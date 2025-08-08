@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "book-md-tools"
+version = "0.1.0"
+description = "Deterministic pipeline and fixers for converting and cleaning OCR’d PDFs to Markdown and Word-ready documents."
+readme = "README.md"
+authors = [{ name = "TLG" }]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = ["markdown", "ocr", "publishing", "pdf", "docx", "cleanup", "tables"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/book-md-tools"
+
+[project.scripts]
+book-pipeline = "scripts.book_pipeline:main"
+fix-headers = "tools.markdown_header_depth_corrector:main"
+fix-ocr = "tools.fix_ocr_errors:main"
+fix-ocr-extra = "tools.fix_additional_ocr_errors:main"
+fix-tables = "tools.fix_table_formatting:main"
+spell-check = "tools.spell_check:main"
+long-lines = "tools.long_line_detector:main"
+pbreaks = "tools.paragraph_break_detector:main"
+remove-daggers = "tools.remove_dagger_symbols:main"

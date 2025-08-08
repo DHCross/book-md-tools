@@ -1,0 +1,148 @@
+import re
+import sys
+import os
+
+# --- CONFIGURATION ---
+
+# A list of known structural headings to differentiate them from data labels.
+STRUCTURAL_HEADINGS = [
+    "Outline", "Foreword", "1 Guide to names & naming", "2 People", "3 Epithets",
+    "4 Places", "5 Fantastic names", "Appendices", "Bibliography", "Tables",
+    "Table of contents", "Introduction", "Gamemasters", "Players",
+    "How to use the book", "Scope, structure, & sundry", "Terminology",
+    "Pronunciation", "Variants", "Authenticity", "Preparation and records",
+    "A nominal history", "People's names", "Mixing names", "Place names",
+    "Character names", "Campaign names", "Contemporary and historical",
+    "Science fiction", "Fantasy", "What's all this, then?", "Mix and match",
+    "Cultural crossover", "Anachronism", "But I need more", "More about names",
+    "Religious names", "Forbidden names", "Historical and literary sources",
+    "Honorifics", "Reputation", "Gamemastering names", "Apt names",
+    "Expectations and English", "Rhythm and stress",
+    "Male and female created he them", "Sound and meaning", "Aptitudes",
+    "In brief", "Names and magic", "The power of names", "Divination by names",
+    "Onomancy", "True names",
+    "English", "Scottish", "Welsh", "Medieval English", "Gaelic",
+    "Medieval French", "Celtic (Gaulish)", "Germanic", "Medieval Spanish"
+]
+
+# --- SCRIPT LOGIC ---
+
+def process_file(input_path, output_path):
+    """
+    Reads the input file, applies structural tags and table formatting idempotently,
+    and writes to the output file.
+    """
+    try:
+        with open(input_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        print(f"Error: Input file not found at '{input_path}'")
+        return
+
+    processed_lines = []
+    
+    for line in lines:
+        stripped_line = line.strip()
+        
+        # --- IDEMPOTENCY CHECK ---
+        # If line is already a tagged or markdown header, or a compliant table row, skip processing.
+        if stripped_line.startswith(('<ch>', '<1>', '<2>', '<3>', '#')) or '\t' in line:
+            processed_lines.append(line)
+            continue
+
+        # 1. HEADING AND TAG PROCESSING (from **bold** lines)
+        bold_match = re.match(r'^\*\*(.+?)\*\*$', stripped_line)
+        if bold_match:
+            header_text = bold_match.group(1).strip()
+            if header_text in STRUCTURAL_HEADINGS:
+                # This is a structural heading, so convert it.
+                if re.match(r'^\d+', header_text) or header_text in ["Appendices", "Bibliography", "Tables", "Foreword", "Outline"]:
+                    processed_line = f"# {header_text}\n" # First pass to Markdown
+                elif header_text in ["Terminology", "Pronunciation", "People's names", "A nominal history"]:
+                    processed_line = f"### {header_text}\n"
+                else:
+                    processed_line = f"## {header_text}\n"
+                processed_lines.append(processed_line)
+                continue
+
+        # 2. TABLE FORMATTING (from space-aligned lines)
+        # More comprehensive table detection for various table formats
+        if (re.match(r'^\d+–\d+', stripped_line) or  # Table identifiers like "1–1"
+            re.match(r'^D%', stripped_line) or        # Dice table headers
+            re.match(r'^\d+-\d+', stripped_line) or   # Alternative table format
+            re.match(r'^\d+\s+\w+\s+\w+\s+\w+', stripped_line) or  # Number followed by multiple words (like "10 ad ak ar")
+            (stripped_line.count('  ') >= 2 and len(stripped_line.split()) >= 3)):  # 3+ columns with multiple spaces
+            # Convert single spaces to tabs for table-like lines with many short words
+            if re.match(r'^\d+\s+\w+\s+\w+\s+\w+', stripped_line):
+                processed_line = re.sub(r' +', '\t', line)  # Convert all spaces to tabs
+            else:
+                processed_line = re.sub(r' {2,}', '\t', line)  # Convert 2+ spaces to tabs
+            processed_lines.append(processed_line)
+        else:
+            # If no other rule matches, just add the original line
+            processed_lines.append(line)
+
+    # --- SECOND PASS FOR TAGGING MARKDOWN HEADERS ---
+    final_lines = []
+    in_toc_section = False
+    
+    for line in processed_lines:
+        stripped_line = line.strip()
+        
+        # Detect start and end of Table of Contents section
+        if stripped_line == "# Table of contents":
+            in_toc_section = True
+            final_lines.append(line.replace('#', '<ch> #', 1))
+            continue
+        elif in_toc_section and stripped_line.startswith("# ") and "Introduction" in stripped_line:
+            in_toc_section = False
+            # This line starts the main content, so tag it normally
+        
+        # Idempotency check for tags
+        if stripped_line.startswith(('<ch>', '<1>', '<2>', '<3>')):
+            final_lines.append(line)
+            continue
+            
+        # Don't tag headers in the ToC section
+        if in_toc_section and stripped_line.startswith("#"):
+            final_lines.append(line)
+            continue
+
+        # Apply tags based on markdown header level
+        if stripped_line.startswith('###'):
+            final_lines.append(line.replace('###', '<2> ###', 1))
+        elif stripped_line.startswith('##'):
+            final_lines.append(line.replace('##', '<1> ##', 1))
+        elif stripped_line.startswith('#'):
+            final_lines.append(line.replace('#', '<ch> #', 1))
+        else:
+            final_lines.append(line)
+
+    # WRITE THE OUTPUT FILE
+    try:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.writelines(final_lines)
+        print(f"\nProcessing complete. Compliant file saved as '{output_path}'")
+    except Exception as e:
+        print(f"Error writing to output file: {e}")
+
+
+# --- EXECUTION ---
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("\nUsage: python format_book_v2.py <input_filename> <output_filename>")
+        print("Example: python format_book_v2.py \"Extraordinary Book of Names.txt\" \"EBoN_Compliant.txt\"")
+    else:
+        input_filename = sys.argv[1]
+        output_filename = sys.argv[2]
+        
+        # Ensure paths are handled correctly relative to the script's location
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        input_filepath = os.path.join(script_dir, input_filename)
+        output_filepath = os.path.join(script_dir, output_filename)
+
+        print(f"Input file: {input_filepath}")
+        print(f"Output file: {output_filepath}")
+
+        process_file(input_filepath, output_filepath)

@@ -1,0 +1,95 @@
+# Copilot Instruction Guide for Marking Up "Extraordinary Book of Names"
+
+**Purpose:**
+Add structural header markers to the Markdown version of the book so it can be automatically styled and parsed by layout software like InDesign. Maintain tab-delimited formatting for tables and do not interfere with list content.
+
+---
+
+## 🎯 Objective
+
+Insert the following plain-text tags **at the beginning of the line** for any headings in the Markdown document:
+
+| Markdown Heading | Tag to Insert | Purpose                         |
+| ---------------- | ------------- | ------------------------------- |
+| `# `             | `<ch>`        | Chapter Title                   |
+| `## `            | `<1>`         | Section Header (1st level)      |
+| `### `           | `<2>`         | Subsection Header (2nd level)   |
+| `#### `          | `<3>`         | Sub-subsection (rare; optional) |
+
+Do **not** alter any lines that:
+
+* Are part of tab-delimited tables
+* Begin with a tab (`\t`) or contain multiple tabs (these are tables)
+* Contain comma-separated lists or examples
+* Are part of a table of contents or internal list
+
+---
+
+## ✅ Transformation Examples
+
+Before:
+
+```markdown
+# Introduction
+## How to use the book
+### A nominal history
+```
+
+After:
+
+```markdown
+<ch> Introduction
+<1> How to use the book
+<2> A nominal history
+```
+
+---
+
+## 🔍 Identification Tips
+
+Use the structure of the Markdown file:
+
+* `# ` = top-level headings (likely match actual chapter titles)
+* `## ` = logical subheadings
+* `### ` = detail-level divisions
+
+Use the presence of leading tabs (`\t`) as a red flag to **avoid editing** — those are tables and must remain untouched.
+
+---
+
+## 🛑 DO NOT TOUCH:
+
+* Lists of names or items with tabs or commas
+* Anything inside actual tables (they are tab-delimited)
+* Literal backslashes like `\t` or `\n` (means bad formatting — warn the user if found)
+
+---
+
+## ⚙️ Scope of Edit
+
+Work on the entire Markdown file, but restrict transformations to lines with heading markers. Leave all other content as-is.
+
+---
+
+## ✍️ Post-Processing Notes
+
+Once the header markers have been applied:
+
+* Save the edited file as `Extraordinary Book of Names (Tagged).md`
+* It can then be previewed, converted to Word, or used for layout parsing
+
+---
+
+## 📎 Reference
+
+Also consult the human-written formatting guide in the same folder titled:
+
+> `InDesign Table Prep & Workflow Note`
+
+It describes the reasons behind tab/return formatting and layout behavior in InDesign.
+
+---
+
+Copilot, your task is to insert structural clarity while preserving data fidelity. Think like a typesetter, edit like a programmer.
+
+Good luck.

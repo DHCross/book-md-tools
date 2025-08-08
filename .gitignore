@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/*.log
+.history/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Generated reports & outputs
+reports/
+*.report
+*.report.md
+*_pipeline*.md
+*_header_corrected*.md
+*_fixed_paragraphs*.md
+*_tables*.md
+*_ocr*.md
+*_spell_*.txt
+*_longlines_*.txt
+*_pbreaks_*.txt
+
+# Large assets (keep outside repo or use LFS)
+*.pdf
+media/
+images/
+tables/

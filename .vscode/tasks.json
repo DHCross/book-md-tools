@@ -1,0 +1,89 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Format Selection as Markdown Table",
+            "type": "shell",
+            "command": "echo \"${selectedText}\" | python3 \"${workspaceFolder}/tools/book_parser.py\" --format md",
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Convert Names to Tab-Delimited Columns",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "${workspaceFolder}/tools/convert_names_to_columns.py",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}-Columns.txt"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Book Pipeline (Markdown → cleaned)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "python3 \"${workspaceFolder}/scripts/book_pipeline.py\" \"${file}\" --out-suffix _progress_pipeline"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Header Depth Corrector (H1–H4)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "python3 \"${workspaceFolder}/tools/markdown_header_depth_corrector.py\" \"${file}\" --max-depth 4"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "QC: Long Line Detector (report only)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "python3 \"${workspaceFolder}/tools/long_line_detector.py\" \"${file}\" --threshold 150 --ignore-headers --ignore-code --report \"${workspaceFolder}/reports/${fileBasenameNoExtension}_longlines.txt\""
+            ],
+            "presentation": { "reveal": "always", "panel": "shared" },
+            "problemMatcher": []
+        },
+        {
+            "label": "QC: Paragraph Break Detector (summary)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "python3 \"${workspaceFolder}/tools/paragraph_break_detector.py\" \"${file}\" || true"
+            ],
+            "presentation": { "reveal": "always", "panel": "shared" },
+            "problemMatcher": []
+        }
+    ]
+}

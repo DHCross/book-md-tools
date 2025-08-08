@@ -1,0 +1,47 @@
+### The Concept
+
+The process involves three steps:
+1.  **You select text** in your editor.
+2.  **You trigger a command** (e.g., via a keyboard shortcut or the command palette).
+3.  **VS Code runs your Python script**, feeding it the selected text. The script processes the text and can either replace your selection with the output, open a new file, or copy it to the clipboard.
+
+### How to Implement It
+
+This is typically achieved by creating a **VS Code Task**. A task is a configured command that VS Code can execute. We can create one that runs our book_parser.py script.
+
+First, I need to modify the Python script so it can accept text from an external source (like the editor selection) instead of using the hardcoded sample.
+
+This book_parser.py does the following 
+1.  Read input from the command line when the script is run.
+2.  Accept an argument to specify the output format (e.g., `tsv`, `md`, `csv`).
+3.  Print the final, formatted output, which VS Code can then use.
+
+YYou can trigger the Python script with your selected text from within VS Code. This is a common and powerful way to integrate custom scripts into your editing environment.
+
+Here's the two-part plan to make this happen:
+
+The script will:
+*   Accept a command-line argument (`--format`) to specify whether you want `tsv`, `md`, or `csv` output.
+*   Read the highlighted text you send it from `sys.stdin`.
+*   Print the formatted result to "standard output" (stdout), which VS Code can then capture.
+
+We set up a VS Code "Task" that executes the script with your selected text. This involved creating a `tasks.json` file in your workspace's .vscode directory.
+
+Here is how you can set up the `tasks.json` file:
+
+1.  Press **Cmd+Shift+P** (or Ctrl+Shift+P on Windows) to open the Command Palette.
+2.  Type **"Tasks: Configure Task"** and select it.
+3.  Choose **"Create tasks.json file from template"** and then select **"Others"**.
+4.  This will create a `tasks.json` file. Replace its contents with the following:
+
+**How to Use It:**
+
+1.  Open any `.txt` or `.md` file.
+2.  **Highlight** the messy text you want to format.
+3.  Press **Cmd+Shift+B** (or Ctrl+Shift+B), which is the default shortcut for the "Run Build Task" command.
+
+VS Code will take your highlighted text, send it to book_parser.py, run the script, and print the clean Markdown table to the integrated terminal. You can then copy it from there.
+
+Open a text file.
+Highlight the messy text.
+Press Cmd+Shift+B (or Ctrl+Shift+B).

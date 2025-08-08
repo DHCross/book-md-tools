@@ -1,0 +1,61 @@
+You are correct that you won't find the word <TAB> spelled out in this version. However, this version is also not compliant with the InDesign workflow.
+
+The workflow requires a single, real tab character, not a series of spaces.
+
+The Correct Fix for THIS Version
+To fix the file you have open now, you need to replace the multiple spaces with single tabs. The most efficient way to do this is with a Regular Expression search.
+
+Here is the correct procedure in Visual Studio Code for the file in your screenshot:
+
+Open the Find and Replace tool (Ctrl+H).
+
+In the Find box, click the icon that looks like .* to enable Regular Expressions.
+
+In the Find field, type:  {2,}
+(This tells it to find any occurrence of two or more space characters in a row.)
+
+In the Replace field, type: \t
+(This is the command for a single, real tab character.)
+
+Click the "Replace All" button.
+
+This will find every group of multiple spaces that are creating the columns and replace each group with a single tab, which is exactly what the InDesign workflow requires. After you do this, you can verify the result by turning on "Show Whitespace" in your editor to see the tab arrows (→).
+
+Great question, Dan. Whether to **keep trailing whitespace visible** depends on your goal:
+
+---
+
+### 🔍 If You're Cleaning Up for InDesign or Markdown
+
+You’ll want to **remove trailing whitespace** to avoid formatting glitches. Regex makes this easy:
+
+- **Regex to match trailing spaces/tabs**:  
+  ```
+  [ \t]+$
+  ```
+- **Replace with**: empty string (`""`)  
+  This strips spaces/tabs at the end of each line without touching line breaks.
+
+---
+
+### 🧪 If You're Validating Structure
+
+Keeping trailing whitespace **visible** in VS Code (via `Render Whitespace: all`) helps spot:
+
+- Accidental tabs after content
+- Misaligned rows in `.txt` tables
+- InDesign import errors due to rogue spacing
+
+---
+
+### ⚙️ Regex Tips for Trailing Whitespace
+
+| Goal                          | Regex Pattern        | Notes                                 |
+|------------------------------|----------------------|----------------------------------------|
+| Remove trailing spaces/tabs  | `[ \t]+$`            | Works line-by-line                     |
+| Preserve empty lines         | `([^ \t\r\n])[ \t]+$`| Only removes if preceded by content    |
+| Remove both leading/trailing | `^\s+|\s+$`          | Use with global flag (`g`)             |
+
+---
+
+If you're prepping `.txt` tables for InDesign, I'd recommend stripping trailing whitespace before saving. Want a quick Python or VS Code snippet to automate that? I can whip one up.

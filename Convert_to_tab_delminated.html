@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Format Text Converter</title>
+    <!-- Tailwind CSS for styling, loaded from a CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- All CSS styles are embedded directly in this file -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s, bottom 0.3s;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+        /* Tab Styles */
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            border-color: #4f46e5;
+            background-color: #4f46e5;
+            color: white;
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Multi-Format Text Converter</h1>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Paste messy TTRPG notes to generate clean output for any workflow.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Input Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col">
+                <label for="raw-text" class="block text-lg font-semibold mb-2 text-gray-700 dark:text-gray-300">1. Paste Messy Text</label>
+                <textarea id="raw-text" class="w-full flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Paste your complex, multi-section text here..."></textarea>
+                <button id="format-btn" class="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ease-in-out transform hover:scale-105">
+                    Generate All Formats
+                </button>
+            </div>
+
+            <!-- Output Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col">
+                <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                        <button class="tab-button active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm" data-tab="tsv">Tab-Delimited</button>
+                        <button class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="md">Markdown</button>
+                        <button class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="csv">CSV</button>
+                    </nav>
+                </div>
+
+                <div class="flex-grow relative">
+                    <div id="panel-tsv" class="tab-panel active">
+                        <textarea id="output-tsv" readonly class="w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-900/50"></textarea>
+                    </div>
+                    <div id="panel-md" class="tab-panel">
+                        <textarea id="output-md" readonly class="w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-900/50"></textarea>
+                    </div>
+                    <div id="panel-csv" class="tab-panel">
+                        <textarea id="output-csv" readonly class="w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-900/50"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button id="copy-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Copy</button>
+                    <button id="download-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Download</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- InDesign Preview Pane -->
+        <div id="preview-container" class="mt-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hidden">
+             <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">InDesign Preview</h2>
+             <div id="preview-pane" class="overflow-x-auto">
+                <!-- The generated HTML table will be inserted here -->
+             </div>
+        </div>
+        
+        <footer class="text-center mt-8 text-gray-500 dark:text-gray-400">
+            <p>One tool for InDesign, Markdown, and Spreadsheet workflows.</p>
+        </footer>
+    </div>
+
+    <div id="toast-notification" class="toast">Copied to clipboard!</div>
+
+    <script>
+        // --- CORE PARSING & FORMATTING LOGIC ---
+
+        /**
+         * The main parser. Takes messy text and returns a structured array of arrays.
+         * This version uses explicit, semantic rules for high accuracy and includes orphan detection.
+         * @returns {string[][]} An array of rows, where each row is an array of cells.
+         */
+        function parseMessyText(rawText) {
+          // 1) clean invisibles + drop underscores/colons
+          const lines = rawText
+            .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "")
+            .replace(/_/g, "")
+            .replace(/:/g, "")
+            .split(/\r?\n/)
+            .map(l => l.trim())
+            .filter(Boolean);
+
+          if (!lines.length) return [];
+
+          // 2) pull category
+          const category = lines.shift();
+
+          const rows = [];
+          const orphans = [];
+          let section = "";
+
+          // Regex for single numbers, "x to y" ranges, percentages, or x-multipliers.
+          const valueRe = /^[+\d.]+(?:\s*to\s*[+\d.]+)?%?$/i;
+          const multiplierRe = /^x\d+/i;
+
+          // Regex for flexible section header detection.
+          const sectionHeaderRe = /multiplier/i;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const next = lines[i+1] || "";
+
+            // 3) section header when next contains "Multiplier" (case-insensitive)
+            if (/^[A-Za-z ]+$/.test(line) && sectionHeaderRe.test(next)) {
+              section = line;
+              i++; // skip the "Multiplier" label
+              continue;
+            }
+
+            // 4) descriptor + multiplier pairing
+            if (valueRe.test(next) || multiplierRe.test(next)) {
+              rows.push([ category, section, line, next ]);
+              i++; // advance past the multiplier
+            } else {
+              // It's not a section header and not a pair, so it's an orphan.
+              orphans.push(line);
+            }
+          }
+
+          // 5) Log any orphans to the console for debugging.
+          if (orphans.length) {
+            console.warn("Unpaired descriptors found and skipped:", orphans);
+          }
+
+          // 6) prepend header row
+          return [
+            ["Category", "Section", "Descriptor", "Multiplier"],
+            ...rows
+          ];
+        }
+
+        /** Formats structured data as Tab-Separated Values. */
+        function formatAsTsv(data) {
+            return data.map(row => row.join('\t')).join('\n');
+        }
+
+        /** Formats structured data as Markdown. */
+        function formatAsMarkdown(data) {
+            if (data.length < 2) return '';
+            const headers = data[0];
+            const rows = data.slice(1);
+            const category = rows.length > 0 ? rows[0][0] : "";
+            
+            let markdown = `# ${category}\n\n`;
+            let currentSection = "";
+
+            for (const row of rows) {
+                const section = row[1];
+                const descriptor = row[2];
+                const value = row[3];
+
+                if (section !== currentSection) {
+                    currentSection = section;
+                    markdown += `### ${currentSection}\n\n`;
+                    markdown += `| ${headers[2]} | ${headers[3]} |\n`;
+                    markdown += `| :--- | :--- |\n`;
+                }
+                markdown += `| ${descriptor} | ${value} |\n`;
+            }
+            return markdown;
+        }
+
+        /** Formats structured data as Comma-Separated Values. */
+        function formatAsCsv(data) {
+            return data.map(row => {
+                return row.map(cell => {
+                    // Wrap cell in quotes if it contains a comma
+                    return cell.includes(',') ? `"${cell}"` : cell;
+                }).join(',');
+            }).join('\n');
+        }
+
+        /** Renders structured data as an HTML table for preview. */
+        function renderPreviewTable(data) {
+            const previewPane = document.getElementById('preview-pane');
+            const previewContainer = document.getElementById('preview-container');
+            previewPane.innerHTML = ''; // Clear previous preview
+
+            if (data.length < 2) {
+                previewContainer.classList.add('hidden');
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'w-full text-sm text-left text-gray-500 dark:text-gray-400 border-collapse';
+
+            const thead = document.createElement('thead');
+            thead.className = 'text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400';
+            const headerRow = document.createElement('tr');
+            data[0].forEach(headerText => {
+                const th = document.createElement('th');
+                th.scope = 'col';
+                th.className = 'px-6 py-3 border border-gray-200 dark:border-gray-600';
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            data.slice(1).forEach(rowData => {
+                const tr = document.createElement('tr');
+                tr.className = 'bg-white border-b dark:bg-gray-800 dark:border-gray-700';
+                rowData.forEach(cellData => {
+                    const td = document.createElement('td');
+                    td.className = 'px-6 py-4 border border-gray-200 dark:border-gray-600';
+                    td.textContent = cellData;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            
+            previewPane.appendChild(table);
+            previewContainer.classList.remove('hidden');
+        }
+
+
+        // --- DOM & EVENT HANDLING ---
+        const rawTextInput = document.getElementById('raw-text');
+        const formatButton = document.getElementById('format-btn');
+        const copyButton = document.getElementById('copy-btn');
+        const downloadButton = document.getElementById('download-btn');
+        const toastNotification = document.getElementById('toast-notification');
+        
+        const outputAreas = {
+            tsv: document.getElementById('output-tsv'),
+            md: document.getElementById('output-md'),
+            csv: document.getElementById('output-csv')
+        };
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        let activeTab = 'tsv';
+
+        formatButton.addEventListener('click', () => {
+            const rawText = rawTextInput.value;
+            if (rawText.trim() === '') return;
+            
+            const structuredData = parseMessyText(rawText);
+            if (structuredData.length === 0) return;
+
+            // Generate all text formats
+            outputAreas.tsv.value = formatAsTsv(structuredData);
+            outputAreas.md.value = formatAsMarkdown(structuredData);
+            outputAreas.csv.value = formatAsCsv(structuredData);
+
+            // Render the visual preview
+            renderPreviewTable(structuredData);
+
+            copyButton.disabled = false;
+            downloadButton.disabled = false;
+            updateActionButtons();
+        });
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                activeTab = button.dataset.tab;
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`panel-${activeTab}`).classList.add('active');
+                updateActionButtons();
+            });
+        });
+
+        function updateActionButtons() {
+            const extensions = { tsv: '.txt', md: '.md', csv: '.csv' };
+            downloadButton.textContent = `Download ${extensions[activeTab]}`;
+        }
+
+        copyButton.addEventListener('click', () => {
+            const textToCopy = outputAreas[activeTab].value;
+            if (textToCopy) {
+                // Use document.execCommand for broader compatibility, especially in local files
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('Copied to clipboard!');
+                } catch (err) {
+                     console.error('Fallback copy failed: ', err);
+                     showToast('Copy failed. Please copy manually.');
+                }
+                document.body.removeChild(tempTextArea);
+            }
+        });
+        
+        downloadButton.addEventListener('click', () => {
+            const textToDownload = outputAreas[activeTab].value;
+            const extensions = { tsv: '.txt', md: '.md', csv: '.csv' };
+            const mimetypes = { tsv: 'text/plain', md: 'text/markdown', csv: 'text/csv' };
+            if (textToDownload) {
+                const element = document.createElement('a');
+                const blob = new Blob([textToDownload], {type: `${mimetypes[activeTab]};charset=utf-8;`});
+                element.href = URL.createObjectURL(blob);
+                element.download = `formatted-output${extensions[activeTab]}`;
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                URL.revokeObjectURL(element.href);
+            }
+        });
+
+        function showToast(message) {
+            toastNotification.textContent = message;
+            toastNotification.classList.add('show');
+            setTimeout(() => {
+                toastNotification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize button states
+        updateActionButtons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+# InDesign Table Prep & Workflow Note
+
+## Table Format Standard
+
+All tables **must** use _real_ control characters:
+
+Column 1<TAB>Column 2<TAB>Column 3<Return>
+
+Row 1<TAB>Entry 1<TAB>Entry 2<TAB>Entry 3<Return>
+
+Row 2<TAB>Entry 1<TAB>Entry 2<TAB>Entry 3<Return>
+
+- = press the Tab key once.
+- = press Enter/Return at the end of every row.
+
+Markdown # ## ### headers are fine for hierarchy; no numeric prefixes are required.
+
+## InDesign Conversion Workflow
+
+1. **Prepare the text** with tabs between columns and returns between rows.
+1. **Select** the lines in InDesign (Type tool).
+1. **Convert** → Table > Convert Text to Table.
+-- Column Separator: **Tab**
+-- Row Separator: **Paragraph**
+1. **Adjust formatting** (Table & Cell Styles) for borders, fills, fonts.
+### Alternative methods
+
+- **Insert Table** first (Table > Insert Table) and paste data into cells.
+- **Import Excel** via File > Place (link for live updates if desired).
+
+## Quick‑Reference Workflow (plain‑text editors)
+
+**Step**
+
+**Action**
+
+**Key detail**
+
+1
+
+Type/paste the table text in a _plain‑text_ editor.
+
+Ensure the file is not rich‑text.
+
+2
+
+Insert a **TAB** between columns.
+
+Press **Tab** once per break.
+
+3
+
+Insert a **RETURN** at the end of each row.
+
+Press **Enter/Return**.
+
+4
+
+**Save** as UTF‑8 .txt.
+
+Encoding: UTF‑8.
+
+5
+
+InDesign: Place or paste → **Convert Text to Table** (Tab / Paragraph).
+
+Table appears with current style.
+
+## Three Fool‑Proof Production Methods
+
+1. **Provide attached text files** (.txt/.tsv) already containing real tabs & returns.
+1. **Show Hidden Characters** (Type > Show Hidden Characters):
+-- Tabs show as ▸
+-- Returns show as ¶
+-- If you see literal "", replace with a real Tab.
+1. **Global Find/Replace** for inherited placeholders:
+-- Find "" → Replace with real Tab.
+-- Find "" → Replace with real Return.
+
+## Verification Checklist (10 seconds)
+
+- Hidden characters visible.
+- Exactly one ▸ per column, one ¶ per row.
+- Run **Convert Text to Table**.
+- Table pops in; column count = tabs + 1. If not, look for stray tabs/spaces.
+
+## Deliverables Going Forward
+
+- Plain‑text .txt or .tsv files **per table**, containing real control characters.
+- Filenames mirror captions (e.g., Table_1‑1_Adventurer_bynames.txt).
+- Optional: a **single master file** if preferred.
+
+This workflow guarantees instant, clean conversion in InDesign with minimal manual fixes.
+
+## Affinity Publisher Limitations (Why the InDesign Table Workflow Fails)
+
+- **Tables Imported as Inline Elements:** When you paste or place a table (Word, RTF, or even some .xlsx) into Affinity Publisher, it arrives as a single inline graphic/text blob—not a true, editable table object.
+- **Heavy Manual Cleanup:** Breaking that blob into usable rows/columns requires hand‑re‑flowing text or rebuilding tables with Publisher's Table Tool, which is time‑consuming for table‑heavy documents.
+- **No Robust Auto‑Conversion:** Unlike InDesign's "Convert Text to Table," Publisher lacks an equivalent one‑click feature that recognises tabs/returns and turns them into a table structure.
+### Practical Workarounds in Publisher
+
+1. **Use Native Table Tool:** Build or rebuild critical tables directly in Publisher using the Table Panel—good for content that must remain editable.
+1. **Treat Tables as Images:** For static or finalised tables, export them from Excel/Sheets as PDF, TIFF, or PNG, then place them in Picture Frames. This bypasses the inline‑element issue and leverages Publisher's strong image handling.
+
+_Bottom line:_ Publisher excels in many areas but needs extra planning for complex table imports. Either rebuild with its Table Tool or place tables as images to maintain layout efficiency.
+
+## Lessons Learned (Extraordinary Book of Names Project)
+
+### File Format Validation
+- **Confirmed**: InDesign imports .txt and .tsv files directly with preserved control characters
+- **Confirmed**: InDesign does NOT directly import .md (Markdown) files - requires manual copy/paste
+- **Takeaway**: The .txt/.tsv specification is technically correct and essential for workflow success
+
+### Automation vs Manual Review
+- **Python scripts** can handle bulk formatting (headers, basic table cleanup) effectively
+- **Manual review remains essential** for complex documents with varied formatting patterns
+- **Two-phase approach works best**: Automated first pass + manual cleanup and verification
+- **Conservative detection rules** prevent false positives better than aggressive pattern matching
+
+### Verification Methods
+- **Hex dumps** (`xxd`, `hexdump`) are invaluable for verifying real tabs vs spaces
+- **VS Code "Show Hidden Characters"** provides visual confirmation of control characters
+- **grep with hex patterns** can detect inconsistent formatting across large documents
+
+### Header Tagging Consistency
+- **Structural tags must be consistent**: `<ch>` vs `<CH>` inconsistencies break automation
+- **Case sensitivity matters** in tag processing and search/replace operations  
+- **ToC vs content distinction**: Table of contents should NOT use chapter tags like `<ch>`
+
+### Table Processing Challenges
+- **Mixed tab/space formatting** in tables requires individual attention
+- **Table detection automation** works best with clear structural patterns
+- **Column count verification** essential - tabs + 1 should equal expected columns
+- **Row-by-row inspection** sometimes needed for tables with embedded formatting
+
+### Development Tools & Workflow
+- **VS Code tasks.json** integration enables "Run Build Task" on selected text
+- **Idempotent scripts** allow safe multiple runs without double-processing
+- **Targeted processing** (selected text) more reliable than full-document sweeps
+- **Multiple output formats** (TSV/Markdown/CSV) provide flexibility for different use cases
+
+### Quality Assurance Recommendations
+1. **Always verify with hex dumps** after automated processing
+2. **Test table imports** in InDesign before final delivery  
+3. **Maintain backup copies** during iterative processing
+4. **Document any manual corrections** made after automation
+5. **Use consistent structural tagging** throughout the document
+
+## Name List Column Conversion Tool
+
+A Python script (`convert_names_to_columns.py`) has been created to automatically convert comma-separated name lists to multi-column tab-delimited format required for InDesign table import:
+
+### Features:
+- **Automatic Detection**: Identifies `**Standard**:` and `**Other**:` name list lines
+- **Real TAB Characters**: Uses actual `\t` characters, not spaces
+- **Configurable Columns**: Default 5 columns per row (adjustable)
+- **Preserves Structure**: Maintains all other document formatting
+
+### Usage:
+```bash
+# Preview conversion without changes
+python3 convert_names_to_columns.py "filename.txt" --preview
+
+# Convert file (creates backup automatically)
+python3 convert_names_to_columns.py "filename.txt"
+
+# Convert with custom column count
+python3 convert_names_to_columns.py "filename.txt" --columns 4
+```
+
+### VS Code Integration:
+- **Task**: "Convert Names to Tab-Delimited Columns" 
+- **Access**: Command Palette > Tasks: Run Task
+- **Output**: Creates `[filename]-Columns.txt` with converted format
+
+### Verification Methods:
+- **Hex Dump**: `xxd filename.txt | head` to verify TAB characters (0x09)
+- **InDesign Test**: Place file and use "Convert Text to Table" (Tab/Paragraph separators)
+

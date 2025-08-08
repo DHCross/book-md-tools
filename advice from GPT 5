@@ -1,0 +1,129 @@
+That’s a strong pipeline. A few **surgical upgrades** will make it bullet-proof for book work and save you hours later.
+
+# Tighten the pipeline
+
+## 1) OCR gate: scale by page count
+
+Your 200-byte threshold can mislabel short/title PDFs. Gate by **bytes per page**:
+
+```bash
+PAGES=$(pdfinfo "$PDF" | awk '/Pages:/ {print $2}')
+BYTES_PER_PAGE=$(( (${BYTES:-0} + PAGES - 1) / PAGES ))
+# Treat < 100 bytes/page as "no/weak text layer"
+if [ "${BYTES_PER_PAGE:-0}" -lt 100 ]; then OCR=1; else OCR=0; fi
+```
+
+Also consider `ocrmypdf --skip-text` (instead of `--force-ocr`) when there *is* text but it’s partial; it’ll OCR only image regions.
+
+## 2) Preserve images deterministically
+
+Have Pandoc extract media with stable names (critical for layout handoff):
+
+```bash
+pandoc "$HTML" \
+  --from=html-native_divs-native_spans \
+  --to=markdown+pipe_tables+gfm_auto_identifiers \
+  --wrap=none --reference-links --markdown-headings=setext \
+  --extract-media="media/${BASE}" \
+  -o "${BASE}.md"
+```
+
+## 3) Two HTML extractors, auto-fallback
+
+Keep your `mutool convert` first; **auto-retry** with Poppler if headings/paras look empty:
+
+```bash
+mutool convert -F html -o "$HTML" "$SRC" || true
+if ! grep -q "<p" "$HTML"; then
+  pdftohtml -s -i -q -noframes -enc UTF-8 "$SRC" "$WORKDIR/out" && HTML="$WORKDIR/out.html"
+fi
+```
+
+## 4) Tables: flavor sweep + de-dup
+
+You’re trying Camelot lattice + stream and Tabula—good. Add **hash de-dup** so you don’t hand layout three variants of the same table:
+
+```bash
+mkdir -p tables
+# …run your extractors…
+# De-dup exact duplicates
+awk 'BEGIN{FS=OFS="\t"} {print}' tables/*.tsv 2>/dev/null | cksum | sort | uniq -w10 >/dev/null
+# or: hash each TSV and keep first instance per (page,table) pattern
+```
+
+Also emit a **manifest** mapping placeholders ↔ TSV:
+
+```bash
+python - <<'PY'
+import glob, json, re
+m=[]
+for p in sorted(glob.glob('tables/*.tsv')):
+    g=re.search(r'(?:_|/)(\d+)_([0-9]+)\.tsv$', p)
+    m.append({"placeholder": f"<!-- TABLE p{g.group(1)} t{g.group(2)} -->" if g else p,
+              "tsv": p})
+print(json.dumps(m, indent=2))
+PY > tables/manifest.json
+```
+
+## 5) Post-processing that matters
+
+* **Mid-word dehyphenation** only across hard linebreaks and letters (avoid real hyphens):
+
+  * `([A-Za-z])-\n([a-z]) → $1$2`
+* **Header sanity**: promote/demote to max H4 and fix jumps (H3 after H1 → H2).
+* **Running headers/footers**: kill page-top/bottom lines that repeat ≥N times.
+* **Ligatures/quotes/dashes** normalization (you listed this—keep it early).
+* **Small caps → true caps** for acronyms (detect `<span style="font-variant:small-caps">` in HTML before Pandoc, or pattern after).
+
+## 6) Quality checks (fast, objective)
+
+Fail the run if structure looks wrong; it’s cheaper than hand fixes.
+
+* **Heading density**: `h[1-4]` count / pages ≥ 0.1 (tune per book).
+* **Avg paragraph length**: `<p>` innerText chars avg > 40.
+* **List integrity**: ratio of lines starting with `-` or digits that are not part of code blocks.
+
+If a check fails, auto-retry with the alternate HTML extractor or toggle Pandoc’s reader (`--from=html+raw_html` vs `html5`).
+
+## 7) VS Code task: add env flags + media
+
+Let the task accept `TABLES=1`, `OCR=force|auto|skip`, and extract media:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PDF → Markdown (smart pipeline)",
+      "type": "shell",
+      "command": "/bin/bash",
+      "args": [
+        "-lc",
+        "chmod +x scripts/pdf_to_md_smart.sh && TABLES=${TABLES:-0} OCRMODE=${OCR:-auto} scripts/pdf_to_md_smart.sh '${file}'"
+      ],
+      "options": { "env": { "PANDOC_MEDIA": "media/${fileBasenameNoExtension}" } },
+      "problemMatcher": []
+    }
+  ]
+}
+```
+
+In your script, pass `--extract-media=\"$PANDOC_MEDIA\"`.
+
+## 8) OCR accuracy boosts you’ll actually feel
+
+* Add `--user-patterns tesseract-user-patterns.txt` (regex-like patterns for hyphenated fantasy names).
+* Install `tesseract-lang` packs you need (e.g., `eng+deu` if there’s Germanic proper nouns).
+* For tiny serif fonts, bump DPI: `ocrmypdf --dpi 400` (or `--oversample 400`).
+
+---
+
+# Actionable next step
+
+Run your smart task on **one worst chapter** with `TABLES=1` and `OCR=auto`. Check:
+
+1. `media/<chapter>/` exists with deterministic filenames.
+2. `tables/manifest.json` lines up with your MD placeholders.
+3. Structural checks pass (heading density & para length).
+
+If any check fails, send me the HTML + MD for that chapter; I’ll tweak the fallback logic or the post-processors so you can lock this in as the house pipeline.
