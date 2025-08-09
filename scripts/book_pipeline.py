@@ -6,11 +6,12 @@ Runs a deterministic sequence of existing fixers and QC tools against a Markdown
 Outputs a versioned, fully processed .md plus individual reports in ./reports.
 
 Usage:
-  python3 scripts/book_pipeline.py <input.md> [--out-suffix _pipeline_v1]
+  python3 scripts/book_pipeline.py <input.md> [--out-suffix _pipeline]
 
 Notes:
 - Uses in-repo modules; no external deps.
 - Does not require moving files to tools/ yet.
+- Final output filenames are automatically versioned with a -vN suffix (e.g., -v1, -v2).
 """
 import argparse
 import sys
@@ -28,6 +29,8 @@ import tools.fix_additional_ocr_errors as fix_additional_ocr_errors  # type: ign
 from tools.spell_check import SpellChecker  # type: ignore
 from tools.long_line_detector import LongLineDetector  # type: ignore
 from tools.paragraph_break_detector import ParagraphBreakDetector  # type: ignore
+from tools import fix_toc_plain  # type: ignore
+from tools.remove_isolated_page_numbers import remove_isolated_page_numbers  # type: ignore
 
 REPORTS_DIR = Path(__file__).resolve().parent.parent / 'reports'
 REPORTS_DIR.mkdir(exist_ok=True)
@@ -44,7 +47,17 @@ def read_text(path: Path) -> str:
         return f.read()
 
 
-def pipeline(input_md: Path, out_suffix: str = '_pipeline_v1') -> dict:
+def _next_versioned_path(directory: Path, base_name: str, ext: str = '.md') -> Path:
+    """Return next available versioned path like '<base_name>-vN.ext' in directory."""
+    n = 1
+    while True:
+        candidate = directory / f"{base_name}-v{n}{ext}"
+        if not candidate.exists():
+            return candidate
+        n += 1
+
+
+def pipeline(input_md: Path, out_suffix: str = '_pipeline') -> dict:
     if not input_md.exists():
         raise FileNotFoundError(f"Input file not found: {input_md}")
 
@@ -67,6 +80,33 @@ def pipeline(input_md: Path, out_suffix: str = '_pipeline_v1') -> dict:
     fix_broken_paragraphs.fix_broken_paragraphs(str(current_file), str(para_fixed))
     current_file = para_fixed
     summary['steps'].append({'step': 'fix_broken_paragraphs', 'output': str(current_file)})
+
+    # 2.5) Normalize plain-text TOC
+    content = read_text(current_file)
+    toc_fixed_text, toc_changes = fix_toc_plain.fix_toc_plain(content)
+    toc_fixed = current_file.with_name(f"{current_file.stem}_toc{current_file.suffix}")
+    write_text(toc_fixed, toc_fixed_text)
+    toc_report = REPORTS_DIR / f"{input_md.stem}_toc_{ts}.report.md"
+    write_text(toc_report, f"TOC normalization changes: {toc_changes}\n")
+    current_file = toc_fixed
+    summary['steps'].append({'step': 'fix_toc_plain', 'output': str(current_file), 'report': str(toc_report), 'changes': int(toc_changes)})
+
+    # 2.6) Remove isolated page numbers
+    content = read_text(current_file)
+    no_pages_text, removed_count, removed_lines = remove_isolated_page_numbers(content)
+    no_pages = current_file.with_name(f"{current_file.stem}_nopages{current_file.suffix}")
+    write_text(no_pages, no_pages_text)
+    pages_report = REPORTS_DIR / f"{input_md.stem}_removed_pages_{ts}.report.md"
+    report_body = [
+        f"Removed isolated page numbers: {removed_count}",
+        "",
+        "Examples removed (first 50):",
+    ]
+    for ex in removed_lines[:50]:
+        report_body.append(f"- {ex!r}")
+    write_text(pages_report, "\n".join(report_body))
+    current_file = no_pages
+    summary['steps'].append({'step': 'remove_isolated_page_numbers', 'output': str(current_file), 'report': str(pages_report), 'removed': int(removed_count)})
 
     # 3) Fix table formatting
     content = read_text(current_file)
@@ -100,11 +140,23 @@ def pipeline(input_md: Path, out_suffix: str = '_pipeline_v1') -> dict:
     current_file = add_fixed
     summary['steps'].append({'step': 'fix_additional_ocr_errors', 'output': str(current_file), 'report': str(add_report), 'changes': int(add_total)})
 
-    # 5) Finalize output name
-    final_out = input_md.with_name(f"{input_md.stem}{out_suffix}.md")
+    # 5) Finalize output name with automatic -vN versioning
+    base_name = f"{input_md.stem}{out_suffix}"
+    final_out = _next_versioned_path(input_md.parent, base_name, '.md')
     # Write final content
     write_text(final_out, read_text(current_file))
     summary['final_output'] = str(final_out)
+
+    # Optional: Convert Markdown pipe tables to inline TSV-in-document for InDesign
+    import os
+    if os.environ.get('TABLES_INLINE', '0') == '1':
+        try:
+            from tools import md_tables_to_tsv_inline as tsv_inline
+            converted_text, n = tsv_inline.convert_tables(read_text(final_out))
+            write_text(final_out, converted_text)
+            summary['steps'].append({'step': 'tables_inline_tsv', 'converted': int(n)})
+        except Exception as e:
+            summary['steps'].append({'step': 'tables_inline_tsv', 'error': str(e)})
 
     # 6) QC: Spell check report
     sc = SpellChecker()
@@ -151,7 +203,7 @@ def pipeline(input_md: Path, out_suffix: str = '_pipeline_v1') -> dict:
 def main():
     ap = argparse.ArgumentParser(description='Run integrated Markdown cleanup pipeline')
     ap.add_argument('input_md', help='Input Markdown file')
-    ap.add_argument('--out-suffix', default='_pipeline_v1', help='Suffix for final output filename (default: _pipeline_v1)')
+    ap.add_argument('--out-suffix', default='_pipeline', help='Suffix for final output filename (default: _pipeline). A -vN will be appended automatically.')
     args = ap.parse_args()
 
     input_md = Path(args.input_md).resolve()

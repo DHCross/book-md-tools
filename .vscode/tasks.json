@@ -40,7 +40,7 @@
             "command": "/bin/zsh",
             "args": [
                 "-lc",
-                "python3 \"${workspaceFolder}/scripts/book_pipeline.py\" \"${file}\" --out-suffix _progress_pipeline"
+                "TABLES_INLINE=${input:tablesInline} python3 \"${workspaceFolder}/scripts/book_pipeline.py\" \"${file}\" --out-suffix _progress_pipeline"
             ],
             "presentation": {
                 "echo": true,
@@ -84,6 +84,87 @@
             ],
             "presentation": { "reveal": "always", "panel": "shared" },
             "problemMatcher": []
+        },
+        {
+            "label": "PDF → Markdown (smart pipeline)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "chmod +x \"${workspaceFolder}/scripts/pdf_to_md_smart.sh\" && TABLES=${input:tables} OCRMODE=${input:ocrMode} PANDOC_MEDIA=media/${fileBasenameNoExtension} \"${workspaceFolder}/scripts/pdf_to_md_smart.sh\" '${file}'"
+            ],
+            "options": {
+                "env": {
+                    "PANDOC_MEDIA": "media/${fileBasenameNoExtension}"
+                }
+            },
+            "presentation": { "reveal": "always", "panel": "shared" },
+            "problemMatcher": []
+        },
+        {
+            "label": "PDF → Markdown (convert only)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "chmod +x \"${workspaceFolder}/scripts/pdf_to_md_smart.sh\" && PIPELINE=0 OCRMODE=${input:ocrMode} PANDOC_MEDIA=media/${fileBasenameNoExtension} \"${workspaceFolder}/scripts/pdf_to_md_smart.sh\" '${file}'"
+            ],
+            "options": {
+                "env": {
+                    "PANDOC_MEDIA": "media/${fileBasenameNoExtension}"
+                }
+            },
+            "presentation": { "reveal": "always", "panel": "shared" },
+            "problemMatcher": []
+        },
+        {
+            "label": "DOCX → Markdown (preserve tags)",
+            "type": "shell",
+            "command": "/bin/zsh",
+            "args": [
+                "-lc",
+                "chmod +x \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" && PANDOC_MEDIA=media/${fileBasenameNoExtension} \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" '${file}'"
+            ],
+            "options": {
+                "env": {
+                    "PANDOC_MEDIA": "media/${fileBasenameNoExtension}"
+                }
+            },
+            "presentation": { "reveal": "always", "panel": "shared" },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "ocrMode",
+            "type": "pickString",
+            "description": "OCR mode for PDF conversion",
+            "options": [
+                { "label": "Auto (detect)", "value": "auto" },
+                { "label": "Force OCR", "value": "force" },
+                { "label": "Skip OCR", "value": "skip" }
+            ],
+            "default": "auto"
+        },
+        {
+            "id": "tables",
+            "type": "pickString",
+            "description": "Convert Markdown pipe tables to inline tab-delimited TSV?",
+            "options": [
+                { "label": "No", "value": "0" },
+                { "label": "Yes", "value": "1" }
+            ],
+            "default": "0"
+        },
+        {
+            "id": "tablesInline",
+            "type": "pickString",
+            "description": "Inline TSV tables during cleanup pipeline?",
+            "options": [
+                { "label": "No", "value": "0" },
+                { "label": "Yes", "value": "1" }
+            ],
+            "default": "0"
         }
     ]
 }
