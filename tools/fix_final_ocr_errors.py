@@ -47,6 +47,19 @@ def fix_final_ocr_errors(content):
         (r'\bnorth\b', 'north'),  # In case there are issues
         (r'\bearth\b', 'earth'),  # In case there are issues
         
+        # New: Fixes for missed issues from error list
+        (r'\bsaltier\b', 'saltire'),
+        (r'party per bend', 'parted per bend'),
+        (r' \.', '.'),  # Space before period
+        (r'  +', ' '),  # Double or more spaces to single space
+        (r'”', '"'),
+        (r'“', '"'),
+        (r'’', "'"),
+        (r'‘', "'"),
+        (r'–', '-'),  # En dash
+        (r'—', '-'),  # Em dash
+        (r'…', '...'),  # Ellipsis
+        
         # Fix any remaining spacing issues
         (r'\s+\.\s+', '. '),
         (r'\s+,\s+', ', '),
@@ -74,6 +87,9 @@ def fix_final_ocr_errors(content):
             content = re.sub(pattern, replacement, content, flags=re.IGNORECASE)
             corrections_made[f"{pattern} → {replacement}"] = len(matches)
             total_corrections += len(matches)
+    
+    # Final normalization: remove stray non-breaking spaces, zero-width, BOM, etc.
+    content = re.sub(r'[\u200B-\u200D\uFEFF\u00A0]', '', content)
     
     return content, corrections_made, total_corrections, len(final_ocr_fixes)
 
