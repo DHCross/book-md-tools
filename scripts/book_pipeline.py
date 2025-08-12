@@ -68,77 +68,107 @@ def pipeline(input_md: Path, out_suffix: str = '_pipeline') -> dict:
         'steps': []
     }
 
+    current_file = input_md
+
+    # 0) Normalize plain-text TOC EARLY (so header tools don't touch it)
+    try:
+        content = read_text(current_file)
+        toc_fixed_text, toc_changes = fix_toc_plain.fix_toc_plain(content)
+        toc_fixed = current_file.with_name(f"{current_file.stem}_toc{current_file.suffix}")
+        write_text(toc_fixed, toc_fixed_text)
+        toc_report = REPORTS_DIR / f"{input_md.stem}_toc_{ts}.report.md"
+        write_text(toc_report, f"TOC normalization changes: {toc_changes}\n")
+        current_file = toc_fixed
+        summary['steps'].append({'step': 'fix_toc_plain', 'output': str(current_file), 'report': str(toc_report), 'changes': int(toc_changes)})
+    except Exception as e:
+        summary['steps'].append({'step': 'fix_toc_plain', 'error': str(e)})
+
     # 1) Header sanity (depth + hierarchy)
-    corrector = HeaderCorrector(max_depth=4, fix_hierarchy=True)
-    header_out, header_report = corrector.process_file(input_md)
-    summary['steps'].append({'step': 'header_depth_correction', 'output': str(header_out), 'report': str(header_report)})
+    try:
+        corrector = HeaderCorrector(max_depth=4, fix_hierarchy=True)
+        header_out, header_report = corrector.process_file(current_file)
+        summary['steps'].append({'step': 'header_depth_correction', 'output': str(header_out), 'report': str(header_report)})
+        current_file = header_out
+    except Exception as e:
+        summary['steps'].append({'step': 'header_depth_correction', 'error': str(e)})
 
-    current_file = header_out
+    # 2) Remove isolated page numbers (early, so paragraph healing works best)
+    try:
+        content = read_text(current_file)
+        no_pages_text, removed_count, removed_lines = remove_isolated_page_numbers(content)
+        no_pages = current_file.with_name(f"{current_file.stem}_nopages{current_file.suffix}")
+        write_text(no_pages, no_pages_text)
+        pages_report = REPORTS_DIR / f"{input_md.stem}_removed_pages_{ts}.report.md"
+        report_body = [
+            f"Removed isolated page numbers: {removed_count}",
+            "",
+            "Examples removed (first 50):",
+        ]
+        for ex in removed_lines[:50]:
+            report_body.append(f"- {ex!r}")
+        write_text(pages_report, "\n".join(report_body))
+        current_file = no_pages
+        summary['steps'].append({'step': 'remove_isolated_page_numbers', 'output': str(current_file), 'report': str(pages_report), 'removed': int(removed_count)})
+    except Exception as e:
+        summary['steps'].append({'step': 'remove_isolated_page_numbers', 'error': str(e)})
 
-    # 2) Fix broken paragraphs (join unintended wraps)
-    para_fixed = current_file.with_name(f"{current_file.stem}_fixed_paragraphs{current_file.suffix}")
-    fix_broken_paragraphs.fix_broken_paragraphs(str(current_file), str(para_fixed))
-    current_file = para_fixed
-    summary['steps'].append({'step': 'fix_broken_paragraphs', 'output': str(current_file)})
+    # 3) Fix broken paragraphs (join unintended wraps)
+    try:
+        para_fixed = current_file.with_name(f"{current_file.stem}_fixed_paragraphs{current_file.suffix}")
+        fix_broken_paragraphs.fix_broken_paragraphs(str(current_file), str(para_fixed))
+        current_file = para_fixed
+        summary['steps'].append({'step': 'fix_broken_paragraphs', 'output': str(current_file)})
+    except Exception as e:
+        summary['steps'].append({'step': 'fix_broken_paragraphs', 'error': str(e)})
 
-    # 2.5) Normalize plain-text TOC
-    content = read_text(current_file)
-    toc_fixed_text, toc_changes = fix_toc_plain.fix_toc_plain(content)
-    toc_fixed = current_file.with_name(f"{current_file.stem}_toc{current_file.suffix}")
-    write_text(toc_fixed, toc_fixed_text)
-    toc_report = REPORTS_DIR / f"{input_md.stem}_toc_{ts}.report.md"
-    write_text(toc_report, f"TOC normalization changes: {toc_changes}\n")
-    current_file = toc_fixed
-    summary['steps'].append({'step': 'fix_toc_plain', 'output': str(current_file), 'report': str(toc_report), 'changes': int(toc_changes)})
+    # 4) Fix table formatting
+    try:
+        content = read_text(current_file)
+        tbl_fixed_text, tbl_changes = fix_table_formatting.fix_table_formatting(content)
+        tbl_fixed = current_file.with_name(f"{current_file.stem}_tables{current_file.suffix}")
+        write_text(tbl_fixed, tbl_fixed_text)
+        tbl_report = REPORTS_DIR / f"{input_md.stem}_tables_{ts}.report.md"
+        if tbl_changes:
+            tbl_body = 'Table Formatting Changes:\n' + '\n'.join(f"- {c}" for c in tbl_changes)
+        else:
+            tbl_body = 'No table formatting changes'
+        write_text(tbl_report, tbl_body)
+        current_file = tbl_fixed
+        summary['steps'].append({'step': 'fix_table_formatting', 'output': str(current_file), 'report': str(tbl_report), 'changes': len(tbl_changes)})
+    except Exception as e:
+        summary['steps'].append({'step': 'fix_table_formatting', 'error': str(e)})
 
-    # 2.6) Remove isolated page numbers
-    content = read_text(current_file)
-    no_pages_text, removed_count, removed_lines = remove_isolated_page_numbers(content)
-    no_pages = current_file.with_name(f"{current_file.stem}_nopages{current_file.suffix}")
-    write_text(no_pages, no_pages_text)
-    pages_report = REPORTS_DIR / f"{input_md.stem}_removed_pages_{ts}.report.md"
-    report_body = [
-        f"Removed isolated page numbers: {removed_count}",
-        "",
-        "Examples removed (first 50):",
-    ]
-    for ex in removed_lines[:50]:
-        report_body.append(f"- {ex!r}")
-    write_text(pages_report, "\n".join(report_body))
-    current_file = no_pages
-    summary['steps'].append({'step': 'remove_isolated_page_numbers', 'output': str(current_file), 'report': str(pages_report), 'removed': int(removed_count)})
+    # 5) OCR error passes (base)
+    try:
+        content = read_text(current_file)
+        ocr_fixed_text, ocr_changes = fix_ocr_errors.fix_ocr_errors(content)
+        ocr_fixed = current_file.with_name(f"{current_file.stem}_ocr{current_file.suffix}")
+        write_text(ocr_fixed, ocr_fixed_text)
+        ocr_report = REPORTS_DIR / f"{input_md.stem}_ocr_{ts}.report.md"
+        if ocr_changes:
+            ocr_body = 'OCR Corrections Applied\n' + '\n'.join(f"- {c}" for c in ocr_changes)
+        else:
+            ocr_body = 'No OCR corrections'
+        write_text(ocr_report, ocr_body)
+        current_file = ocr_fixed
+        summary['steps'].append({'step': 'fix_ocr_errors', 'output': str(current_file), 'report': str(ocr_report), 'changes': len(ocr_changes)})
+    except Exception as e:
+        summary['steps'].append({'step': 'fix_ocr_errors', 'error': str(e)})
 
-    # 3) Fix table formatting
-    content = read_text(current_file)
-    tbl_fixed_text, tbl_changes = fix_table_formatting.fix_table_formatting(content)
-    tbl_fixed = current_file.with_name(f"{current_file.stem}_tables{current_file.suffix}")
-    write_text(tbl_fixed, tbl_fixed_text)
-    tbl_report = REPORTS_DIR / f"{input_md.stem}_tables_{ts}.report.md"
-    write_text(tbl_report, '\n'.join(['Table Formatting Changes:'] + [f"- {c}" for c in tbl_changes]) or 'No changes')
-    current_file = tbl_fixed
-    summary['steps'].append({'step': 'fix_table_formatting', 'output': str(current_file), 'report': str(tbl_report), 'changes': len(tbl_changes)})
-
-    # 4) OCR error passes (base + additional)
-    content = read_text(current_file)
-    ocr_fixed_text, ocr_changes = fix_ocr_errors.fix_ocr_errors(content)
-    ocr_fixed = current_file.with_name(f"{current_file.stem}_ocr{current_file.suffix}")
-    write_text(ocr_fixed, ocr_fixed_text)
-    ocr_report = REPORTS_DIR / f"{input_md.stem}_ocr_{ts}.report.md"
-    write_text(ocr_report, 'OCR Corrections Applied\n' + '\n'.join(f"- {c}" for c in ocr_changes) or 'No OCR corrections')
-    current_file = ocr_fixed
-    summary['steps'].append({'step': 'fix_ocr_errors', 'output': str(current_file), 'report': str(ocr_report), 'changes': len(ocr_changes)})
-
-    # Additional OCR pass
-    content = read_text(current_file)
-    add_text, add_map, add_total, patterns = fix_additional_ocr_errors.fix_additional_ocr_errors(content)
-    add_fixed = current_file.with_name(f"{current_file.stem}_ocr2{current_file.suffix}")
-    write_text(add_fixed, add_text)
-    add_report = REPORTS_DIR / f"{input_md.stem}_ocr_additional_{ts}.report.md"
-    add_lines = [f"Total additional corrections: {add_total}", f"Patterns matched: {len(add_map)}", "", "Details:"]
-    add_lines += [f"- {k}: {v}" for k, v in add_map.items()]
-    write_text(add_report, '\n'.join(add_lines))
-    current_file = add_fixed
-    summary['steps'].append({'step': 'fix_additional_ocr_errors', 'output': str(current_file), 'report': str(add_report), 'changes': int(add_total)})
+    # 6) Additional OCR pass
+    try:
+        content = read_text(current_file)
+        add_text, add_map, add_total, patterns = fix_additional_ocr_errors.fix_additional_ocr_errors(content)
+        add_fixed = current_file.with_name(f"{current_file.stem}_ocr2{current_file.suffix}")
+        write_text(add_fixed, add_text)
+        add_report = REPORTS_DIR / f"{input_md.stem}_ocr_additional_{ts}.report.md"
+        add_lines = [f"Total additional corrections: {add_total}", f"Patterns matched: {len(add_map)}", "", "Details:"]
+        add_lines += [f"- {k}: {v}" for k, v in add_map.items()]
+        write_text(add_report, '\n'.join(add_lines))
+        current_file = add_fixed
+        summary['steps'].append({'step': 'fix_additional_ocr_errors', 'output': str(current_file), 'report': str(add_report), 'changes': int(add_total)})
+    except Exception as e:
+        summary['steps'].append({'step': 'fix_additional_ocr_errors', 'error': str(e)})
 
     # 5) Finalize output name with automatic -vN versioning
     base_name = f"{input_md.stem}{out_suffix}"
