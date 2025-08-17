@@ -30,3 +30,9 @@ spell-check = "tools.spell_check:main"
 long-lines = "tools.long_line_detector:main"
 pbreaks = "tools.paragraph_break_detector:main"
 remove-daggers = "tools.remove_dagger_symbols:main"
+
+[tool.book-pipeline]
+# Configuration for the book_pipeline.py script
+out_suffix = "_cleaned"
+max_header_depth = 4
+long_line_threshold = 150
