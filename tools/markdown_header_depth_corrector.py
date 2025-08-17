@@ -449,6 +449,44 @@ class HeaderCorrector:
         
         return output_file, report_file
 
+    def process_content(self, content: str) -> Tuple[str, str]:
+        """
+        Process markdown content in-memory to correct header depth.
+
+        Args:
+            content: The markdown content as a string.
+
+        Returns:
+            Tuple of (corrected_content_string, report_string)
+        """
+        self.logger.info("Processing content in-memory...")
+
+        # Analyze headers
+        analysis = self.analyze_headers(content)
+
+        # Fix hierarchy issues first
+        corrected_headers = None
+        if self.fix_hierarchy:
+            self.logger.info("Fixing header hierarchy...")
+            corrected_headers = self.fix_header_hierarchy(analysis['all_headers'])
+
+        # Validate hierarchy (after corrections)
+        self.logger.info("Validating header hierarchy...")
+        headers_to_validate = corrected_headers if corrected_headers else analysis['all_headers']
+        self.hierarchy_issues = self.validate_hierarchy(headers_to_validate)
+
+        # Correct header depth
+        self.logger.info("Correcting header depth...")
+        corrected_content = self.correct_header_depth(content, corrected_headers)
+
+        # Generate report
+        # We don't have a real output file path, so we'll use a placeholder.
+        report_content = self.generate_report(analysis, Path("in-memory-output.md"))
+
+        self.logger.info("In-memory processing complete.")
+
+        return corrected_content, report_content
+
     def get_next_version(self, base_path: Path, suffix: str = "_header_corrected") -> int:
         """
         Determine the next version number based on existing files.
