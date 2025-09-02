@@ -22,6 +22,7 @@ Homepage = "https://github.com/your-org/book-md-tools"
 
 [project.scripts]
 book-pipeline = "scripts.book_pipeline:main"
+deinterleaver = "scripts.deinterleaver:main"
 fix-headers = "tools.markdown_header_depth_corrector:main"
 fix-ocr = "tools.fix_ocr_errors:main"
 fix-ocr-extra = "tools.fix_additional_ocr_errors:main"

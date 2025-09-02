@@ -28,6 +28,9 @@ except ImportError:
 # Import local tools
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Import deinterleaver
+from scripts.deinterleaver import deinterleave_content
+
 # New imports for the synchronized pipeline
 from tools.image_reference_remover import remove_image_references # New
 from tools.blockquote_remover import BlockquoteRemover # New
@@ -98,6 +101,53 @@ def pipeline(input_md: Path, config: dict) -> dict:
 
     # This will hold the content in memory
     current_content = read_text(input_md)
+
+    # =================================================================================
+    # STAGE 0: Deinterleaving (for two-column sources)
+    # =================================================================================
+
+    # Step 0: Deinterleaver (New Tool for chaotic two-column sources)
+    try:
+        # Check if content appears to need deinterleaving
+        import re
+        # Look for signs of interleaved content throughout the entire document
+        lines = current_content.split('\n')
+        interleaved_indicators = 0
+        examples = []
+        
+        for line_num, line in enumerate(lines, 1):
+            line_stripped = line.strip()
+            if len(line_stripped) > 20:  # Only check substantial lines
+                if re.search(r'[a-z][A-Z]', line_stripped):  # lowercase followed by uppercase
+                    interleaved_indicators += 1
+                    if len(examples) < 5:  # Keep first 5 examples for reporting
+                        examples.append(f"Line {line_num}: {line_stripped[:80]}...")
+        
+        if interleaved_indicators > 2:  # If we find multiple indicators, apply deinterleaving
+            original_content = current_content
+            current_content = deinterleave_content(current_content)
+            deint_report = REPORTS_DIR / f"{input_md.stem}_deinterleaving_{ts}.report.md"
+            report_lines = [
+                f"Deinterleaving Analysis Report",
+                f"Input file: {input_md.name}",
+                f"Interleaved content indicators found: {interleaved_indicators}",
+                f"Deinterleaving applied: Yes",
+                "",
+                "Examples of detected interleaved content:",
+            ]
+            report_lines.extend(examples)
+            report_lines.extend([
+                "",
+                "Note: Original two-column content has been reorganized into sequential format.",
+                "Left column content appears first, followed by right column content."
+            ])
+            write_text(deint_report, '\n'.join(report_lines))
+            summary['steps'].append({'step': '0_deinterleave', 'report': str(deint_report), 'indicators': interleaved_indicators, 'applied': True})
+        else:
+            # No deinterleaving needed
+            summary['steps'].append({'step': '0_deinterleave', 'applied': False, 'indicators': interleaved_indicators})
+    except Exception as e:
+        summary['steps'].append({'step': '0_deinterleave', 'error': str(e)})
 
     # =================================================================================
     # STAGE 1: Pre-processing and Initial Cleanup
