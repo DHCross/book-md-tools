@@ -23,6 +23,7 @@ reports/
 *.report
 *.report.md
 *_pipeline*.md
+*_deinterleaved*.txt
 *_header_corrected*.md
 *_fixed_paragraphs*.md
 *_tables*.md
