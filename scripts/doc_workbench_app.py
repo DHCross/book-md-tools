@@ -19,6 +19,7 @@ import json
 import threading
 from pathlib import Path
 from datetime import datetime
+from typing import Any
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from tkinter.scrolledtext import ScrolledText
@@ -324,15 +325,32 @@ class DocWorkbenchApp(tk.Tk):
                               borderwidth=1, relief='solid')
         self.log.pack(fill='both', expand=True)
         
-        # Summary panel
-        summary_frame = ttk.LabelFrame(content_frame, text=" Summary ", padding=8, width=300)
-        summary_frame.pack(side='right', fill='both')
-        
-        self.summary = ScrolledText(summary_frame, wrap='word', font=('Menlo', 10), 
-                                  state='disabled', height=10,
-                                  bg='#f8f9fa', fg=colors['text'],
-                                  borderwidth=1, relief='solid')
-        self.summary.pack(fill='both', expand=True)
+        # Detail panel
+        paned = ttk.PanedWindow(content_frame, orient="horizontal")
+        paned.pack(fill="both", expand=True)
+
+        left = ttk.Frame(paned)
+        paned.add(left, weight=1)
+
+        right = ttk.Frame(paned)
+        paned.add(right, weight=1)
+
+        self.detail_notebook = ttk.Notebook(right)
+        self.detail_notebook.pack(fill="both", expand=True)
+
+        self.preview_tab = ttk.Frame(self.detail_notebook)
+        self.summary_tab = ttk.Frame(self.detail_notebook)
+        self.detail_notebook.add(self.preview_tab, text="Preview")
+        self.detail_notebook.add(self.summary_tab, text="Summary")
+
+        self.preview = ScrolledText(self.preview_tab, wrap='word', font=('Menlo', 10),
+                                    state='disabled', bg='#ffffff', fg=colors['text'],
+                                    borderwidth=1, relief='solid')
+        self.preview.pack(fill='both', expand=True, padx=4, pady=4)
+
+        self.summary = ScrolledText(self.summary_tab, height=10, state="disabled")
+        self.summary.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
+        self.summary.pack(fill="both", expand=True, padx=4, pady=4)
         
         # Footer
         footer = ttk.Frame(main_frame, height=24)
@@ -356,6 +374,12 @@ class DocWorkbenchApp(tk.Tk):
         self.input_md = Path(path)
         self.input_entry.delete(0, "end")
         self.input_entry.insert(0, str(self.input_md))
+        try:
+            text = self.input_md.read_text(encoding="utf-8")
+        except Exception as exc:
+            messagebox.showerror("Preview error", f"Could not read file: {exc}")
+            return
+        self._set_preview(text)
 
     def _start_busy(self, msg="Working…"):
         self.progress.start(10)
@@ -371,6 +395,13 @@ class DocWorkbenchApp(tk.Tk):
         self.log.insert("end", text + ("\n" if not text.endswith("\n") else ""))
         self.log.see("end")
 
+    def _set_preview(self, text: str):
+        self.preview.config(state="normal")
+        self.preview.delete("1.0", "end")
+        self.preview.insert("end", text)
+        self.preview.config(state="disabled")
+        self.detail_notebook.select(self.preview_tab)
+
     def _set_summary(self, obj: dict | str):
         self.summary.config(state="normal")
         self.summary.delete("1.0", "end")
@@ -379,6 +410,7 @@ class DocWorkbenchApp(tk.Tk):
         else:
             self.summary.insert("end", json.dumps(obj, indent=2))
         self.summary.config(state="disabled")
+        self.detail_notebook.select(self.summary_tab)
 
     def _validate_input(self) -> Path | None:
         # Allow manual typing
@@ -447,6 +479,46 @@ class DocWorkbenchApp(tk.Tk):
         self._start_busy("Normalizing TOC…")
         threading.Thread(target=worker, daemon=True).start()
 
+    def quick_format(self):
+        input_md = self._validate_input()
+        if not input_md:
+            return
+
+        def worker():
+            try:
+                self._log(f"Running formatter on: {input_md.name}")
+                content = input_md.read_text(encoding="utf-8")
+
+                pipeline_config = load_config()
+                formatter_config: dict[str, Any] = {}
+                if isinstance(pipeline_config, dict):
+                    formatter_config = pipeline_config.get('formatter', {}) or {}
+
+                formatter = MarkdownFormattingFixer(config=formatter_config)
+                fixed_content = formatter.fix_content(content)
+
+                out_path = input_md.with_name(f"{input_md.stem}_formatted.md")
+                out_path.write_text(fixed_content, encoding="utf-8")
+
+                change_count = len(formatter.changes)
+                summary_payload = {
+                    "quick": "formatter",
+                    "output": str(out_path),
+                    "changes": change_count,
+                    "config": formatter_config,
+                }
+                self.last_summary = summary_payload
+                self._log(f"Formatter wrote {out_path.name} ({change_count} changes)")
+                self._set_summary(summary_payload)
+                self._stop_busy("Formatting complete")
+            except Exception as e:
+                self._stop_busy("Error")
+                messagebox.showerror("Formatter error", str(e))
+                self._log(f"ERROR: {e}")
+
+        self._start_busy("Running formatter…")
+        threading.Thread(target=worker, daemon=True).start()
+
     def quick_advanced_break_fix(self):
         input_md = self._validate_input()
         if not input_md:
@@ -496,6 +568,13 @@ class DocWorkbenchApp(tk.Tk):
 
     def open_reports_folder(self):
         self._open_path(PIPE_REPORTS_DIR)
+
+    def show_help(self):
+        messagebox.showinfo(
+            "DocWorkbench Help",
+            "Select an input Markdown file, then choose a quick fix or run the full pipeline.\n\n"
+            "Use the Settings panel (⚙️) to configure formatter options that are saved in pyproject.toml."
+        )
 
 
 def main():
