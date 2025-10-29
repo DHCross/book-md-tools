@@ -46,6 +46,17 @@ from scripts.fix_formatting import MarkdownFormattingFixer
 # Optional: direct tool imports for partial runs
 from tools import fix_toc_plain
 
+# Optional dependencies for rendered preview
+try:
+    import markdown as md_lib  # type: ignore
+except Exception:  # pragma: no cover - optional dependency
+    md_lib = None
+
+try:
+    from tkhtmlview import HTMLScrolledText  # type: ignore
+except Exception:  # pragma: no cover - optional dependency
+    HTMLScrolledText = None
+
 
 APP_TITLE = "DocWorkbench — Yggsburgh Markdown Tooling"
 DEFAULT_SUFFIX = "_pipeline"
@@ -339,14 +350,24 @@ class DocWorkbenchApp(tk.Tk):
         self.detail_notebook.pack(fill="both", expand=True)
 
         self.preview_tab = ttk.Frame(self.detail_notebook)
+        self.render_tab = ttk.Frame(self.detail_notebook)
         self.summary_tab = ttk.Frame(self.detail_notebook)
         self.detail_notebook.add(self.preview_tab, text="Preview")
+        self.detail_notebook.add(self.render_tab, text="Rendered")
         self.detail_notebook.add(self.summary_tab, text="Summary")
 
         self.preview = ScrolledText(self.preview_tab, wrap='word', font=('Menlo', 10),
                                     state='disabled', bg='#ffffff', fg=colors['text'],
                                     borderwidth=1, relief='solid')
         self.preview.pack(fill='both', expand=True, padx=4, pady=4)
+
+        if HTMLScrolledText is not None:
+            self.rendered = HTMLScrolledText(self.render_tab, html="", padding=8)
+        else:
+            self.rendered = ScrolledText(self.render_tab, wrap='word', font=('Menlo', 10),
+                                         state='disabled', bg='#f8f9fa', fg=colors['text'],
+                                         borderwidth=1, relief='solid')
+        self.rendered.pack(fill='both', expand=True, padx=4, pady=4)
 
         self.summary = ScrolledText(self.summary_tab, height=10, state="disabled")
         self.summary.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
@@ -401,6 +422,29 @@ class DocWorkbenchApp(tk.Tk):
         self.preview.insert("end", text)
         self.preview.config(state="disabled")
         self.detail_notebook.select(self.preview_tab)
+        self._update_rendered_preview(text)
+
+    def _update_rendered_preview(self, text: str):
+        if HTMLScrolledText is not None and hasattr(self.rendered, "set_html"):
+            if md_lib is None:
+                self.rendered.set_html("<p><strong>Markdown package not installed.</strong><br>"
+                                       "Run <code>pip install markdown tkhtmlview</code> inside the venv "
+                                       "to enable rendered preview.</p>")
+                return
+            try:
+                html = md_lib.markdown(text, extensions=["extra", "tables", "toc"])
+            except Exception as exc:
+                self.rendered.set_html(f"<p><strong>Markdown render error:</strong> {exc}</p>")
+                return
+            self.rendered.set_html(html)
+        else:
+            # Fallback: plain text notice
+            self.rendered.config(state="normal")
+            self.rendered.delete("1.0", "end")
+            self.rendered.insert("end",
+                                  "Install 'markdown' and 'tkhtmlview' in the virtualenv to see a rendered preview.\n"
+                                  "Command: pip install markdown tkhtmlview")
+            self.rendered.config(state="disabled")
 
     def _set_summary(self, obj: dict | str):
         self.summary.config(state="normal")
