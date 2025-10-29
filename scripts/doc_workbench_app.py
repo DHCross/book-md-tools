@@ -202,62 +202,148 @@ class DocWorkbenchApp(tk.Tk):
 
     # ---------------- UI ----------------
     def _build_ui(self):
-        root = ttk.Frame(self, padding=8)
-        root.pack(fill="both", expand=True)
-
-        # Top controls
-        top = ttk.Frame(root)
-        top.pack(fill="x")
-
-        ttk.Label(top, text="Input .md:").pack(side="left")
-        self.input_entry = ttk.Entry(top)
-        self.input_entry.pack(side="left", fill="x", expand=True, padx=(6, 6))
-        ttk.Button(top, text="Browse…", command=self.pick_input).pack(side="left", padx=(0, 6))
-        ttk.Label(top, text="Suffix:").pack(side="left")
-        ttk.Entry(top, width=16, textvariable=self.out_suffix_var).pack(side="left", padx=(6, 6))
-        ttk.Checkbutton(top, text="Inline tables (TSV) [TABLES_INLINE=1]", variable=self.inline_tables_var).pack(side="left")
-
+        # Configure style
+        style = ttk.Style()
+        style.theme_use('default')
+        
+        # Color scheme
+        colors = {
+            'primary': '#4a6da7',
+            'secondary': '#6c757d',
+            'success': '#28a745',
+            'info': '#17a2b8',
+            'warning': '#ffc107',
+            'danger': '#dc3545',
+            'light': '#f8f9fa',
+            'dark': '#343a40',
+            'bg': '#f0f2f5',
+            'text': '#212529',
+            'border': '#dee2e6'
+        }
+        
+        # Configure styles
+        self.configure(bg=colors['bg'])
+        
+        style.configure('TFrame', background=colors['bg'])
+        style.configure('TLabel', background=colors['bg'], foreground=colors['text'])
+        style.configure('TButton', padding=6, font=('Helvetica', 10))
+        style.configure('TEntry', padding=4, font=('Helvetica', 10))
+        style.configure('TProgressbar', background=colors['info'], troughcolor=colors['border'])
+        
+        # Primary button style
+        style.configure('Primary.TButton', 
+                       background=colors['primary'], 
+                       foreground='white',
+                       font=('Helvetica', 10, 'bold'))
+        
+        # Secondary button style
+        style.configure('Secondary.TButton',
+                      background=colors['secondary'],
+                      foreground='white')
+        
+        # Main container
+        main_frame = ttk.Frame(self, padding=(12, 12, 12, 12), style='TFrame')
+        main_frame.pack(fill='both', expand=True)
+        
+        # Header section
+        header = ttk.LabelFrame(main_frame, text=" Document Processor ", padding=(12, 8, 12, 12))
+        header.pack(fill='x', pady=(0, 12))
+        
+        # Input group
+        input_frame = ttk.Frame(header)
+        input_frame.pack(fill='x', pady=4)
+        
+        ttk.Label(input_frame, text="Input File:", font=('Helvetica', 10, 'bold')).pack(side='left', padx=(0, 8))
+        
+        self.input_entry = ttk.Entry(input_frame, width=60)
+        self.input_entry.pack(side='left', fill='x', expand=True, padx=(0, 8))
+        
+        ttk.Button(input_frame, text="Browse…", command=self.pick_input, style='Secondary.TButton')\
+             .pack(side='left', padx=(0, 12))
+        
+        # Options group
+        options_frame = ttk.Frame(header)
+        options_frame.pack(fill='x', pady=8)
+        
+        ttk.Label(options_frame, text="Output Suffix:").pack(side='left', padx=(0, 4))
+        ttk.Entry(options_frame, width=16, textvariable=self.out_suffix_var, 
+                 font=('Monospace', 10)).pack(side='left', padx=(0, 12))
+        
+        ttk.Checkbutton(options_frame, text="Inline Tables (TSV)", 
+                       variable=self.inline_tables_var).pack(side='left', padx=12)
+        
         # Action buttons
-        actions = ttk.Frame(root)
-        actions.pack(fill="x", pady=(8, 8))
-        ttk.Button(actions, text="Run FULL Pipeline", command=self.run_full_pipeline).pack(side="left", padx=(0, 6))
-        ttk.Button(actions, text="Quick Fix: Paragraphs", command=self.quick_advanced_break_fix).pack(side="left", padx=6)
-        ttk.Button(actions, text="Quick Fix: Normalize TOC", command=self.quick_fix_toc).pack(side="left", padx=6)
-
-        btn_right_frame = ttk.Frame(actions)
-        btn_right_frame.pack(side="right")
-        ttk.Button(btn_right_frame, text="Settings…", command=self.open_settings).pack(side="right")
-        ttk.Button(btn_right_frame, text="Open Reports Folder", command=self.open_reports_folder).pack(side="right", padx=6)
-        ttk.Button(btn_right_frame, text="Open Output Folder", command=self.open_output_folder).pack(side="right", padx=6)
-
-        # Progress + status
-        status = ttk.Frame(root)
-        status.pack(fill="x")
-        self.progress = ttk.Progressbar(status, mode="indeterminate")
-        self.progress.pack(side="left", fill="x", expand=True, padx=(0, 8))
-        self.status_label = ttk.Label(status, text="Idle")
-        self.status_label.pack(side="right")
-
-        # Log + summary
-        paned = ttk.Panedwindow(root, orient="horizontal")
-        paned.pack(fill="both", expand=True)
-
-        self.log = ScrolledText(paned, height=10)
-        self.log.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
-        paned.add(self.log, weight=2)
-
-        right = ttk.Frame(paned)
-        paned.add(right, weight=1)
-
-        ttk.Label(right, text="Summary").pack(anchor="w")
-        self.summary = ScrolledText(right, height=10, state="disabled")
-        self.summary.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
-        self.summary.pack(fill="both", expand=True)
-
+        actions_frame = ttk.Frame(main_frame)
+        actions_frame.pack(fill='x', pady=(0, 12))
+        
+        # Left action buttons
+        left_actions = ttk.Frame(actions_frame)
+        left_actions.pack(side='left', fill='x', expand=True)
+        
+        ttk.Button(left_actions, text="🔄 Run FULL Pipeline", 
+                 command=self.run_full_pipeline, style='Primary.TButton').pack(side='left', padx=(0, 8))
+        
+        ttk.Button(left_actions, text="✏️  Format Text", 
+                 command=self.quick_format, style='Secondary.TButton').pack(side='left', padx=8)
+        
+        ttk.Button(left_actions, text="📑 Fix TOC", 
+                 command=self.quick_fix_toc, style='Secondary.TButton').pack(side='left', padx=8)
+        
+        # Right action buttons
+        right_actions = ttk.Frame(actions_frame)
+        right_actions.pack(side='right')
+        
+        ttk.Button(right_actions, text="⚙️ Settings", 
+                 command=self.open_settings, style='Secondary.TButton').pack(side='right', padx=4)
+        
+        ttk.Button(right_actions, text="📂 Open Output", 
+                 command=self.open_output_folder, style='Secondary.TButton').pack(side='right', padx=4)
+        
+        # Status bar
+        status_frame = ttk.Frame(main_frame, height=28)
+        status_frame.pack(fill='x', pady=(0, 8))
+        
+        self.progress = ttk.Progressbar(status_frame, mode='indeterminate', style='TProgressbar')
+        self.progress.pack(side='left', fill='x', expand=True, padx=(0, 8))
+        
+        self.status_label = ttk.Label(status_frame, text="Ready", 
+                                    foreground=colors['secondary'],
+                                    font=('Helvetica', 9, 'italic'))
+        self.status_label.pack(side='right')
+        
+        # Main content area
+        content_frame = ttk.Frame(main_frame)
+        content_frame.pack(fill='both', expand=True)
+        
+        # Log panel
+        log_frame = ttk.LabelFrame(content_frame, text=" Processing Log ", padding=8)
+        log_frame.pack(side='left', fill='both', expand=True, padx=(0, 8))
+        
+        self.log = ScrolledText(log_frame, wrap='word', font=('Menlo', 10), 
+                              bg='#ffffff', fg=colors['text'],
+                              borderwidth=1, relief='solid')
+        self.log.pack(fill='both', expand=True)
+        
+        # Summary panel
+        summary_frame = ttk.LabelFrame(content_frame, text=" Summary ", padding=8, width=300)
+        summary_frame.pack(side='right', fill='both')
+        
+        self.summary = ScrolledText(summary_frame, wrap='word', font=('Menlo', 10), 
+                                  state='disabled', height=10,
+                                  bg='#f8f9fa', fg=colors['text'],
+                                  borderwidth=1, relief='solid')
+        self.summary.pack(fill='both', expand=True)
+        
         # Footer
-        footer = ttk.Frame(root)
-        footer.pack(fill="x")
-        ttk.Label(footer, text="Use FULL Pipeline for a complete, versioned run with reports.").pack(anchor="w")
+        footer = ttk.Frame(main_frame, height=24)
+        footer.pack(fill='x', pady=(8, 0))
+        
+        ttk.Label(footer, text="DocWorkbench v1.0 • Press F1 for help", 
+                 foreground=colors['secondary'],
+                 font=('Helvetica', 8)).pack(side='right')
+        
+        # Bind F1 key for help
+        self.bind('<F1>', lambda e: self.show_help())
 
     # ---------------- Helpers ----------------
     def pick_input(self):
