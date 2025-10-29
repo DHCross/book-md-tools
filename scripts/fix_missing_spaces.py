@@ -152,6 +152,14 @@ class SpaceInserter:
         i = 0
         
         while i < len(text):
+            # Special case for "DesignEssential" -> "Design Essential"
+            if text.startswith('DesignEssential', i):
+                result.append('Design Essential')
+                changes.append(('DesignEssential', 'Design Essential'))
+                self.changes_made += 1
+                i += len('DesignEssential')
+                continue
+                
             # Look for lowercase followed by uppercase
             if (i < len(text) - 1 and 
                 text[i].islower() and 
