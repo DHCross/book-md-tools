@@ -362,12 +362,13 @@ class DocWorkbenchApp(tk.Tk):
         self.preview.pack(fill='both', expand=True, padx=4, pady=4)
 
         if HTMLScrolledText is not None:
-            self.rendered = HTMLScrolledText(self.render_tab, html="", padding=8)
+            self.rendered = HTMLScrolledText(self.render_tab, html="")
         else:
             self.rendered = ScrolledText(self.render_tab, wrap='word', font=('Menlo', 10),
-                                         state='disabled', bg='#f8f9fa', fg=colors['text'],
+                                         state='normal', bg='#f8f9fa', fg=colors['text'],
                                          borderwidth=1, relief='solid')
         self.rendered.pack(fill='both', expand=True, padx=4, pady=4)
+        self._configure_rendered_widget()
 
         self.summary = ScrolledText(self.summary_tab, height=10, state="disabled")
         self.summary.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
@@ -437,14 +438,39 @@ class DocWorkbenchApp(tk.Tk):
                 self.rendered.set_html(f"<p><strong>Markdown render error:</strong> {exc}</p>")
                 return
             self.rendered.set_html(html)
+            self.rendered.config(state="normal")
         else:
             # Fallback: plain text notice
-            self.rendered.config(state="normal")
             self.rendered.delete("1.0", "end")
             self.rendered.insert("end",
                                   "Install 'markdown' and 'tkhtmlview' in the virtualenv to see a rendered preview.\n"
                                   "Command: pip install markdown tkhtmlview")
-            self.rendered.config(state="disabled")
+        self.rendered.see("1.0")
+
+    def _configure_rendered_widget(self):
+        nav_keys = {"Left", "Right", "Up", "Down", "Home", "End", "Prior", "Next"}
+
+        def block_edit(event: tk.Event) -> str | None:
+            # Allow navigation keys
+            if event.keysym in nav_keys or event.keysym == "Tab":
+                return None
+
+            # Allow copy/select all shortcuts (Command on macOS / Control elsewhere)
+            if (event.state & 0x4) and event.keysym.lower() in {"a", "c"}:
+                return None
+
+            # Allow Command+C on macOS (Mod2)
+            if (event.state & 0x0008) and event.keysym.lower() == "c":
+                return None
+
+            # Block all other keypresses to keep read-only
+            return "break"
+
+        self.rendered.bind("<Key>", block_edit)
+        self.rendered.bind("<Button-1>", lambda e: self.rendered.focus_set())
+        # Block paste/cut explicitly
+        for sequence in ("<<Paste>>", "<Control-v>", "<Command-v>", "<Control-x>", "<Command-x>"):
+            self.rendered.bind(sequence, lambda e: "break")
 
     def _set_summary(self, obj: dict | str):
         self.summary.config(state="normal")
