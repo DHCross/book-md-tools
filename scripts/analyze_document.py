@@ -106,13 +106,23 @@ def analyze_ocr_issues(content):
     # Additional OCR fixes
     fixed_content, add_map, add_total, _ = fix_additional_ocr_errors(fixed_content)
     
-    total_changes = len(ocr_changes) + add_total
+    # Handle different return types from fix_ocr_errors
+    if isinstance(ocr_changes, dict):
+        ocr_count = len(ocr_changes)
+        example_changes = list(ocr_changes.items())[:2]
+    else:
+        ocr_count = len(ocr_changes) if ocr_changes else 0
+        example_changes = ocr_changes[:2] if ocr_changes else []
+    
+    total_changes = ocr_count + add_total
     print(f"Potential OCR issues found: {total_changes}")
     
     if total_changes > 0:
         print("Example changes:")
-        for i, (old, new) in enumerate(list(ocr_changes.items())[:2], 1):
-            print(f"  {i}. '{old}' → '{new}'")
+        for i, change in enumerate(example_changes, 1):
+            if isinstance(change, tuple):
+                old, new = change
+                print(f"  {i}. '{old}' → '{new}'")
         if add_map:
             for i, (old, new) in enumerate(list(add_map.items())[:2], i + 1):
                 print(f"  {i}. '{old}' → '{new}'")
