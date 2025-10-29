@@ -38,6 +38,9 @@ import tools.advanced_break_fixer as advanced_break_fixer # New (replaces fix_br
 from tools.markdown_cleanup_fixer import MarkdownCleanupFixer # New
 from tools.markdown_validator import MarkdownValidator # New
 
+# Import our enhanced formatter
+from scripts.fix_formatting import MarkdownFormattingFixer
+
 # Existing imports
 from tools.markdown_header_depth_corrector import HeaderCorrector
 import tools.fix_table_formatting as fix_table_formatting
@@ -198,45 +201,56 @@ def pipeline(input_md: Path, config: dict) -> dict:
     # STAGE 2: Structural Fixing
     # =================================================================================
 
-    # Step 5: Paragraph Fixer
+    # Step 5: Enhanced Markdown Formatter (Consolidated)
     try:
-        fixed_content, fixes_made = advanced_break_fixer.fix_mid_word_breaks(current_content)
-        fixed_content, hyphen_fixes_made = advanced_break_fixer.fix_hyphenated_word_splits(fixed_content)
-        current_content, blank_line_fixes_made = advanced_break_fixer.fix_sentence_blank_line_splits(fixed_content)
-        total_fixes = fixes_made + hyphen_fixes_made + blank_line_fixes_made
-        para_fix_report = REPORTS_DIR / f"{input_md.stem}_adv_para_fix_{ts}.report.md"
-        write_text(para_fix_report, f"Advanced paragraph fixer made {total_fixes} total corrections.")
-        summary['steps'].append({'step': '5_fix_paragraphs_advanced', 'report': str(para_fix_report), 'fixes': total_fixes})
+        # Configure the formatter with pipeline settings
+        formatter_config = {
+            'max_header_depth': config.get('max_header_depth', 4),
+            'fix_hierarchy': True,
+            'enable_break_fixing': True,
+            'enable_cleanup': True
+        }
+        
+        # Initialize the formatter with config
+        formatter = MarkdownFormattingFixer(config=formatter_config)
+        
+        # Track initial state
+        initial_line_count = len(current_content.splitlines())
+        
+        # Apply comprehensive formatting
+        current_content = formatter.fix_content(current_content)
+        changes_made = len(formatter.changes)
+        
+        # Generate detailed report
+        formatter_report = REPORTS_DIR / f"{input_md.stem}_formatting_{ts}.report.md"
+        report_content = [
+            "# Markdown Formatting Report\n",
+            f"Changes made: {changes_made}",
+            "\n## Summary of Changes",
+            "- Line break and paragraph fixes",
+            "- Header hierarchy and formatting",
+            "- Special label normalization",
+            "- Merged word fixes",
+            "- Markdown cleanup and validation",
+            "\n## First 100 Changes (of {changes_made}):",
+            "\n".join(str(change) for change in formatter.changes[:100])
+        ]
+        
+        write_text(formatter_report, "\n".join(report_content))
+        summary['steps'].append({
+            'step': '5_markdown_formatting',
+            'report': str(formatter_report),
+            'changes': changes_made,
+            'config': formatter_config
+        })
     except Exception as e:
-        summary['steps'].append({'step': '5_fix_paragraphs_advanced', 'error': str(e)})
+        summary['steps'].append({'step': '5_markdown_formatting', 'error': str(e)})
 
-    # Step 6: Header Corrector
-    try:
-        max_depth = config.get('max_header_depth', 4)
-        corrector = HeaderCorrector(max_depth=max_depth, fix_hierarchy=True)
-
-        # Use the new in-memory processing method
-        current_content, report_content = corrector.process_content(current_content)
-
-        header_report_path = REPORTS_DIR / f"{input_md.stem}_header_correction_{ts}.report.md"
-        write_text(header_report_path, report_content)
-
-        summary['steps'].append({'step': '6_header_correction', 'report': str(header_report_path)})
-    except Exception as e:
-        summary['steps'].append({'step': '6_header_correction', 'error': str(e)})
-
-    # Step 7: Long Line Fixer (Placeholder)
-    summary['steps'].append({'step': '7_fix_long_lines', 'status': 'SKIPPED - requires refactor of long_line_detector.py'})
-
-    # Step 8: Cleanup Fixer
-    try:
-        fixer = MarkdownCleanupFixer()
-        current_content = fixer.fix_line_breaks(current_content)
-        cleanup_report_path = REPORTS_DIR / f"{input_md.stem}_cleanup_fixer_{ts}.report.md"
-        write_text(cleanup_report_path, fixer.generate_report(str(input_md)))
-        summary['steps'].append({'step': '8_markdown_cleanup', 'report': str(cleanup_report_path), 'fixes': len(fixer.fixes_applied)})
-    except Exception as e:
-        summary['steps'].append({'step': '8_markdown_cleanup', 'error': str(e)})
+    # Step 6: Long Line Fixer (Placeholder - to be implemented)
+    summary['steps'].append({
+        'step': '6_fix_long_lines',
+        'status': 'SKIPPED - requires refactor of long_line_detector.py'
+    })
 
     # =================================================================================
     # STAGE 3: Content and Formatting Fixes

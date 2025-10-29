@@ -39,9 +39,11 @@ except ImportError:
 from scripts.book_pipeline import pipeline as run_pipeline_func, load_config
 from scripts.book_pipeline import REPORTS_DIR as PIPE_REPORTS_DIR
 
+# Import the enhanced formatter
+from scripts.fix_formatting import MarkdownFormattingFixer
+
 # Optional: direct tool imports for partial runs
 from tools import fix_toc_plain
-from tools import advanced_break_fixer
 
 
 APP_TITLE = "DocWorkbench — Yggsburgh Markdown Tooling"
@@ -53,12 +55,22 @@ class SettingsWindow(tk.Toplevel):
         super().__init__(parent)
         self.title("Settings")
         self.transient(parent)
-        self.geometry("500x200")
+        self.geometry("500x400")
 
         self.config = {}
         self.pyproject_path = REPO_ROOT / 'pyproject.toml'
 
-        self.max_depth_var = tk.StringVar()
+        # Header settings
+        self.max_depth_var = tk.StringVar(value="4")
+        self.fix_hierarchy_var = tk.BooleanVar(value=True)
+        
+        # Formatter settings
+        self.enable_break_fixing_var = tk.BooleanVar(value=True)
+        self.enable_cleanup_var = tk.BooleanVar(value=True)
+        self.fix_merged_words_var = tk.BooleanVar(value=True)
+        self.normalize_labels_var = tk.BooleanVar(value=True)
+        
+        # Other settings
         self.line_threshold_var = tk.StringVar()
 
         self._build_ui()
@@ -68,18 +80,52 @@ class SettingsWindow(tk.Toplevel):
         frame = ttk.Frame(self, padding=10)
         frame.pack(fill="both", expand=True)
 
-        ttk.Label(frame, text="Max Header Depth:").grid(row=0, column=0, sticky="w", pady=5)
-        ttk.Entry(frame, textvariable=self.max_depth_var).grid(row=0, column=1, sticky="ew")
+        # Create a canvas with scrollbar
+        canvas = tk.Canvas(frame)
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
 
-        ttk.Label(frame, text="Long Line Threshold:").grid(row=1, column=0, sticky="w", pady=5)
-        ttk.Entry(frame, textvariable=self.line_threshold_var).grid(row=1, column=1, sticky="ew")
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
 
-        frame.columnconfigure(1, weight=1)
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
 
-        btn_frame = ttk.Frame(self, padding=10)
-        btn_frame.pack(fill="x", side="bottom")
-        ttk.Button(btn_frame, text="Save", command=self.save_settings).pack(side="right", padx=5)
-        ttk.Button(btn_frame, text="Cancel", command=self.destroy).pack(side="right")
+        # Header Settings
+        ttk.Label(scrollable_frame, text="Header Settings", font=('TkDefaultFont', 10, 'bold')).grid(row=0, column=0, sticky="w", pady=(0, 5))
+        
+        ttk.Label(scrollable_frame, text="Max Header Depth:").grid(row=1, column=0, sticky="w", pady=2)
+        ttk.Spinbox(scrollable_frame, from_=1, to=6, width=5, textvariable=self.max_depth_var).grid(row=1, column=1, sticky="w", padx=5)
+        
+        ttk.Checkbutton(scrollable_frame, text="Fix Header Hierarchy", variable=self.fix_hierarchy_var).grid(row=2, column=0, columnspan=2, sticky="w")
+        
+        # Formatter Settings
+        ttk.Label(scrollable_frame, text="\nFormatter Settings", font=('TkDefaultFont', 10, 'bold')).grid(row=10, column=0, sticky="w", pady=(10, 5))
+        
+        ttk.Checkbutton(scrollable_frame, text="Enable Break Fixing", variable=self.enable_break_fixing_var).grid(row=11, column=0, columnspan=2, sticky="w")
+        ttk.Checkbutton(scrollable_frame, text="Enable Cleanup", variable=self.enable_cleanup_var).grid(row=12, column=0, columnspan=2, sticky="w")
+        ttk.Checkbutton(scrollable_frame, text="Fix Merged Words", variable=self.fix_merged_words_var).grid(row=13, column=0, columnspan=2, sticky="w")
+        ttk.Checkbutton(scrollable_frame, text="Normalize Special Labels", variable=self.normalize_labels_var).grid(row=14, column=0, columnspan=2, sticky="w")
+        
+        # Other Settings
+        ttk.Label(scrollable_frame, text="\nOther Settings", font=('TkDefaultFont', 10, 'bold')).grid(row=20, column=0, sticky="w", pady=(10, 5))
+        
+        ttk.Label(scrollable_frame, text="Line Threshold:").grid(row=21, column=0, sticky="w", pady=2)
+        ttk.Entry(scrollable_frame, textvariable=self.line_threshold_var, width=10).grid(row=21, column=1, sticky="w", padx=5)
+        ttk.Label(scrollable_frame, text="(0 = auto)").grid(row=21, column=2, sticky="w")
+
+        # Buttons
+        btn_frame = ttk.Frame(frame)
+        btn_frame.pack(fill="x", pady=(10, 0))
+        
+        ttk.Button(btn_frame, text="Save", command=self.save_settings).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Cancel", command=self.destroy).pack(side="left", padx=5)
+        
+        # Pack the canvas and scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
 
     def load_settings(self):
         if not self.pyproject_path.exists():
@@ -90,8 +136,20 @@ class SettingsWindow(tk.Toplevel):
             self.config = tomllib.load(f)
 
         pipeline_config = self.config.get('tool', {}).get('book-pipeline', {})
-        self.max_depth_var.set(str(pipeline_config.get('max_header_depth', 4)))
-        self.line_threshold_var.set(str(pipeline_config.get('long_line_threshold', 150)))
+        formatter_config = pipeline_config.get('formatter', {})
+        
+        # Load header settings
+        self.max_depth_var.set(str(formatter_config.get('max_header_depth', 4)))
+        self.fix_hierarchy_var.set(formatter_config.get('fix_hierarchy', True))
+        
+        # Load formatter settings
+        self.enable_break_fixing_var.set(formatter_config.get('enable_break_fixing', True))
+        self.enable_cleanup_var.set(formatter_config.get('enable_cleanup', True))
+        self.fix_merged_words_var.set(formatter_config.get('fix_merged_words', True))
+        self.normalize_labels_var.set(formatter_config.get('normalize_labels', True))
+        
+        # Load other settings
+        self.line_threshold_var.set(str(pipeline_config.get('line_length_threshold', 0)))
 
     def save_settings(self):
         try:
@@ -106,16 +164,26 @@ class SettingsWindow(tk.Toplevel):
         if 'book-pipeline' not in self.config['tool']:
             self.config['tool']['book-pipeline'] = {}
 
-        self.config['tool']['book-pipeline']['max_header_depth'] = new_max_depth
-        self.config['tool']['book-pipeline']['long_line_threshold'] = new_threshold
+        # Update formatter settings
+        formatter_config = {
+            'max_header_depth': new_max_depth,
+            'fix_hierarchy': self.fix_hierarchy_var.get(),
+            'enable_break_fixing': self.enable_break_fixing_var.get(),
+            'enable_cleanup': self.enable_cleanup_var.get(),
+            'fix_merged_words': self.fix_merged_words_var.get(),
+            'normalize_labels': self.normalize_labels_var.get()
+        }
+        
+        self.config['tool']['book-pipeline']['formatter'] = formatter_config
+        self.config['tool']['book-pipeline']['line_length_threshold'] = new_threshold
 
         try:
             with open(self.pyproject_path, 'wb') as f:
                 tomli_w.dump(self.config, f)
-            messagebox.showinfo("Success", "Settings saved to pyproject.toml.", parent=self)
+            messagebox.showinfo("Success", "Settings saved to pyproject.toml", parent=self)
             self.destroy()
         except Exception as e:
-            messagebox.showerror("Error Saving", f"Could not save settings: {e}", parent=self)
+            messagebox.showerror("Error", f"Failed to save settings: {e}", parent=self)
 
 
 class DocWorkbenchApp(tk.Tk):
