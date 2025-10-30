@@ -20,7 +20,7 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 # --- Configuration -------------------------------------------------------
 
@@ -138,10 +138,13 @@ class MarkdownFormattingFixer:
         self._init_break_fixer()
         self._init_header_corrector()
         
-        # Explicit replacements
-        self.explicit_replacements: Dict[str, str] = {
-            # Add any explicit replacements here
-        }
+        # Explicit replacements table (base + optional config overrides)
+        self.explicit_map: List[Tuple[str, str]] = list(EXPLICIT_REPLACEMENTS)
+        extra_replacements = self.config.get('explicit_replacements', [])
+        if isinstance(extra_replacements, dict):
+            self.explicit_map.extend(extra_replacements.items())
+        elif isinstance(extra_replacements, (list, tuple)):
+            self.explicit_map.extend(extra_replacements)
 
     def _init_break_fixer(self):
         """Initialize the advanced break fixing component."""
@@ -295,6 +298,10 @@ class MarkdownFormattingFixer:
         
         # Normalize special labels
         updated = self._normalize_special_labels(updated)
+        # Remove stray underscores that leak into prose
+        updated = self._strip_extraneous_underscores(updated)
+        # Restore missing paragraph breaks caused by OCR artifacts
+        updated = self._restore_paragraph_breaks(updated)
         
         # Record changes if any were made
         if updated != original:
@@ -367,6 +374,54 @@ class MarkdownFormattingFixer:
 
         return line
 
+    # ------------------------------------------------------------------
+    def _strip_extraneous_underscores(self, line: str) -> str:
+        """Remove stray underscores while preserving intentional emphasis."""
+        if "_" not in line:
+            return line
+
+        placeholders: list[str] = []
+        token_template = "\uFFF0{}\uFFF1"
+
+        def _save(match: re.Match[str]) -> str:
+            placeholders.append(match.group(0))
+            return token_template.format(len(placeholders) - 1)
+
+        # Temporarily protect valid emphasis spans (_..._)
+        protected = re.sub(r"_[^_\n]+_", _save, line)
+
+        # Replace underscores between word chars with a space
+        protected = re.sub(r"(?<=\w)_(?=\w)", " ", protected)
+        # Remove any remaining underscores (leading/trailing artifacts)
+        protected = protected.replace("_", "")
+
+        def _restore(match: re.Match[str]) -> str:
+            return placeholders[int(match.group(1))]
+
+        restored = re.sub(r"\uFFF0(\d+)\uFFF1", _restore, protected)
+        return restored
+
+    # ------------------------------------------------------------------
+    def _restore_paragraph_breaks(self, line: str) -> str:
+        """Insert paragraph breaks when OCR merges sentences into one line."""
+        if len(line) < 200:
+            return line
+
+        # Only operate when the line has sentence terminators followed by uppercase words
+        pattern = re.compile(r"([.!?][\"')\]]?)(\s+)([A-Z][A-Za-z0-9\-']+)")
+
+        def _split(match: re.Match[str]) -> str:
+            sentence_end = match.group(1)
+            next_word = match.group(3)
+            # Require at least two words in the segment after the split to avoid false positives
+            remainder = line[match.end():].strip()
+            if remainder and len(remainder.split()) < 2:
+                return match.group(0)
+            return f"{sentence_end}\n\n{next_word}"
+
+        updated = pattern.sub(_split, line, count=3)
+        return updated
+
 
 # --- Script entry point --------------------------------------------------
 
@@ -383,7 +438,9 @@ def run_formatter(input_path: Path, output_path: Optional[Path]) -> None:
     if fixer.changes:
         print("First 10 changes:")
         for record in fixer.changes[:10]:
-            print(f"  Line {record.line_number}: '{record.before.strip()}' -> '{record.after.strip()}'")
+            before = record.original.strip()
+            after = record.new.strip()
+            print(f"  Line {record.line_number}: '{before}' -> '{after}'")
         if len(fixer.changes) > 10:
             remaining = len(fixer.changes) - 10
             print(f"  ... {remaining} additional changes")

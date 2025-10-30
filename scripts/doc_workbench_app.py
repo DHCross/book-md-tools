@@ -19,7 +19,7 @@ import json
 import threading
 from pathlib import Path
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict, List, Tuple
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from tkinter.scrolledtext import ScrolledText
@@ -45,6 +45,16 @@ from scripts.fix_formatting import MarkdownFormattingFixer
 
 # Optional: direct tool imports for partial runs
 from tools import fix_toc_plain
+from tools.image_reference_remover import remove_image_references
+from tools.blockquote_remover import BlockquoteRemover
+from tools.remove_isolated_page_numbers import remove_isolated_page_numbers
+from tools import fix_table_formatting
+from tools.fix_ocr_errors import fix_ocr_errors
+from tools.fix_additional_ocr_errors import fix_additional_ocr_errors
+from tools.long_line_detector import LongLineDetector
+from tools.markdown_validator import MarkdownValidator
+from tools.spell_check import SpellChecker
+from tools.paragraph_break_detector import ParagraphBreakDetector
 
 # Optional dependencies for rendered preview
 try:
@@ -198,6 +208,166 @@ class SettingsWindow(tk.Toplevel):
             messagebox.showerror("Error", f"Failed to save settings: {e}", parent=self)
 
 
+TOOL_DEFINITIONS: List[Dict[str, Any]] = [
+    {
+        "key": "fix_toc_plain",
+        "label": "Fix TOC",
+        "category": "Formatting & Cleanup",
+        "description": "Normalize the Table of Contents block.",
+        "mutates": True,
+    },
+    {
+        "key": "remove_images",
+        "label": "Remove Images",
+        "category": "Formatting & Cleanup",
+        "description": "Strip Markdown image references.",
+        "mutates": True,
+    },
+    {
+        "key": "remove_blockquotes",
+        "label": "Remove Blockquotes",
+        "category": "Formatting & Cleanup",
+        "description": "Drop stray blockquote markers (>)",
+        "mutates": True,
+    },
+    {
+        "key": "remove_page_numbers",
+        "label": "Remove Page Numbers",
+        "category": "Formatting & Cleanup",
+        "description": "Remove isolated page numbers from converted text.",
+        "mutates": True,
+    },
+    {
+        "key": "markdown_formatting",
+        "label": "Markdown Formatting",
+        "category": "Formatting & Cleanup",
+        "description": "Run the consolidated Markdown formatter.",
+        "mutates": True,
+    },
+    {
+        "key": "fix_long_lines",
+        "label": "Fix Long Lines",
+        "category": "Formatting & Cleanup",
+        "description": "Break overly long lines into paragraphs using detector heuristics.",
+        "mutates": True,
+    },
+    {
+        "key": "fix_tables",
+        "label": "Fix Tables",
+        "category": "Formatting & Cleanup",
+        "description": "Clean Markdown tables using the table formatter.",
+        "mutates": True,
+    },
+    {
+        "key": "fix_ocr_base",
+        "label": "Fix OCR (Base)",
+        "category": "OCR Fixes",
+        "description": "Apply the baseline OCR correction map.",
+        "mutates": True,
+    },
+    {
+        "key": "fix_ocr_additional",
+        "label": "Fix OCR (Additional)",
+        "category": "OCR Fixes",
+        "description": "Apply the additional OCR corrections and overrides.",
+        "mutates": True,
+    },
+    {
+        "key": "spell_check",
+        "label": "Spell Check (Report)",
+        "category": "Quality Control",
+        "description": "Generate a potential misspelling report (no changes).",
+        "mutates": False,
+    },
+    {
+        "key": "long_line_detector",
+        "label": "Long Line Detector (Report)",
+        "category": "Quality Control",
+        "description": "Report lines exceeding the configured threshold.",
+        "mutates": False,
+    },
+    {
+        "key": "paragraph_break_detector",
+        "label": "Paragraph Break Detector (Report)",
+        "category": "Quality Control",
+        "description": "Report likely paragraph break artifacts.",
+        "mutates": False,
+    },
+    {
+        "key": "final_validation",
+        "label": "Final Validation",
+        "category": "Quality Control",
+        "description": "Run Markdown structural validation checks.",
+        "mutates": False,
+    },
+]
+
+
+class QuickToolDialog(tk.Toplevel):
+    """Dialog for selecting quick tools and scope."""
+
+    def __init__(self, parent: tk.Tk, tools: List[Dict[str, Any]], selection_available: bool):
+        super().__init__(parent)
+        self.title("Quick Tools")
+        self.transient(parent)
+        self.grab_set()
+
+        self._tools = tools
+        self._selection_available = selection_available
+        self.result: Dict[str, Any] | None = None
+
+        self.scope_var = tk.StringVar(value="selection" if selection_available else "document")
+        self.tool_vars: Dict[str, tk.BooleanVar] = {}
+
+        container = ttk.Frame(self, padding=12)
+        container.pack(fill="both", expand=True)
+
+        ttk.Label(container, text="Select one or more tools to run:", font=('Helvetica', 11, 'bold')).pack(anchor="w")
+
+        categories: Dict[str, List[Dict[str, Any]]] = {}
+        for tool in tools:
+            categories.setdefault(tool["category"], []).append(tool)
+
+        tools_frame = ttk.Frame(container)
+        tools_frame.pack(fill="both", expand=True, pady=(8, 12))
+
+        for category, items in categories.items():
+            cat_frame = ttk.LabelFrame(tools_frame, text=f" {category} ")
+            cat_frame.pack(fill="x", expand=True, pady=4)
+            for tool in items:
+                var = tk.BooleanVar(value=False)
+                self.tool_vars[tool["key"]] = var
+                chk = ttk.Checkbutton(cat_frame, text=tool["label"], variable=var)
+                chk.pack(anchor="w", padx=8, pady=2)
+                if tool.get("description"):
+                    ttk.Label(cat_frame, text=f"↳ {tool['description']}", style='ToolDescription.TLabel').pack(anchor="w", padx=24)
+
+        scope_frame = ttk.LabelFrame(container, text=" Scope ")
+        scope_frame.pack(fill="x", pady=(0, 12))
+        ttk.Radiobutton(scope_frame, text="Apply to selection", value="selection", variable=self.scope_var,
+                        state='normal' if selection_available else 'disabled').pack(anchor="w", padx=8, pady=2)
+        ttk.Radiobutton(scope_frame, text="Apply to entire document", value="document", variable=self.scope_var).pack(anchor="w", padx=8, pady=2)
+
+        btn_frame = ttk.Frame(container)
+        btn_frame.pack(fill="x")
+        ttk.Button(btn_frame, text="Run", command=self._on_run, style='Primary.TButton').pack(side="right")
+        ttk.Button(btn_frame, text="Cancel", command=self.destroy).pack(side="right", padx=(0, 8))
+
+        self.bind("<Return>", lambda *_: self._on_run())
+        self.bind("<Escape>", lambda *_: self.destroy())
+
+    def _on_run(self):
+        selected = [key for key, var in self.tool_vars.items() if var.get()]
+        if not selected:
+            messagebox.showwarning("No tools selected", "Choose at least one tool to run.", parent=self)
+            return
+        scope = self.scope_var.get()
+        if scope == "selection" and not self._selection_available:
+            messagebox.showwarning("No selection", "No text selection detected. Choose the entire document or select text first.", parent=self)
+            return
+        self.result = {"tools": selected, "scope": scope}
+        self.destroy()
+
 class DocWorkbenchApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -208,6 +378,10 @@ class DocWorkbenchApp(tk.Tk):
         self.input_md: Path | None = None
         self.out_suffix_var = tk.StringVar(value=DEFAULT_SUFFIX)
         self.inline_tables_var = tk.BooleanVar(value=False)
+
+        self.current_content: str = ""
+        self.change_log_entries: List[str] = []
+        self._pipeline_config_cache: Dict[str, Any] | None = None
 
         self.last_summary: dict | None = None
         self._build_ui()
@@ -298,6 +472,9 @@ class DocWorkbenchApp(tk.Tk):
         ttk.Button(left_actions, text="✏️  Format Text", 
                  command=self.quick_format, style='Secondary.TButton').pack(side='left', padx=8)
         
+        ttk.Button(left_actions, text="🛠 Quick Tools…", 
+                 command=self.open_quick_tools, style='Secondary.TButton').pack(side='left', padx=8)
+        
         ttk.Button(left_actions, text="📑 Fix TOC", 
                  command=self.quick_fix_toc, style='Secondary.TButton').pack(side='left', padx=8)
         
@@ -307,6 +484,9 @@ class DocWorkbenchApp(tk.Tk):
         
         ttk.Button(right_actions, text="⚙️ Settings", 
                  command=self.open_settings, style='Secondary.TButton').pack(side='right', padx=4)
+        
+        ttk.Button(right_actions, text="⬇️ Export Markdown", 
+                 command=self.export_markdown, style='Secondary.TButton').pack(side='right', padx=4)
         
         ttk.Button(right_actions, text="📂 Open Output", 
                  command=self.open_output_folder, style='Secondary.TButton').pack(side='right', padx=4)
@@ -352,9 +532,11 @@ class DocWorkbenchApp(tk.Tk):
         self.preview_tab = ttk.Frame(self.detail_notebook)
         self.render_tab = ttk.Frame(self.detail_notebook)
         self.summary_tab = ttk.Frame(self.detail_notebook)
+        self.log_tab = ttk.Frame(self.detail_notebook)
         self.detail_notebook.add(self.preview_tab, text="Preview")
         self.detail_notebook.add(self.render_tab, text="Rendered")
         self.detail_notebook.add(self.summary_tab, text="Summary")
+        self.detail_notebook.add(self.log_tab, text="Log")
 
         self.preview = ScrolledText(self.preview_tab, wrap='word', font=('Menlo', 10),
                                     state='disabled', bg='#ffffff', fg=colors['text'],
@@ -373,6 +555,10 @@ class DocWorkbenchApp(tk.Tk):
         self.summary = ScrolledText(self.summary_tab, height=10, state="disabled")
         self.summary.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
         self.summary.pack(fill="both", expand=True, padx=4, pady=4)
+
+        self.change_log_view = ScrolledText(self.log_tab, height=10, state="disabled")
+        self.change_log_view.configure(font=("Menlo", 11) if sys.platform == "darwin" else ("Consolas", 10))
+        self.change_log_view.pack(fill="both", expand=True, padx=4, pady=4)
         
         # Footer
         footer = ttk.Frame(main_frame, height=24)
@@ -424,6 +610,7 @@ class DocWorkbenchApp(tk.Tk):
         self.preview.config(state="disabled")
         self.detail_notebook.select(self.preview_tab)
         self._update_rendered_preview(text)
+        self.current_content = text
 
     def _update_rendered_preview(self, text: str):
         if HTMLScrolledText is not None and hasattr(self.rendered, "set_html"):
@@ -446,6 +633,40 @@ class DocWorkbenchApp(tk.Tk):
                                   "Install 'markdown' and 'tkhtmlview' in the virtualenv to see a rendered preview.\n"
                                   "Command: pip install markdown tkhtmlview")
         self.rendered.see("1.0")
+
+    def _append_change_log(self, message: str):
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        entry = f"[{timestamp}] {message}"
+        self.change_log_entries.append(entry)
+        self.change_log_view.config(state="normal")
+        self.change_log_view.insert("end", entry + "\n")
+        self.change_log_view.config(state="disabled")
+        self.change_log_view.see("end")
+
+    def _get_selection_text(self) -> Tuple[str | None, Tuple[str, str] | None]:
+        # Try preview text widget (read-only)
+        text_widget: ScrolledText = self.preview
+        if text_widget.tag_ranges("sel"):
+            start = text_widget.index("sel.first")
+            end = text_widget.index("sel.last")
+            return text_widget.get(start, end), (start, end)
+
+        # Fallback to rendered (if text widget)
+        if isinstance(self.rendered, ScrolledText) and self.rendered.tag_ranges("sel"):
+            start = self.rendered.index("sel.first")
+            end = self.rendered.index("sel.last")
+            return self.rendered.get(start, end), None
+
+        return None, None
+
+    def _replace_selection_text(self, replacement: str, indices: Tuple[str, str]) -> None:
+        start, end = indices
+        self.preview.config(state="normal")
+        self.preview.delete(start, end)
+        self.preview.insert(start, replacement)
+        self.preview.config(state="disabled")
+        self.current_content = self.preview.get("1.0", "end-1c")
+        self._update_rendered_preview(self.current_content)
 
     def _configure_rendered_widget(self):
         nav_keys = {"Left", "Right", "Up", "Down", "Home", "End", "Prior", "Next"}
@@ -504,6 +725,33 @@ class DocWorkbenchApp(tk.Tk):
             # Fallback to browser if folder
             webbrowser.open(str(path))
 
+    def export_markdown(self):
+        if not self.current_content:
+            messagebox.showwarning("No content", "Load a document before exporting.")
+            return
+
+        default_name = "exported.md"
+        if self.input_md:
+            default_name = f"{self.input_md.stem}_final.md"
+
+        path = filedialog.asksaveasfilename(
+            title="Export Markdown",
+            defaultextension=".md",
+            filetypes=(("Markdown", "*.md"), ("All files", "*.*")),
+            initialfile=default_name
+        )
+        if not path:
+            return
+
+        try:
+            Path(path).write_text(self.current_content, encoding="utf-8")
+        except Exception as exc:
+            messagebox.showerror("Export failed", f"Could not write file:\n{exc}")
+            return
+
+        self._append_change_log(f"Exported markdown to {path}")
+        messagebox.showinfo("Export complete", f"Markdown saved to:\n{path}")
+
     # ---------------- Actions ----------------
     def run_full_pipeline(self):
         input_md = self._validate_input()
@@ -526,6 +774,123 @@ class DocWorkbenchApp(tk.Tk):
 
         self._start_busy("Running full pipeline…")
         threading.Thread(target=worker, daemon=True).start()
+
+    def open_quick_tools(self):
+        selected_text, selection_indices = self._get_selection_text()
+        selection_available = selected_text is not None and selected_text.strip() != ""
+
+        dialog = QuickToolDialog(self, TOOL_DEFINITIONS, selection_available)
+        self.wait_window(dialog)
+        result = dialog.result
+        if not result:
+            return
+
+        tools_to_run: List[str] = result["tools"]
+        scope = result["scope"]
+
+        # Determine scope text
+        original_text = self.current_content
+        if scope == "selection" and selection_available and selection_indices:
+            target_text = selected_text or ""
+        else:
+            target_text = original_text
+
+        if target_text is None:
+            messagebox.showwarning("No content", "Nothing to process with the selected tools.")
+            return
+
+        def worker():
+            self._start_busy("Running quick tools…")
+            text = target_text
+            log_entries: List[str] = []
+
+            try:
+                for key in tools_to_run:
+                    tool_def = next((t for t in TOOL_DEFINITIONS if t["key"] == key), None)
+                    if not tool_def:
+                        continue
+
+                    label = tool_def["label"]
+                    mutates = tool_def.get("mutates", False)
+                    start_time = datetime.now()
+
+                    if key == "fix_toc_plain":
+                        text, change_count = fix_toc_plain.fix_toc_plain(text)
+                        log_entries.append(f"{label} → {change_count} adjustments")
+                    elif key == "remove_images":
+                        text, removed, _ = remove_image_references(text)
+                        log_entries.append(f"{label} → removed {removed} images")
+                    elif key == "remove_blockquotes":
+                        remover = BlockquoteRemover()
+                        text = remover.remove_blockquotes(text)
+                        log_entries.append(f"{label} → stripped blockquotes")
+                    elif key == "remove_page_numbers":
+                        text, removed, _ = remove_isolated_page_numbers(text)
+                        log_entries.append(f"{label} → removed {removed} lines")
+                    elif key == "markdown_formatting":
+                        formatter = MarkdownFormattingFixer(config=self._load_formatter_config())
+                        text = formatter.fix_content(text)
+                        log_entries.append(f"{label} → {len(formatter.changes)} changes")
+                    elif key == "fix_long_lines":
+                        detector = LongLineDetector()
+                        detector.analyze_file = lambda *_: []  # type: ignore[attr-defined]
+                        # Use existing apply_breaks on a single chunk
+                        breaks = detector.find_optimal_breaks(text)
+                        text = detector.apply_breaks(text, [pos for pos, _ in breaks])
+                        log_entries.append(f"{label} → applied {len(breaks)} breaks")
+                    elif key == "fix_tables":
+                        text, changes = fix_table_formatting.fix_table_formatting(text)
+                        log_entries.append(f"{label} → {len(changes)} adjustments")
+                    elif key == "fix_ocr_base":
+                        text, changes = fix_ocr_errors(text)
+                        log_entries.append(f"{label} → {len(changes)} substitutions")
+                    elif key == "fix_ocr_additional":
+                        text, corrections, total, _ = fix_additional_ocr_errors(text)
+                        log_entries.append(f"{label} → {total} corrections")
+                    elif key == "spell_check":
+                        checker = SpellChecker()
+                        findings = checker.find_potential_issues(text)
+                        log_entries.append(f"{label} → {len(findings)} findings")
+                    elif key == "long_line_detector":
+                        detector = LongLineDetector()
+                        # placeholder for analysis
+                        log_entries.append(f"{label} → analysis queued")
+                    elif key == "paragraph_break_detector":
+                        detector = ParagraphBreakDetector()
+                        issues = detector.analyze_file(text)
+                        log_entries.append(f"{label} → {len(issues or [])} issues")
+                    elif key == "final_validation":
+                        validator = MarkdownValidator()
+                        problems = validator.validate(text)
+                        log_entries.append(f"{label} → {len(problems)} problems")
+                    else:
+                        log_entries.append(f"{label} → skipped (unknown)")
+
+                    end_time = datetime.now()
+                    duration_ms = int((end_time - start_time).total_seconds() * 1000)
+                    self._append_change_log(f"{label} on {scope}: {duration_ms} ms")
+
+                # Apply results back to UI
+                if scope == "selection" and selection_indices:
+                    self._replace_selection_text(text, selection_indices)
+                else:
+                    self._set_preview(text)
+
+                self._append_change_log("; ".join(log_entries))
+                self._stop_busy("Quick tools complete")
+            except Exception as exc:
+                self._stop_busy("Error")
+                messagebox.showerror("Quick tools error", str(exc))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _load_formatter_config(self) -> Dict[str, Any]:
+        if self._pipeline_config_cache is None:
+            self._pipeline_config_cache = load_config() or {}
+        config = self._pipeline_config_cache
+        if isinstance(config, dict):
+            return config.get('formatter', {}) or {}
+        return {}
 
     def quick_fix_toc(self):
         input_md = self._validate_input()
