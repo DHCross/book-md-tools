@@ -11,12 +11,20 @@ import re
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Import pipeline tools
+import pytest
 from tools.markdown_header_depth_corrector import HeaderCorrector
 from tools.markdown_cleanup_fixer import MarkdownCleanupFixer
 from tools.fix_table_formatting import fix_table_formatting
 from tools.fix_ocr_errors import fix_ocr_errors
 from tools.fix_additional_ocr_errors import fix_additional_ocr_errors
 from tools.long_line_detector import LongLineDetector
+
+
+@pytest.fixture(scope="module")
+def content():
+    """Load sample markdown content for pipeline checks."""
+    sample_path = Path(__file__).resolve().parent / "test_data" / "sample.md"
+    return sample_path.read_text(encoding="utf-8")
 
 def print_header(title):
     print(f"\n{'='*80}\n{title}\n{'='*80}")
