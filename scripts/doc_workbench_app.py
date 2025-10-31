@@ -19,6 +19,7 @@ import json
 import threading
 from pathlib import Path
 from datetime import datetime
+import re
 from typing import Any, Dict, List, Tuple
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
@@ -380,6 +381,8 @@ class DocWorkbenchApp(tk.Tk):
         self.inline_tables_var = tk.BooleanVar(value=False)
 
         self.current_content: str = ""
+        self._render_anchor_map: Dict[str, str] = {}
+        self._render_anchor_tag = "md_link"
         self.change_log_entries: List[str] = []
         self._pipeline_config_cache: Dict[str, Any] | None = None
 
@@ -620,19 +623,81 @@ class DocWorkbenchApp(tk.Tk):
                                        "to enable rendered preview.</p>")
                 return
             try:
+                self._render_anchor_map = self._build_anchor_index_map(text)
                 html = md_lib.markdown(text, extensions=["extra", "tables", "toc"])
+                html = self._inject_anchor_spans(html)
             except Exception as exc:
                 self.rendered.set_html(f"<p><strong>Markdown render error:</strong> {exc}</p>")
+                self._render_anchor_map = {}
                 return
             self.rendered.set_html(html)
             self.rendered.config(state="normal")
+            self.rendered.tag_config(self._render_anchor_tag, foreground="#105eb5", underline=True)
+            self.rendered.tag_bind(self._render_anchor_tag, "<Button-1>", self._on_render_link_click)
         else:
             # Fallback: plain text notice
             self.rendered.delete("1.0", "end")
             self.rendered.insert("end",
                                   "Install 'markdown' and 'tkhtmlview' in the virtualenv to see a rendered preview.\n"
                                   "Command: pip install markdown tkhtmlview")
+            self._render_anchor_map = {}
         self.rendered.see("1.0")
+
+    def _build_anchor_index_map(self, text: str) -> Dict[str, str]:
+        anchors: Dict[str, str] = {}
+        lines = text.splitlines()
+        offset = 1
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                level = len(stripped) - len(stripped.lstrip("#"))
+                heading = stripped[level:].strip()
+                if heading:
+                    anchor = self._slugify_anchor(heading)
+                    anchors[anchor] = f"{offset}.0"
+            offset += 1
+        return anchors
+
+    def _slugify_anchor(self, heading: str) -> str:
+        slug = re.sub(r"[^\w\s-]", "", heading).strip().lower()
+        slug = re.sub(r"[\s-]+", "-", slug)
+        return slug
+
+    def _inject_anchor_spans(self, html: str) -> str:
+        if not self._render_anchor_map:
+            return html
+
+        def repl(match: re.Match[str]) -> str:
+            href = match.group(1)
+            display = match.group(2)
+            if href.startswith("#"):
+                anchor = href[1:]
+                if anchor in self._render_anchor_map:
+                    return f"<span class=\"doc-link\" data-anchor=\"{anchor}\">{display}</span>"
+            return match.group(0)
+
+        return re.sub(r"<a[^>]*href=\"([^\"]+)\"[^>]*>(.*?)</a>", repl, html, flags=re.IGNORECASE)
+
+    def _on_render_link_click(self, event: tk.Event):
+        if not isinstance(event.widget, tk.Text):
+            return "break"
+
+        index = event.widget.index(f"@{event.x},{event.y}")
+        tags = event.widget.tag_names(index)
+        for tag in tags:
+            if tag.startswith("data-anchor:"):
+                anchor = tag.split(":", 1)[1]
+                target_index = self._render_anchor_map.get(anchor)
+                if target_index:
+                    self.preview.see(target_index)
+                    self.preview.config(state="normal")
+                    self.preview.tag_remove("sel", "1.0", "end")
+                    line = target_index.split(".")[0]
+                    self.preview.tag_add("sel", f"{line}.0", f"{line}.end")
+                    self.preview.config(state="disabled")
+                    self.detail_notebook.select(self.preview_tab)
+                return "break"
+        return "break"
 
     def _append_change_log(self, message: str):
         timestamp = datetime.now().strftime('%H:%M:%S')
@@ -642,6 +707,14 @@ class DocWorkbenchApp(tk.Tk):
         self.change_log_view.insert("end", entry + "\n")
         self.change_log_view.config(state="disabled")
         self.change_log_view.see("end")
+
+    def _get_pipeline_config(self) -> Dict[str, Any]:
+        if self._pipeline_config_cache is None:
+            config = load_config() or {}
+            if not isinstance(config, dict):
+                config = {}
+            self._pipeline_config_cache = config
+        return self._pipeline_config_cache
 
     def _get_selection_text(self) -> Tuple[str | None, Tuple[str, str] | None]:
         # Try preview text widget (read-only)
@@ -832,12 +905,8 @@ class DocWorkbenchApp(tk.Tk):
                         text = formatter.fix_content(text)
                         log_entries.append(f"{label} → {len(formatter.changes)} changes")
                     elif key == "fix_long_lines":
-                        detector = LongLineDetector()
-                        detector.analyze_file = lambda *_: []  # type: ignore[attr-defined]
-                        # Use existing apply_breaks on a single chunk
-                        breaks = detector.find_optimal_breaks(text)
-                        text = detector.apply_breaks(text, [pos for pos, _ in breaks])
-                        log_entries.append(f"{label} → applied {len(breaks)} breaks")
+                        text, changed_lines, total_breaks = self._apply_fix_long_lines(text)
+                        log_entries.append(f"{label} → reshaped {changed_lines} lines, {total_breaks} breaks")
                     elif key == "fix_tables":
                         text, changes = fix_table_formatting.fix_table_formatting(text)
                         log_entries.append(f"{label} → {len(changes)} adjustments")
@@ -885,12 +954,48 @@ class DocWorkbenchApp(tk.Tk):
         threading.Thread(target=worker, daemon=True).start()
 
     def _load_formatter_config(self) -> Dict[str, Any]:
-        if self._pipeline_config_cache is None:
-            self._pipeline_config_cache = load_config() or {}
-        config = self._pipeline_config_cache
-        if isinstance(config, dict):
-            return config.get('formatter', {}) or {}
-        return {}
+        config = self._get_pipeline_config()
+        return config.get('formatter', {}) or {}
+
+    def _apply_fix_long_lines(self, text: str) -> Tuple[str, int, int]:
+        config = self._get_pipeline_config()
+        threshold = config.get('line_length_threshold', 150)
+        try:
+            threshold = int(threshold)
+        except (TypeError, ValueError):
+            threshold = 150
+
+        detector = LongLineDetector(threshold=threshold, min_sentence_length=40)
+        lines = text.split('\n')
+        new_lines: List[str] = []
+        changed = 0
+        total_breaks = 0
+
+        for line in lines:
+            if detector.is_special_line(line, ignore_headers=True, ignore_code=True):
+                new_lines.append(line)
+                continue
+            if len(line) <= threshold:
+                new_lines.append(line)
+                continue
+
+            breaks = detector.find_optimal_breaks(line)
+            break_positions = [pos for pos, _reason in breaks]
+            if not break_positions:
+                new_lines.append(line)
+                continue
+
+            wrapped = detector.apply_breaks(line, break_positions)
+            if wrapped != line:
+                changed += 1
+                total_breaks += max(1, len(break_positions))
+            new_lines.append(wrapped)
+
+        new_text = '\n'.join(new_lines)
+        if text.endswith('\n') and not new_text.endswith('\n'):
+            new_text += '\n'
+
+        return new_text, changed, total_breaks
 
     def quick_fix_toc(self):
         input_md = self._validate_input()

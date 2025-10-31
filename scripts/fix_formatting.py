@@ -380,26 +380,16 @@ class MarkdownFormattingFixer:
         if "_" not in line:
             return line
 
-        placeholders: list[str] = []
-        token_template = "\uFFF0{}\uFFF1"
+        # Strip bold/italic markers entirely
+        updated = re.sub(r"__([^_\n]+)__", r"\1", line)
+        updated = re.sub(r"_([^_\n]+)_", r"\1", updated)
 
-        def _save(match: re.Match[str]) -> str:
-            placeholders.append(match.group(0))
-            return token_template.format(len(placeholders) - 1)
+        # Replace underscores between word characters with a space
+        updated = re.sub(r"(?<=\w)_(?=\w)", " ", updated)
+        # Drop any remaining underscores
+        updated = updated.replace("_", "")
 
-        # Temporarily protect valid emphasis spans (_..._)
-        protected = re.sub(r"_[^_\n]+_", _save, line)
-
-        # Replace underscores between word chars with a space
-        protected = re.sub(r"(?<=\w)_(?=\w)", " ", protected)
-        # Remove any remaining underscores (leading/trailing artifacts)
-        protected = protected.replace("_", "")
-
-        def _restore(match: re.Match[str]) -> str:
-            return placeholders[int(match.group(1))]
-
-        restored = re.sub(r"\uFFF0(\d+)\uFFF1", _restore, protected)
-        return restored
+        return updated
 
     # ------------------------------------------------------------------
     def _restore_paragraph_breaks(self, line: str) -> str:
