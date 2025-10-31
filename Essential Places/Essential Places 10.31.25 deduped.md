@@ -1381,8 +1381,6 @@ The second apprentice, **Loosestrife**, favors illusion, distraction, and enchan
 
 * **Known for being more than a little perverse, Belsor will every few years or so entice or otherwise arrange for one or more burglars to attempt to rob his tower** (e.g., he once had a third party approach the local **Thieves’ Guild** (q.v.) and commission a robbery). His main motivations are both to test the strength of his defenses and to secretly observe and derive pleasure from the efforts of the thieves. The wizard is unconcerned if would-be thieves are incidentally injured, killed, arrested, or otherwise incommoded while making such an attempt. He will not directly seek to slay or harm any of them, however, and will at the most inflict some magical punishment on those who successfully learn some of his secrets or steal from him (e.g., banish them to some faraway place, transmogrify them into an unfortunate form, imprison them).
 
-# **FINAL THOUGHTS** Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
-
 # **CHAPTER 9: RELIGIOUS PLACES** Some of the most immersive, varied, and interesting places in many role-playing game settings are those devoted to the mythical deities and fantastic moral codes to which player characters might variously be fanatically devoted or zealously opposed. Religious establishments within a campaign setting can provide many specific game benefits as well, such as dealing with serious ailments, injuries, spiritual distress, curses, or even, in some settings, untimely death; interaction with the leaders of religious sects in the setting, many of whom also wield considerable temporal authority; and advice from knowledgeable characters or extraplanar sources about dilemmas that characters face with regard to religion and the supernatural entities that form the elements of its mythoi.
 
 Shrines, temples, monasteries or convents, and cemeteries are described in this chapter. Other religious places that characters might encounter or visit include hermits’ dwellings, tombs, oracles’ chambers, processional and pilgrimage routes, sacred wells, statues, monuments, and wonders, initiation chambers, places of sacrifice, seminaries, charity offices, miracle sites, and legendary locations like purported gates to the Underworld or other planes of existence.
@@ -1562,8 +1560,6 @@ The chief official of a temple might be an ordained member holding rank in the h
 * **General:** An outbreak of disease threatens Yggsburgh, and the temple calls upon adventurers to retrieve a rare herb rumored to grow in the treacherous depths of the Wynchwood Forest.  
 * **Specific to the Temple of the Serene Waters:** A rival sect spreads rumors that the Fountain of Serenity has been tainted. The adventurers must uncover the truth and protect the temple’s reputation—or deal with the consequences of its corruption.
 
-# **FINAL THOUGHTS** Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden   secrets, or even a path to power — if they can survive the dangers.
-
 # **CHAPTER 10: GOVERNMENTAL PLACES** In addition to the quintessential taverns, inns, marketplaces, and other commercial places so familiar to characters, there are many sorts of public buildings or structures representing the government of the city or region that they might need to visit in the course of their urban adventures.
 
 Communities of any size might have governmental places of some sort. In small communities like villages, these might include council halls or, if they exist in societies with strong central governments, departmental offices or police commanderies. Governmental places are likely to be less imposing in such settings, and might essentially be large versions of the rural structures described under “Buildings” in Chapter 1: Communities. In less organized regions yet, single appointees or influential business folk, such as the proprietors of taverns or general stores, may fulfill many governmental functions by default and their premises might take the place of a clerk’s office or even a courthouse (e.g., the Jersey Lilly Saloon made famous by Judge Roy Bean).
@@ -1726,51 +1722,6 @@ Theto has recently begun to detect evidence of organized, sinister activity in t
 
 * **Theto Poseidonius**, harbormaster of Yggsburgh, is concerned about the growing level of cult activity within his area of responsibility but believes his staff may somehow be compromised and is unwilling to entrust an investigation to it. With that in mind, he is seeking an independent group of characters to get to the bottom of the disappearances and other strange activities that have been occurring around the port district. Player characters might also independently encounter this cult in any number of ways, whether in the course of a particular adventure or just by randomly falling afoul of it.
 
-# **THE VELVET DICE (GAMBLING DEN)** Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice** stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities.
-
-## **Example: The Velvet Dice** Tucked away in a nondescript townhouse in the **Mercantile Ward**, the **Velvet Dice** is Yggsburgh’s premier gambling den, catering to the city’s elite. Owned by the mysterious **Madame Valeria**, the establishment offers high-stakes games of dice, cards, and roulette, all under the guise of a private social club.
-
-The main floor features plush seating, fine tapestries, and tables arranged for various games. A back room, accessible only to trusted patrons, hosts the highest-stakes games and serves as a meeting place for Yggsburgh’s wealthiest and most powerful figures. Hidden beneath the Velvet Dice is a secret vault where Valeria stores her ill- gotten gains and sensitive documents.
-
-## **Specific to the Velvet Dice:**
-
-* **Informant Network:** Madame Valeria employs a network of informants and enforcers to protect her interests, ensuring that cheats are dealt with swiftly and quietly.  
-* **Hidden Vault:** A concealed area below the establishment houses valuable items, records of high-stakes games, and magical artifacts.  
-* **Magical Surveillance:** Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access.
-
-## **Adventure Hooks**
-
-* **A Game of Deception:** The adventurers must infiltrate the Velvet Dice to recover a stolen heirloom lost in a high-stakes game.  
-* **The House Always Wins:** Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city.
-
-# **BLACK MARKET BAZAAR** Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar** is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors.
-
-## **Example: The Black Market Bazaar** Though it appears and disappears like a ghost, the **Black Market Bazaar** remains the favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. Its location shifts weekly, announced only through whispered rumors and cryptic messages passed among trusted contacts.
-
-The Bazaar’s stalls are manned by a motley assortment of smugglers, fences, and rogue merchants, all under the protection of hired enforcers. Goods are sold “as is,” with no guarantees, and haggling is expected. The Bazaar thrives in the shadows, moving quickly to avoid detection by Yggsburgh’s watch.
-
-## **Specific to the Black Market Bazaar:**
-
-* **Dynamic Locations:** The Bazaar sets up in different abandoned courtyards, deserted warehouses, or hidden alleys each week, making it difficult for authorities to track.  
-* **Security Measures:** Runners and lookouts warn of approaching authorities, allowing the Bazaar to pack up and vanish swiftly. Bribes to certain officials ensure some level of protection.  
-* **Diverse Offerings:** From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods.
-
-## **Adventure Hooks**
-
-* **The Hidden Vendor:** The adventurers hear rumors of a rare artifact for sale at the Bazaar, only to discover that acquiring it comes with unexpected consequences.  
-* **Market Mayhem:** A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene.
-
-# **BOOTLEG TAVERNS** Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises.
-
-## **Example: The Hidden Tankard** Located in the rougher parts of the **Outs**, the **Hidden Tankard** appears to be a run-
-
-down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place.
-
-## **Adventure Hooks**
-
-* **Undercover Revelry:** The adventurers are hired to infiltrate the Hidden Tankard to gather information on a smuggling ring, navigating the tavern’s secret passages and avoiding detection by the guards.  
-* **Smuggler’s Request:** A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance.
-
 # **FINAL THOUGHTS** In Yggsburgh, commerce and custom follow daylight; but in the city’s gated quarters and beneath its flagstone streets, other trades flourish. Dealers slip between market stalls and old brickwork, offering goods more valuable than law allows—amber drafts, forbidden tomes, a knife for hire. Adventurers willing to descend into these hidden places step off the path of public order and into a web of shifting debts. Behind every shuttered grate or cellar door, allies are weighed by reputation and caution, and each pact struck in the shadows carries the risk as well as the possibility of true powerWhether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 
 # **CHAPTER 11: UNDERWORLD PLACES** Underworld places of various sorts cater to the unsavory or illegal needs and desires of a society’s members. Adventurers might have any number of reasons for visiting such places, from taking a walk on the wild side to conducting business with the sorts of people who frequent them. Indeed, characters with certain occupations — or inclinations toward criminal or immoral tendencies — might even spend a significant amount of their non-adventuring time in such places. Roleplaying some of the activities associated with underworld places can contribute to a lively game, add a new dimension to scenarios, and allow for some interesting and lively interactions. Such episodes can also allow characters to utilize skills that they might not routinely have the opportunity to use in the field (e.g., those geared toward sensing the motives of others or to deceiving or intimidating them).
@@ -1921,49 +1872,6 @@ Membership in the Thieves’ Underground really does have some tangible benefits
 ## **Specific to the Thieves’ Underground**
 
 * Concerned that the Thieves’ Underground may have been suborned by an unfriendly foreign power, elements within the normally laissez-faire government of Yggsburgh are more determined than usual to infiltrate the guild and learn more about what is going on in it. Needless to say, this assignment — whether undertaken by a government agent or a freelancer — could be extremely dangerous.
-
-# **THE VELVET DICE (GAMBLING DEN)** Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice** stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities.
-
-## **Example: The Velvet Dice** Tucked away in a nondescript townhouse in the **Mercantile Ward**, the **Velvet Dice** is Yggsburgh’s premier gambling den, catering to the city’s elite. Owned by the mysterious **Madame Valeria**, the establishment offers high-stakes games of dice, cards, and roulette, all under the guise of a private social club.
-
-The main floor features plush seating, fine tapestries, and tables arranged for various games. A back room, accessible only to trusted patrons, hosts the highest-stakes games and serves as a meeting place for Yggsburgh’s wealthiest and most powerful figures. Hidden beneath the Velvet Dice is a secret vault where Valeria stores her ill- gotten gains and sensitive documents.
-
-## **Specific to the Velvet Dice:**
-
-* **Informant Network:** Madame Valeria employs a network of informants and enforcers to protect her interests, ensuring that cheats are dealt with swiftly and quietly.  
-* **Hidden Vault:** A concealed area below the establishment houses valuable items, records of high-stakes games, and magical artifacts.  
-* **Magical Surveillance:** Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access.
-
-## **Adventure Hooks**
-
-* **A Game of Deception:** The adventurers must infiltrate the Velvet Dice to recover a stolen heirloom lost in a high-stakes game.  
-* **The House Always Wins:** Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city.
-
-# **BLACK MARKET BAZAAR** Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar** is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors.
-
-## **Example: The Black Market Bazaar** Though it appears and disappears like a ghost, the **Black Market Bazaar** remains the favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. Its location shifts weekly, announced only through whispered rumors and cryptic messages passed among trusted contacts.
-
-The Bazaar’s stalls are manned by a motley assortment of smugglers, fences, and rogue merchants, all under the protection of hired enforcers. Goods are sold “as is,” with no guarantees, and haggling is expected. The Bazaar thrives in the shadows,   moving quickly to avoid detection by Yggsburgh’s watch.
-
-## **Specific to the Black Market Bazaar:**
-
-* **Dynamic Locations:** The Bazaar sets up in different abandoned courtyards, deserted warehouses, or hidden alleys each week, making it difficult for authorities to track.  
-* **Security Measures:** Runners and lookouts warn of approaching authorities, allowing the Bazaar to pack up and vanish swiftly. Bribes to certain officials ensure some level of protection.  
-* **Diverse Offerings:** From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods.
-
-## **Adventure Hooks**
-
-* **The Hidden Vendor:** The adventurers hear rumors of a rare artifact for sale at the Bazaar, only to discover that acquiring it comes with unexpected consequences.  
-* **Market Mayhem:** A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene.
-
-# **BOOTLEG TAVERNS** Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises.
-
-## **Example: The Hidden Tankard** Located in the rougher parts of the **Outs**, the **Hidden Tankard** appears to be a run- down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place.
-
-## **Adventure Hooks**
-
-* **Undercover Revelry:** The adventurers are hired to infiltrate the Hidden Tankard to gather information on a smuggling ring, navigating the tavern’s secret passages and avoiding detection by the guards.  
-* **Smuggler’s Request:** A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance.
 
 # **FINAL THOUGHTS** Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 

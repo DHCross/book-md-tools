@@ -1,26 +1,43 @@
 #!/usr/bin/env python3
 """
-Markdown formatting repair tool for Essential Places drafts.
+Comprehensive Markdown formatting and normalization tool.
 
-This utility focuses on two issues discovered after the automated
-conversion pipeline:
+This utility handles a wide range of formatting issues in Markdown files,
+including but not limited to:
 
-1. Words that were merged together (missing spaces or hyphenation).
-2. Chapter headings that lost their markdown level indicators.
+1. Merged words and spacing fixes
+2. Chapter/section header normalization
+3. Paragraph and line break fixes
+4. Header depth correction
+5. Advanced break fixing (mid-word, hyphenated words, etc.)
+6. Markdown cleanup and validation
+7. Paragraph normalization and wrapping
+8. Ghost blank line removal
 
-The script is intentionally conservative: it skips fenced code blocks,
-inline code, URLs, and other segments likely to be adversely affected by
-simple search/replace operations. All changes are logged so the caller
-can review the first few adjustments performed.
+The script is designed to be safe and conservative, preserving code blocks,
+URLs, and other special Markdown constructs while fixing common formatting issues.
 """
 from __future__ import annotations
 
 import argparse
+import logging
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Pattern, Match, Callable, Any, Union, Set
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
+
+# Constants for paragraph handling
+STRUCTURAL_PREFIXES = ("#", "*", "-", ">", "|", "{{", "```")
+DEFAULT_MAX_PARAGRAPH_LENGTH = 800
 
 # --- Configuration -------------------------------------------------------
 
@@ -101,28 +118,31 @@ CHAPTER_HEADER_PATTERN = re.compile(r"^(##\s+Chapter\s+\d+:\s*.*)$", re.IGNORECA
 
 @dataclass
 class ChangeRecord:
+    """Record of a single change made during formatting."""
+
     line_number: int
     original: str
     new: str
-    
+    change_type: str = "formatting"
+
     def __str__(self) -> str:
-        return f"Line {self.line_number}: {self.original!r} -> {self.new!r}"
+        return f"[{self.change_type.upper()}] Line {self.line_number}: {self.original!r} -> {self.new!r}"
 
 
 class MarkdownFormattingFixer:
-    """
-    Comprehensive Markdown formatter that combines multiple formatting tools:
+    """Comprehensive Markdown formatter that combines multiple formatting tools:
     - Merged words and spacing fixes
     - Chapter/section header normalization
     - Paragraph and line break fixes
     - Header depth correction
     - Advanced break fixing (mid-word, hyphenated words, etc.)
     - Markdown cleanup and validation
+    - Paragraph normalization and wrapping
+    - Ghost blank line removal
     """
-    
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
-        """
-        Initialize the formatter with optional configuration.
+        """Initialize the formatter with optional configuration.
         
         Args:
             config: Configuration dictionary with options like:
@@ -130,9 +150,25 @@ class MarkdownFormattingFixer:
                 - fix_hierarchy: Whether to fix header hierarchy (default: True)
                 - enable_break_fixing: Whether to enable advanced break fixing (default: True)
                 - enable_cleanup: Whether to enable markdown cleanup (default: True)
+                - max_paragraph_length: Maximum paragraph length before splitting (default: 800)
+                - normalize_paragraphs: Whether to normalize paragraphs (default: True)
+                - fix_ghost_blanks: Whether to fix ghost blank lines (default: True)
         """
         self.changes: List[ChangeRecord] = []
-        self.config = config or {}
+        self.config = {
+            'max_header_depth': 4,
+            'fix_hierarchy': True,
+            'enable_break_fixing': True,
+            'enable_cleanup': True,
+            'max_paragraph_length': 800,
+            'normalize_paragraphs': True,
+            'fix_ghost_blanks': True,
+            'in_place': False,
+            **(config or {})
+        }
+        
+        # Initialize regex patterns
+        self.patterns = self._compile_patterns()
         
         # Initialize components
         self._init_break_fixer()
@@ -145,6 +181,30 @@ class MarkdownFormattingFixer:
             self.explicit_map.extend(extra_replacements.items())
         elif isinstance(extra_replacements, (list, tuple)):
             self.explicit_map.extend(extra_replacements)
+    
+    def _compile_patterns(self) -> Dict[str, Pattern]:
+        """Compile and return all regex patterns used in the formatter."""
+        return {
+            # Existing patterns
+            'ghost_blank': re.compile(
+                r"([^\n.!?\"\'\)\]\-])\n(?:[ \t]*\n)+([ \t]*[a-z])",
+                flags=re.MULTILINE | re.IGNORECASE
+            ),
+            'multi_newline': re.compile(r"\n{3,}"),
+            'toc_fix': re.compile(
+                r"(# I Table of Contents for Essential Places)\s*(\{\{TOC\}\})\s*(Like everyone)"
+            ),
+            'sentence_breaks': re.compile(
+                r'(?<=[.!?])\s+(?=[A-Z])|(?<=\w\.)\s+(?=[A-Z][a-z])'
+            ),
+            'list_item': re.compile(r'^\s*[*\-+]\s+'),
+            'code_fence': re.compile(r'^\s*```'),
+            'header': re.compile(r'^#+\s+'),
+            'blockquote': re.compile(r'^\s*>'),
+            'html_tag': re.compile(r'<[^>]+>'),
+            'link': re.compile(r'\[([^\]]+)\]\([^)]+\)'),
+            'image': re.compile(r'!\[([^\]]*)\]\([^)]+\)')
+        }
 
     def _init_break_fixer(self):
         """Initialize the advanced break fixing component."""
@@ -311,19 +371,272 @@ class MarkdownFormattingFixer:
 
     # ------------------------------------------------------------------
     def fix_content(self, content: str) -> str:
-        self.changes.clear()
-        lines = content.splitlines()
-        fixed_lines = [self.process_line(line, idx + 1) for idx, line in enumerate(lines)]
-        return "\n".join(fixed_lines)
+        """Apply all formatting fixes to the content."""
+        # Track original line count for change reporting
+        original_lines = content.splitlines()
+        line_map = {i: i+1 for i in range(len(original_lines))}
+        
+        # Apply fixes in sequence
+        result = content
+        
+        # 1. Merge wrapped lines and fix ghost blanks
+        if self.config.get('fix_ghost_blanks', True):
+            result = self.merge_wrapped_lines(result)
+        
+        # 2. Apply explicit replacements
+        for original, replacement in self.explicit_map:
+            if original in result:
+                result = result.replace(original, replacement)
+        
+        # 3. Apply generic fixes
+        for pattern, repl in GENERIC_FIXES:
+            result = pattern.sub(repl, result)
+        
+        # 4. Split long paragraphs
+        if self.config.get('normalize_paragraphs', True):
+            result = self.split_long_paragraphs(result)
+        
+        # 5. Process individual lines for line-specific fixes
+        lines = result.splitlines()
+        processed_lines = []
+        
+        for i, line in enumerate(lines):
+            if not line.strip():
+                processed_lines.append("")
+                continue
+                
+            # Skip processing for code blocks and other structural elements
+            if self.is_structural_line(line):
+                processed_lines.append(line)
+                continue
+                
+            # Apply line-specific processing
+            processed_line = self.process_line(line, i+1)
+            processed_lines.append(processed_line)
+        
+        # 6. Ensure proper spacing between sections
+        final_lines = []
+        for i, line in enumerate(processed_lines):
+            if i > 0 and line and processed_lines[i-1] and \
+               not any(processed_lines[i-1].strip().startswith(p) for p in STRUCTURAL_PREFIXES) and \
+               not any(line.startswith(p) for p in STRUCTURAL_PREFIXES):
+                final_lines.append("")
+            final_lines.append(line)
+        
+        return "\n".join(final_lines)
 
     # ------------------------------------------------------------------
+    def is_structural_line(self, line: str) -> bool:
+        """Check if a line is a structural Markdown element."""
+        stripped = line.strip()
+        if not stripped:
+            return True
+            
+        return any(
+            pattern.search(stripped)
+            for pattern in [
+                self.patterns['list_item'],
+                self.patterns['code_fence'],
+                self.patterns['header'],
+                self.patterns['blockquote']
+            ]
+        ) or stripped.startswith(STRUCTURAL_PREFIXES)
+    
+    def merge_wrapped_lines(self, text: str) -> str:
+        """Merge lines that are part of the same logical paragraph."""
+        if not self.config.get('fix_ghost_blanks', True):
+            return text
+            
+        lines = text.split("\n")
+        merged_lines = []
+        buffer = []
+        in_code_block = False
+        in_html_block = False
+        html_tag_stack = []
+        line_number = 1
+
+        for line in lines:
+            stripped = line.strip()
+            original_indent = line[:len(line) - len(line.lstrip())] if line else ""
+
+            # Handle code blocks
+            if self.patterns['code_fence'].match(line):
+                in_code_block = not in_code_block
+                if buffer:
+                    merged_lines.append(" ".join(buffer).strip())
+                    buffer = []
+                merged_lines.append(line)
+                continue
+
+            # Skip processing inside code blocks
+            if in_code_block:
+                merged_lines.append(line)
+                continue
+
+            # Handle HTML blocks
+            if '<' in line and '>' in line and not in_html_block:
+                in_html_block = True
+                html_tag_stack = []
+                
+            if in_html_block:
+                # Track HTML tags to detect block boundaries
+                for match in self.patterns['html_tag'].finditer(line):
+                    tag = match.group(0)
+                    if tag.startswith('</'):
+                        if html_tag_stack and html_tag_stack[-1] == tag[2:-1]:
+                            html_tag_stack.pop()
+                    elif tag.endswith('/>'):
+                        continue  # Self-closing tag
+                    else:
+                        # Extract tag name (handling attributes)
+                        tag_name = tag[1:].split(' ')[0].rstrip('>')
+                        if tag_name not in ['br', 'hr', 'img', 'meta', 'link']:
+                            html_tag_stack.append(tag_name)
+                
+                if not html_tag_stack:
+                    in_html_block = False
+                
+                if buffer:
+                    merged_lines.append(" ".join(buffer).strip())
+                    buffer = []
+                merged_lines.append(line)
+                continue
+
+            # Handle structural lines
+            if self.is_structural_line(line):
+                if buffer:
+                    merged_lines.append(" ".join(buffer).strip())
+                    buffer = []
+                merged_lines.append(line)
+                continue
+
+            # Handle regular text lines
+            if not stripped:
+                if buffer:
+                    merged_lines.append(" ".join(buffer).strip())
+                    buffer = []
+                merged_lines.append("")
+            else:
+                buffer.append(stripped)
+            
+            line_number += 1
+
+        # Add any remaining buffered content
+        if buffer:
+            merged_lines.append(" ".join(buffer).strip())
+
+        # Join with proper spacing
+        result = []
+        for i, line in enumerate(merged_lines):
+            if i > 0 and line and result and result[-1] and not any(
+                result[-1].strip().startswith(prefix) 
+                for prefix in STRUCTURAL_PREFIXES
+            ) and not line.startswith(STRUCTURAL_PREFIXES):
+                result.append("")
+            result.append(line)
+        
+        return "\n".join(result)
+    
+    def split_long_paragraphs(self, text: str) -> str:
+        """Split paragraphs longer than max_length at sentence boundaries."""
+        if not self.config.get('normalize_paragraphs', True):
+            return text
+            
+        max_length = self.config.get('max_paragraph_length', 800)
+        lines = text.split("\n")
+        result = []
+        current_para = []
+        
+        for line in lines:
+            stripped = line.strip()
+            
+            # Skip processing for structural lines
+            if self.is_structural_line(line):
+                # If we have a paragraph in progress, process it first
+                if current_para:
+                    result.extend(self._process_paragraph(" ".join(current_para)))
+                    current_para = []
+                result.append(line)
+                continue
+                
+            # Skip empty lines
+            if not stripped:
+                if current_para:
+                    result.extend(self._process_paragraph(" ".join(current_para)))
+                    result.append("")
+                    current_para = []
+                else:
+                    result.append("")
+                continue
+                
+            # Add to current paragraph
+            current_para.append(stripped)
+        
+        # Process any remaining paragraph
+        if current_para:
+            result.extend(self._process_paragraph(" ".join(current_para)))
+        
+        return "\n".join(result)
+    
+    def _process_paragraph(self, text: str) -> List[str]:
+        """Process a single paragraph, splitting if necessary."""
+        max_length = self.config.get('max_paragraph_length', 800)
+        
+        # Skip if under length limit
+        if len(text) <= max_length:
+            return [text]
+            
+        # Try to split at sentence boundaries
+        sentences = self.patterns['sentence_breaks'].split(text)
+        if len(sentences) > 1:
+            result = []
+            current = ""
+            
+            for i in range(0, len(sentences), 2):
+                sentence = sentences[i]
+                if i + 1 < len(sentences):
+                    sentence += sentences[i+1]
+                    
+                if len(current) + len(sentence) > max_length and current:
+                    result.append(current.strip())
+                    current = sentence
+                else:
+                    if current:
+                        current += " " + sentence
+                    else:
+                        current = sentence
+            
+            if current:
+                result.append(current.strip())
+                
+            return result if len(result) > 1 else [text]
+        
+        # If no good sentence breaks, split at spaces
+        words = text.split()
+        result = []
+        current = []
+        current_len = 0
+        
+        for word in words:
+            if current_len + len(word) + len(current) > max_length and current:
+                result.append(" ".join(current))
+                current = [word]
+                current_len = len(word)
+            else:
+                current.append(word)
+                current_len += len(word)
+        
+        if current:
+            result.append(" ".join(current))
+            
+        return result if len(result) > 1 else [text]
+    
     def _apply_keyword_breaks(self, line: str) -> str:
         updated = line
         for pattern, replacement in KEYWORD_BREAK_RULES:
             updated = pattern.sub(replacement, updated)
         return updated
 
-    # ------------------------------------------------------------------
     def _apply_uppercase_section_breaks(self, line: str) -> str:
         def repl(match: re.Match[str]) -> str:
             punctuation = match.group(1)
@@ -333,7 +646,6 @@ class MarkdownFormattingFixer:
 
         return UPPERCASE_SECTION_PATTERN.sub(repl, line)
 
-    # ------------------------------------------------------------------
     def _normalize_special_labels(self, line: str) -> str:
         if "\n" in line:
             parts = line.split("\n")
@@ -374,7 +686,6 @@ class MarkdownFormattingFixer:
 
         return line
 
-    # ------------------------------------------------------------------
     def _strip_extraneous_underscores(self, line: str) -> str:
         """Remove stray underscores while preserving intentional emphasis."""
         if "_" not in line:
@@ -391,7 +702,6 @@ class MarkdownFormattingFixer:
 
         return updated
 
-    # ------------------------------------------------------------------
     def _restore_paragraph_breaks(self, line: str) -> str:
         """Insert paragraph breaks when OCR merges sentences into one line."""
         if len(line) < 200:
@@ -415,54 +725,218 @@ class MarkdownFormattingFixer:
 
 # --- Script entry point --------------------------------------------------
 
-def run_formatter(input_path: Path, output_path: Optional[Path]) -> None:
-    fixer = MarkdownFormattingFixer()
-
-    text = input_path.read_text(encoding="utf-8")
-    fixed_text = fixer.fix_content(text)
-
-    destination = output_path or input_path
-    destination.write_text(fixed_text, encoding="utf-8")
-
-    print(f"Processed {input_path} -> {destination}")
-    if fixer.changes:
-        print("First 10 changes:")
-        for record in fixer.changes[:10]:
-            before = record.original.strip()
-            after = record.new.strip()
-            print(f"  Line {record.line_number}: '{before}' -> '{after}'")
-        if len(fixer.changes) > 10:
-            remaining = len(fixer.changes) - 10
-            print(f"  ... {remaining} additional changes")
-    else:
-        print("No formatting changes were required.")
+def process_file(input_path: Path, output_path: Optional[Path], config: Dict[str, Any]) -> bool:
+    """Process a single file with the given configuration."""
+    try:
+        content = input_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as e:
+        logger.error(f"Error reading {input_path}: {e}")
+        return False
+    
+    if config.get('verbose', 0) > 0:
+        logger.info(f"Processing: {input_path}")
+    
+    # Create fixer with config
+    fixer = MarkdownFormattingFixer(config)
+    
+    try:
+        fixed_content = fixer.fix_content(content)
+    except Exception as e:
+        logger.error(f"Error processing {input_path}: {e}")
+        if config.get('verbose', 0) > 1:
+            import traceback
+            traceback.print_exc()
+        return False
+    
+    # Handle output
+    output_path = output_path or input_path
+    
+    # Create backup if requested
+    if config.get('in_place') and config.get('backup') and output_path.exists():
+        backup_path = output_path.with_suffix(f"{output_path.suffix}.bak")
+        output_path.replace(backup_path)
+        if config.get('verbose', 0) > 0:
+            logger.info(f"Created backup: {backup_path}")
+    
+    # Write output
+    try:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(fixed_content, encoding="utf-8")
+        
+        if not config.get('quiet'):
+            if config.get('in_place'):
+                logger.info(f"Updated: {output_path}")
+            else:
+                logger.info(f"Wrote: {output_path}")
+                
+        # Report changes if verbose
+        if config.get('verbose', 0) > 1 and fixer.changes:
+            logger.info(f"Made {len(fixer.changes)} changes:")
+            for change in fixer.changes[:5]:  # Show first 5 changes
+                logger.info(f"  {change}")
+            if len(fixer.changes) > 5:
+                logger.info(f"  ... and {len(fixer.changes) - 5} more changes")
+                
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error writing {output_path}: {e}")
+        return False
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Fix merged words and chapter headers in markdown files.")
-    parser.add_argument("input", type=Path, help="Input markdown file")
-    parser.add_argument(
-        "-o",
-        "--output",
-        type=Path,
-        help="Optional output path (if omitted, the input file is modified in place)",
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Fix common formatting issues in Markdown files.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
+    
+    # Input/output options
+    parser.add_argument(
+        "inputs",
+        nargs="+",
+        help="Input Markdown file(s) or directory to process"
+    )
+    parser.add_argument(
+        "-o", "--output",
+        help="Output file or directory (default: input with _fixed suffix)"
+    )
+    parser.add_argument(
+        "-i", "--in-place",
+        action="store_true",
+        help="Modify files in place (make backups with --backup)"
+    )
+    parser.add_argument(
+        "-b", "--backup",
+        action="store_true",
+        help="Create backup files when using --in-place"
+    )
+    
+    # Processing options
+    parser.add_argument(
+        "--max-paragraph-length",
+        type=int,
+        default=800,
+        help="Maximum paragraph length before splitting"
+    )
+    parser.add_argument(
+        "--no-normalize-paragraphs",
+        action="store_false",
+        dest="normalize_paragraphs",
+        help="Disable paragraph normalization"
+    )
+    parser.add_argument(
+        "--no-fix-ghost-blanks",
+        action="store_false",
+        dest="fix_ghost_blanks",
+        help="Disable ghost blank line fixing"
+    )
+    
+    # Output options
+    parser.add_argument(
+        "-v", "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (can be used multiple times)"
+    )
+    parser.add_argument(
+        "-q", "--quiet",
+        action="store_true",
+        help="Suppress non-error output"
+    )
+    
     return parser.parse_args(argv)
 
 
-def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
+def expand_file_patterns(patterns: List[str]) -> List[Path]:
+    """Expand file patterns to actual file paths."""
+    result = []
+    for pattern in patterns:
+        path = Path(pattern)
+        
+        # Handle direct file paths
+        if path.exists() and path.is_file():
+            result.append(path.resolve())
+            continue
+            
+        # Handle directory patterns
+        if '*' in pattern or '?' in pattern or '[' in pattern:
+            import glob
+            for match in glob.glob(pattern, recursive=True):
+                match_path = Path(match).resolve()
+                if match_path.is_file():
+                    result.append(match_path)
+        
+        # Try to handle non-existent files (might be created later)
+        if not result and not path.exists():
+            result.append(path.resolve())
+    
+    return result
 
-    if not args.input.exists():
-        print(f"Error: input file not found: {args.input}", file=sys.stderr)
+def main() -> int:
+    """Main entry point."""
+    args = parse_args()
+    
+    # Configure logging
+    log_level = logging.WARNING
+    if args.verbose > 1:
+        log_level = logging.DEBUG
+    elif args.verbose > 0:
+        log_level = logging.INFO
+    elif args.quiet:
+        log_level = logging.ERROR
+        
+    logging.basicConfig(level=log_level, format='%(levelname)s: %(message)s')
+    
+    # Prepare configuration
+    config = {
+        'max_paragraph_length': args.max_paragraph_length,
+        'normalize_paragraphs': args.normalize_paragraphs,
+        'fix_ghost_blanks': args.fix_ghost_blanks,
+        'in_place': args.in_place,
+        'backup': args.backup,
+        'verbose': args.verbose
+    }
+    
+    # Process files
+    success_count = 0
+    input_paths = expand_file_patterns(args.inputs)
+    
+    if not input_paths:
+        logger.error("No valid input files found")
         return 1
-
-    output_path = args.output
-    if output_path is not None:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    run_formatter(args.input, output_path)
-    return 0
+    
+    for input_path in input_paths:
+        if not input_path.exists():
+            logger.warning(f"File not found: {input_path}")
+            continue
+            
+        if input_path.is_dir():
+            # Process all markdown files in directory
+            for md_file in input_path.rglob("*.md"):
+                output_path = None
+                if args.output and Path(args.output).is_dir():
+                    output_path = Path(args.output) / md_file.name
+                success = process_file(md_file, output_path, config)
+                if success:
+                    success_count += 1
+        else:
+            # Process single file
+            output_path = None
+            if args.output:
+                output_path = Path(args.output)
+                if output_path.is_dir():
+                    output_path = output_path / input_path.name
+            success = process_file(input_path, output_path, config)
+            if success:
+                success_count += 1
+    
+    # Report results
+    if not args.quiet:
+        total = len(input_paths)
+        logger.info(f"Processed {success_count} of {total} files successfully")
+    
+    return 0 if success_count > 0 else 1
 
 
 if __name__ == "__main__":
