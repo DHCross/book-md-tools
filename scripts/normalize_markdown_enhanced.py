@@ -44,6 +44,21 @@ PATTERNS = {
     'table': re.compile(r'\|.*\|\s*\n\|[-|\s]*\|\s*(?:\n\|.*\|\s*)*', re.MULTILINE)
 }
 
+
+def fix_broken_chapter_titles(text: str) -> str:
+    """Merge multi-line chapter titles back into a single line."""
+
+    def _merge(match: re.Match[str]) -> str:
+        return f"**CHAPTER {match.group(1).strip()}**"
+
+    return re.sub(
+        r"\*\*CHAPTER\s*\n\s*([IVXLC0-9]+[:\s]+[A-Z][A-Z\s]+)\*\*",
+        _merge,
+        text,
+        flags=re.MULTILINE,
+    )
+
+
 def is_structural_line(line: str) -> bool:
     """Check if a line is a structural element that should be preserved as-is."""
     stripped = line.lstrip()
@@ -197,7 +212,10 @@ def normalize_markdown(text: str, max_paragraph_length: int = 800) -> str:
     
     # Restore protected blocks
     result = restore_protected_blocks(protected_text, protected_blocks)
-    
+
+    # Merge any multi-line chapter titles that slipped through
+    result = fix_broken_chapter_titles(result)
+
     # Final cleanup of any double newlines that might have been introduced
     result = '\n'.join(line.rstrip() for line in result.split('\n'))
     
