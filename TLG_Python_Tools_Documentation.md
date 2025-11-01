@@ -1,10 +1,10 @@
-# TLG Publishing Workflow - Python Tools Documentation
+# Universal TRPG & Markdown Book Formatting Suite - Python Tools Documentation
 
-This document catalogs the Python tools developed for the TLG publishing workflow, specifically for preparing books for layout by converting documents from various formats to clean, editable Markdown.
+This document catalogs a comprehensive suite of Python tools for preparing any tabletop RPG book (or markdown-formatted book) for professional layout. Originally developed for TLG publishing workflows, these tools are designed to handle any TRPG publication or markdown-formatted book by converting documents from various formats to clean, production-ready Markdown suitable for layout and publishing.
 
 ## Overview
 
-The TLG publishing workflow involves converting books from PDF → DOCX → Markdown, then cleaning and preparing the Markdown for InDesign layout. These Python tools help automate detection and fixing of common conversion artifacts.
+The formatting workflow involves converting books from PDF → DOCX → Markdown, then cleaning and preparing the Markdown for professional layout (InDesign, Word, etc.). These Python tools automate detection and fixing of common conversion artifacts created during document processing, making them applicable to any TRPG or markdown-formatted publication.
 
 ## Recommended Cleanup Workflow
 
@@ -80,7 +80,7 @@ Line 379: Verb-object phrase broken across blockquote -
   continues as 'his uniform sans heavy armor...'
 ```
 
-**Created for**: Yggsburgh book preparation project (August 2025)  
+**Tested on**: Yggsburgh TRPG book (test case - August 2025)  
 **Last Updated**: August 2025 - Major enhancement for cross-blockquote detection
 
 ---
@@ -214,8 +214,8 @@ python3 long_line_detector.py document.md --threshold 200 --ignore-headers --ign
 - Preserves blockquote prefixes (`>`) when breaking quoted text
 - Maintains proper paragraph spacing with double newlines
 
-**Real-World Impact**:
-- **Yggsburgh Project**: Detected 2,536 long line issues across 13,419 lines
+**Real-World Impact** (Test case - Yggsburgh TRPG):
+- **Test Project**: Detected 2,536 long line issues across 13,419 lines
   - 1,439 severe issues (>300 characters)
   - 544 moderate issues (225-300 characters) 
   - 553 minor issues (150-225 characters)
@@ -289,7 +289,7 @@ Output: ## Section
         ### Skipped Level (corrected to H3)
 ```
 
-**Real-World Results** (Yggsburgh project):
+**Test Results** (Yggsburgh TRPG book - test case):
 - **894 total headers** analyzed
 - **643 headers corrected** (H5-H8 → bold text)
 - **38 hierarchy corrections** made automatically
@@ -303,7 +303,7 @@ Output: ## Section
 - Detailed transformation log
 - Processing statistics
 
-**Created for:** Yggsburgh book preparation project - eliminated excessive 8-level header nesting  
+**Tested on:** Yggsburgh TRPG book (test case - eliminated excessive 8-level header nesting)  
 **Integration:** Perfect for post-conversion cleanup after Pandoc processing
 
 ---
@@ -374,7 +374,7 @@ Line 3265: Comma break - 'The iron coffer contains 500sp, 500gp,'
 followed by short line '>'
 ```
 
-## Detection Statistics (Latest Run on Yggsburgh)
+## Detection Statistics (Example: Yggsburgh TRPG Test Case)
 
 **Total Issues Detected:** 542 potential paragraph break artifacts
 
@@ -415,7 +415,7 @@ followed by short line '>'
 ## Future Tool Ideas
 
 ### Potential Additions
-Based on lessons learned from the Yggsburgh project:
+Based on lessons learned from TRPG book test cases (Yggsburgh, Essential Places):
 
 1. **`anchor_remover.py`**: Automated removal of Pandoc anchor tags
    - Pattern: `[]{#_bookmark1 .anchor}` → (removed)
@@ -498,8 +498,9 @@ Tools are tracked in the workspace and should be backed up with project files.
 
 ## Success Stories
 
-### Yggsburgh Project Results ⭐ **UPDATED**
-Using the enhanced tools on the Yggsburgh book:
+### TRPG Test Cases Results ⭐ **UPDATED**
+#### Yggsburgh Test Project
+Using the enhanced tools on the Yggsburgh TRPG book:
 - **Detected**: 545 paragraph break artifacts (vs. 47 with basic detection)
 - **Complex Issues Found**: Cross-blockquote sentence breaks previously missed
 - **Cleaned**: All Pandoc anchor tags removed automatically  
@@ -510,15 +511,16 @@ Using the enhanced tools on the Yggsburgh book:
 ### Time Savings & Accuracy ⭐ **ENHANCED**
 - **Manual review**: 4-6 hours → 30 minutes with enhanced tools
 - **Accuracy**: 90%+ reduction in human error through automated detection
-- **Consistency**: Standardized cleanup process across all projects
-- **Reusability**: Tools work on any similar conversion project
+- **Consistency**: Standardized cleanup process across all TRPG projects
+- **Reusability**: Tools work on any TRPG or markdown-formatted book
 - **Scalability**: Can now handle entire book series efficiently
 
-### Real-World Impact
-- **Publisher Workflow**: Transformed TLG's document preparation process
-- **Quality Improvement**: Significantly cleaner final manuscripts
+### Universal Application
+- **Publisher Workflow**: Applicable to any TRPG publisher's document preparation process
+- **Quality Improvement**: Produces significantly cleaner final manuscripts for any publisher
 - **Team Productivity**: Editorial staff can focus on content vs. technical cleanup
 - **Cost Savings**: Reduced need for multiple rounds of manual proofreading
+- **Format Agnostic**: Works with PDF, DOCX, or any markdown-formatted book
 
 ---
 

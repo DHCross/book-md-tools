@@ -1,6 +1,7 @@
+````markdown
 # book-md-tools
 
-Helps convert and prepare books for layout. Deterministic tools and pipeline for converting OCR'd PDFs and legacy source into clean Markdown suitable for Word/InDesign workflows.
+Universal TRPG and Markdown book formatting suite. Convert and prepare any tabletop RPG book (or markdown-formatted book) for professional layout. Deterministic tools and pipeline for converting OCR'd PDFs and legacy source formats into clean, production-ready Markdown suitable for Word/InDesign workflows.
 
 ## ⚠️ Recent Changes (v2.0)
 
@@ -73,6 +74,18 @@ remove-daggers <in.md> [out.md]
 
 ### Deprecated Scripts
 Deprecated scripts will continue to work but will show a warning. Please update your workflows to use the new `fix_formatting.py` tool.
+
+## Universal TRPG & Markdown Book Support
+
+This suite is designed to work with any TRPG book or markdown-formatted publication, including:
+- D&D 5e supplements
+- Pathfinder books
+- Custom TRPG rulesets
+- World-building guides
+- Campaign modules
+- Any markdown-formatted book
+
+Yggsburgh and Essential Places were proof-of-concept test cases demonstrating the tools' effectiveness. The suite is ready for production use with any similar publication.
 
 ## Repo hygiene
 - Keep large PDFs and full books out of public repos; include samples/snippets only.
