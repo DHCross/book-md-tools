@@ -72,25 +72,19 @@ This book draws on the city-state of Yggsburgh—Gary Gygax’s reimagining of C
 
 For full detail on the city and its region, see *Castle Zagyg: Galleries of the Arch Mage* by Troll Lord Games, the first volume of a two-part project reviving Gygax’s legendary mega-dungeon.
 
-# **CHAPTER
-
-1: COMMUNITIES**
+# **CHAPTER 1: COMMUNITIES**
 
 Communities of all sorts frequently serve as the traditional starting and ending points for adventures, and innumerable parties of characters have met and disbanded in the taverns and marketplaces of isolated villages, fortified frontier towns, and teeming metropolises. Such places can also serve as venues for quests of all sorts, especially those involving non-hack-and-slay elements like investigation, diplomacy, and trade. Even campaigns encompassing long overland travels or voyages at sea will likely involve occasional stops at settlements or ports to obtain supplies and services beyond what characters in a party can carry or provide for themselves. Indeed, one of the things that distinguishes a campaign from an unrelated series of dungeon crawls can be the downtime between adventures. Many parties will return again and again to a well-established base of operations, a place where the adventurers can heal up, resupply, and train. Providing a detailed community in which to perform these tasks establishes a sense of continuity, provides a stronger rationale for player characters’ progression in competence and ability, and helps tie together adventures into a cohesive whole. Unfortunately, game-world versions of such places are often not as unique or interesting as they should be. The intent of this chapter is to provide Game Masters with information, resources, and suggestions to help make adventures and encounters in communities of all sorts more plausible, memorable, and exciting for their players. To a lesser or greater extent, most traditional communities in the game world are made up of people with many similar interests, goals, backgrounds, and concerns (there can, of course, be marked exceptions to this rule, such as in communities in the throes of division and crisis, or those in which there has been historic isolation and oppression of a weaker group). The smaller a community is, the more this will be true, the greater the chance that the population will also be racially homogenous, and the narrower the likely gap between the poorest and richest members of the community. Because there is a strong link between wealth and political power, smaller communities will also tend to be more egalitarian and democratic in nature. Everyone will likely know each other, at least by name or appearance, privacy will be limited, and anonymity will likely be nonexistent. Members of small communities are also likely to benefit or suffer fairly equally from circumstances affecting the group as a whole. The larger a community is, the greater the chance that the population will be racially diverse and that there will be a great economic void between the richest and poorest members of society. Power is also likely to be very unequally distributed, typically ranging from a handful of families or individuals with great political influence to a politically disenfranchised underclass, with the majority of the population falling somewhere in between. Most people will tend to mind their own business as much as possible and value their privacy, and there will be many individuals about whom the population as a whole knows little or nothing. Benefits or detriments to the community will not always be distributed equally. A new marketplace, for example, is likely to benefit the merchant class more than other members of society, and a famine or other disaster is almost always likely to strike the least affluent hardest. A small nation-state might consist of little more than a single major community, probably somewhere in size from a large town to a metropolis, including perhaps a number of surrounding villages or smaller towns, most likely dedicated to agriculture and providing food for the capital. Indeed, such relatively small countries often evolved from single cities historically and, despite their size, could often become quite powerful and influential. Such small states will likely be the norm in ancient, medieval, or fantasy game milieus. A large nation might consist of dozens of cities, hundreds of towns, and thousands of villages and smaller communities. Such larger countries will likely be divided into a number of major regions, typically with up to two or three cities and a number of smaller communities associated with each. While such states will almost always have a unified foreign policy and some form of central government that oversees national-level affairs, they may also be content to leave the administration of regional or local affairs to individual communities. Rome, for example, had a cohesive foreign and national policy that unified its empire, but its central government did not generally involve itself in local politics or administrative matters. In certain looser forms of government — such as confederations, leagues, and weak feudal states — the overall ruler may hold power only by the cooperation of a number of lords or electors, or the central government body might only convene yearly or at longer intervals or in times of crisis. (For more information about nations and the forms of government prevalent in them, see Gary Gygax’s *Nation Builder*). Indeed, even dependent communities might operate with a high degree of autonomy, especially if they have the practical clout or distance from their suzerain to insist upon it, or if such semi-independence is to the advantage of the authorities to which they answer. Most European cities during the latter part of the Middle Ages, for example, fell within the territories of various dukes, counts, or kings, but had charters from their lords granting them certain rights and privileges in exchange for various fees and responsibilities. Communities value their independence, and their charters are sometimes won through hard negotiation and even bloodshed. Because trade and industrial communities have a capability of generating liquid assets in a way with which country estates cannot compete, however, many ambitious lords willingly grant charters in exchange for the cash flow they can provide. Charters granted in this way sometimes reduce the city government to little more than a fundraising organ for the lords — and one that could be dismissed and replaced if it is not successful.
 
 Regardless of whether a community has a charter to operate autonomously or is simply allowed to administer its own local affairs, community government might be markedly different from that of the greater nation itself (e.g., preserving traditions from the community’s history, experimenting with model forms of government proposed by various philosophers, adhering to variations suited to particular circumstances). Even under the autocratic Roman Empire, for example, municipal government was distinctly republican in nature. Similarly, Medieval cities that received their charters from feudal lords were generally organized as communes, a plutocratic form of government in which merchants, craftsman, and businesspeople held political power, often in relation to their experience or rank within various guilds.
 
-# **TYPES
-
-OF COMMUNITIES**
+# **TYPES OF COMMUNITIES**
 
 Most communities can be broadly classified as villages, towns, or cities. There are also various sorts of special-purpose communities that can play a role in the game, such as communes, prisons, plantations, and military bases, and these are all described either in this chapter or elsewhere in this book. The size of a particular community will play a big role in determining what sorts of essential places are present within it. In general, the larger the community, the more sorts of craftsmen, goods, and services of various sorts it can support. Size of most communities is also closely linked to their proximity to natural resources or trade routes, so the GM should have some plausible reason for why a particular community has attained the size that it has. Communities with little to offer new residents will remain at their current size, or possibly even shrink if the pickings are scarce — perhaps leaving amenities intended for a much larger population to fall into disuse or to be adapted for different purposes. On the other hand, events like establishment of a new trade route or discovery of a previously unexploited resource might cause a period of expansion. Being based in such a “boom town” can make for many exciting adventure hooks, as well as providing adventurers with a familiar base of operations that could plausibly grow to meet some of the more complex needs of higher-level characters.
 
 ## **Village and Smaller Communities**
 
-Several sorts of communities of up to village size can be found in the campaign world, especially in the largely-unorganized borderlands, marches, and wildernesses that constitute the frontiers of many nations — places rich in opportunities for adventure. Even in a fantasy milieu, provided that it functions much like the real world, the vast majority of communities overall will likely be farming villages. **Thorps** are the smallest sort of communities, typically with a mere 20 to 80 inhabitants. Any particular thorp is 50% likely to be non-permanent in nature and dedicated to seasonal activities — like hunting, quarrying, logging, or herb gathering — or to public works projects. If any given thorp is a permanent settlement, it is 30% likely that all the inhabitants will be part of the same family or clan. If not engaged in some such specific activity, inhabitants of thorps are more likely than those of larger communities to earn their livings as hunter-gatherers, beggars, bandits, scavengers, or the like, or even to be raiders, scouts, migrants, or refugees from a neighboring nation. A thorp might have one or several family heads, although such de facto community leaders are unlikely to have any formal titles and typically hold an ill-defined equality of status. It is only 40% likely that any particular permanent thorp will have a name. Structures are usually confined to huts, shanties, tents, and lean-tos. **Hamlets** are larger than thorps but still smaller than true villages, typically with as many as 400 residents. It is 30% likely that such a community is only temporary in nature, being occupied either seasonally or until a specific task is finished (e.g., the completion of a canal). If permanent, a hamlet will generally have no firm economic base or organized governance, and its inhabitants will typically earn livings as subsistence farmers, hunter-gatherers, or through various cottage industries. If non- permanent in nature, the residents will likely be laborers involved in a public works project, such as building a castle, temple, or road; people engaged in exploiting some rich resource, such as seasonal harvesting of wild plants, hunting of saleable fur or meat animals, prospecting for precious metals or gems, or scavenging from ruins; or even bandits or equivalent lawless groups, including irregular military forces like rebels or unemployed mercenaries. The leading individuals in a hamlet may hold some sort of outside authority — such as bosses of a work group, priests, or rebel officers — although typically no particular post of leadership exists for the hamlet itself, which is more often recognized as a locality than a community. The most substantial structures in such a community are likely to be longhouses or huts, perhaps clustered around the ruin of an older building. **Villages** are communities of up to 900 inhabitants that have some sort of government and a specific economic base — which, in most cases, is agriculture, making the majority of people in such places farmers. A typical village might have up to a half-dozen industries, the first two of which will almost always be a blacksmith’s workshop and a mill, the two sorts of industry needed to support day-to-day life in an agricultural community (i.e., a blacksmith to create and repair farm implements and a miller to grind grain for use in bread). The third sort of industry most likely to be present in a village will generally be a small brewery. Villages do not generally have the resources to construct defenseworks, other than perhaps palisades if some suitable construction material (such as sturdy thorn bushes) and constant threat exists. Many do, however, have some place of refuge — such as a watchtower — to which people can retreat if their community is attacked by raiders. Historically, fortified churches served this purpose from the Dark Ages through the Renaissance, as these structures were generally built with the greatest sense of permanency in mind and, as a result, tended to be the sturdiest in any particular area. If a village is located in an area where physical threats like monsters or humanoid marauders are present, the able-bodied members of the community will also generally be organized into some sort of militia unit. **Communes** are religious communities, and might be similar in appearance and many functions to villages, often with the addition of one or more ecclesiastic structures. Most of the members of such a community will be of the same ethos and adhere to the same set of religious beliefs. Reasons for the commune being established as a separate community could include worship of a deity with an agricultural or wilderness orientation; location at some holy site associated with the deity; or, if the members are part of a sect or cult, religious beliefs that differ enough from the norm in the nation in question that its worshippers prefer some measure of isolation. A typical example of such a community would consist of the rural temple of a high priest, housing for his clergy and other followers, and a cluster of huts, barns, granaries, and storage buildings occupied and run by his peasants (or, alternately homes for craftsmen and a collection of workshops if the commune has a manufacturing rather than an agricultural basis). It is 50% likely, however, that any particular commune consists of laity led by a non-ordained prophet and that its members are part of a religious movement deemed eccentric, heretical, or forbidden by the society at large. Communes can range in size considerably. The smallest would probably consist of a leader and his extended family or immediate followers, numbering up to about 20 folk, while the largest might have 500 or more members. **Other sorts of small communities** might also exist in the game world. Non- permanent communities consisting of tents, wagons, or boats might be used by nomadic bands of various sorts and resemble thorps or hamlets in their numbers of inhabitants and organization. Boom towns might spring up in formerly isolated or unsettled areas where a particularly rich resource has been discovered or tract of desirable land has been opened for acquisition. A rush of fortune-seekers may flood in, erecting temporary structures on land that they may or may not own legally. Such places might have organization and facilities comparable to a thorp, hamlet, or even a village, but have a population in the thousands. Such unstable conditions very often breed disease, hardship, exploitation, crime, and violence.
-
-## **Towns**
+Several sorts of communities of up to village size can be found in the campaign world, especially in the largely-unorganized borderlands, marches, and wildernesses that constitute the frontiers of many nations — places rich in opportunities for adventure. Even in a fantasy milieu, provided that it functions much like the real world, the vast majority of communities overall will likely be farming villages. **Thorps** are the smallest sort of communities, typically with a mere 20 to 80 inhabitants. Any particular thorp is 50% likely to be non-permanent in nature and dedicated to seasonal activities — like hunting, quarrying, logging, or herb gathering — or to public works projects. If any given thorp is a permanent settlement, it is 30% likely that all the inhabitants will be part of the same family or clan. If not engaged in some such specific activity, inhabitants of thorps are more likely than those of larger communities to earn their livings as hunter-gatherers, beggars, bandits, scavengers, or the like, or even to be raiders, scouts, migrants, or refugees from a neighboring nation. A thorp might have one or several family heads, although such de facto community leaders are unlikely to have any formal titles and typically hold an ill-defined equality of status. It is only 40% likely that any particular permanent thorp will have a name. Structures are usually confined to huts, shanties, tents, and lean-tos. **Hamlets** are larger than thorps but still smaller than true villages, typically with as many as 400 residents. It is 30% likely that such a community is only temporary in nature, being occupied either seasonally or until a specific task is finished (e.g., the completion of a canal). If permanent, a hamlet will generally have no firm economic base or organized governance, and its inhabitants will typically earn livings as subsistence farmers, hunter-gatherers, or through various cottage industries. If non- permanent in nature, the residents will likely be laborers involved in a public works project, such as building a castle, temple, or road; people engaged in exploiting some rich resource, such as seasonal harvesting of wild plants, hunting of saleable fur or meat animals, prospecting for precious metals or gems, or scavenging from ruins; or even bandits or equivalent lawless groups, including irregular military forces like rebels or unemployed mercenaries. The leading individuals in a hamlet may hold some sort of outside authority — such as bosses of a work group, priests, or rebel officers — although typically no particular post of leadership exists for the hamlet itself, which is more often recognized as a locality than a community. The most substantial structures in such a community are likely to be longhouses or huts, perhaps clustered around the ruin of an older building. **Villages** are communities of up to 900 inhabitants that have some sort of government and a specific economic base — which, in most cases, is agriculture, making the majority of people in such places farmers. A typical village might have up to a half-dozen industries, the first two of which will almost always be a blacksmith’s workshop and a mill, the two sorts of industry needed to support day-to-day life in an agricultural community (i.e., a blacksmith to create and repair farm implements and a miller to grind grain for use in bread). The third sort of industry most likely to be present in a village will generally be a small brewery. Villages do not generally have the resources to construct defenseworks, other than perhaps palisades if some suitable construction material (such as sturdy thorn bushes) and constant threat exists. Many do, however, have some place of refuge — such as a watchtower — to which people can retreat if their community is attacked by raiders. Historically, fortified churches served this purpose from the Dark Ages through the Renaissance, as these structures were generally built with the greatest sense of permanency in mind and, as a result, tended to be the sturdiest in any particular area. If a village is located in an area where physical threats like monsters or humanoid marauders are present, the able-bodied members of the community will also generally be organized into some sort of militia unit. **Communes** are religious communities, and might be similar in appearance and many functions to villages, often with the addition of one or more ecclesiastic structures. Most of the members of such a community will be of the same ethos and adhere to the same set of religious beliefs. Reasons for the commune being established as a separate community could include worship of a deity with an agricultural or wilderness orientation; location at some holy site associated with the deity; or, if the members are part of a sect or cult, religious beliefs that differ enough from the norm in the nation in question that its worshippers prefer some measure of isolation. A typical example of such a community would consist of the rural temple of a high priest, housing for his clergy and other followers, and a cluster of huts, barns, granaries, and storage buildings occupied and run by his peasants (or, alternately homes for craftsmen and a collection of workshops if the commune has a manufacturing rather than an agricultural basis). It is 50% likely, however, that any particular commune consists of laity led by a non-ordained prophet and that its members are part of a religious movement deemed eccentric, heretical, or forbidden by the society at large. Communes can range in size considerably. The smallest would probably consist of a leader and his extended family or immediate followers, numbering up to about 20 folk, while the largest might have 500 or more members. **Other sorts of small communities**might also exist in the game world. Non- permanent communities consisting of tents, wagons, or boats might be used by nomadic bands of various sorts and resemble thorps or hamlets in their numbers of inhabitants and organization. Boom towns might spring up in formerly isolated or unsettled areas where a particularly rich resource has been discovered or tract of desirable land has been opened for acquisition. A rush of fortune-seekers may flood in, erecting temporary structures on land that they may or may not own legally. Such places might have organization and facilities comparable to a thorp, hamlet, or even a village, but have a population in the thousands. Such unstable conditions very often breed disease, hardship, exploitation, crime, and violence. ##**Towns**
 
 Towns are permanent communities of up to several thousand people that typically have a variety of different industries and quite often a diversity of races. Small towns are typically home to as many as 2,000 residents, and large towns to as many as 5,000 inhabitants. What generally differentiates a town from a village is the presence of a central market, where people from outlying villages can bring their farm produce or other commodities to sell and trade for the goods and services available in a larger community (unlike villages, towns are also typically not self-sufficient in food). It is 20% likely that a particular town market is noted for the availability or quality of a certain locally produced commodity (e.g., iron ingots, cloth, leather goods, horses). Towns often have several recognized districts or suburbs. They also generally require a more complex and organized system of governance than a village, and are often run by a body like a citizens’ council headed by a mayor. Most towns will have a diversity of industries, including those most fundamental ones required by their inhabitants on a daily basis (e.g., greengrocers, bakeries, butcheries, fish-markets, mills, blacksmith shops, breweries). About 30%, however, will also have particular industries they are noted for above and beyond other towns in the same region, and such communities will be magnets both for those who wish to either acquire the fruits of those commercial endeavors or participate in them. Historic examples include towns noted for ceramic wares or armor. Depending on their layout, resources, and prevailing threats, towns might be entirely walled or may contain a secure area large enough to hold all of the local citizenry — and perhaps even people from outlying communities — for at least short periods of time (e.g., until coastal raiders have dispersed). Such a secure area will often consist of a shell keep or walled precinct at the top of a nearby hill, maintained by the civic government or the town’s feudal ruler.
 
@@ -98,21 +92,13 @@ Towns are permanent communities of up to several thousand people that typically 
 
 Cities are the largest and most diverse sorts of communities and are considerably more complex in almost every way than smaller communities. Such communities are almost always located along major trade routes, on the banks of navigable rivers, or on the shores of deep water bays, and have ample access to resources like food and fresh water for their populations. In a typical ancient, medieval, or fantasy game milieu, small cities have up to 12,000 inhabitants (one modern definition of a city, in fact, is a settlement of at least 10,000 residents), large cities up to 25,000, and metropolises as many as the economics of the game world can support (e.g., Gary Gygax’s City of Greyhawk had a population of about 40,000, while at its peak imperial Rome itself was home to as many as a million). Unlike most smaller communities, cities will often be divided into multiple quarters, wards, districts, or precincts — sometimes separated by walls or even with movement between them controlled or interdicted by fortified gates — each with a different purpose and each similar in size to an independent town. These might include craft, trade, mercantile, academic, professional, service, temple, entertainment, underworld, government, residential, and military quarters, each of which might be further subdivided (e.g., market districts might be divided into separate sections for different types of goods, or residential districts might only allow people of sufficient social standing to live in certain parts of them). Another common pattern is to allot one or more quarters primarily to particular nationalities or races, or to foreigners and visitors generally (both for purposes of providing them with suitable amenities and segregating them from the indigenous population). Various sections of a city might be set off and identified with distinctive boundary stones marked with specific sorts of symbols or sculptures. Respect for such official markers is generally taken very seriously by the community that has expended the time and effort to erect them. Such markers might also have some sort of reputed or actual relevant magical properties. Cities are even more likely than towns to have some sort of industry (45% likely) or commodity exchange (30%) that is especially associated with them. The head of government of a city usually has at least the title of Lord Mayor (though often this personage will instead be a high noble of the realm or the ruler of an independent state, holding such titles as Duke, Prince, Doge, or Sultan) and presides over a council of representatives who each have a considerable constituency in the city and without whose organizational skills the administration of such a vast and complex system could not function. Communities affluent enough to evolve from towns to cities will almost always have the economic resources to create whatever defenseworks they need. Independent cities or those that serve as strategic strongpoints for kingdoms or great nobles will generally be walled, even if they have subsequently fallen on hard times (see Fortifications, below, for more information). Designed to impress as much as to defend, such defenseworks are frequently elaborate and imposing, and sometimes even unique, distinctive, or aesthetically striking. In addition to walls and towers, each gate will likely be defended by a structure equivalent to a keep, and multiple fortifications similar in size to a castle — or even a separate, walled garrison equivalent in size and form to a huge castle — may be incorporated into the defensive line. Another feature common to cities (and to many towns as well) is the presence of public fountains, which are often erected in prominent areas by civic leaders and organizations, both as public works intended to impress and as practical sites for residents or travelers to obtain water. Edifices of this sort are often reputed to have various magical properties, whether innately as a function of the spring water that flows from them or somehow deliberately imbued through the actions of some being.
 
-Example: **Yggsburgh**. Situated along the converging rivers of the verdant midlands, Yggsburgh is both a thriving city and its encompassing county, unified under a single governing authority. Historically renowned as the seat of learning for the legendary sage Immar, it remains a pilgrimage destination for seekers of arcane and divine  knowledge  alike.  Having  survived  the  upheavals  of  the  great  Southern Rebellion, Yggsburgh has since entered a golden age of trade and scholarship.
+Example: **Yggsburgh**. Situated along the converging rivers of the verdant midlands, Yggsburgh is both a thriving city and its encompassing county, unified under a single governing authority. Historically renowned as the seat of learning for the legendary sage Immar, it remains a pilgrimage destination for seekers of arcane and divine  knowledge  alike.  Having  survived  the  upheavals  of  the  great  Southern Rebellion, Yggsburgh has since entered a golden age of trade and scholarship. ##**Special-Purpose Communities**
 
-## **Special-Purpose
-
-Communities**
-
-Various sorts of special-purpose communities — including military bases, plantations, and prisons (described in Chapter 10: Governmental Places) — can play a role in the game and provide an interesting change of venue from more traditional sites of habitation. **Military bases** are fortified communities owned and operated by and for standing armies, typically the armed forces of a state (although in a medieval setting other armed groups such as knightly orders or pirate brotherhoods might support equivalent facilities). Such places generally house one or more units of military personnel, store equipment, and facilitate activities like training, equipment testing, and field operations. Military bases can range from small outposts to military cities containing thousands of people. Most are dedicated to supporting a single military or paramilitary organization, such as an army, navy, marine corps, constabulary, militia, watch, or guard force. Some military bases may belong to nations or states other than those in which they are located, and such facilities are characteristic of imperial powers in particular. Regardless of where they are located, military facilities are often extra-legal jurisdictions not subject to the prevailing civil laws of the land. Terms applied to particular sorts of military bases generally indicate their sizes or functions. Such terms might include armory, arsenal, barracks, camp, depot, dock, facility, field, fort, fortress, garrison, installation, magazine, post, proving ground, reservation, station, or yard. A strategic defensive line might contain numerous interconnected bases, or effectively constitute a single large military base along its entire length (e.g., 70-mile-long Hadrian’s Wall in northern England). Whatever they are called or used for, military bases will generally employ stringent security measures, which might include walls, towers, fences, moats, buffer zones (e.g., marches), free-fire zones, and armed patrols. In campaign settings where magic is prolific, spellcasters might even serve as members of military garrisons and apply their abilities to securing military bases or specific areas within them. Other features of military bases may include facilities like command posts, barracks, armories, arsenals, workshops, supply depots, training areas, dining facilities, and stables. Depending on the purpose of a base or the ethos of its owners, such places might also include chapels, academies, gymnasiums, athletic fields, parks, baths, libraries, hospitals, and amenity vendors (e.g., sutlers). While bases in friendly areas might depend on nearby communities for support, those in frontier areas will likely have adequate stocks of food, water, and other supplies to function indefinitely on their own under hostile conditions or siege. Not all societies will have military bases, and such special-purpose communities are likely to be maintained only by nation states that are fairly large, well organized, and have standing military forces. Independent communities like bandit redoubts and some monasteries, however, might essentially conform to the characteristics of military bases. **Plantations** are large, even huge, farms worked not by individual farmers and their families but by gangs of slaves or hired labor, and were common in many areas in both ancient and Medieval times. Such communities are often largely self-sufficient, having all of the characteristics of a village — including a mill and blacksmith shop — plus quarters for slaves or hired labor, barracks for overseers or troops, and a home for the owner and his family (assuming they reside at the plantation). Moral orientation of the people running a plantation is usually toward order and often evil (i.e., the very nature of the plantation is to exploit the organized labor of many for the material benefit of just a few). Conditions on a plantation are generally comfortable for the owners, adequate for the overseers, and often terrible for the labor force; providing “luxuries” for workers only cuts into profits unnecessarily. Typically, the labor force of a plantation represents from 50% to 75% of its population, and demographics may be split along these lines, with members of one race or ethnic group running the plantation and the members of another working it. This sort of community also includes such things as “company towns,” where the sole local industry (e.g., a mine) and all other resources are under the control of a single person or organization.
-
-# **BUILDINGS**
+Various sorts of special-purpose communities — including military bases, plantations, and prisons (described in Chapter 10: Governmental Places) — can play a role in the game and provide an interesting change of venue from more traditional sites of habitation. **Military bases** are fortified communities owned and operated by and for standing armies, typically the armed forces of a state (although in a medieval setting other armed groups such as knightly orders or pirate brotherhoods might support equivalent facilities). Such places generally house one or more units of military personnel, store equipment, and facilitate activities like training, equipment testing, and field operations. Military bases can range from small outposts to military cities containing thousands of people. Most are dedicated to supporting a single military or paramilitary organization, such as an army, navy, marine corps, constabulary, militia, watch, or guard force. Some military bases may belong to nations or states other than those in which they are located, and such facilities are characteristic of imperial powers in particular. Regardless of where they are located, military facilities are often extra-legal jurisdictions not subject to the prevailing civil laws of the land. Terms applied to particular sorts of military bases generally indicate their sizes or functions. Such terms might include armory, arsenal, barracks, camp, depot, dock, facility, field, fort, fortress, garrison, installation, magazine, post, proving ground, reservation, station, or yard. A strategic defensive line might contain numerous interconnected bases, or effectively constitute a single large military base along its entire length (e.g., 70-mile-long Hadrian’s Wall in northern England). Whatever they are called or used for, military bases will generally employ stringent security measures, which might include walls, towers, fences, moats, buffer zones (e.g., marches), free-fire zones, and armed patrols. In campaign settings where magic is prolific, spellcasters might even serve as members of military garrisons and apply their abilities to securing military bases or specific areas within them. Other features of military bases may include facilities like command posts, barracks, armories, arsenals, workshops, supply depots, training areas, dining facilities, and stables. Depending on the purpose of a base or the ethos of its owners, such places might also include chapels, academies, gymnasiums, athletic fields, parks, baths, libraries, hospitals, and amenity vendors (e.g., sutlers). While bases in friendly areas might depend on nearby communities for support, those in frontier areas will likely have adequate stocks of food, water, and other supplies to function indefinitely on their own under hostile conditions or siege. Not all societies will have military bases, and such special-purpose communities are likely to be maintained only by nation states that are fairly large, well organized, and have standing military forces. Independent communities like bandit redoubts and some monasteries, however, might essentially conform to the characteristics of military bases. **Plantations**are large, even huge, farms worked not by individual farmers and their families but by gangs of slaves or hired labor, and were common in many areas in both ancient and Medieval times. Such communities are often largely self-sufficient, having all of the characteristics of a village — including a mill and blacksmith shop — plus quarters for slaves or hired labor, barracks for overseers or troops, and a home for the owner and his family (assuming they reside at the plantation). Moral orientation of the people running a plantation is usually toward order and often evil (i.e., the very nature of the plantation is to exploit the organized labor of many for the material benefit of just a few). Conditions on a plantation are generally comfortable for the owners, adequate for the overseers, and often terrible for the labor force; providing “luxuries” for workers only cuts into profits unnecessarily. Typically, the labor force of a plantation represents from 50% to 75% of its population, and demographics may be split along these lines, with members of one race or ethnic group running the plantation and the members of another working it. This sort of community also includes such things as “company towns,” where the sole local industry (e.g., a mine) and all other resources are under the control of a single person or organization. #**BUILDINGS**
 
 In a traditional ancient, medieval, Renaissance, or fantasy campaign setting, many of the essential places characters need to visit before, during, and after their adventures will be located in the sorts of structures described here. In rural areas, villages, and other small communities, many businesses and other essential places will be located in one of two types of buildings: longhouses, and sunken huts or roundhouses. Longhouses are generally rectangular and typically made of plaster-covered wood, with a living space at one end, a workshop in the middle, and an area for livestock or storage at the other. Roundhouses are generally square or round, built on top of a three-foot-deep excavated area, tend to be about 10 to 15 feet across, and consist of a single room that is used as a living area, a workshop, or both. In towns, cities, and other urban areas, many of the essential places that adventurers need to visit are located in townhouses that are two to five stories in height, and built side-by-side to form long rows that are separated by secondary or main streets. Typically, the ground level of such a structure is used as a workshop and to conduct any necessary sales or business; a basement or back room, if present, might be used for storage or as additional work space. A first floor usually consists of a large dining area toward the front and a kitchen toward the rear of the house. A second floor is typically devoted to the master’s bed chambers and perhaps rooms for other family members or guests. A third floor is generally used for servant and apprentice living quarters and a fourth floor or attic, if present, is typically used either for storage or extra living space. Materials used for the construction of townhouses and other urban structures might include stone, brick, or plaster-covered timbers (with perhaps the former, heavier materials being used for the first few stories of a building and the latter, lighter materials being used for the upper stories, interior walls, and floors). Roofing for such buildings might consist of thatch, wood boards or shingles, ceramic tiles, slate tiles, or even lead sheeting, any of which might be sealed with pitch or some similar substance. Doors tend to be simple but sturdy wooden portals with adequate locks and bars on their insides, although main entry doors are often larger and more decorative. What materials are used for a particular building will depend on the use for which it was constructed or adapted, the financial resources of its owner, and local availability of various building resources. In some quarters of a city, especially industrial or poorer residential districts, smaller, simpler, one-story buildings — perhaps similar to those described as being typical of rural areas and small communities — might be used variously for workshops, businesses, residences, or storage areas. Likewise, many bigger and more substantial buildings will also be present in urban areas, including large inns and taverns, businesses that require extra space for machinery and equipment (e.g., mills, tanneries, shipyards), and the like. Many such buildings will simply be larger, free-standing versions of the other sorts of buildings described here, up to five-or-so stories in height, and constructed of the same sorts of materials. Others will be voluminous sheds framed in heavy timbers or substantial vaulted or columned halls made of stone. Many of the essential places characters need to visit will be established in one of the sorts of structures described above. Communities in any particular milieu might also include any number of unique, specialized, or purpose-built craft, trade, mercantile, scholarly, professional, service, religious, entertainment, underworld, or government places.
 
-# **PHYSICAL
-
-CHARACTERISTICS OF CITIES**
+# **PHYSICAL CHARACTERISTICS OF CITIES**
 
 In many ways, urban areas are much like dungeons, made up of buildings, alleys, and courtyards rather than walls, doors, rooms, and corridors. Adventures that take place in such areas differ from their dungeon counterparts in a number of major ways, however, including much greater access to resources, restrictions on the use of weapons and spells, and the presence of law-enforcement personnel. **Access to Resources:**
 
@@ -132,9 +118,7 @@ Historically, the gates leading into and out of towns, cities, and military and 
 
 Some city walls are adorned with watch towers set at regular intervals. These towers provide an enhanced view of the surrounding countryside, serve as redoubts against attackers, and sometimes house heavy weapons such as catapults, or alarm devices such as beacons, horns, or gongs. Few cities have enough guards to keep someone constantly stationed at every tower, unless the city is expecting an attack from outside. More common practice, where the wall is guarded diligently, is for roving patrols of guards to pass periodically over all parts of the walls and for ready-response forces to await any alarm in well-spaced guardhouses (q.v.) or barracks (q.v.). Attitudes of the guards and their officers, weather conditions, and events such as festivals taking place within the city can markedly vary the frequency of patrols and likelihood of a guardhouse garrison responding to any ambiguous signs of possible intrusion. Watch towers are typically at least 10 feet higher than the walls they adjoin, jut out at least 10 feet from the face of the wall on one side so that troops in them can fire down on the flanks of enemies attempting to climb the walls, and have a diameter five times the thickness of the walls on average (e.g., a 25-foot-diameter tower adjoining a five-foot-thick wall). Particularly long walls, such as those of a large city or metropolis, fulfill some of the functions of watchtowers by including projecting bastions or right- angled returns in the line of the wall instead, spaced at an easy bowshot or spear-throw from each other. Arrow slits generally line the outer sides of the upper stories of towers, and their tops are crenellated like the surrounding walls. In small towers, simple ladders typically connect the various stories and the roof. In larger towers, stairs generally serve that purpose. Heavy wooden doors, reinforced with iron and outfitted with good locks, usually secure entry to towers from inside the city, unless they are in regular use. As a rule, a designated officer of the guard or watch keeps the keys to a particular tower secured on his person, with duplicate copies being kept in the city’s inner fortress or barracks (q.v.).
 
-## **City
-
-Streets**
+## **City Streets**
 
 The majority of streets in a typical city are narrow and twisting. Most streets average 15 to 20 feet wide, while alleys range from five to 10 feet wide. Cobblestones in good condition allow normal movement, but ones in poor repair and heavily rutted dirt streets should be treated as areas full of light rubble. Some municipalities have no larger thoroughfares, particularly those that gradually grew from small settlements to larger cities. Cities that are planned, or perhaps have suffered major fires, sackings, or periods of abandonment that allowed authorities to construct new roads through formerly inhabited areas, might have a few larger straight streets through town, known as avenues or boulevards. These main roads are often 25 feet wide or more — offering room for wagons to pass each other and perhaps for central rows of trees, statuary, or other embellishments by the local rulers who laid out the street plan — and often have five-foot-wide sidewalks on one or both sides. Because the majority of the city’s residents pass along them, rulers typically choose main roads as the locations for large monuments to the state’s prestige, such as triumphal arches and grand squares — and for reminders of the state’s capacity to punish, such as execution-places and gibbets.
 
@@ -152,17 +136,13 @@ To get into underground sewers and storm drains, it is generally necessary to op
 
 Urban areas may or may not have lighted streets at night, depending on their philosophies, requirements, and means. In any case, municipal lighting will typically be much less widespread or reliable than in the modern world, and citizens venturing out after dark will have to address this in some way (e.g., hiring lantern-bearers). Most cities that provide street lighting will typically line main thoroughfares with lanterns spaced at intervals of about 60 feet — in order to provide continuous illumination — hanging at a height greater than head level from building awnings or posts, and serviced at dusk variously by building owners or a corps of lamplighters (through the requirements of local ordinances in either case). Even in such communities, secondary streets and alleys are not usually lit except directly at the entrances to occupied buildings, and can be darkened even in daylight, due to the shadows of the tall buildings that surround them. A dark alley in daylight is rarely dark enough to afford full concealment, but it might grant a bonus on attempts to hide in the shadows. Some cities will not provide lighting at all (just as most hamlets, villages, and smaller towns will not). For example, cities where most people believe that decent folk ought not to be out at night anyway, those with a majority of residents who can see in the dark, or those that do not have the monetary resources or organization to keep great numbers of lanterns burning throughout the night are unlikely to provide such a luxury. At the other end of the spectrum, communities that can afford or have a pressing need to keep the darkness at bay are likely to keep much of their space well-lit. Indeed, those with access to sufficient arcane resources — especially magocracies and theocracies — might even be inclined to light their streets magically.
 
-# **REGIONAL
-
-INFLUENCES**
+# **REGIONAL INFLUENCES**
 
 “Location, location, location” — the familiar mantra of real estate agents — expresses not just the three most important things in selecting property but also, to a large extent, some of the most important factors in how a particular municipality, city state, or other community and the areas around it will develop.
 
 A perusal of modern maps will reveal many straight lines, an artificiality made possible by modern surveying and mapping methods. When maps of pre-modern boundaries existed — and this was not by any means always the case — this artificiality was not to be found, however, and straight surveyed borders are not likely to be found in a traditional fantasy milieu, either. Instead, political lines followed the lines of the most significant terrain features. Borders ended not along arbitrary lines — and usually only for very brief periods at negotiated ones — but where the effective reach of the polity’s ability to enforce its dictates was constrained by major terrain features like rivers, seas and oceans, rift valleys and canyons, impenetrable forests, rugged hills or mountains, and impassable deserts. Indeed, frontier areas between nations in uninhabited areas or wastelands were not in the past marked by straight lines on maps. An especially poignant example of this can be found in maps of the Middle East, depicting straight political boundaries through desert areas rarely if ever visited, such as those through the “empty quarter” of the Rub-al-Khali, the immense desert that separates Saudi Arabia from Yemen and Qatar. In pre-modern times, a variety of much smaller states would have filled the huge expanse of the Arabian peninsula, their political boundaries extending little beyond the districts most suitable for habitation, and the areas beyond these haunted only by nomads, monsters, and djinn. Major terrain features can thus impose local limits on such things as how far a particular community has naturally expanded and determine any major lines of defense against foreign invaders, such as a major river beyond which the community’s troops do not venture, or a strategic pass controlled by a vital fortress that may have changed hands many times. Areas that are beyond the control of any of the surrounding civilized states will likely remain debatable in legal status and a haven to whatever outlaws, monsters, and highly-skilled adventurers choose to make their home there. Some cities have strategic locations that give them intrinsic benefits that can make them the envy of other communities. Historically, this has included such things as straits connecting large bodies of water, land bridges connecting major land masses, major river systems, and deep-water ports. In a fantasy world, it might also include things like gateways to other worlds, zones of high or low magic, and exploitable natural phenomena (e.g., volcanoes). While strategic locations can give communities marked benefits over their neighbors, it can also be a liability to them, by making them a perpetual target for conquest. Cities that have something worth having are going to be in the position of forever having to defend it, and city states and other communities that have failed to do so over the centuries have both lost crucial parts of their territories or been wholly overrun and either destroyed or occupied by foreign powers. Terrain can also play a critical role in how and in which directions a particular community develops. States with very rich farmland, for example, may be able to produce food in excess of what they need, both contributing to a well-fed population and providing a resource for trade. Communities with meager farmland, on the other hand, may not be able to support large populations, may have to deal with malnutrition, and — in the absence of other resources they can exploit, such as mineral wealth or service industries — will likely either have to take what they need from more fortunate lands by constant aggression, or give up their independence and remain no more than small towns subject to their more powerful neighbors.
 
-# **RACIAL
-
-INFLUENCES**
+# **RACIAL INFLUENCES**
 
 In most fantasy settings, the presence of non-Human races and civilizations is a key element contributing to the exotic nature of the milieu. Fantasy communities may consist partly or entirely of such non-Human populations, which might range in size from individual aliens, to pockets within large, predominantly Human communities, to nation-states consisting almost entirely of non-Humans. The possibilities are only limited by the GM’s imagination and concept for the fantasy milieu that he wishes to create for the enjoyment of his players. Because independent, autonomous communities can be handled much like any others, this section will only deal with the unique situations arising from pockets of another culture residing within a larger, parent community. Such sub-communities, either from lack of ability or inclination, have not distinguished themselves as separate entities but instead operate within the bounds of the larger population. Creating a non-Human district within a larger community should still be addressed in much the same fashion as creating the parent community. For purposes of this discussion, we will assume the parent community is Human, although roles could be reversed if the Game Master is an expert at creating unique, exotic cultures and societies *quite different* from those of humanity (a task that many readers will justifiably find daunting). The biggest challenge in this process will be factoring in the larger community’s influence upon the non-Human community. To that end, the first step to weaving a non- Human culture into a fantasy community is to decide how that culture is recognized by the community. In many ways, this is likely to resemble, in a slightly more extreme fashion, the different relationships that foreign-derived Human communities have historically held with their neighbors. Are its members considered citizens of the parent community? Are the non-Humans politically independent or semi-autonomous to any extent, perhaps governing themselves differently than Human communities? What unique benefits do its members contribute to the parent community, possibly in the form of monetary, magic, or military aid? Or is the non-Human community disenfranchised, either ignored by the community’s rulers or viewed as a threat to be stamped out?
 
@@ -174,9 +154,7 @@ How has the interchange of technology, beliefs, and culture affected the two soc
 
 Communities of all sizes are vulnerable, to a lesser or greater extent, to a number of different sorts of calamities. Historically, ancient and medieval communities perpetually faced the threat of five major sorts of disasters: Fire, Flood, Famine, Pestilence, and War, and all of these could manifest themselves — or be combated — in a number of unique and interesting ways in a fantasy environment. Most maladies likely to beset municipalities on a recurring basis, even in a fantasy milieu, are likely to fall into one of these categories. There is one more that does not, however, but which might be a prevalent threat in a fantasy campaign setting: Monsters. **Fire** is a problem exacerbated by a number of conditions prevalent in ancient and medieval communities, including narrow, irregular streets; closely packed buildings; architecture that relies heavily on flammable materials like wood, wattle, and thatch, as well as unfortunate architectural features like wooden party walls between houses; and a lack of fire-fighting infrastructure, such as fire hydrants. Historical examples include the conflagration that ravaged the Egyptian city of Alexandria, destroying the greatest library in the world. Methods for combating urban conflagrations in the communities of a traditional ancient or medieval milieu tend to be limited in both range and effectiveness, and often consist of little more than bucket brigades. Some cities have private fire departments, but many of these — such as those that existed in ancient Rome — are private businesses, not municipal services, and their leaders might first negotiate rates before turning to the task of putting out flames. **Floods** are a perennial problem in many communities, particularly those located along coasts or rivers or in low-lying areas. Such disasters are often associated with certain seasons, especially spring, when snow and ice begins to melt and engorge waterways, but might also be the result of storms. Small communities, such as villages, might be completely swept away — even without a trace — by heavy flooding, and those that are not are likely to suffer severe damage and the death of people and livestock. Larger communities with more substantial structures are less likely to be destroyed wholesale, but might still suffer significant damage and be brought to a standstill, with people trapped on rooftops and paddling makeshift watercraft through the streets until the waters recede. The first and surest line of defense against flooding, of course, is simply to build communities in highland areas. Communities are often located in areas prone to flooding for good reasons, however; farm villages are located in alluvial plains with rich soil, for example, while cities enjoy the commerce made possible by their locations along rivers or coasts. Good drainage system can also be an effective means of dealing with flooding, but were rare until pre-modern times — exceptions to which included the ancient cities of Rome, Thera, and the Indus River Valley. **Famine** results when disasters like crop failure reduce the amount of food that can be sold or distributed within communities. Other disasters, like destruction of crops through warfare or sieges resulting from the same, can also lead to famine. Even as agriculture allows for the growth of large populations, the establishment of settled communities, and the foundation of communities, so, too, does it make all of them vulnerable to the disruption of those food supplies. Ample stored food supplies can be a remedy for short-term famine but, historically, this measure could not generally be employed. Only rarely were ancient or medieval communities able to acquire food surpluses adequate to support entire communities for extended periods of time, a problem exacerbated by limited means for the long-term preservation of victuals. Magical or divine abilities to create large amounts of food also might stave off famine if available, and if spellcasters who command such abilities agree to exercise their magic in this way.
 
-**Pestilence** was, historically, one of the most devastating disasters that could strike ancient and medieval communities, and has the capability of annihilating every person in some areas and up to half the population of entire continents. Closely packed populations, poor waste disposal systems, and a highly imperfect concept of the means of disease transmission make traditional ancient and medieval communities especially vulnerable to such epidemics. Famine, too, diminishes people’s immune systems and makes them more prone to disease. Effective waste disposal, extermination of disease-bearing vermin, quarantine, certain medicines and medical procedures, and various forms of magical protection are among the ways of reducing the prevalence of plague and other epidemic diseases. These measures cannot necessarily be conceived of intuitively, however, and generally require a certain amount of knowledge and a relatively high level of medical development to implement. **War** was one of the most dramatic disasters that could strike an ancient or medieval community, and could be equally exciting and dangerous in a fantasy milieu. A community might be the target of anything from a raid-in-force by marauding humanoids or barbarians to a prolonged siege by a well-equipped enemy army. Small communities like villages might not actually be military objectives, but might get overrun in the course of larger operations, major battles, disasters triggered by magical means, or foraging sweeps by one or more opponents with which they might not be affiliated at all. Larger communities, whether independent city states or possessions of larger nations, might be objectives in themselves, for purposes that might include pillage, annexation, control of a strategically-located site, or a desire to damage or provoke the nation of which they are part. Attacks on communities that are dependents of larger states, of course, are tantamount to attacks on those nations as a whole. Walls, if they can be afforded, are one of the best and most basic measures a community in a traditional milieu can employ for deterring or resisting conventional attacks, and various augmentations can make them more effective. Such improvements include moats, towers, strong gates, and variations upon such basic structures. A militia, standing army, mercenary forces, or other military resources to defend such structures — or the fighting resolve of the community itself, if they are lacking — are also very important. Good intelligence gathering, which starts with well-manned watchtowers and patrols along the limits of a community’s political control, can also go a long way toward helping a community be prepared for armed attack. House-to-house fighting against a foe who intends to contest or to hide within a settlement is a prospect that most military commanders do not relish, bearing many of the difficulties of storming a dungeon complex (see “Physical Characteristics,” above). Conflict can also place particular stress on the political allegiance of local residents, forcing them to choose where their loyalties lie, and perhaps dividing communities into factions. Foreign agents, or the suspicion of them, can sow divisions within a community. Requisitions and harsh measures can even bring civilians into conflict with military forces nominally on the same side, breeding resentment, hatred, and possibly revolt. On the other hand, formation of defensive militias and community efforts to withstand a siege might build cohesion and loyalty to a community that residents may have been ambivalent toward, or bring together previously conflicting groups in a community. In these ways, wars can give rise to unexpected reorganizations in local politics. **Monsters** of all sorts can pose a threat to communities, depending on how dangerous they are, their motivations, and the relative vulnerability of various communities to their predations. Most communities will have measures in place to deal with wild animals, small bands of humanoids, and common indigenous threats. It is solitary gargantuan or extremely dangerous monsters — like Godzilla, who ravaged Tokyo innumerable times, or the Balrog that overran and slaughtered the inhabitants of the Mines of Moria — unleashed by some cataclysm or inadvertently attracted by some activity, however, that can pose the biggest threats to communities, because they can be difficult or impossible to anticipate or counter. Infestations of many smaller creatures — such as locust swarms or fantasy-world variations on them, like giant insects and spiders — can be just as dangerous and overwhelm inadequate or belated efforts to stem their advances. In a fantasy milieu, any of the listed calamities might be combated or even negated with various magical resources. Fire, for example, might be battled in some cities by priests capable of creating water or summoning rain or by sorcerers adept at calling water elementals, and disease might be cured by clerics with medical proficiency or appropriate magics. Game masters should keep in mind, however, that any of the most common sorts of disasters might also be exacerbated or even created by magic as well. Magical fire might be even more dangerous than its mundane counterpart to fantasy cities, areas free of disease might be infested by an evil wizard capable of creating contagion, and war is not likely to be more pleasant when it includes contingents of humanoid, undead, or monstrous troops. It is also certainly possible for two or more of these disasters to strike a community at the same time. Fire, for example, might break out in a city even while it was being assaulted by enemy forces, either coincidentally or in some connection with the attack. And, as aficionados of disaster films know, there are also quite often peripheral problems associated with disasters, which can give the worst elements in any particular society the opportunity to engage in crimes like murder, robbery, and looting. Game masters can, naturally, customize such secondary problems as appropriate for their fantasy campaign settings. Floods, for example, are only more difficult to deal with if they have disgorged the contents of a local necropolis, distributing waterlogged undead monsters throughout the flooded sections of a community. And famine can take on an even more horrific cast if certain segments of the population begin turning to cannibalism … Most of the described historical disasters remain problems, to a lesser or greater extent, for real-world communities today, and a regular perusal of newspaper or television news can give game masters some inkling — and possibly some ideas — of how such calamities might be extrapolated for their own campaign settings.
-
-## **Effects of Calamities on Communities**
+**Pestilence** was, historically, one of the most devastating disasters that could strike ancient and medieval communities, and has the capability of annihilating every person in some areas and up to half the population of entire continents. Closely packed populations, poor waste disposal systems, and a highly imperfect concept of the means of disease transmission make traditional ancient and medieval communities especially vulnerable to such epidemics. Famine, too, diminishes people’s immune systems and makes them more prone to disease. Effective waste disposal, extermination of disease-bearing vermin, quarantine, certain medicines and medical procedures, and various forms of magical protection are among the ways of reducing the prevalence of plague and other epidemic diseases. These measures cannot necessarily be conceived of intuitively, however, and generally require a certain amount of knowledge and a relatively high level of medical development to implement. **War** was one of the most dramatic disasters that could strike an ancient or medieval community, and could be equally exciting and dangerous in a fantasy milieu. A community might be the target of anything from a raid-in-force by marauding humanoids or barbarians to a prolonged siege by a well-equipped enemy army. Small communities like villages might not actually be military objectives, but might get overrun in the course of larger operations, major battles, disasters triggered by magical means, or foraging sweeps by one or more opponents with which they might not be affiliated at all. Larger communities, whether independent city states or possessions of larger nations, might be objectives in themselves, for purposes that might include pillage, annexation, control of a strategically-located site, or a desire to damage or provoke the nation of which they are part. Attacks on communities that are dependents of larger states, of course, are tantamount to attacks on those nations as a whole. Walls, if they can be afforded, are one of the best and most basic measures a community in a traditional milieu can employ for deterring or resisting conventional attacks, and various augmentations can make them more effective. Such improvements include moats, towers, strong gates, and variations upon such basic structures. A militia, standing army, mercenary forces, or other military resources to defend such structures — or the fighting resolve of the community itself, if they are lacking — are also very important. Good intelligence gathering, which starts with well-manned watchtowers and patrols along the limits of a community’s political control, can also go a long way toward helping a community be prepared for armed attack. House-to-house fighting against a foe who intends to contest or to hide within a settlement is a prospect that most military commanders do not relish, bearing many of the difficulties of storming a dungeon complex (see “Physical Characteristics,” above). Conflict can also place particular stress on the political allegiance of local residents, forcing them to choose where their loyalties lie, and perhaps dividing communities into factions. Foreign agents, or the suspicion of them, can sow divisions within a community. Requisitions and harsh measures can even bring civilians into conflict with military forces nominally on the same side, breeding resentment, hatred, and possibly revolt. On the other hand, formation of defensive militias and community efforts to withstand a siege might build cohesion and loyalty to a community that residents may have been ambivalent toward, or bring together previously conflicting groups in a community. In these ways, wars can give rise to unexpected reorganizations in local politics. **Monsters**of all sorts can pose a threat to communities, depending on how dangerous they are, their motivations, and the relative vulnerability of various communities to their predations. Most communities will have measures in place to deal with wild animals, small bands of humanoids, and common indigenous threats. It is solitary gargantuan or extremely dangerous monsters — like Godzilla, who ravaged Tokyo innumerable times, or the Balrog that overran and slaughtered the inhabitants of the Mines of Moria — unleashed by some cataclysm or inadvertently attracted by some activity, however, that can pose the biggest threats to communities, because they can be difficult or impossible to anticipate or counter. Infestations of many smaller creatures — such as locust swarms or fantasy-world variations on them, like giant insects and spiders — can be just as dangerous and overwhelm inadequate or belated efforts to stem their advances. In a fantasy milieu, any of the listed calamities might be combated or even negated with various magical resources. Fire, for example, might be battled in some cities by priests capable of creating water or summoning rain or by sorcerers adept at calling water elementals, and disease might be cured by clerics with medical proficiency or appropriate magics. Game masters should keep in mind, however, that any of the most common sorts of disasters might also be exacerbated or even created by magic as well. Magical fire might be even more dangerous than its mundane counterpart to fantasy cities, areas free of disease might be infested by an evil wizard capable of creating contagion, and war is not likely to be more pleasant when it includes contingents of humanoid, undead, or monstrous troops. It is also certainly possible for two or more of these disasters to strike a community at the same time. Fire, for example, might break out in a city even while it was being assaulted by enemy forces, either coincidentally or in some connection with the attack. And, as aficionados of disaster films know, there are also quite often peripheral problems associated with disasters, which can give the worst elements in any particular society the opportunity to engage in crimes like murder, robbery, and looting. Game masters can, naturally, customize such secondary problems as appropriate for their fantasy campaign settings. Floods, for example, are only more difficult to deal with if they have disgorged the contents of a local necropolis, distributing waterlogged undead monsters throughout the flooded sections of a community. And famine can take on an even more horrific cast if certain segments of the population begin turning to cannibalism … Most of the described historical disasters remain problems, to a lesser or greater extent, for real-world communities today, and a regular perusal of newspaper or television news can give game masters some inkling — and possibly some ideas — of how such calamities might be extrapolated for their own campaign settings. ##**Effects of Calamities on Communities**
 
 A concerted relief effort by a number of neighbors can often face and overcome relatively small-scale calamities, and this is much more likely to occur when the people concerned know each other well and share a certain degree of common interest and trust — characteristics of small towns, villages, or well-established old neighborhoods in a city. Individuals may rise to the occasion and display unexpected talents, strengths, or leadership that will be remembered for many years to come. The reverse can also be true: a previously well-respected neighbor’s weakness, breakdown, or corruption can led to lasting rifts and feuds in a local community. In the anonymity of a big city or a recently-founded town with little sense of community, it is more likely that people will simply look out for themselves and may fall into exploitation of the weak or fighting over scarce resources. Major disasters can stress and break civic governments that are already weak or internally divided, deadlocking relief efforts in jurisdictional disputes or settling of scores. If well forewarned, or in the aftermath of a disaster, however, city and regional governments can typically bring to bear significant resources and skilled management for large-scale preventive or cleanup tasks. Panic buying is likely to exhaust the stocks of many items, as residents seek to buy supplies to last through a crisis — quite likely in much larger than accustomed amounts, or of particular items and commodities that are not in common use — from those stores that have not yet closed so that their proprietors themselves can escape. The last available supplies might sell for grossly increased amounts — perhaps from profiteering individuals who have already bought in bulk for speculative purposes — or lead to anguished or even violent scenes. Even if the chain of supply is adequate over the following days or weeks for the ongoing basic need, luxuries may run out, and even simple items of other sorts may remain scarce and sell for inflated prices. Entrepreneurs (whether those who already work as shopkeepers, or other individuals who see an opportunity) may set up numerous ad-hoc points of sale for particular goods, caches of supplies, or pre-packaged convenience items for people in transit, that are in demand due to the current emergency. The efforts (if any) of local government figures to carry out necessary relief works and control the social effects of the calamity are likely to lead to some form of emergency  measures,  such  as  decrees,  requisitions,  and  on-the-spot  or  swift punishments to keep from adding to the burdens that the governing power bears by incarcerating arrested troublemakers. It is also possible that local leaders who are incapable of dealing with the problems — or are out of touch with their people — will behave badly, leaving for safety elsewhere or shutting themselves away and perhaps throwing decadent revels, leading to breakdown of government. If such behavior brings long-simmering resentment to a head, the people could even attack or depose the present rulers in a revolution. In response to a calamity approaching or in progress that threatens the lives of ordinary people or makes their homes unlivable, their last resort is to flee their settlements for places where they expect or hope to find greater safety. The more fortunate, wealthy, or forewarned might be able to reach alternate homes that they own or relatives who have room available, or to rent or purchase accommodations in distant communities. Up to a point, a community might alsomight have also have traditional or prepared safe havens available, such as a nearby larger town, higher ground, or a fortified place. Many other escapees, however, must simply set up unstructured camps wherever they can find space, or fall upon the charity of the places where they end up. Eventually, if the disaster is large and long-lasting enough, such displaced populations might fill or overwhelm the resources of temples, civic authorities, or helpful local businesses at their destinations. Columns of such refugees slow traffic on roads to a crawl with heavily-loaded carts, beasts of burden, people on foot, and straggling, sick, or wounded dependents. Such exoduses can come to a standstill — for many hours or even days — when routes are blocked by broken-down conveyances or obstacles like damaged bridges, narrow sections of road, or problems like fire or flooding along the route. Refugees escaping by boat pose similar problems to ports along their routes. Organization of refugee camps, such as it is, often depends on the relationship between the majority of refugees and those who were leaders of the communities that they have departed (e.g., with individuals associated with regimes from which they may have fled or which they blame for a failure to secure their livelihoods and property). Refugees might also not have the understanding or inclination to place themselves under local authority or to follow established procedures for entry, potentially causing substantial political problems. On the other hand, if immigrants have desirable skills, one or several local rulers might wish to bring them without delay into feudal service or under the local regime of taxation. Local religious organizations might also combine with charity work among refugees the no-less important task — in the clerics’ minds, anyway — of securing their allegiance to local deities. Small communities with significant differences from their neighbors may not be able to rely on any outside help or local refuge and may descend into ruin, misery, and desperate compromises alone, perhaps little-known to the outside world.
 
@@ -186,11 +164,7 @@ Breakdown of normal law and order in partially-abandoned settlements likely will
 
 Within any particular community beset by one or more calamities, the various essential places upon which residents and adventurers alike depend will like be affected in different ways. **Craftsmen and tradesmen** probably will have to close and secure their shops — unless they stay open to sell goods for emergency use, as noted above. It is very likely that such people will be involved in efforts to deal with the calamity, such as work parties or militias, as skilled artisans typically have a great deal invested in a community and are unwilling to abandon it lightly. **Entertainment** places are likely to close, perhaps to move on to better prospects if they are mobile in nature, unless they choose to continue with scheduled productions in a spirit of defiance. Performances that do go ahead will probably be very popular and most likely will contain oblique references to the surrounding events. **Professional organizations and guilds** might postpone meetings, cancel training courses, or hold extraordinary meetings if the calamity directly affects their business. Guild leadership might be involved in trying to resolve the crisis as part of the civic leadership. **Merchants** likely will close their establishments and retreat to a secure location, perhaps in command of significant private armed forces. Experienced merchants may be well-used to crisis situations and respond in a calculated and planned fashion — though such plans might not enhance the welfare of anyone other than themselves. **Service** places very likely will be needed to provide shelter and food to displaced people, perhaps in a different volume and quality than they usually provide to their guests. The proprietors of such places are experienced in organizing supplies, accommodations, and work groups, and may hold significant respect in the local community, so they can be very effective as leaders of efforts to cope with disasters. Taverns may do a roaring trade, especially with an influx of soldiers.
 
-**Scholars** will probably be primarily concerned about keeping their books, collections, and fragile items safe and may take considerable risks to do so. Civic leaders may call upon those scholars who have relevant knowledge or abilities to help find solutions to the crisis. **Religions** feel the need to offer comfort to their adherents with special services and to arrange practical help, such as shelter, food and medical assistance. Nonetheless, their establishments could be targeted by those who blame the god or sect for the calamity, or attacked by looters or others seeking to take advantage of the situation. Doomsday cults may arise or reveal their presence, occasionally proving helpful by stocking up and benefiting from organization beforehand as a consequence of survivalist beliefs. Ultimately, however, such groups will largely prove to be a menace in various unpredictable ways, such as instigating acts that promote and fuel the disaster, refusing to obey civil authorities, and inciting generalized panic. **Governmental** office-holders are likely to be either the busiest people in a calamity or the first to flee from it. The first parts of an effective response are likely to include declaring or signaling a formal state of emergency in some pre-arranged way (e.g., making a decree, ringing temple bells), convening an emergency meeting of community leaders, setting up a command center for the duration of the crisis, mandating the call-up of emergency reserves such as local militia, and making appeals for specific forms of help that might variously be answered by adventurers, mercenaries, and the like. The municipal government might have to enter diplomatic negotiations with the community’s neighbors (or with a threatening army or intelligent monster), whether for help, a suspension of hostilities or financial demands, or the formation of a league or alliance against a common threat. These might be achieved by concessions that the city would normally be unwilling to make. The government — or rulers personally — might have to borrow money or sell treasured items to fund response to, and reconstruction after, the calamity. This is likely to invoke, whether formally or informally, more wide-reaching and centralized powers than the civic government and particularly its leader normally would exercise. Such measures may even involve setting aside of constitutional or relatively liberal government and the investiture of a supreme leader with a formal position such as Tyrant, Lord Protector, or Warlord. Prisoners of the local regime at the time of the calamity might be neglected or even abandoned — and perhaps even be offered an opportunity to escape — but might also be protected to a great extent by their sturdy enclosure from events going on around them. **Underworld** figures are likely to do better than average or even well in unsettled times. Brothels and gambling dens, like taverns, are likely to prosper with the presence of soldiers and may even spring up in response to their arrival. Underworld figures can also show a surprising level of patriotism at times, just as craftsmen, tradesmen, and the proprietors of service places do, but perhaps with greater and unexpected effect.
-
-# **CHAPTER
-
-2: CRAFTSMAN PLACES**
+**Scholars** will probably be primarily concerned about keeping their books, collections, and fragile items safe and may take considerable risks to do so. Civic leaders may call upon those scholars who have relevant knowledge or abilities to help find solutions to the crisis. **Religions** feel the need to offer comfort to their adherents with special services and to arrange practical help, such as shelter, food and medical assistance. Nonetheless, their establishments could be targeted by those who blame the god or sect for the calamity, or attacked by looters or others seeking to take advantage of the situation. Doomsday cults may arise or reveal their presence, occasionally proving helpful by stocking up and benefiting from organization beforehand as a consequence of survivalist beliefs. Ultimately, however, such groups will largely prove to be a menace in various unpredictable ways, such as instigating acts that promote and fuel the disaster, refusing to obey civil authorities, and inciting generalized panic. **Governmental** office-holders are likely to be either the busiest people in a calamity or the first to flee from it. The first parts of an effective response are likely to include declaring or signaling a formal state of emergency in some pre-arranged way (e.g., making a decree, ringing temple bells), convening an emergency meeting of community leaders, setting up a command center for the duration of the crisis, mandating the call-up of emergency reserves such as local militia, and making appeals for specific forms of help that might variously be answered by adventurers, mercenaries, and the like. The municipal government might have to enter diplomatic negotiations with the community’s neighbors (or with a threatening army or intelligent monster), whether for help, a suspension of hostilities or financial demands, or the formation of a league or alliance against a common threat. These might be achieved by concessions that the city would normally be unwilling to make. The government — or rulers personally — might have to borrow money or sell treasured items to fund response to, and reconstruction after, the calamity. This is likely to invoke, whether formally or informally, more wide-reaching and centralized powers than the civic government and particularly its leader normally would exercise. Such measures may even involve setting aside of constitutional or relatively liberal government and the investiture of a supreme leader with a formal position such as Tyrant, Lord Protector, or Warlord. Prisoners of the local regime at the time of the calamity might be neglected or even abandoned — and perhaps even be offered an opportunity to escape — but might also be protected to a great extent by their sturdy enclosure from events going on around them. **Underworld**figures are likely to do better than average or even well in unsettled times. Brothels and gambling dens, like taverns, are likely to prosper with the presence of soldiers and may even spring up in response to their arrival. Underworld figures can also show a surprising level of patriotism at times, just as craftsmen, tradesmen, and the proprietors of service places do, but perhaps with greater and unexpected effect. #**CHAPTER 2: CRAFTSMAN PLACES**
 
 Player character parties employ a staggering array of arms, armor, and equipment and—apart from that obtained through plunder—it is to the workshops of skilled craftsmen that they must go to obtain much of it. True, there may be much that is available “off-the-shelf” in shops or even used in the town marketplace. Custom-made items and those that are rare, of masterwork quality, or otherwise special, however, may require a visit to the workshops of their creators. This not only gives game masters opportunities for role-playing and the use of skills that might not otherwise appear during dungeon delves, but it also makes the prized items all the more meaningful to characters who have secured them personally. Essential places of this sort that characters might visit when preparing for their adventures include the workshops of armorers, blacksmiths, clothiers, gemners, jewelers, and weaponmakers—all of which are described in the following sections. Other typical craftsman places in a medieval or fantasy community—and which characters might encounter during their journeys or while preparing for them—include, but are not limited to, the establishments of brewers, sculptors, shipwrights, stonemasons, and taxidermists. Craftsmen’s workshops are as diverse as the characters who use them. They can be found in villages, towns, cities, castles, fortresses, religious complexes, and even in more unexpected locales such as caves, ruins, or dungeons if circumstances call for an artisan presence. In traditional ancient, medieval, or Renaissance urban areas, many craftsmen live and work in townhouses or other typical homes (although certain trades may require purpose-built structures). In the rural areas, villages, and smaller communities, craftsmen’s operations tend to be modest and are usually located in longhouses or sunken huts—building types also described in Chapter 1: Communities. Regardless of form or location, a craftsman’s workshop typically contains all of the tools, equipment, and materials needed to create the items in which the artisan specializes. In general, the greater the ability and affluence of the craftsman, the larger and better equipped the workshop. Certain tasks, however, require specialized equipment that no individual can do without. Security in these workshops is usually modest. Most craftsmen rely on sturdy doors, strong locks, and—where available—the vigilance of the city watch. In less secure areas, they may keep weapons at hand for personal defense, and those handling especially valuable commodities (such as jewelers) might hire full-time security guards or off-duty soldiers to watch over their establishments.
 
@@ -286,9 +260,7 @@ Located in Yggsburgh’s Jewel District, The Starry Anvil is a landmark of maste
 * The Lost Dwarven Crown: A scholar presents an ancient artifact linked to a fabled dwarven crown adorned with enchanted gems. In assisting the Stonehammers to decipher its secrets, adventurers uncover a trail to an artifact of immense power.
 * A Curse in the Glittering Knobs: Miners report mysterious illnesses after unearthing a vein of green-tinged quartz. Suspecting a cursed gem or disturbed elemental, the Stonehammers enlist adventurers to investigate and restore balance to their ancestral mines.
 
-# **CHAPTER
-
-3: ENTERTAINMENT PLACES**
+# **CHAPTER 3: ENTERTAINMENT PLACES**
 
 As characters who spend most of their professional lives tramping through dungeons, ruins, and wilderness, battling monsters and villains, and being exposed to all sorts of other dangers, adventurers are as likely as anyone to need the relief provided by the various entertainments that their societies have to offer. Just as visiting various entertainment venues can be fun and diverting for characters, so too can periodically role-playing outings to such places be enjoyable and interesting for players. It can also be a good way for game masters to introduce parties to new allies, enemies, or other non-player characters and to allow characters to interact with them much differently than they would in a field environment. And, naturally, such places can also sometimes themselves be sites for adventure, or sources of information that lead to or otherwise affect missions. Some of the main entertainment places characters might visit before, during, or after adventures include carnivals and circuses, menageries and zoos, museums and collections of curiosities, theaters of various sorts, and parks, all of which are described in the following chapter. Other sorts of entertainment venues characters might visit include racetracks and hippodromes, arenas and coliseums, and other places designed for various sorts of sporting events, performances, or pastimes. Activities at such places are generally intended to appeal to many sorts of people with a broad variety of tastes. Entertainment venues can be of almost any size and are as varied as the diversions presented in them. One thing most such places have in common, however, is that they are built specifically for the activity in question and, beyond simple gathering- places, are not suitable for much else. Such places are intended to temporarily distract people and allow them to forget about their day-to-day lives and concerns, and are often decorated or designed throughout with those goals in mind. For example, the walls in the entryway of a theater might be painted with scenes from popular plays; a small park might be laid out to enhance the illusion that visitors are in a sylvan area rather than a city; or a domed room in a museum might be designed to make visitors feel as if they were underwater or under a night sky. Dedicated entertainment venues, which are expensive to build and maintain and require a large population base to support, are usually characteristic of communities of large town size or bigger. Traveling sorts of entertainments might cater to small towns and villages in ancient, medieval, or fantasy game milieus, however, and these could include minstrels who can entertain in any home or tavern, actors who likewise can use large chambers or set up temporary stages wherever they stop, and mobile venues like carnivals. Some entertainment venues also serve as homes for the people who run them. Large places like theaters and racetracks are not likely to also serve as dwellings for performers, but might have caretakers of some sort present much of the time. Traveling venues like carnivals, on the other hand, are likely to also include mobile accommodations for the people associated with them.
 
@@ -300,29 +272,19 @@ Carnivals are fairs that seek to entertain people with attractions like games; t
 
 Many carnival folk in a particular game milieu will speak a special language that is similar in many ways to a thieves’ cant and is a composite of the common tongue, one or more foreign or even dead languages, double entendres, and slang and idiomatic phrases specific to their trade. In the real world, for example, carnival folk use the terms “fairings” for sweets, “swag” for prizes, “swagman” for a carnie who hands out prizes, “sand scratcher” for a colleague who has established a stationary fair in a seaside area, and “flatty” for a non-carnie. Like other trades, carnivals and their activities are often regulated and supported by guilds that establish rules for managing, organizing, and running fairs, settling disputes between members, and protecting members from outside forces like municipal laws. Due to the geographical spread and traveling nature of many carnivals, such guilds are more likely to operate across a province or an entire kingdom than a single city. In part because of their insularity, carnivals and their folk are sometimes regarded with some misgivings by local authorities, who often see them as sources of trouble that include thievery, vice, and immorality. While these perceptions are not without some basis in reality, in the real world they are marginally less true now than they were in the past and may be either more or less valid in a game milieu.
 
-the replacement for **The Wonders of Thera** in Yggsburgh.
-
-## **Example:
-
-The Wyvern's Tail**
+the replacement for **The Wonders of Thera**in Yggsburgh. ##**Example: The Wyvern's Tail**
 
 Located in Yggsburgh’s **Entertainment, Industrial, and Warehouse District**, **The Wyvern’s Tail** is one of the most celebrated entertainment venues in the city, offering a fixed location of thrills, curiosities, and merriment for locals and visitors alike. Owned by the charismatic **Jasper Farthingale**, a former adventurer with a penchant for spectacle, The Wyvern’s Tail combines a variety of attractions under one roof to cater to diverse tastes and sensibilities.
 
 Jasper personally oversees many of the larger attractions and ensures their quality and safety, though a significant portion of the venue is leased to independent performers and vendors. His extensive travels and connections have allowed him to bring unique entertainment and exotic curiosities to Yggsburgh, making The Wyvern’s Tail a truly one-of-a-kind establishment.
 
-The centerpiece of The Wyvern’s Tail is its **Grand Arena**, a wide-open space designed to host a variety of performances and contests. Among the most popular events are the **baiting pits**, where spectators can witness bear-baiting, bull-baiting, and cockfighting. While these attractions draw spirited crowds, Jasper has implemented strict rules to ensure the events are as orderly as possible.
-
-The **Ale Hall** serves as the venue’s social heart, providing patrons with food, drink, and a lively atmosphere. Regularly scheduled **variety shows** feature acrobats, jugglers, comedians, and traveling musicians who perform on a raised stage flanked by brightly colored banners. The ale itself is brewed in-house, and the kitchen offers a rotating menu of local and exotic dishes.
-
-Another major draw is the **Exotic Menagerie**, a section of the venue dedicated to showcasing rare creatures collected from the far corners of the world. Visitors can marvel at a sleek swamp drake, a bucentaur grazing contentedly in its pen, and other extraordinary beings, many sourced from the nearby Wynchwood or brought in by Jasper’s far-reaching network of adventurer contacts. A small admission fee allows access to this area, which helps fund the upkeep of the creatures.
+The centerpiece of The Wyvern’s Tail is its **Grand Arena**, a wide-open space designed to host a variety of performances and contests. Among the most popular events are the **baiting pits**, where spectators can witness bear-baiting, bull-baiting, and cockfighting. While these attractions draw spirited crowds, Jasper has implemented strict rules to ensure the events are as orderly as possible. The**Ale Hall** serves as the venue’s social heart, providing patrons with food, drink, and a lively atmosphere. Regularly scheduled **variety shows**feature acrobats, jugglers, comedians, and traveling musicians who perform on a raised stage flanked by brightly colored banners. The ale itself is brewed in-house, and the kitchen offers a rotating menu of local and exotic dishes. Another major draw is the**Exotic Menagerie**, a section of the venue dedicated to showcasing rare creatures collected from the far corners of the world. Visitors can marvel at a sleek swamp drake, a bucentaur grazing contentedly in its pen, and other extraordinary beings, many sourced from the nearby Wynchwood or brought in by Jasper’s far-reaching network of adventurer contacts. A small admission fee allows access to this area, which helps fund the upkeep of the creatures.
 
 The gambling wing of The Wyvern’s Tail offers a variety of games of chance and skill, from dice and cards to more elaborate contests like ring tosses and dart throwing. Jasper is known for keeping a watchful eye on this area, deterring would-be cheaters while ensuring that patrons have a fair shot at the prizes.
 
 Despite the excitement, The Wyvern’s Tail is not without its challenges. Security is a constant concern, and Jasper employs a cadre of guards to maintain order. However, the bustling and sometimes chaotic nature of the venue means that petty crimes, scheming rivals, and occasional accidents are inevitable.
 
-## **Adventure
-
-Hooks General:**
+## **Adventure Hooks General:**
 
 * The Wyvern’s Tail is an ideal location for intrigue, with its diverse clientele and mix of attractions providing fertile ground for adventurers to gather information, meet contacts, or overhear whispered schemes.
 * A traveling performer or vendor working at The Wyvern’s Tail has gone missing, and Jasper hires the characters to investigate their mysterious disappearance.
@@ -341,11 +303,7 @@ Predecessors of modern zoos, menageries are collections of exotic wild animals t
 
 European Baroque-style menageries, which gained great popularity with aristocrats during the Renaissance, had a circular layout. In their middle was an ornate pavilion from which walking paths radiated, along which were enclosures and cages. Each enclosure was bounded on three sides by walls, with bars on the side used by the visitors, and had a building at the far end for the animals. Game world menageries might have layouts that are similar, more akin to those of modern zoos, or altogether different than either. Despite their open-air locations, conditions at most menageries will still likely be far inferior to what would be ideal for the creatures housed in them, and are terrible in the worst, with creatures confined in undersized or inappropriate enclosures. In a game setting, however, this might not necessarily be the case at any particular menagerie. Security, from just about every point of view, is a major concern at menageries of all sorts. Stupid and cruel visitors need to be prevented from antagonizing animals for the good of everyone concerned, animals need to be prevented from attacking visitors or escaping, and animals that do break free need to be recaptured or restrained.
 
-Here's a rewrite of **The Sylvan Sanctuary** :
-
-## **Example:
-
-The Sylvan Sanctuary**
+Here's a rewrite of **The Sylvan Sanctuary**: ##**Example: The Sylvan Sanctuary**
 
 Hidden deep within the **Wynchwood**, Yggsburgh’s renowned enchanted forest, the **Sylvan Sanctuary** is a haven for extraordinary and magical creatures. Unlike the menageries of wealthy nobles or public exhibitions, the Sylvan Sanctuary is a place of preservation and quiet study, established by the reclusive druid **Mistress Elowyn**. Known for her deep connection to the forest and its denizens, Mistress Elowyn has spent decades ensuring the safety of the creatures entrusted to her care, earning a reputation as both a protector and a mystery to those who encounter her.
 
@@ -355,26 +313,18 @@ Among the sanctuary’s inhabitants are creatures both mundane and fantastical, 
 
 Mistress Elowyn herself is a commanding figure, with emerald eyes that seem to pierce the soul and a demeanor that commands respect. While her devotion to the sanctuary is unwavering, her mistrust of outsiders often makes access difficult for all but the most persistent or trustworthy individuals.
 
-## **Adventure
-
-Hooks General:**
+## **Adventure Hooks General:**
 
 * **Poaching Threat:** Rumors of poachers targeting the Wynchwood’s creatures reach Mistress Elowyn, who seeks adventurers to track and stop the culprits before they reach the sanctuary.
-* **Scholarly Escort:** A scholar of magical creatures hires the party to guide them to the Sylvan Sanctuary, navigate the dangers of the Wynchwood, and negotiate access to its wonders.
-
-## **Specific to The Sylvan Sanctuary:**
+* **Scholarly Escort:**A scholar of magical creatures hires the party to guide them to the Sylvan Sanctuary, navigate the dangers of the Wynchwood, and negotiate access to its wonders. ##**Specific to The Sylvan Sanctuary:**
 
 * **Escapee Trouble:** A mischievous faerie dragon escapes from the sanctuary and wreaks havoc in Yggsburgh’s markets and taverns. Mistress Elowyn asks the adventurers to locate and return it safely.
 * **Corrupted Glade:** A sickness begins to spread through one of the sanctuary’s groves, threatening its inhabitants. Mistress Elowyn enlists the party to trace the illness to its source, which leads deep into the Wynchwood and reveals a long-forgotten magical curse.
-* **Rival Interference:** A powerful noble secretly hires the adventurers to capture one of the sanctuary’s prized creatures for their private collection. The adventurers must decide whether to aid the noble or protect the sanctuary from this threat.
-
-# **MUSEUM**
+* **Rival Interference:**A powerful noble secretly hires the adventurers to capture one of the sanctuary’s prized creatures for their private collection. The adventurers must decide whether to aid the noble or protect the sanctuary from this threat. #**MUSEUM**
 
 A museum is a place devoted to collecting, safeguarding, and displaying various sorts of items and artifacts and might be devoted to any particular people, race, art, science, pursuit, or other subject or combinations thereof. Historical examples include the original Library of Alexandria — often considered to have been the first true museum — the Uffizi Gallery in Florence, the British Museum in London, and the Louvre in Paris. While such places have traditionally figured only rarely in game scenarios, their role in books, movies, and reality allude to the many fascinating ways in which they might be incorporated into adventures. In a typical fantasy, ancient, or medieval environment, many museums will be less like the public institutions familiar to people today and more like private collections of various sorts, including “wonder rooms” and “cabinets of curiosities” and might be much more eclectic in nature than most modern museums. Such private collections may or may not be open to the public and might be accessible only to certain individuals (e.g., friends of the owner, people with something to offer to the collection). Other places of this sort might actually be more temple-like in nature and true to the derivation of the word “museum” as a place devoted to the Muses, the ancient Greek goddesses of the arts. Regardless of their form, most museums in the context of the game — unlike their modern equivalents — will not likely contain gift shops or other amenities (anything, of course, is possible). Museums and their exhibits as described here might range in form and size from the esoteric contents of a single closet-sized area to entire palaces full of art and other treasures. Indeed, because the things they contain are often quite valuable — if only to other collectors — museums of various sorts will often have security measures in place as strong as those associated with places like banks and maybe even more exotic (e.g., a museum of arms might use animated weapons as a means of discouraging theft). Curators of museums might include anyone from priests or professional sages who oversee an institution’s exhibits fulltime, individuals interested in particular sorts of items and possibly in displaying them for fellow collectors, or the servants of wealthy patrons who manage their masters’ collections. Visitors to museums might include everyone from the merely curious to people seeking to learn more about various subjects for any number of reasons (e.g., a weaponmaker might be extremely interested in a significant collection of arms because he might be able to apply in his own work what he can learn from it).
 
-## **Example:
-
-Yggsburgh Museum of History and Commerce**
+## **Example: Yggsburgh Museum of History and Commerce**
 
 Located in the heart of Yggsburgh near **Plaza Avenue**, the **Yggsburgh Museum of History and Commerce** serves as a testament to the city’s rich history, cultural achievements, and economic legacy. Situated close to **Yggsburgh College**, the museum attracts scholars, students, merchants, and adventurers seeking to learn about the city's storied past and its role as a hub of trade and craftsmanship.
 
@@ -388,29 +338,19 @@ The museum is housed in an impressive stone building, its facade adorned with ca
 
 **The Mint and Currency**: Highlighting Yggsburgh’s unique monetary system, this wing features the city’s coinage through the ages, from its earliest minted coins to the beautifully engraved modern currency. Displays include the tools used in the minting process and an interactive exhibit where visitors can try their hand at creating coin imprints. The exhibit also examines the impact of Yggsburgh's strict monetary regulations, including its rejection of foreign coins, on trade and prosperity.
 
-**Local Legends and Folklore**: A more whimsical section of the museum, this exhibit dives into the myths and stories that have shaped Yggsburgh’s cultural identity. Artifacts and artistic renderings bring to life tales like the legend of the **River King**, said to rule the Grey Run, and the mysterious origins of **Mound Island**, believed by some to conceal ancient treasures.
-
-## **Adventure
-
-Hooks General:**
+**Local Legends and Folklore**: A more whimsical section of the museum, this exhibit dives into the myths and stories that have shaped Yggsburgh’s cultural identity. Artifacts and artistic renderings bring to life tales like the legend of the **River King**, said to rule the Grey Run, and the mysterious origins of **Mound Island**, believed by some to conceal ancient treasures. ##**Adventure Hooks General:**
 
 * **\*\*Artifact Protection:\*\* A rare artifact, such as Lord Yggs' original signet ring, is being transported to the museum for display. The characters are hired to ensure its safe arrival amidst threats of theft or sabotage.\*\*Artifact Protection:\*\* A rare artifact, such as Lord Yggs' original signet ring, is being transported to the museum for display. The characters are hired to ensure its safe arrival amidst threats of theft or sabotage.**
 * **\*\*Mysterious Discovery:\*\* During an excavation near Mound Island, workers uncover an ancient artifact linked to Yggsburgh's founding. The museum's curator requests the party's assistance in identifying its origin and protecting it from rival factions.Mysterious Discovery: During an excavation near Mound Island, workers uncover an ancient artifact linked to Yggsburgh’s founding. The museum’s curator requests the party’s assistance in identifying its origin and protecting it from rival factions.**
-* **Conspiracy Unveiled:** While researching old guild records, the museum’s curator uncovers evidence of a plot that threatens Yggsburgh’s economic stability. The characters are tasked with investigating and thwarting the conspirators before they can carry out their plans.
-
-## **Specific to the Museum:**
+* **Conspiracy Unveiled:**While researching old guild records, the museum’s curator uncovers evidence of a plot that threatens Yggsburgh’s economic stability. The characters are tasked with investigating and thwarting the conspirators before they can carry out their plans. ##**Specific to the Museum:**
 
 * **Stolen Relic:** A priceless exhibit—a ceremonial coin minted during Lord Yggs’ reign—has been stolen. The characters must track down the thieves, recover the artifact, and uncover their motives.
 * **Haunted Exhibit:** Rumors of spectral activity begin to swirl around the guilds’ exhibit, frightening visitors and staff. The museum hires the party to investigate the haunting and lay any restless spirits to rest.
-* **Guild Rivalry:** A dispute between two guilds over the authenticity of an artifact threatens to escalate into open conflict. The characters are called upon to mediate the dispute or uncover the truth about the artifact’s origins.
-
-# **PARK**
+* **Guild Rivalry:**A dispute between two guilds over the authenticity of an artifact threatens to escalate into open conflict. The characters are called upon to mediate the dispute or uncover the truth about the artifact’s origins. #**PARK**
 
 Parks are bounded areas of land that are set aside for a variety of purposes that often include recreation, preservation of natural resources, or hunting. Such areas are usually owned and maintained by local governments or rulers but may sometimes be the property of affluent private parties. Many are open to the public and, especially in industrialized societies where large numbers of people live in urban areas, are specifically maintained to provide people with pleasant areas for leisure and recreation. In some societies, however, parks might only be open to certain privileged groups. From the Middle Ages onward, for example, many parks consisted of land set aside for hunting by the nobility. Those owned by private parties, of course, might be open only to those to whom the owner wishes to give access. Most parks are managed in one way or another, whether to encourage what the owner believes to be their natural condition or to maintain them in an appealing landscaped state, and might range in appearance from wilderness to manicured garden or anything in between. Many combine elements of rolling grasslands and open woodlands, and some include or are built adjacent to wetlands, ponds, lakes, streams, beaches, canals, or other bodies of water. Grass is often kept short so that open areas can be used for picnicking, games, and other activities, and to discourage the presence of vermin and perhaps even larger creatures. Trees are often those naturally occurring in the area in question, but to these may be added other varieties, especially those considered attractive or useful in some way (e.g., shade trees, fruit trees). Likewise, plants and animals that are not considered to add to the value of a park might be culled from it. Many parks are also surrounded and sometimes subdivided with walls, fences, hedges, moats, or other barriers, often with an eye toward keeping game in, unwelcome visitors out, or both. Parks  can  be  of  almost  any  size  and  shape,  and  might  include  small neighborhood commons created from abandoned lots; very long, narrow recreational zones established around areas like razed city walls; specially-designated quarters of a city; large but discrete areas like islands or dense forests; or walled tracts of land in conjunction with manor houses and their gardens that form the country estates of aristocrats. Amenities in parks designed for recreation might include such areas as fields for locally popular sports, playgrounds, benches and tables, trails of various sorts (e.g., dirt, paved, graveled) and signage. Structures within highly developed parks might include fountains or pools; shrines and monuments; decorative shelters like bandstands, gazebos, or follies; kiosks that serve snacks and drinks; storage sheds; and possibly even offices or even dwellings for caretakers, rangers, or the like. Parks might also be built in conjunction with or adjacent to other sorts of recreational areas, such as outdoor theaters (q.v.) or fairgrounds. Because preservation of the landscape and its natural resources is at least a secondary goal in most parks, and because parks are often shared by many people, there will likely be strictures as to what people are allowed to do in various parts of such places. Typical rules, for example, might include prohibitions against cutting down trees, fires except perhaps in designated areas, and the like. Because un-enforced rules might just as well not exist, most places with regulations will have personnel assigned to ensure they are followed (e.g., forest rangers). Some park-like areas — such as village commons — do allow specific activities like grazing, wood-gathering, or other exploitation, but even if these are permitted in a limited way, it will only be to those who have acquired licenses or are otherwise qualified (e.g., local residents, indigenous peoples living in areas adjacent to a large park). Parks might prove useful to adventurers in many ways, serving as devotional sites for clergy of nature religions, a source for herbs or other plant products, or a location where animals of various sorts might be encountered by those who have connections with them (e.g., Gnomes’ affinity for burrowing creatures). Because parks are often somewhat isolated places where law enforcement is limited, they might also be employed as venues for various sorts of illegal or questionable activities, such as duels, prostitution, or black magic rituals.
 
-## **Example:
-
-Memorial Park of Lord Yggs**
+## **Example: Memorial Park of Lord Yggs**
 
 Situated on the banks of the **Urt River**, just north of Yggsburgh’s city walls, the **Memorial Park of Lord Yggs** honors the city’s founder and commemorates the decisive battle that secured Yggsburgh’s independence. Nestled near the **Workmen’s Sector**, this serene park provides a peaceful retreat from the bustling life within the city. The park’s lush vegetation, maintained by the river’s fertile banks, offers visitors a tranquil setting steeped in history.
 
@@ -424,34 +364,22 @@ The park is a sprawling expanse, blending natural beauty with monumental tribute
 
 **Grove of Remembrance**: A quiet grove of oaks stands as a living memorial to those who fell in the battle. Each tree bears a small brass plaque at its base, inscribed with the name of a soldier or civilian who perished. The grove’s dappled light and rustling leaves create a solemn and reflective atmosphere.
 
-**Memorial Fountain**: At the park’s center lies a magnificent fountain, its design a blend of art and symbolism. The fountain features a circular basin with carvings of the river, the city walls, and the banners of Yggsburgh’s founding guilds. The water flows from the mouths of sculpted lions, a nod to the strength and vigilance that preserved the city.
+**Memorial Fountain**: At the park’s center lies a magnificent fountain, its design a blend of art and symbolism. The fountain features a circular basin with carvings of the river, the city walls, and the banners of Yggsburgh’s founding guilds. The water flows from the mouths of sculpted lions, a nod to the strength and vigilance that preserved the city. ##**Caretakers**
 
-## **Caretakers**
-
-The park is maintained by a dedicated group of retired soldiers and volunteers from the **Common Temple**, who see to its upkeep and safeguard its tranquility. These caretakers not only tend to the grounds but also serve as informal historians, sharing tales of Yggsburgh’s storied past with visitors. Their presence ensures that the park remains a place of respect and reflection.
-
-## **Adventure
-
-Hooks General:**
+The park is maintained by a dedicated group of retired soldiers and volunteers from the **Common Temple**, who see to its upkeep and safeguard its tranquility. These caretakers not only tend to the grounds but also serve as informal historians, sharing tales of Yggsburgh’s storied past with visitors. Their presence ensures that the park remains a place of respect and reflection. ##**Adventure Hooks General:**
 
 * **Defending History**: Vandals, motivated by political agendas or simple malice, have begun defacing the park’s statues and monuments. The characters are hired to protect the site and uncover the perpetrators’ motives.
 * **Lost Secrets**: While exploring the ruined fortifications, the characters discover a hidden chamber containing an artifact from the battle—perhaps a lost banner or an enchanted weapon. This discovery could spark interest from rival factions or uncover long-forgotten secrets about Yggsburgh’s founding.
 
-* **Rewriting the Past**: A radical group seeks to destroy or alter the park’s memorials to promote a revisionist narrative of the city’s history. The characters must decide whether to thwart their efforts or investigate their claims for truth.
-
-## **Specific to the Park:**
+* **Rewriting the Past**: A radical group seeks to destroy or alter the park’s memorials to promote a revisionist narrative of the city’s history. The characters must decide whether to thwart their efforts or investigate their claims for truth. ##**Specific to the Park:**
 
 * **Restless Spirits**: Visitors to the Grove of Remembrance report eerie whispers and ghostly apparitions. The characters are asked to investigate, uncovering the lingering presence of soldiers who feel their sacrifices have been forgotten.
 * **Theft of the Banner**: The ceremonial banner held by the statue of Lord Yggs is stolen, threatening to disrupt an important city celebration. The characters are tasked with recovering it before the festivities begin.
-* **Ritual at the Fountain**: The Memorial Fountain begins flowing with water tinged red, sparking fear and rumors of a curse. The caretakers believe it is linked to a forbidden ritual performed at the fountain, and they seek adventurers to unravel the mystery and prevent further desecration.
-
-# **THEATER**
+* **Ritual at the Fountain**: The Memorial Fountain begins flowing with water tinged red, sparking fear and rumors of a curse. The caretakers believe it is linked to a forbidden ritual performed at the fountain, and they seek adventurers to unravel the mystery and prevent further desecration. #**THEATER**
 
 Theaters are places where plays and other sorts of performances are presented. They can be as diverse in size, form, construction, and appearance as the entertainment traditions and peoples associated with them and can include everything from stages set up in taverns just big enough to hold a few dozen patrons, to temple-like edifices, to immense amphitheaters large enough to hold tens of thousands of spectators. Significant historical examples include the Theater of Dionysius in Athens, Shakespeare’s Globe Theater in London, and a variety of Roman theaters throughout Europe, some of which are still used to this day. Most communities of town size or larger in a traditional fantasy, medieval, or ancient environment will have theaters of some sort in which entertainers present their various performing arts. The structures and elements of such theaters can vary widely — especially if the needs, inclinations, and tastes of non-Human races are taken into consideration — and game masters should adopt existing traditions or develop new ones in accordance with what is most suitable for their campaigns. Two traditions that are relatively familiar to modern people and recommended as some of the most suitable for these purposes are the Greek and English traditions (as exemplified by the afore- mentioned theaters in Athens and London). At the least, however, all theaters recognizable as such include a stage or cleared space for the performers and an area where an audience can sit or stand, generally tiered to allow a view from anywhere in the house. For anything beyond the simplest and most stylized performances, a dressing room, storage for props of different kinds and private space for the troupe to relax and transact back-of-house matters are also necessary. Miniature, often portable theaters are also sometimes used for performances featuring puppets, small animals, or similarly diminutive entertainers. The purposes of theaters and the performances given in them can vary widely and can include everything from producing art-for-art’s sake to honoring the gods. Most of the time, however, the primary goal is entertainment and other goals are secondary. People of all races, classes, and social levels might enjoy theatrical productions. Indeed, theaters are likely to be almost universally attended in societies that do not have modern entertainments like television or cinema. Proprietors of theaters will probably be either professional entertainers (whether retired or still players in their theater’s productions) or promoters and impresarios. Other people associated with theaters include actors, singers, acrobats, and other sorts of performers; artisans capable of creating such things as backdrops, props, and costumes; and, in large operations, a diversity of characters that might include laborers, fencing masters, makers of playbills, adventurers or sages retained as story consultants, and business managers.
 
-## **Example:
-
-The Marvel Playhouse**
+## **Example: The Marvel Playhouse**
 
 Theater in Yggsburgh flourished thanks to the establishment of the **Marvel Playhouse**, a grand wooden theater located on **Mills Street** in the heart of the city. Owned and operated by **Sir Richard Albright**, a former adventurer turned impresario, the Marvel Playhouse has become a cultural institution that attracts audiences from all walks of life. Known for its eclectic performances and skilled actors, the theater is a beacon of entertainment in Yggsburgh’s vibrant Entertainment District.
 
@@ -465,35 +393,23 @@ The Marvel Playhouse is a large wooden structure featuring a main performance ha
 
 **Dining Salon**: Also on the second floor is an elegant dining salon offering fine food and drinks to theatergoers. The menu changes seasonally and features local delicacies alongside imported wines and spirits.
 
-**Backstage Facilities**: Behind the scenes, the Marvel Playhouse is a hive of activity. Dressing rooms, prop storage, and workshops ensure that every performance runs smoothly. Sir Richard himself often oversees rehearsals and production meetings, lending his experience and flair to every show.
+**Backstage Facilities**: Behind the scenes, the Marvel Playhouse is a hive of activity. Dressing rooms, prop storage, and workshops ensure that every performance runs smoothly. Sir Richard himself often oversees rehearsals and production meetings, lending his experience and flair to every show. ##**The Owner**
 
-## **The
-
-Owner**
-
-**Sir Richard Albright**, a charismatic figure in Yggsburgh society, has dedicated his post-adventuring life to elevating the performing arts. Known for his sharp wit and keen business sense, he has cultivated a reputation as both a patron of the arts and a savvy entrepreneur. Under his guidance, the Marvel Playhouse has gained a reputation for hosting some of the most talented performers and innovative productions in the region.
-
-## **Performances and Productions**
+**Sir Richard Albright**, a charismatic figure in Yggsburgh society, has dedicated his post-adventuring life to elevating the performing arts. Known for his sharp wit and keen business sense, he has cultivated a reputation as both a patron of the arts and a savvy entrepreneur. Under his guidance, the Marvel Playhouse has gained a reputation for hosting some of the most talented performers and innovative productions in the region. ##**Performances and Productions**
 
 The Marvel Playhouse offers a rotating schedule of performances that cater to a wide audience. Its repertoire includes classic tragedies, comedic satires, operatic spectacles, and original works by local playwrights. Special events, such as free performances on festival days, ensure that the theater remains accessible to Yggsburgh’s diverse populace.
 
-## **Adventure
-
-Hooks General:**
+## **Adventure Hooks General:**
 
 * **Inspired Playwright**: A playwright eager to win a prestigious competition approaches the party, hoping to adapt one of their adventures into a script. This request could lead to unexpected fame—or unwanted attention.
 
-* **Sabotage at the Theater**: Controversial material in a new play sparks outrage from a political faction or influential group. Characters may find themselves hired to protect the production—or recruited to disrupt it.
-
-## **Specific to the Marvel Playhouse:**
+* **Sabotage at the Theater**: Controversial material in a new play sparks outrage from a political faction or influential group. Characters may find themselves hired to protect the production—or recruited to disrupt it. ##**Specific to the Marvel Playhouse:**
 
 * **Theft of a Masterpiece**: A rare and valuable prop or costume, central to an upcoming production, is stolen. Sir Richard hires the characters to recover it before the performance is ruined.
 
 * **Rivalry in the Arts**: A competing impresario from a lesser-known theater attempts to discredit the Marvel Playhouse. The party may be enlisted to uncover the rival’s schemes and protect the playhouse’s reputation.
 
-* **Haunted Stage**: Actors and stagehands report strange occurrences during rehearsals, leading many to believe the playhouse is haunted. Sir Richard offers the characters a reward to investigate the source of the disturbances.
-
-This adaptation of the "Theatre of Dionysius" reimagines the setting as the **Marvel Playhouse**, a lively and prestigious theater in Yggsburgh. Its dynamic performances, elegant facilities, and charismatic owner provide rich opportunities for storytelling and adventure.
+* **Haunted Stage**: Actors and stagehands report strange occurrences during rehearsals, leading many to believe the playhouse is haunted. Sir Richard offers the characters a reward to investigate the source of the disturbances. This adaptation of the "Theatre of Dionysius" reimagines the setting as the**Marvel Playhouse**, a lively and prestigious theater in Yggsburgh. Its dynamic performances, elegant facilities, and charismatic owner provide rich opportunities for storytelling and adventure.
 
 its trade secrets. He is not above appealing to the characters’ better natures by suggesting some nefarious plot on the Satyrs’ part.
 
@@ -501,9 +417,7 @@ its trade secrets. He is not above appealing to the characters’ better natures
 
 — is believed to have been spotted in disguise at a number of performances at the Theatre of Dionysius (allegedly weeping uncontrollably during especially tragic scenes). Anyone with an interest in bounty hunting, law enforcement, or battling evil in general might be interested in this information and decide to act upon it.
 
-# **CHAPTER
-
-4: PROFESSIONAL PLACES**
+# **CHAPTER 4: PROFESSIONAL PLACES**
 
 In the course of their adventures or in pursuit of advancement in their vocations, player characters may find it necessary to visit a variety of places devoted to the development of various professions. While the events and interactions that occur at such places might simply be hazed over in a few minutes of discussion between players and the game master, some groups might find it more satisfying and realistic to have their characters periodically — or always — role play activities like dealing with vocational guilds and seeking trainers to help them improve their class abilities, skills, or combat techniques. Guildhouses and training halls are, in fact, two sorts of essential professional places that are described in the following pages. Other sorts of professional places that might come into play in some campaigns — especially if they involve occupations in which characters hope to advance or professionals with which they must consult — are the workplaces of architects, lawyers, cartographers, engineers, navigators, and physicians. Professional places are sometimes established in residential-type buildings of various sorts; a lawyer or cartographer, for example, might run their operations out of a townhouse of the sort described under “Buildings” in Chapter 1: Communities. Many professional places will be more institutional, however, and located in purpose-built structures. In any event, professional places are almost always found in or around urban areas — where the greatest number of people can avail themselves of their services — although if large enough, such places might be built in more isolated areas and even have communities of up to village size grow up around them. A historic example of this is the Asclepion, an ancient Greek hospital complex located in what is now Turkey. Features of professional places might include, as appropriate, training areas, workshops, halls for events and for regular dining, trophy rooms, meeting rooms, offices, vaults for safekeeping of valuables, rooms for storing institutional records, and libraries of professional materials. Larger places might also include amenities for their members or staffs (e.g., private dining rooms, residential apartments). Regardless of their sizes or locations, professional places are almost always intended to project a sense of substance, sobriety, and seriousness commensurate with the gravity of the vocations that are pursued within them.
 
@@ -513,9 +427,7 @@ Guildhouses are the headquarters and seats of activity for the organizations tha
 
 Facilities at a guildhouse of any size typically include a hall for large gatherings, one or more smaller meeting areas, offices for guild officials and their clerical staffs, storage areas for guild records, and a vault for guild monies and valuables. Larger guildhouses might also include kitchens and dining areas where guild staff can take their meals and members can purchase them at a nominal cost, living areas for the staff that include an apartment and private offices for the guildmaster, guest rooms for visiting dignitaries, and inexpensive lodgings where members traveling from other areas can stay (e.g., for half the prevailing local rate). Guildhouses might also include workshops where out-of-town members, those who have temporarily lost use of their own work areas, or those who cannot afford expensive or specialized facilities can work for a reasonable fee. Furnishings throughout a guildhouse are typically sober, although not generally actually utilitarian or austere, and often showcase the specialty of the guild (e.g., wooden wall paneling carved by local craftsmen that depict an idealized history of the local community). Decorations generally include examples of goods produced by guild business and awards or other honors that have been bestowed upon the guild or its members. Functions practiced by a guildhouse typically include collecting dues from members, inspecting and levying fees on goods being produced, sold, or transported through the area, maintaining guild records, and providing services for both local and visiting members (e.g., issuing temporary permits to newcomers to pursue their vocations in the surrounding area). Chief official at a guildhouse is typically a master of an appropriate craft or vocation who has worked his way up through the political structure of the guild and perhaps even the community as a whole. Such an official is likely very influential, and his favor or dislike can go a long way toward reflecting how his friends or enemies are treated in the community. Other personnel typically include an appropriate number of clerks and however many servants are needed to clean the guildhouse, cook, and perform other necessary chores. Security at guildhouses will be commensurate with the prevailing level of threat and the value of anything kept on the premises (e.g., coining dies at a guild entrusted with producing a city’s money). Such security might be provided by guards hired directly by the guild, by those provided through affiliation with a fighters’ guild, by city watchmen who are themselves guild members, or by city guardsmen who are either moonlighting or provided through some arrangement with their superiors.
 
-## **Example:
-
-The Wayfarers’ Lodge**
+## **Example: The Wayfarers’ Lodge**
 
 Located in the bustling Workmen’s Sector of Yggsburgh, the Wayfarers’ Lodge serves as a haven for adventurers seeking respite, camaraderie, and opportunity. Housed in a repurposed craftsman’s workshop, the Lodge is modest but functional, offering a warm hearth, hearty meals, and a steady flow of work for those with a taste for adventure.
 
@@ -523,25 +435,19 @@ The common room is the heart of the Lodge, a spacious area filled with sturdy ta
 
 For those needing rest, the Lodge offers a small number of private rooms for rent. These sparsely furnished quarters provide a secure place to sleep and store belongings, though accommodations are far from luxurious. The Wayfarers’ Lodge is lively and diverse, frequented by grizzled mercenaries, eager young adventurers, and everyone in between.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * A cryptic note appears on the Lodge’s notice board, hinting at a forgotten treasure hidden beneath the city. The characters must decipher the message and navigate potential competition to claim the prize.
 * A thief posing as an adventurer begins targeting patrons of the Lodge, stealing valuable equipment and coin. The characters are tasked with identifying and stopping the culprit.
 * A mysterious visitor arrives at the Lodge, seeking capable adventurers for a secretive and dangerous mission.
 
-# **TRAINING
-
-HALL**
+# **TRAINING HALL**
 
 Training halls are places where warriors, athletes, and others can variously exercise, train with weapons, and associate with others of similar inclination, both for purposes of socializing and of networking. This sort of place includes all sorts of gymnasiums, dojos, fencing clubs, martial monasteries, and the like. Individual training halls might be associated with specific weapons, fighting styles, philosophies, sports, or activities. In some campaigns, access to such a place might be required for characters to advance in their chosen professions or to learn specific skills or fighting methods. Clientele at training halls will often be determined by the sorts of training or amenities they offer. Quite often, a significant number of their patrons will be members of the same vocational or racial demographic (e.g., marines, mercenaries, cavalrymen, members of the city watch, Orcish fighters, citizens from the community’s aristocracy and upper crust).
 
 Proprietors of training halls are quite often former professional soldiers, adventurers, or athletes who have retired from the hazards of their vocation and turned the remainder of their energies to running establishments where others can build their bodies or learn the arts of war. Religious organizations devoted to gods of physical prowess sometimes have training halls associated with their temples. Training halls can assume a wide variety of sizes and forms. At its smallest and simplest, such an establishment might consist of a one-room building or perhaps only an open-sided pavilion, with space adequate for a master and one or more pupils to train with weapons or at whatever other martial arts or activities in which they are seeking to improve their skills. At the other extreme, training halls might be multi- building complexes that include amenities such as dining areas and dormitories. The primary service provided at a training hall is, of course, access to its facilities and trainers. Some might also provide access to arms, armor, and specialized equipment. And, in societies where individuals sell their abilities as professional combatants, some may also serve as de facto fighters’ guilds that help find work or provide other services for their members. Price structures are often geared toward encouraging or discouraging clientele from certain levels of society. Entry criteria might also be enforced in order to include or exclude specific types of people (e.g., encourage citizens, males, or Humans, and discourage foreigners, females, and non-Humans). Some training halls might also function as private clubs and, like guilds, have specific membership requirements, such as providing services to support the hall and taking part in its social and civic activities. If access to a training hall is required in order for characters to advance in their careers, however, such places should not ultimately be made inaccessible to them, except perhaps temporarily as an opportunity for roleplaying, a side quest, or greater expenditure of excess treasure.
 
-## **Example:
-
-The Iron Ring**
+## **Example: The Iron Ring**
 
 Situated in the Entertainment, Industrial, and Warehouse District of Yggsburgh, the Iron Ring is a loosely organized fraternity of fighters, mercenaries, and martial enthusiasts. The group operates out of a converted warehouse, where the clang of steel and the shouts of combatants echo day and night. Unlike formal guilds, the Iron Ring places little emphasis on structure, instead valuing raw strength, combat skill, and a shared respect for martial prowess.
 
@@ -549,17 +455,13 @@ The Iron Ring holds regular training sessions and sparring matches in its wareho
 
 Leadership within the Iron Ring is informal and fluid, with authority naturally gravitating to those who prove themselves through skill and reputation. Contracts for mercenary work often flow through the Ring, providing lucrative opportunities for its members. Despite its rough-and-tumble nature, the Iron Ring is a place where bonds are forged in the crucible of combat.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * A high-stakes tournament is announced, with the prize being an enchanted weapon of great renown. The characters must train and compete to claim victory.
 * The Iron Ring’s leaders are approached by a wealthy noble offering a suspiciously lucrative contract. The characters are hired to investigate the true nature of the mission.
 * A rival faction attempts to infiltrate the Iron Ring, sowing discord and threatening its unity. The characters must expose the saboteurs and restore order.
 
-# **CHAPTER
-
-5: TRADESMAN PLACES**
+# **CHAPTER 5: TRADESMAN PLACES**
 
 Tradesmen are characters who provide skilled services based on specialized training and knowledge. While player character parties usually have a wide range of skills and abilities at their disposal, there are times when they might need to avail themselves of the specialized capabilities of such individuals. Putting characters in the position where they need these skills can encourage role-playing or creative thinking, prompting them either to accomplish skill-based tasks on their own or to negotiate with non-player characters to do so for them. Game masters can also sometimes use the essential places associated with tradesmen as opportunities to insert adventure hooks into their campaigns.
 
@@ -605,9 +507,7 @@ The Bountiful Cauldron is not merely a shop but also a gathering place for those
 
 —and dangerously predatory. The adventurers must contain it before it escapes and wreaks havoc.
 
-# **CHAPTER
-
-6: MERCANTILE PLACES**
+# **CHAPTER 6: MERCANTILE PLACES**
 
 Wealth in various forms is a big part of most fantasy roleplaying games, and characters need a variety of places to liquidate, spend, and safeguard the swag they acquire in the course of their adventures. While playing out every financial transaction obviously does not serve the interests of a lively game, reenacting some of them can add a new dimension to scenarios and allow for some interesting and lively roleplaying. This can also allow characters to utilize skills — such as appraisal, bargaining, or various areas of knowledge — that they do not usually have the opportunity to use in the field. Essential places of a mercantile nature that characters are most likely to visit prior to adventures include city marketplaces, village general stores, and wilderness trading posts, where they obtain provisions and much of the general equipment they might expect to need on their adventures. Places many will need to visit after their adventure — if they are successful, of course — include brokerages, where they can sell items they have decided not to keep, moneychangers to convert foreign currencies into local legal tender, banks to safeguard excess wealth or arrange loans, and perhaps even warehouses to store quantities of bulky items that they need to hold onto for a period of time. All of these sorts of places are described in the following chapter. Mercantile places that sell various sorts of things are likely to be found in communities of almost any size, or even at crossroads or oases along trade routes. Places that perform higher financial functions, however, like banks, are not likely to be found in communities smaller than town size. While mercantile places can vary widely in size, construction, and appearance, one thing most have in common —to a lesser or greater extent and as appropriate to their functions — is an effort to project substance, affluence, and success. Some are established in structures similar to those described under “Buildings” in Chapter 1 (e.g., an urban broker might operate out of an urban townhouse, a rural general store will likely be run out of a wattle-and-daub longhouse). Others, such as banks or warehouses, will likely consist of large, solid, purpose-built structures made of stone or brick. Another thing mercantile places have in common is a need for security that is more costly and stringent than at almost any other sorts of establishments. This is, naturally, in keeping with their function as places used to store or actually safeguard various sorts of valuable commodities and wealth. Measures are likely to include reinforced or solid-metal doors, the best locks available, stone or metal vaults, cages or grills to separate customers from employees, and the fulltime presence of armed guards. Magical safeguards, if they exist in the milieu in question, will likely be employed as well. In addition to the commodities kept in them, items present in mercantile places are likely to include ledgers, files, and forms for keeping track of inventory and transactions; materials for writing, sealing, and otherwise preparing documents like receipts, invoices, and bank draughts; shelves, containers, or other systems for storing (and sometimes for displaying) various items of stock; and whatever sorts of tables, desks, chairs, or other furnishings are required to facilitate comfort, document- handling, and interactions between customers and proprietors. Whether the proprietors of various mercantile places dwell on the premises or not depends to a large extent on the size, location, and affluence of the establishments in question (e.g., while the owner of a country general store would almost certainly live in an adjacent backroom or loft, the manager of a bank would not likely have an apartment inside the establishment he runs).
 
@@ -615,9 +515,7 @@ Wealth in various forms is a big part of most fantasy roleplaying games, and cha
 
 Banks are institutions that provide financial services and often have profound influence over prevailing economic and political circumstances. In a traditional ancient, medieval, or fantasy gaming milieu, services provided by banks will likely include safeguarding valuables; accepting deposits of money; lending money and investing in commercial ventures of various sorts; issuing and cashing checks, bank guarantees, letters of credit, and the like — particularly to transfer money more safely between distant countries — if such instruments exist in the milieu; and money-changing. Some banks may also have charters from the local government to mint or otherwise produce coinage, banknotes, or whatever financial instruments are accepted as legal tender in the society in question. Historically, banks have had strong links to international merchant enterprises and are among the most profitable sorts of institutions. Real-world examples include Swiss banking, which dates to the Middle Ages; the military order of the Knights Templar, which financed the activities of monarchs until it was destroyed in the 14th century (probably so the king of France would not have to repay his debts to it); and the Florentine financial institutions of the Renaissance. Commercial banks generally make money by charging interest, often at usurious rates, on loans and investments and by assessing fees for services like safe deposit boxes and money changing. (Banks in some historical and present-day societies are prohibited from earning or paying interest, but these still typically profit through the assessment of fees.) Deposits of money can usually be made for free at commercial banks; some of these funds are then loaned out or invested in other ways and a small proportion of them are held in reserve to cover depositor withdrawals and unforeseen demands. While most banks operate as private businesses and for profit, it is possible for some — or all of them in some societies — to operate as non-profit institutions or to be owned and operated by the government. Such banks — often called central banks — may be charged with controlling interest rates and money supplies within a nation. And, while many banks offer their services to the public at large, some offer their services only to specific economic or demographic groups (e.g., the wealthy, the poor, guild members, farmers, Dwarves). In some societies, banking might be controlled largely or entirely by members of certain races, ethnic groups, or subcultures, or prohibited to the members of others. Security is paramount at banks and may be greater at them than anywhere else. Indeed, in an age predating government insurance of banking institutions, loss of assets from robbery could destroy a bank and those whose money is kept in it. Traditional measures are likely to include stone walls, metal vaults, the best locks available, and armed guards. Magical or exotic defenses, to the extent that they are available, are more likely to be employed in banks than in any other sort of commercial institution.
 
-## **Example:
-
-The Helmsworth Vaults**
+## **Example: The Helmsworth Vaults**
 
 Located prominently in Yggsburgh’s Merchant Quarter, the Helmsworth Vaults are an institution synonymous with wealth, security, and influence. This imposing structure is built of pale limestone blocks, with gargoyle-shaped waterspouts at each corner and heavy wrought-iron gates at its entrance. Inside, high ceilings and polished marble floors contribute to an atmosphere of both affluence and gravity.
 
@@ -625,9 +523,7 @@ The Vaults cater to Yggsburgh’s wealthiest citizens and merchants, safeguardin
 
 The Vaults are staffed by a mix of experienced accountants, armored guards, and highly-trained wizards, all under the supervision of Guildmaster Claudius Helmsworth. Claudius, a middle-aged man with a reputation for discretion, personally oversees any transactions involving significant sums or items of extreme value.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * A gang of thieves has discovered a way to bypass some of the Vaults’ magical defenses. The adventurers are hired by Claudius to uncover the source of the breach and ensure the security of the bank before it loses its reputation.
 * A client’s deposit—a mysterious, rune-carved chest—has begun emitting strange noises. The adventurers are hired to discreetly investigate its contents before the entire bank staff flees in panic.
@@ -638,9 +534,7 @@ Known variously as brokerages, factors of imports, and clearinghouses, instituti
 
 Proprietors of brokerages are typically merchants, bankers, or other characters skilled at appraising the value of goods, managing inventory, raising large loans and letters of credit, and reselling commodities. Their workers tend to be junior partners aspiring to develop similar skills and connections. Because large sums of money and goods or commodities of great value are exchanged at such places, brokerages are typically well constructed, with reinforced doors, good locks, and sturdy vaults. Those dealing with large quantities of cash, goods that might be easily stolen, or in high risk areas will usually also employ guards or other security measures. Adventurers interested in quickly unloading large quantities of swag might be encountered at an establishment of this sort. Other clients might include foreign merchants without the benefit of contacts at local trading houses, those wishing to sell large quantities of goods in one place, and — depending on local laws and mores — pirates, privateers, or mercenary bands needing to liquidate their prizes.
 
-## **Example:
-
-The Counting House of the Coiners’ Guild**
+## **Example: The Counting House of the Coiners’ Guild**
 
 In the heart of Yggsburgh’s Counting Quarter stands the Counting House of the Coiners’ Guild, a tall, stately structure of white stone capped with a domed copper roof. Its entrance features a series of intricate carvings depicting scales, coins, and other symbols of trade and commerce.
 
@@ -648,22 +542,16 @@ The central hall of the Counting House is lined with long tables at which broker
 
 Guildmaster Renaud Grevaux, a shrewd former trader, runs the establishment with an eye for precision and a love of profit. The Counting House enforces a strict no- haggling policy within its walls, ensuring all transactions are handled efficiently and fairly under the watchful eye of guild clerks.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * Renaud Grevaux hires the adventurers to recover a shipment of rare goods stolen en route to the Counting House. The thieves, however, appear to be more interested in a specific item in the shipment than its overall value.
 * A distraught merchant approaches the party after discovering that a trusted broker at the Counting House has disappeared, taking a ledger containing incriminating information. The party must retrieve the ledger before its secrets become public.
 
-# **GENERAL
-
-STORE**
+# **GENERAL STORE**
 
 General stores are retail establishments that offer a wide selection of merchandise packed into a relatively small space, at which people from the local and surrounding areas can come to purchase most of what they need, and to place special orders for items that are not in stock. Such places are typically located in frontier or rural areas, oases or crossroads, or communities of village size or smaller, rather than towns or larger communities where a broad variety of goods are available from more specialized vendors (although in the modern world, box stores, corner stores, convenience stores, and many drug stores fulfill the same function in urban and suburban areas). Many general stores in smaller and more isolated settlements are combined with other sorts of establishments, such as trading posts, post offices, or taverns. Such establishments are also variously known as village shops, provisioners, traders, or company stores. Merchandise at general stores typically includes staple comestibles like milk, eggs, bread, and cheese, along with all sorts of dried and preserved food (including canned food if the necessary technology is available), manufactured household goods and tools, one or more sorts of bottled alcoholic beverage, outer-wear, outdoor supplies like fishing gear, local produce, crafts, and souvenirs. Such stores may also feature a wide variety of items that the proprietor might have obtained second-hand or from traveling salesmen or other sources and put on display in the hope that they might sell. In the context of a roleplaying game, general stores — particularly those in areas frequented by adventurers — carry most or all common sorts of adventuring equipment. And, if there is a demand for them and local ordinances do not prohibit it, such stores may also carry simple armaments for hunting and home defense like bows, crossbows, spears, daggers, shields, helmets, and perhaps even light or second-hand pieces of heavier armor. More specialized items might be available by chance (e.g., 10% or less) or if they can be readily obtained locally. Keeping the shelves stocked at general stores in especially isolated areas is often a challenge, and the proprietors of such places might thus be willing to purchase items obtained by characters in the course of their adventures. The quantities they are willing to purchase will likely be limited by the amount of storage space and cash at their disposal and how quickly they believe they can unload them, and they will not likely be willing to either buy repeated consignments of unusual items (e.g., foreign-made weapons) or pay more than 50% of what they believe they can sell them for. They might also be cash-poor — or claim to be — and more willing to offer store credits rather than currency. Because the merchandise at general stores must usually be shipped there by merchants from other areas, it is also sometimes much more expensive than it would be at its point of origin. Game masters can determine, for the sake of simplicity, that the prices given for such items in the game represent purchases from a general store; can deem that a general store charges double those prices (or some other multiplier) because of isolation and restricted competition where the items are being sold; or can set prices based on how far afield a particular general store is. Proprietors of general stores can hail from a wide variety of backgrounds and include petty merchants, former adventurers, and owners of other local concerns who have established such places with an eye to increasing their incomes. General stores can be of any size and their forms will usually be determined by where they are located (e.g., a general store located in a timber fort will probably be run out of a log building). Many will be set in sunken huts, long houses, and the other sorts of general purpose buildings described under “Buildings” in Chapter 1: Communities. Security measures at general stores are usually not elaborate but are typically commensurate with the prevailing level of threat — often with higher levels of caution at night at stores that remain open then — and those established in areas subject to banditry or other violent crime will likely be set within protected areas. Most include doors and windows that are barred or which can be locked and/or shuttered when the store is closed, and are run by people who can generally take care of themselves and who can count on support from their neighbors or the local authorities.
 
-## **Example:
-
-The Blackwillow Trading Post**
+## **Example: The Blackwillow Trading Post**
 
 The Blackwillow Trading Post sits at a remote crossroads deep in the Wynchwood Forest, its sturdy timber frame surrounded by a weathered palisade. The post serves as a vital outpost for adventurers and traders venturing into the forest’s depths.
 
@@ -671,9 +559,7 @@ The trading post comprises a general store, a modest tavern, and a small stable.
 
 Proprietor Dannel "Blackwillow" Groth, a grizzled former trapper, runs the establishment with the help of his daughter, Althea. Dannel is known for his no- nonsense demeanor and encyclopedic knowledge of the Wynchwood, making him a valuable ally to those seeking guidance through the wilderness.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * Dannel suspects that one of his suppliers has been murdered, and he hires the adventurers to deliver payment and investigate the suspicious circumstances of their death.
 * An ancient, weathered map appears in Dannel’s inventory, hinting at a hidden ruin deep in the Wynchwood. He offers the map to the party in exchange for a share of any treasure they uncover.
@@ -684,9 +570,7 @@ Marketplaces are designated areas within communities, whether temporary and open
 
 Some marketplaces might have specialized areas within them peripheral to trade, such as mercantile courts, shrines to deities of trade, and the like.
 
-## **Example:
-
-The Great Market of Yggsburgh**
+## **Example: The Great Market of Yggsburgh**
 
 The Great Market sprawls across the edge of Yggsburgh’s Merchant Quarter, bordered by the bustling riverside docks. Open from sunrise to sunset, it offers a lively mix of goods from across the region and beyond, with vendors hawking everything from fresh produce to exotic treasures.
 
@@ -696,9 +580,7 @@ The market is divided into sections, with one corner dedicated to livestock, ano
 
 City watchmen patrol the market regularly, ensuring order is maintained while also keeping a wary eye out for pickpockets and fraudsters.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * A merchant’s stall is vandalized during the night, leaving behind a cryptic symbol. The merchant offers the adventurers payment to protect his wares and investigate the meaning of the symbol.
 * A fortune-teller in the market foretells doom for Yggsburgh if a particular artifact, currently for sale in a vendor’s stall, is not acquired and returned to its rightful place.
@@ -708,9 +590,7 @@ Hooks:**
 
 Pawnbrokerages are businesses that offer monetary loans in exchange for items of value, which the pawnbroker holds as collateral and are subsequently called pledges or pawns. Under the terms offered by such an establishment, the owner of the item is allowed to redeem it within an agreed-to period of time for a price equal to the amount of the loan plus a fee that is usually based on monthly interest. If, for whatever reasons, the owner does not redeem the item within the stipulated period of time, the pawnbroker is entitled to sell it. Historically, pawnbrokers existed in China since around 1000 B.C., were known to the ancient Greeks and Romans, and had spread to northwestern Europe by the 11th century A.D. Such establishments were among the forerunners of modern banks and most, beyond merely making loans in exchange for the pledge of items, also served as moneychangers or performed other financial functions, such as appraising items for a fee. In the West, the historic symbol for a pawnbroker is a cluster of three gold coins or spheres, and is derived from the symbol of the Medieval financiers of Lombardy, in Italy. In China, the symbol for a pawnbroker is a bat holding a coin. Pawnbrokers exist at all levels of affluence. While many at the lower end of the spectrum trade mainly in personal items of a relatively modest value, those at the opposite extreme might be involved in transactions involving items of very high value indeed. In 1338, for example, King Edward III of England pawned his crown jewels to Lombard financiers to raise money for his war with France, and King Henry V of England followed suit in 1415\. The operations of pawnbrokers — including the interest they can charge, the period of time they must allow for a customer to redeem an item, and safeguards they must take against receipt of stolen goods — are usually closely regulated by the authorities and have traditionally been subject to many limitations (indeed, most modern Western law related to pawnbrokers ultimately derives from ancient Roman jurisprudence). Illegal variants on pawnbrokers include loansharks, who do not necessarily accept collateral but charge usurious rates of interest and typically employ violence to enforce repayment; and fences, who may strive to run operations that look legitimate but specialize in purchasing stolen goods and even working in collusion with thieves (in such cases using the pawnbrokerage mostly as a front to explain their possession of a variety of valuables). Pawnbrokers cannot generally exist in societies that prohibit assessment of interest on loans, and these have included some Christian and most Islamic societies. Even when the operations of such financiers are not prohibited outright, they might be harassed or severally hampered in their operations by officials that dislike their trade. What a particular pawnbroker is willing or able to accept can vary widely. Most, however, are eager to deal in items such as gold, silver, gems, jewelry, musical instruments, and artisans’ tools. Others might be disposed to deal in weapons, armor, horses, large items like wagons or vessels, or even real estate. Few will be willing to accept perishable items or things they do not think they will be able to sell if unredeemed. A pawnbroker usually lends much less for items than they are worth, and this amount will almost never exceed one-third of an item’s full appraised value. A customer can then buy back his item for this amount plus interest. Rates can vary widely, from the liberal 3 percent per annum in China to the much more usurious rates of 5 percent to 12 percent per month in the West. Periods of time that a customer has to redeem an item can vary widely from region-to-region and depend on the prevailing laws governing the operations of pawnbrokers. This period will almost never be less than a month and, in some societies, might be much longer (e.g., in China a customer generally has up to three years to redeem an item). Many pawnbrokers operate shops where they sell items that have not been redeemed by their original owners within the agreed-to period of time. Proprietors of pawnshops might also be willing to purchase items outright for cash and offer them for sale immediately. Adventurers of almost any level of experience might periodically choose to avail themselves of the services of a pawnbroker, typically when they need to finance an expedition but do not wish to sell the items they intend to pledge. A low-level warrior, for example, might hock his best set of armor in order to buy additional equipment he wants on a particular dungeon-delve, while a more experienced character might decide to pledge a sailing ship that he will not need for the overland venture he is planning. Characters might also find it useful to purchase items at pawnshops. At least half the items in stock at many such establishments will sell for between 60 percent and 90 percent of their full market value, so characters of limited means in particular might find some good deals at them. Security is paramount at the establishments of pawnbrokers and second only to that of banks (q.v.), or even equal to them in cases of the most affluent characters of this sort. In addition to the safeguards described in the section on banks, a typical measure employed by real-world pawnshops in the Far East is to have a counter too high for a typical customer to look over, requiring them to reach up to offer items for inspection.
 
-## **The
-
-Iron Chest**
+## **The Iron Chest**
 
 Located at the edge of Mills Street, in the heart of Yggsburgh’s bustling Workmen’s Sector, The Iron Chest stands as a beacon for both desperate commoners and adventurous speculators. The building is a squat, unassuming stone structure with reinforced oak doors banded in black iron and a sign bearing its simple emblem: a sturdy chest bound in chains. Its dim interior smells of aged wood and faint pipe smoke, and the faint clinking of coins echoes through its halls.
 
@@ -724,23 +604,17 @@ The Iron Chest offers short-term loans against collateral at reasonable rates, s
 
 Rumors abound that Gorlan has connections to Yggsburgh’s elusive Thieves’ Guild, though no proof of this exists. Some say he uses these ties to ensure stolen goods never pass through his doors—others whisper that the arrangement simply helps him recover stolen items faster than most.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 A Pawned Relic: A rare item of immense historical or magical significance has been pawned to The Iron Chest, drawing the attention of rival factions who seek to claim it. When Gorlan refuses to sell, the adventurers are drawn into a web of intrigue. The Runaway Loan: An old client of Gorlan's has defaulted on a substantial loan, disappearing with a unique heirloom used as collateral. The adventurers are hired to track down the debtor and recover the item, but doing so reveals deeper motives behind the disappearance. Break-In on Mills Street: An attempted robbery of The Iron Chest leads Gorlan to suspect betrayal from within his own ranks—or even among his clients. The adventurers must uncover the culprits and protect the shop from further attacks.
 
-# **TRADING
-
-POST**
+# **TRADING POST**
 
 Trading posts are places established for the purchase, sale, and exchange of goods along and at the junctions of roads, rivers, and other travel venues, or in far-flung places where specific sorts of commodities can be obtained. Consequently, many such places are located in remote areas, along frontiers, or in sparsely populated or wilderness areas. There is thus a certain amount of risk and hazard associated with many such commercial enterprises, and they are often run by hardy adventurer-merchants and reinforced with fortifications and troops. Trading posts can range from tiny settlements centered on blockhouses or low stockades to entire fortified cities at isolated oases. Such places quite often have few useful natural resources available to them other than their locations.
 
 Historic examples of trading posts include legendary Timbuktu, in what is now Mali, which linked the trade routes of north and west Africa with those of Europe; the Black Sea city of Caffa, founded as a trading post by Genoa in the 1300s; the trade and slaving stations established by the Portuguese along the coasts and spice routes of Africa, Arabia, India, and Southeast Asia in the 15th century; and the outposts built throughout North America by the French and English for purposes of trading with the native population and obtaining commodities like furs. Legendary examples include the Keep on the Borderlands, which functioned both as a military base and a fortified trading post. Goods available at trading post “general stores” traditionally include manufactured goods or other resources that are generally unavailable in the area in question. Such goods are often sold at far higher prices than they would be at their points of origin and are often traded primarily for whatever local commodities in which an area is rich (e.g., gold, ivory, slaves, furs). Various services are also typically available at trading posts, including blacksmithing, stabling, and sleeping facilities. Adventurers often patronize trading posts in the neighborhood of ruins, ancient tombs, or other places of interest to them. In a traditional campaign setting, characters generally use such places to equip themselves before expeditions, liquidate their loot and dissipate some of the proceeds after their adventures, and bivouac in relative safety in between them.
 
-## **Example:
-
-Fort Wayfarer Trading Post**
+## **Example: Fort Wayfarer Trading Post**
 
 Fort Wayfarer is a small, fortified trading post located along the Old South Road, near the edge of the Wynchwood Forest. The fort is built upon the remnants of an ancient stone watchtower, expanded over the years into a sturdy bastion that serves as a hub for adventurers, travelers, and traders. The fort’s position at a crossroads ensures a steady stream of merchants, local hunters, and even wandering pilgrims seeking safe haven in its walls.
 
@@ -750,9 +624,7 @@ The fort’s current overseer is a Half-Orc named Brathen “Ironhand”, a semi
 
 Brathen ensures order within the post and maintains alliances with local woodsmen and scouts, providing him with news of the forest and potential threats.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 Brathen’s scouts have gone missing while investigating an old ruin in the forest. He hires the adventurers to find out what happened and recover any goods they might have been carrying.
 
@@ -762,9 +634,7 @@ A reclusive merchant from the underlands periodically trades rare, subterranean 
 
 Warehouses are buildings or other structures used for both long- and short-term storage of large quantities of goods and materials and are a feature of all complex, organized societies. The first warehouses were built by municipal and national governments, which used them to store surplus food in order to protect their populations against crises like famine or siege. Commercial warehouses are generally owned by individual merchants or trading houses, which both use such facilities to store their own goods and rent out portions of them to other people or organizations, or by other organizations that need to store large quantities of goods. These might include everything from major planters or agricultural cooperatives that need places to store their produce until it can be sold, to manufacturers that have to keep on hand large quantities of certain materials (e.g., a major shipyard that needs to have timber, nails, waterproofing materials, and the like). Most communities of town size or larger will include some sorts of government and commercial storage facilities, and other sorts of communities — such as fortress or temple complexes — might contain them as well. Within such areas, warehouses are often located near seaports, highways, and other routes along which goods are moved; in industrialized areas near where raw materials are refined or goods are manufactured, or adjacent to marketplaces and other venues where all sorts of goods are sold. Most storage facilities are built with certain broad categories of goods in mind and because of this are not necessarily suitable for other sorts. Grain towers, for example, are not going to be useful for storing bales of cotton, while a townhouse-style warehouse would not be conducive at all to the storage of iron ore. What warehouses are built from will generally be determined with an emphasis on materials that are sturdy, readily available, and economical (e.g., brick or concrete in some milieus) and by the basic form dictated by the commodities that they are to be used for. Aesthetics tend not to be a major concern in the construction of warehouses, which tend to be almost notoriously plain. Such buildings are constructed to maintain a suitable climate for goods rather than for people and may thus be chilly in winter or stifling in summer. Warehouses generally have ramps rather than stairs leading into them or connecting multiple levels, as well as loading docks appropriate to the modes of transportation used to move goods to and from them (e.g., loading docks as high as the beds of standard wagons). Many warehouses are also outfitted with built-in movement systems — such as rails, conveyers, stationary or suspended cranes, hoists, or elevators, depending on the prevailing level of technology — appropriate to the usual size and weight of containers or materials that the warehouse handles, Movable equipment at such facilities generally includes handcarts, wagons, and other sorts of conveyances for moving heavy or bulky goods; small cranes, possibly on wheeled frames, and other devices for lifting goods as needed; and shelves and pallets on which goods are stored — both to keep them dry and make the most of the vertical space available. Security at warehouses tends to be fairly stringent but, because the goods stored in them is generally pound-for-pound worth much less than things like gold and gems, nowhere near the level of that at institutions like banks. Warehouses that store very precious commodities however — such as spices — will have measures in place commensurate with the value of what is kept in them. Precautions tend to include measures like walls or fences around warehouses or complexes of them; heavy doors, locks and windowless walls on buildings; strongrooms, cages, or other secure areas within individual buildings; and guards of various sorts (e.g., Human, canine). Such facilities are usually managed by one or more merchants, government officials, or administrative specialists skilled at bookkeeping and staffed by brawny workers capable of stowing, retrieving, and moving around as needed the contents of their facilities. Customers at commercial warehouses include anyone who has large quantities of goods they need securely stored for periods of time ranging from overnight to indefinitely. Some of the most prominent in a typical ancient, medieval, or fantasy campaign setting will be merchants who need inventory held while they are waiting for events like ships to arrive or the trade season to begin. Adventurers, especially those without extensive lairs, might need to avail themselves of such places in order to store large quantities of bulky swag, equipment, or trade goods that they plan on using to defray the costs of their next expeditions. They might also end up visiting warehouses while conducting business on behalf of various third parties (e.g., traveling to a warehouse in another city to pick up the goods stored there by their patron).
 
-## **Example:
-
-The Rivergate Warehouse Complex**
+## **Example: The Rivergate Warehouse Complex**
 
 The Rivergate Warehouse Complex dominates a stretch of Yggsburgh’s bustling Wharf District, where the River Wayn flows into the city. This sprawling facility consists of several brick and timber warehouses surrounded by a high wooden palisade. Each warehouse has multiple loading docks designed for wagons and river barges, facilitating the efficient movement of goods. The facility’s front-facing offices are adorned with the insignia of the powerful Mercantile League, whose influence ensures smooth operations.
 
@@ -772,17 +642,13 @@ The complex is managed by Master Edmund Brey, a calculating businessman with a p
 
 Security is robust, with armed guards patrolling the grounds and watchtowers overlooking the complex. The warehouses themselves are equipped with reinforced doors, barred windows, and secure internal compartments for valuable goods. Brey also maintains a "gentlemen’s agreement" with the local thieves’ guild, ensuring a measure of peace while deterring opportunistic criminals.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 Brey suspects sabotage within the complex after a series of fires disrupt operations. He hires adventurers to uncover the culprit, suspecting rival merchants or disgruntled workers.
 
 Rumors circulate about a shipment of contraband—an ancient artifact hidden among mundane goods—stored within the complex. The adventurers must retrieve it without alerting Brey or the guards.
 
-# **CHAPTER
-
-7: SERVICE PLACES**
+# **CHAPTER 7: SERVICE PLACES**
 
 After weeks of marching through wilderness and dank caverns, sloshing and struggling through muck, slime, and blood, and sleeping on flagstones and rock, most adventurers find it either necessary or enjoyable to seek the comforts of civilization. A return to a familiar and welcoming inn or eatery can serve to remind characters and players alike that not all in the world is grim, dangerous, or unpleasant, and that there are simple things worth fighting for. Service places accommodate necessities of life like food, drink, sleep, and personal hygiene. They include inns, taverns, hostels, lodging-houses, public kitchens, rotisseries, feast-halls, bath-houses, laundries, barber-shops, shoe-shine stands, sellers of hot or iced snacks, and livery stables (which supply to horses what the other establishments provide for their owners). Service facilities cater to those who are away from the comforts of their own homes, among them adventurers, travelers, and itinerants, as well as by townsfolk who wish to socialize with each other or periodically indulge in luxuries they cannot afford every day. Such places are prolific in the towns and cities of a typical ancient, medieval, or fantasy milieu, and might also be found to some extent in communities as small as villages. Settlements that have few outside visitors are unlikely to support many inns, however, so in small and isolated communities occasional travelers might stay at religious institutions or as guests with those wealthier locals who have room to spare in their houses. In rural areas, service places might exist in areas crossed by major transportation routes, especially at crossroads, natural stopping points, or waypoints mandated by the government. Such facilities are usually established in compounds and provide accommodation, victuals, stabling, and perhaps several lesser services or workshops within a building or enclosure with defensive features commensurate with the prevailing level of threat expected in the region. Such intra-city facilities are more likely to be common in well-administered areas with good roads and a strong government than in perilous Dark Age settings where any sort of travel is extremely hazardous. Service places of various sorts are typically run by private businessfolk with suitable backgrounds in provisioning and bookkeeping, but might also be established by major religious institutions or the civic government, either at subsidized charges or as acts of charity (with the practical aims of keeping the indigent from dying inconveniently in the streets or resorting to crime, commending such projects even to less-than-generous-hearted citizens). Service facilities can have vary widely in size, appearance, and construction, although in a traditional game setting a great many of them are often simply roomier versions of the craftsman’s places described in Chapter 2\. Service facilities with a larger clientele — especially those that cater to the workforce of large institution — might require purpose-built halls or multi-storey building of heavy timbers, brick, or stone or be expanded over time to a complex of interconnected buildings. Most of the areas in service places are dedicated to the needs of their customers, and might include dining areas, bedrooms, kitchens, or stables, as appropriate. In addition, there might also be storage areas, an office for the proprietor, private living quarters for his family and staff, a secure place for cash or other valuables (both the owner’s and the customer’s), or small workshops. Security at such areas is usually limited to vigilant staff and locks or bars on points of entry like doors and windows. Many such places, of course, especially those patronized by adventurers or military personnel, might also have bodies of customers that can discourage or foil attacks against them.
 
@@ -848,9 +714,7 @@ A sharp-featured journeyman known for his nimble hands and a secretive past. Rum
 
 An eager young apprentice with a natural gift for both barbering and basic surgical procedures. Her bright eyes and quick smile hide a fierce determination to prove herself in Yggsburgh’s competitive underworld.
 
-By integrating these details, **The Skilled Hand and Blade** becomes a fully realized Yggsburgh establishment—a practical and culturally rich locale where players can enjoy engaging role-play, gather rumors, and even embark on unexpected adventures in the vibrant urban tapestry of Yggsburgh.
-
-# **BATHHOUSE**
+By integrating these details, **The Skilled Hand and Blade**becomes a fully realized Yggsburgh establishment—a practical and culturally rich locale where players can enjoy engaging role-play, gather rumors, and even embark on unexpected adventures in the vibrant urban tapestry of Yggsburgh. #**BATHHOUSE**
 
 Bathhouses are places where people can go to clean themselves and perform other hygienic functions. In many societies throughout the world, however, public baths have evolved into major institutions that have also served the functions of gyms, spas, barber shops, and social halls. Peoples for whom public baths have been important have included the Turks, the Russians, and the Romans, who built them in every city of their empire (some of which still exist and are used, albeit in a renovated form, to this day). An individual bathhouse also might also be associated with another facility, such as a stronghold, brothel, or temple, and used by its inhabitants and clients. In cultures where bathing is important but where baths in homes are not universal, public baths of some sort will likely be available to everyone — even slaves, beggars, and the lowest classes of society — for free or a nominal fee. More sumptuous, privately run commercial baths might also be available for those with adequate funds, of course. Depending on cultural mores, baths might be wholly or partially accessible to members of one or the other sex, depending on whether men and women bathing together is accepted or frowned upon. Any particular bathhouse might thus be open fully open to members of both sexes, open only to members of one gender or the other, or have separate areas for each (with perhaps mixed areas like a main swimming pool). Proprietors of baths might simply be businessmen but are also quite often people with professions related to the functions of their establishments, such as barbers, masseurs, various sorts of healers, or people affiliated with another institution with which a particular bathhouse is connected. Baths are almost always built near ample sources of fresh water. If possible, they are also built near sources of natural heat, such as hot springs or geothermal vents (also favored for their medicinal properties), and if these are not available then artificial means of providing heat must be built into them. Baths are usually built of stone, brick, or other durable materials and might be entirely underground or have significant subterranean areas (largely because it is easier to direct water downward than upward). At the least, a bath must include a place where patrons can wash themselves (e.g., a pool through which fresh water flows), and the smallest baths might all be contained within a single building or large chamber. Many baths, however, will include bathing pools with cold, tepid, and hot water; steam rooms and dry saunas; swimming pools or various sizes; and other appropriate areas (e.g., massage rooms, a barber shop). A major bath facility with many or all of those elements might be as large as an entire city block in size.
 
@@ -902,11 +766,7 @@ Guests at The Mariner’s Refuge are as varied as the tides: rugged adventurers,
 
 * **Bram**, a gruff yet dependable stable hand, manages the small outdoor area where a few pack animals are kept for local deliveries.
 
-* **Eira**, a quick-witted server with a mysterious background—rumored to be the daughter of a famed fortune teller—adds to the establishment’s air of intrigue.
-
-Distinct from the similarly themed tavern elsewhere in Yggsburgh (The Wayfarer’s Respite, with its winged boat emblem), **The Mariner’s Refuge** is unmistakable with its nautical anchor sign and its location at the vital junction where two rivers converge. This unique positioning not only makes it a hub for travel and commerce but also a fertile ground for rumors, secret meetings, and adventure.
-
-# **INN**
+* **Eira**, a quick-witted server with a mysterious background—rumored to be the daughter of a famed fortune teller—adds to the establishment’s air of intrigue. Distinct from the similarly themed tavern elsewhere in Yggsburgh (The Wayfarer’s Respite, with its winged boat emblem),**The Mariner’s Refuge**is unmistakable with its nautical anchor sign and its location at the vital junction where two rivers converge. This unique positioning not only makes it a hub for travel and commerce but also a fertile ground for rumors, secret meetings, and adventure. #**INN**
 
 Inns are businesses that supply lodgings for considerable numbers of travelers to stay overnight or longer, providing comfortable places to eat, sleep, bathe, have their clothes laundered and boots cleaned, and their mounts and carriages tend to. Such places are also often convenient settings from which to arrange excursions into the local area or meet privately with acquaintances or business associates. Inns often include or are affiliated with taverns, restaurants, or gaming rooms where guests — and locals of good standing — can share a drink or a meal and socialize. Many also provide guests with business amenities such as posting letters, money-changing, and storing valuables. Inns are most common in the merchants’ and foreigners’ quarters of larger towns and cities that are centers of trade or which attract visitors to worship at their temples or see their widely-reputed wonders. Many well-traveled routes also have inns at regular intervals (e.g., along roadsides, in small villages), to accommodate travelers during each night of their journeys. Innkeepers may also establish their inns at strategic locations near any sites that attract significant numbers of visitors (e.g., a region of fabled natural beauty, a famous hunting-ground), and such places, which will likely specialize in serving the kinds of people who visit the region for recreational purposes, are sometimes known as resorts. Small country inns that provide accommodations and meals to visitors pursuing particular outdoor activities — such as hunting, fishing or skiing — are often called lodges. In some milieus, higher-end urban inns are often called hotels. In widely literate societies, travel writers may publish their good or bad impressions of inns, sometimes singling out one as the best in a locality or even giving a scale of ratings, allowing such establishments to develop reputations far beyond their immediate surroundings. In a fantasy setting, bards might even celebrate particular inns as the best in all the world, the last outposts of civilization on chaotic frontiers, or as reliable starting points for high adventure, lending them an almost mythic significance. Although few other races travel as widely or as luxuriously as Humans, all of the civilized peoples maintain lodgings of one sort or another for visitors. Among the less- civilized humanoids, Goblinoids periodically run austere, barracks-like inns for those with business in their communities. Gnolls, too, sometimes maintain caverns, ruins, and the like for use by different bands — under a rough and often-disregarded custom of truce — as hunting lodges, occasionally with a group of subservient beings residing permanently nearby to render services. Inns need numerous private, semi-private, or common rooms to accommodate large numbers of guests and, if located in villages or smaller settlements, will often be the largest privately-owned buildings there and either include numerous wings or be located in compounds that include affiliated structures and businesses. A typical building design consists of two or three double-storey wings partly encircling a courtyard where carriages can pull in to unload guests and luggage, conveyances thereafter being taken to a coach-house and draft animals to a stable by attendants. The innkeeper’s office and residence are usually next to the main entrance in order to welcome customers when they arrive and to settle their bills when they leave. The inn may have a small postern-gate from which guests can venture out into the surrounding area. Proprietors of inns might have worked in their younger days in one part of an inn’s operations, such as in the kitchens or stables, or might be most skilled at bookkeeping and purchasing and managing stocks of supplies and foodstuffs. Inns are very often family businesses with relations of different ages filling jobs appropriate to their abilities and experience. In temperate countries — where the first desire of guests stumbling in from long winter journeys is to get warm — both common rooms and private chambers of inns are generally built around large fireplaces venting to a number of shared chimneys. Kitchens at such inns also consume a great deal of fuel, as hot meals and mulled wine are much in demand. As a result, collecting and stockpiling of firewood from any available woods is an important task, for which the inn usually pays local peasants. While some inns provide nothing but accommodations — especially those in areas where a variety of other amenities are available — many also provide hearty meals to restore the spirits and keep up the energy of travelers. Often, aristocratic or wealthy guests are served in a separate dining room, or in their rooms, while their coachmen and other servants eat in the kitchen or taproom, where they can gossip and interact with the inn’s staff and various other working-class visitors (e.g., traveling hawkers, mercenaries, constables, royal message-riders). Food served at inns is usually simple, common fare, but if an inn is known for a culinary specialty, it is often traditional local recipes using ingredients such as game meats or wild herbs freshly gathered from the immediate area. Beyond rest, inns can help fulfill guests’ other needs, including preparing for anything from another hard day of travel to attending important business meetings, religious services, or other events. Most inns — at least those in societies where hygiene is important — will have small bath houses or have provisions for bringing hot water and toiletries to each room. Some will even provide personal services such as barbers or cleaning and mending of clothing, arrange for tradesmen like clothiers to call on guests, or maintain a storefront near the inn to sell or rent appropriate formal wear (e.g., courtiers’ outfits at an inn near a seat of government). And at finer establishments, the innkeeper or a concierge may assist guests with any purchases or arrangements they wish to make, drawing upon local contacts that outsiders may not otherwise have access to. Because the essence of an inn’s business is to allow guests to rest peacefully and to travel through unfamiliar places without concern for injury to their persons or reputations, the proprietors of inns are known for their distaste for openly rowdy or disreputable behavior, often adding extra charges to a guest’s bill to pay for damage caused. What goes on in private rooms, of course, is another matter.
 
@@ -934,9 +794,7 @@ The inn offers five classes of guest rooms spread over its five floors. Ground-f
 
 **Proprietor & Staff:**
 
-The Traveler’s Rest is managed by **Gareth Stonehand**, a former adventurer whose calm demeanor and wealth of worldly experience have earned him a sterling reputation in Yggsburgh. Known for his deep knowledge of the city’s intricacies and his unwavering dedication to his guests, Gareth ensures that every patron’s stay is both comfortable and discreet.
-
-Among the staff, **Corso Honeycup**, a worldly halfling with a knack for organization and insider information, serves as the dedicated concierge. Other key members include:
+The Traveler’s Rest is managed by **Gareth Stonehand**, a former adventurer whose calm demeanor and wealth of worldly experience have earned him a sterling reputation in Yggsburgh. Known for his deep knowledge of the city’s intricacies and his unwavering dedication to his guests, Gareth ensures that every patron’s stay is both comfortable and discreet. Among the staff,**Corso Honeycup**, a worldly halfling with a knack for organization and insider information, serves as the dedicated concierge. Other key members include:
 
 * **Beryl**, the skilled cook who delights guests with a mix of local and exotic dishes.
 
@@ -962,9 +820,7 @@ The inn’s central location also places it within easy reach of other popular e
 
 * **Missing Valuables:** When a wealthy guest’s prized possession vanishes from the inn’s secure vault, Gareth discreetly calls upon the party to investigate, potentially unearthing connections to local crime syndicates or even corrupt money changers.
 
-* **Mysterious Guests:** A guest of questionable origins—a potential spy or a runaway noble—creates a stir, drawing the attention of both local authorities and clandestine operatives. The party may be tasked with determining the true identity and intentions of this mysterious visitor.
-
-# **KITCHEN**
+* **Mysterious Guests:**A guest of questionable origins—a potential spy or a runaway noble—creates a stir, drawing the attention of both local authorities and clandestine operatives. The party may be tasked with determining the true identity and intentions of this mysterious visitor. #**KITCHEN**
 
 Precursors of modern cafeterias, buffets, and fast-food restaurants, commercial kitchens were a characteristic of many urban areas, where they served simple but hardy fare at affordable prices to the masses. Institutions of this sort could be found in many ancient, medieval, and later cities and generally included provisions for either eating on the premises or carrying away their wares. Unlike taverns, the proprietors of kitchens do not encourage their customers to linger after completion of their meals or to use such places as drinking establishments. Clientele at commercial urban kitchens are determined more by financial means and the neighborhoods in which they are located than any other common bonds, and a great diversity of people might be found at such establishments. Common laborers, craftsmen, tradesmen, entertainers, and anyone else without more than a few pieces of silver to spend on their main repast are likely to be found elbow-to-elbow with relatively impoverished adventurers. Cooks’ shops might take a wide variety of forms, from carts and wagons where food is prepared for passersby, to townhouses that can seat several dozen people, to great halls that can serve the culinary needs of hundreds at a time. Furniture, chiefly plank benches and tables or upended large barrels where patrons can dine standing, tends to be simple, sturdy, and marked with the grime and knifemarks of innumerable diners. Fare at commercial kitchens can vary widely, but generally tends toward stewed, roasted, fried, or boiled meats, boiled vegetables, and starches like coarse bread, pasta, and baked tubers. Variety is often limited, however, and daily specials are typical. Cheaper, much simpler meals — such as porridge — might also be available at about half as much as other meals for those on especially tight budgets. Outdoor stalls often sell just one or two items, such as pies, various sorts of meat wrapped in a bun or flatbread, or fried or roasted snacks (e.g., French fries, chestnuts). In addition to selling food on the premises, cooks’ shops might also provide catering services. Commercial kitchens might also be established temporarily only at certain times or for specific reasons. In many Islamic countries, for example, kitchens sponsored by restaurants and other institutions are set up in tents or other temporary structures and used to serve free meals to the faithful during the festival of Ramadan.
 
@@ -972,9 +828,7 @@ One unnamed but fairly typical London eatery is described by Charles Dickens as 
 
 **Example: The Grand Common Eatery**
 
-Situated between the market district and the public games ground, the **Grand Common Eatery** occupies a sprawling, timeworn palace that has seen better days. Though somewhat decrepit, it remains a favored dining hall for nearly every sort of patron—from petty merchants, laborers, travelers, and guards-for-hire to those coming and going from nearby spectacles or fairs. Adventurers, pilgrims, and visiting traders also find it a convenient and inexpensive place to eat, and local guides often receive free meals or small commissions for steering clients through its doors.
-
-The establishment is operated by a hulking, bald-headed man known simply as **the Master Cook**, whose exact origins are a matter of gossip and conjecture. He manages a large staff of Goblin servers and Hobgoblin cooks, whose taciturn manner and unnerving silence contrast sharply with the bustle of the hall. Despite their ominous presence, the food is consistently good and the service quick.
+Situated between the market district and the public games ground, the **Grand Common Eatery**occupies a sprawling, timeworn palace that has seen better days. Though somewhat decrepit, it remains a favored dining hall for nearly every sort of patron—from petty merchants, laborers, travelers, and guards-for-hire to those coming and going from nearby spectacles or fairs. Adventurers, pilgrims, and visiting traders also find it a convenient and inexpensive place to eat, and local guides often receive free meals or small commissions for steering clients through its doors. The establishment is operated by a hulking, bald-headed man known simply as**the Master Cook**, whose exact origins are a matter of gossip and conjecture. He manages a large staff of Goblin servers and Hobgoblin cooks, whose taciturn manner and unnerving silence contrast sharply with the bustle of the hall. Despite their ominous presence, the food is consistently good and the service quick.
 
 The fare, according to regulars, includes “a bit of everything”: cold vegetable dishes, hot stewed meats, rice, flatbread, and a variety of sweet pastries. Meals are arranged buffet-style along tables set against the walls, while drinks are brought to the tables by the white-aproned Goblin servers. For a single silver piece, a patron may eat their fill and receive one cup of wine, ale, or tea; additional drinks may be purchased directly from the servers. Water is free—but usually approached with caution.
 
@@ -994,9 +848,7 @@ While dining at the Eatery, the characters find themselves seated between two bo
 
 The Goblin servers keep wisely to the walls until the city watch arrives, beating down anyone slow to flee. Those who resist or draw steel are subdued with brutal efficiency, as the guards call for reinforcements to restore order. Whether the fight was mere fan rivalry or something more deliberately provoked is left for the characters—and their bruises—to uncover.
 
-# **LIVERY
-
-STABLE**
+# **LIVERY STABLE**
 
 A livery stable provides for the needs of people who need transportation by hiring out mounts and carriages (with the tack of each mount and trim of each carriage discreetly marked, of course, with the establishment’s livery or colors), by taking care of mounts that their customers have brought with them from elsewhere, or both. A stable usually has proper accommodations and trained staff for only one kind of mount — whether it is horses, camels, elephants, riding dogs, or something else altogether — but larger stables might have separate stalls and yards for several kinds of mounts. Many stable proprietors are farriers — tradesmen skilled at shoeing and otherwise caring for horses — or stablehands with many years of experience caring for mounts. Some, however, have some other experience with the sorts of animals they work with (e.g., retired cavalrymen, carriage drivers, former showmen who specialized in displays using trained mounts). A livery stable needs facilities similar to other places where many mounts are kept but is more geared toward keeping mounts in glossy good looks than in tip-top fitness, requiring more spacious stalls and a higher number of grooms to attend not just to the mounts but also to the safety and comfort of customers. Open yards or training facilities, however, to the extent that they are present, are mostly for parading mounts for customer’s selection. Stalls themselves will be sized — and perhaps strengthened or barred — for the particular mounts that they are intended to hold and provided with suitable feeding and watering receptacles and mucking-out access. Depending on the services offered by a particular livery stable, other areas might include carriage houses with adequate room for maintenance (e.g., carpentry, polishing, painting, leatherworking), workshops for tailoring and the maintenance of horse-tack, storage areas, quarters for the owner and stablehands, an office, and perhaps a suitable parlor for the entertainment of upper-class customers. **Example: The Steps of the Sea Nymphs**
 
@@ -1014,15 +866,11 @@ Restaurants are private businesses that aim to provide distinctly pleasurable, f
 
 The proprietor of a restaurant is often also the head chef, or may be purely a business manager. Skilled cooks often move easily through their careers between owning and running their own restaurants, managing restaurants that are part of larger concerns (such as large inns or government centers), and serving as private cooks for wealthy households. Restaurant kitchens contain an array of specialized professional cooking equipment, from knives, bowls, and dishes up to particular types of ovens, arranged as a production line from washing and peeling through to final presentation for the standard dishes served at the establishment. They use cooking processes that are larger in volume, faster, and sometimes require greater skill than those typically found in common households (although the mansions of wealthy merchants and nobles might have kitchens that are very similar to those of restaurants). Large quantities of standard ingredients are typically either picked out by skilled restaurant staff or the chef himself at wholesale markets, gathered or hunted fresh from the local countryside, delivered by specialist suppliers known as *providores*, or purchased in large bulk containers sold specifically for the restaurant trade; delivered daily to a back or side entrance; stored in a fashion that the proprietor, if not his customers, considers adequately clean; and brought out ready for the chefs to use. Lesser-skilled kitchen staff must also perform daily tasks like washing numerous dishes, pots, pans, and utensils and dumping large amounts of malodorous garbage. Screened from all this, the restaurant’s customers receive finished dishes served with flair by well-dressed wait staff, on tables that are often provided with ornamental centerpieces and even freshly-laundered covers, and provided with appealing — but sturdy and easily washed — crockery and often-specialized eating utensils appropriate to the foods served.
 
-## **The
-
-Riverbend Catch**
+## **The Riverbend Catch**
 
 A seafood restaurant of growing fame in Yggsburgh, The Riverbend Catch operates from a timber-framed shelter with one side opening directly onto the Grey Run River, near the Bridgegate Wharf. The restaurant is positioned where the level riverbank meets a cluster of stone piers, allowing patrons a scenic view of the bustling dockside. A stone- walled annex to the dining area contains the kitchen, and a small shrine within a natural alcove of the wharf honors Liriel, a river nymph revered by the local fisherfolk. The Varnassi clan, long-time riverfolk, have been granted perpetual rights to fish this particular stretch of the Grey Run, a privilege awarded in recognition of their ancestors’ role in defending the city’s waterways from a notorious bandit flotilla. Family members ply their trade with hand-woven nets and lantern-lit night-fishing, and they are known to fiercely guard their fishing grounds against poachers and unscrupulous traders. The Riverbend Catch prides itself on delivering the freshest seafood, often within hours of being pulled from the river. The menu includes specialties such as smoked eel, grilled pike with herb butter, and a rich crayfish bisque, all accompanied by freshly baked rye bread and tangy riverweed chutney. The restaurant’s head chef, Davos Varnassi, trained in a prestigious coastal city and has refined the family’s traditional fare with sophisticated techniques. Each year, the restaurant hosts a special candlelit feast during the peak of the silver trout migration, when the river is said to shimmer with the darting reflections of thousands of fish. This event, once a forgotten tradition, has been revived by the Varnassi family and draws locals and travelers alike, cementing The Riverbend Catch as one of the finest dining establishments in Yggsburgh.
 
-## **Adventure
-
-Hooks**
+## **Adventure Hooks**
 
 **General**
 
@@ -1034,23 +882,17 @@ The Stolen Catch: A shipment of silver trout, meant for the festival feast, has 
 
 Fisherfolk Feud: A rival fishing family claims ancestral rights to the same waters. Skirmishes are breaking out along the wharf, and the city magistrates are slow to intervene. The Varnassi seek outside help to settle the dispute.
 
-# **ROOMING
-
-HOUSE**
+# **ROOMING HOUSE**
 
 Rooming houses are accommodations intended mainly for members of the lower tier of the middle class and the upper tier of the lower class and serve the needs of travelers who will be staying for a week or more in a particular area. For a reasonable price by the day — or much more cheaply by the week — the traveler can have a bed (often in a shared room) and a modest breakfast and supper. Both meals are typically served only during narrow prescribed times that may be more convenient to the management than to guests (e.g., strictly for a half-hour after dawn for breakfast and for a half-hour commencing on the hour after sunset for the evening meal). Also frequently known as a boarding house, a rooming house is most often simply a relatively long and large, internally divided house of the sort used by craftsmen or tradesmen and described under “Buildings” in Chapter 1: Communities. In those with more than one or two rooms to rent, chambers are often arranged along a common corridor on each floor, but perhaps in a more haphazard way if the premises have grown by successive additions to an original building. A common dining room, kitchen, laundry, and a slightly larger apartment for a live-in manager typically connect close to the street entrance, for convenience of housekeeping in the common areas and in order for the manager to keep an eye on comings and goings.
 
 Single folk who follow a somewhat uncertain course in their professional life, such as adventurers, are often well served by staying for extended periods in a boarding house. They may also benefit from being able to give the establishment’s address as a point of contact, provided that the management do not object to guests receiving visitors or having messages left. Indeed, many rooming houses are known also for the extensive rules established by the landlord or landlady, to avoid disruption to their lives and reputations by the antics of lodgers of uncertain morals.
 
-## **Example:
-
-The Kindly House of Dionysus**
+## **Example: The Kindly House of Dionysus**
 
 This large, converted townhouse in a quiet street along the fringe separating the merchants’ quarter from the temple district has plastered walls boasting several fine antique frescos and an airy semi-enclosed balcony around three sides of the house where residents often sit. It is subsidized by the cult of Dionysus and staffed by three non-ordained followers of the vine-god led by the matron Agriope, and provides a refuge for artists, writers and other creative souls whose lives have been overcome by emotional derangement, drunkenness, or a great shock. Adventurers of a like ethos, particularly those who have recently been subjected to trauma or tragedy, are also welcome at the establishment. Features of the Kindly House of Dionysus include 10 bedchambers divided over two floors, and a common dining chamber where the attendants take turns to cook meals. The staff have a separate set of apartments with their own small parlor for times when they need respite from the eccentricities of the guests. Indeed, because the attendants and the visiting high priest who cater to the lodging-house believe they have no right to interfere with the maddening grip of the god’s inspiration, residents who continue to produce artistic works are not bothered or encouraged to seek a cure for their tippling or bizarre behavior, beyond restraining them from harming others. This can make the Kindly House, on occasion, a raucous and disturbing place. Still, the minimal stability that the boarding house provides, along with freedom for a short time from the demands of supporting a full household, can give rest and time for troubled minds to heal themselves. When it comes to dealing with the dreary black grip of depression or addictions that gnaw away at the mental faculties, on the other hand, the staff members of the Kindly House have no compunctions about interfering. In such cases, they are more than willing to call upon their temple’s hierarchy or to sponsor visits to the Dream Temple of Hippocrates, and to discretely provide relief from costs when a patient lacks means to pay but has the potential to resume a distinguished artistic career.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * A sage, gemner or other professional who has been recommended to the party as a source of advice might carry out business dealings from his lodgings — where the characters have to brave the suspicious gaze of his landlady as they arrive, especially if any of them are roughly or outlandishly dressed or otherwise seem disreputable.
 
@@ -1066,9 +908,7 @@ Taverns are businesses that sell various sorts of alcoholic beverages and often 
 
 Most Human cultures will have taverns of some sort associated with them. Races known for their drinking, such as Dwarves and Orcs, patronize a correspondingly large number of taverns, while sylvan races such as Elves and Satyrs, though they love to drink and revel, tend to favor parties thrown by individuals or held in natural settings. Militaristic societies, such as those of Hobgoblins, might prefer all members of the warrior class to eat and drink together in places more akin to communal kitchens (q.v.) or warlords’ feasthalls. Many taverns provide minstrels and other entertainers or host popular forms of gambling, games of skill (some of them dangerous), animal-fighting, and attractions like Goblin-tossing and prize-fighting. Some also provide conveniences to help inebriated guests find their way home (e.g., hire carriages, the sale of torches) or the opportunity to pass out under tables. Those that provide separate accommodations usually do so as a sideline, with a few small rooms on an upper floor above the bar, where noise passes up from below and guests can expect only slow — if any — service during opening hours. Those catering to travelers, however, might place more emphasis on meals and amenities like rooms and stables for mounts and less on varieties of entertainment. Disturbances or full-scale brawls can easily break out in taverns, particularly if the customers are from groups accustomed to violence or their aggression is heightened by stressful circumstances, ethnic tensions, or disagreements over the results of a tavern’s games. Depending on the likelihood of such problems, the publican often employs one or more bouncers to head off such problems by removing customers who are on the verge of assaulting each other.
 
-## **The
-
-Wayfarer’s Respite**
+## **The Wayfarer’s Respite**
 
 Near Bridgegate Wharf, where river traffic never slows, stands The Wayfarer’s Respite—a spacious, well-traveled tavern housed in a refurbished warehouse. Cobblestone walls and raised sidewalks frame its entrance, where a sign swings in the breeze: a winged boat, the region’s emblem of travel. Within, the glow of lanterns mingles with the murmur of sailors, merchants, and adventurers sharing stories over their cups.
 
@@ -1084,9 +924,7 @@ Music is a constant presence. A harpist plucks soft melodies, visiting minstrels
 
 Newcomers often remark on a strange phenomenon—errant breezes stirring the common room, scented with pine, exotic spices, or briny air, as if carrying messages from distant shores.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * A Gathering Place for Adventurers – The Respite is a hub for those seeking work, rumors, or companions for the road. A well-placed conversation might lead to fortune— or peril.
 
@@ -1098,9 +936,7 @@ Hooks General**
 * The Vanishing Cargo – A shipment stored at the tavern has disappeared without a trace. The signs suggest theft or magic at play. Marcos offers a reward for its recovery.
 * A Dying Warning – A traveler collapses inside the tavern, muttering of an imminent attack on Yggsburgh’s trade routes before breathing his last. Who sent him, and can the party stop the coming disaster?
 
-# **CHAPTER
-
-8: SCHOLARLY PLACES**
+# **CHAPTER 8: SCHOLARLY PLACES**
 
 Adventurers can often improve their chances of survival and success by obtaining in advance information about the characteristics and dangers of the little-frequented places where they are about to venture. For this, they often avail themselves of the services of scholarly places, which variously record, store, distribute, improve, and seek to diminish errors in all branches of knowledge (including the specialized knowledge of crafts and trade sources, which are of interest to guilds and mercantile cartels).
 
@@ -1128,24 +964,16 @@ The official head of an academy, often titled Chancellor, is usually either an e
 
 Due to their size and sometimes because of a concern to protect their ethos of academic freedom against state interference (assuming they are not actually run by the government), academies often maintain their own security forces. Patrols by such forces are generally intended to restrict disturbances during the day and evening, and burglary by night. Other security measures for individual buildings are commensurate with the value of their contents, as described for libraries and similar facilities. For unattended lecture halls and the like, these typically comprise simple locks mostly intended to discourage unauthorized use of the rooms, pranks, and vandalism.
 
-## **Example:
-
-Spire of Eldwyth**
+## **Example: Spire of Eldwyth**
 
 The **Spire of Eldwyth**, a gleaming white tower located in the **Manors District** of **Yggsburgh**, is home to **Lady Eldwyth**, a reclusive and enigmatic mage. Renowned for her knowledge of planar magic, Eldwyth serves as a mentor to promising students and a consultant for the city’s elite.
 
 The tower contains lecture halls, study rooms, and an observatory equipped for planar research. Eldwyth herself is known for her connections to Yggsburgh’s nobility, as well as her rivalry with other scholars and mages in the region.
 
-## **Adventure
-
-Hooks**
+## **Adventure Hooks**
 
 * **General:** The adventurers uncover rumors that Eldwyth’s tower is a front for a spy network. Investigating these claims leads to intrigue involving nobles, rival mages, and foreign agents.
-* **Specific to the Spire of Eldwyth:** Eldwyth’s planar research attracts the attention of a rival mage who accuses her of hoarding magical knowledge that could benefit the city. The adventurers may be hired to investigate or protect her from harm.
-
-# **ALCHEMIST’S
-
-SHOP**
+* **Specific to the Spire of Eldwyth:**Eldwyth’s planar research attracts the attention of a rival mage who accuses her of hoarding magical knowledge that could benefit the city. The adventurers may be hired to investigate or protect her from harm. #**ALCHEMIST’S SHOP**
 
 Alchemists are experts in alchemy, a proto-scientific discipline devoted to extracting, refining, transforming, and compounding the basic elements present in all manner of common substances. Alchemists base their skills on complex metaphysical theories, setting forth a long-term experimental program with the ultimate goal of deriving the fundamental essence of all things — called the Philosopher’s Stone in Western history or the Golden Elixir in Taoist practice — at the conclusion of a lifelong investigation known to them as the Great Work.
 
@@ -1163,9 +991,7 @@ An alchemist’s workshop typically extends over at least the ground floor of a 
 
 Because their products and even many of their base materials are valuable — and to prevent curiosity-seekers and children suffering various horrible injuries from the substances stored within — alchemists typically protect their premises with walls and strong locks. Facilities of alchemists who are sponsored by powerful individuals to perform transmutation experiments often have large quantities of their clients’ precious metals on hand and thus generally have much higher security measures, such as round- the-clock guards of soldiery. Alchemists might also protect their cash reserves, finished magic potions, or stores of gold and silver with particularly fiendish traps that incorporate various harmful substances. Some might even have various sorts of synthetic creatures at their disposal.
 
-## **Example:
-
-The Child of Art**
+## **Example: The Child of Art**
 
 The dubiously-reputed alchemist’s shop known as **Snapus’ Child of Art** occupies a free-standing villa within the semi-developed waste grounds lying outside of the **Dung Gate** of **Yggsburgh** city. Its proprietor, **Snapus Sizzlewit**, is generally agreed among his fellow Gnomes to be the maddest of a clan known for their eccentricities.
 
@@ -1181,9 +1007,7 @@ Another cousin who is an expert artificer, an apothecary, two apprentices, five 
 
 Besides a central vat-room, containing many large vessels and jars filled with odd- colored fluids in which strangely-shaped organic objects grow — some under gentle heat from dung-baths or copper piping, others with odiferous gases bubbling through the growth medium — and occasionally twitch or peer out at observers, the building contains an extensive herbal pharmacy and a brass-smithy with a range of fine artificer’s tools. Each of the work areas contains a combination of workbenches sized for Humans — typically serving those tasks that require hard labor rather than skill — and better-equipped low benches suited for Gnomes.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * An alchemist might commission player characters to provide him with rare ingredients that he needs in his work, but which can only be obtained in a distant land or dangerous wilderness. For example, rare minerals might be available from certain foreign mines or jungle-choked prospecting areas, chips of worked stone or remnants of long-disintegrated burials may only be obtainable from a particular ancient ruin (perhaps one rumored to harbor equally old undead spirits), or unusual liquids could lie exposed in natural pools free for the taking, but deep within a distant and hazardous desert or mountain range.
 
@@ -1193,9 +1017,7 @@ Hooks General**
 
 * While investigating a series of peculiar burglaries in the Merchants’ Quarter near the Dung Gate, the player characters might encounter or track a bizarre creature, eventually leading them to the Child of Art. Snapus might be prepared to send some of his pets to obtain items that he needs for his work; his sly cousin Slinkin might have put up some of the creatures to thieving on his own account or in collusion with the Guild of Beggars, Guides, Locksmiths, and Exterminators (q.v.); or one of the created beings might have developed an independent intelligence — or a streak of kleptomania — of which its creator so far is unaware.
 
-* Player characters might become aware, while adventuring in the Slum Quarter, of an epidemic of birth defects or bizarre growths among children of a certain neighborhood, or might be asked to look into this situation by a priest of their acquaintance. These deformities are caused by a combination of mutagenic fumes drifting from the Child of Art and wastes seeping into the local well- water. In order to put an end to the problem, once it has been identified, the characters might variously have to find a way to appeal to the better natures of the obsessed Snapus and avaricious Slinkin, support a lawsuit on behalf of the slum dwellers against the wealthy alchemists, obtain suitable supplies or a piece of special equipment to improve the Child of Art’s production methods sufficiently to shut off the toxic discharges, or — failing all of these — take more direct action to end the harmful processes, perhaps with the help of other inhabitants of the Slum Quarter, such as **Hephestion the blacksmith** (q.v.).
-
-# **FORTUNE-TELLER**
+* Player characters might become aware, while adventuring in the Slum Quarter, of an epidemic of birth defects or bizarre growths among children of a certain neighborhood, or might be asked to look into this situation by a priest of their acquaintance. These deformities are caused by a combination of mutagenic fumes drifting from the Child of Art and wastes seeping into the local well- water. In order to put an end to the problem, once it has been identified, the characters might variously have to find a way to appeal to the better natures of the obsessed Snapus and avaricious Slinkin, support a lawsuit on behalf of the slum dwellers against the wealthy alchemists, obtain suitable supplies or a piece of special equipment to improve the Child of Art’s production methods sufficiently to shut off the toxic discharges, or — failing all of these — take more direct action to end the harmful processes, perhaps with the help of other inhabitants of the Slum Quarter, such as **Hephestion the blacksmith**(q.v.). #**FORTUNE-TELLER**
 
 Fortune-tellers, more technically known as diviners, provide magical knowledge of future events and present-day secrets, often employing such methods as reading cards, dice, or palms, making astrological or numerological calculations, and crystal-gazing. Some, typically known as soothsayers or psychics, can make predictions without any material adjuncts. Some fortune-tellers can also provide other types of magical aid — especially in response to situations they have discovered by divination — such as healing, warding off evil influences, or cursing those who have secretly wronged the fortune-teller’s customer, thus providing services similar to those of a priest or hired mage. Other fortune-tellers provide their customers with instructions they can carry out themselves to receive an answer or solution to their problems.
 
@@ -1209,9 +1031,7 @@ Different fortune-tellers, with different methods, serve the needs of country, t
 
 A fortune-teller’s establishment is often a private house of modest size, similar to those described for craftsmen or tradesmen in Chapter 2\. An assistant typically shows customers into a waiting area while, separated by a curtain, the fortune-teller prepares for the reading. The divining area itself is usually dim, with no outside windows and the only light focused on the table, often with the walls hidden by drapes, to create a sensation of removal from the outside world. Such an area is typically furnished with seats for the fortune-teller and as many clients as he or she normally assists at once — from one person up to a large banquet-style table for séances and the like — and may have devices such as a crystal ball or inlaid magical diagram permanently set up.
 
-## **Example:
-
-Catha the Haruspex**
+## **Example: Catha the Haruspex**
 
 When the thieves, immigrants, and laborers of Yggsburgh’s lower ward need supernatural guidance but have no means to pay the “suggested donations” of the temples or the prices of professional mages, they increasingly resort to a somewhat sinister Orc shamaness.
 
@@ -1227,9 +1047,7 @@ For a generous payment in gold, Catha can also assist by casting spells, such as
 
 Despite her display of barbaric crudity, Catha does have a great deal of insight into humanoid behavior and can provide helpful advice for her customers to resolve the situations that she has divined.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * Introducing an adventure by a prediction uttered by a fortune-teller — whether a person that the character decides to visit on a whim or one who accosts the character in a public place, overcome with an urgent spiritual message to impart — is a device almost as classic in general literature as the “meeting in a tavern” for fantasy gaming.
 
@@ -1257,9 +1075,7 @@ Libraries typically emphasize the use of available light sources that avoid the 
 
 Because handmade books are difficult to replace and may be very valuable, libraries generally employ a number of precautions against theft. These are often attached to the books themselves — such as locking covers, chains fastening books to their shelves or lecterns, magical traps that sound an alarm when items are taken from a specific area, or those that harm thieves without damaging texts — as well as locks on doors and windows and periodic checks after hours by any guards who normally patrol the general area. While a library is open, a guard may be stationed near the entrance to assist librarians in preventing such things as attempts to enter without authorization or to leave with books (if the library has reason to expect such disturbances).
 
-## **Example:
-
-Cartomancer’s Guild**
+## **Example: Cartomancer’s Guild**
 
 The **Cartomancer’s Guild** in **Yggsburgh** is renowned for its collection of rare and magical maps. Located in a discreet stone building in the **Scholars’ Quarter**, the guild is frequented by adventurers, merchants, and even nobles seeking insights into the world’s geography, both mundane and mystical.
 
@@ -1267,17 +1083,11 @@ The guild maintains an extensive chart-room, with illuminated maps covering the 
 
 Guildmasters take pride in safeguarding their collection, employing both mundane and magical defenses. Access to certain maps, such as those detailing legendary treasures or ancient ruins, is restricted to trusted members or those who pay a significant fee.
 
-## **Adventure
-
-Hooks**
+## **Adventure Hooks**
 
 * **The Cartomancer’s Guild hires adventurers to retrieve a stolen map rumored to reveal the hidden trails of the nearby Thornwood.** The theft is suspected to be the work of rivals from the Order of the Striped Mage.
 
-* **A newly discovered map in the guild’s archives shows the location of a forgotten ruin beneath Yggsburgh.** The adventurers are tasked with verifying the map’s accuracy and uncovering the secrets of the site.
-
-# **MAGES’
-
-GUILD**
+* **A newly discovered map in the guild’s archives shows the location of a forgotten ruin beneath Yggsburgh.**The adventurers are tasked with verifying the map’s accuracy and uncovering the secrets of the site. #**MAGES’ GUILD**
 
 A mages’ guild, sometimes called a convocation, covenant, brotherhood, school, or especially, an order, carries out many of the functions traditional to other guilds: it regulates how its members perform their trade; organizes the training of apprentices; shares and improves techniques; grants degrees of recognition; assists in the supply of necessary materials; and honors the gods. However, because the trade in question is magic, many of these activities work in unique ways. A mages’ guild may also perform complex rituals that require multiple casters. Historical examples include the Order of the Golden Dawn in England, the various Black Schools rumored to exist in medieval and Renaissance Europe, and Pharaoh’s body of magicians in the book of Exodus.
 
@@ -1291,29 +1101,13 @@ The guildhouse itself (or at least its private interior chambers, if the guild i
 
 Most mages’ guilds keep servants, whether humanoids or magical beings, either to provide for the personal comforts to which the guildmembers are accustomed, to move large objects that are necessary for the guild’s rituals, or to carry out more complex tasks such as assassinations.
 
-## **Example:
+## **Example: The Order of Gemini and the Circle of the Black Moon**
 
-The Order of Gemini and the Circle of the Black Moon**
+Mages in the Greek tradition often divide magic into three forms or schools of practice. **Magia** is a practical, pragmatic method of magic, largely derived from the traditions of Eastern lands such as Persia and Chaldaea together with Stygian and Atlantean learning, which makes use of astrology, the sacred properties of words and numbers, and invocation of elemental and planetary spirits to bring about concrete benefits to the caster. **Goëtia**, derived from the word “howling,” refers both to the wild and frightening nature of its rites and the eerie baying of dogs that signifies the presence of its patron, the goddess Hecate; goëtists practice summoning, necromancy, and the making of potions and talismans. **Theurgia**is a high-minded tradition, much concerned with moral philosophy and self-improvement through communion with angelic beings and heavenly spheres. The public mages’ guild in**Yggsburgh**, the **Order of Gemini**, has a large guildhall in the richer part of the **Merchants’ Quarter**, dominated by a broad circular chamber not unlike the meeting-place of a senate or city council that is vaulted over in a magnificent and accurate jeweled representation of a starry sky with Mercury ascending in the house of Gemini. The Order provides all mages in the city with a meeting-place to discuss the practice of magic both in formal session and by informal groups in its many galleries and lounges, the use of its library of astrological and theoretical texts, and the opportunity to mingle and argue business at regular social functions. Wizards must pay annual dues, pass an examination on their skills by a committee of masters, and attend a ceremony of recognizance to become **Worshipful Journeymen** of the guild with the right to use the facilities of the guildhall. Those who wish to speak in council or acquire offices of the Order may ask the approval of **Old Preceptor Coroneos** and the assembled masters to pass through the more stringent requirements of becoming **Master Magicians**. The**Order of Gemini**encompasses everything from tradesman mages who are careful to sacrifice to Hecate to maintain the potency of their dowsings for lost trinkets and curses-for-hire, to aristocratic scholars of theurgia who feel that the only proper use of magical theory is the refinement of the soul under the tutelage of Apollo, Athena, or Zeus. The guild thus harbors any number of cliques, interest groups, and intrigues, which greatly increases the length and acrimony of its council meetings. Indeed, apart from almost yearly revisions to the Master rites and occasional acquisitions for the library, the Order of Gemini is practically incapable of making decisions on any difficult issue. Everyone assumes that in the case of a serious threat to the city, the mages would vote in favor of action to support its defense, but there is no record in history of them doing so (although many individual members work as paid consultants to the City Guard or serve as volunteer members of the City Watch). The secret**Circle of the Black Moon**, on the other hand, is decisive and resolute in its allegiance to Hecate, loyal to its coven-master **Zadek of Messene**, and capable of significant feats of magic. The goëtists in Yggsburgh city and surrounding towns meet for worship and to receive encouragement and instructions on each dark of the moon at midnight outside the hillside village of **Zipari**, about six miles from the city, where three roads meet — a place sacred to Hecate, three-faced goddess of the crossroads. Most of the circle members ride from Yggsburgh city at sunset and spend the time until their appointed hour sheltering in nearby crofts with the connivance of local shepherds. The Black Moon mages take care not to damage the herms (pillars dedicated to Hermes) beside the roads and go as far as clearing weeds and repairing any that are neglected.
 
-Mages in the Greek tradition often divide magic into three forms or schools of practice. **Magia** is a practical, pragmatic method of magic, largely derived from the traditions of Eastern lands such as Persia and Chaldaea together with Stygian and Atlantean learning, which makes use of astrology, the sacred properties of words and numbers, and invocation of elemental and planetary spirits to bring about concrete benefits to the caster. **Goëtia**, derived from the word “howling,” refers both to the wild and frightening nature of its rites and the eerie baying of dogs that signifies the presence of its patron, the goddess Hecate; goëtists practice summoning, necromancy, and the making of potions and talismans. **Theurgia** is a high-minded tradition, much concerned with moral philosophy and self-improvement through communion with angelic beings and heavenly spheres.
+**Zadek**keeps the coven’s most rare and potent books and scrolls at his mansion near Zipari. This sumptuous abode has a suite of rooms in one of its wings where lesser mages can stay while studying and copying passages from the books, or preparing for their induction into higher grades of the black arts. Most senior members of the**Circle of the Black Moon** are careful to maintain their standing as Journeymen of the **Order of Gemini** to take advantage of its various privileges and contacts. **Zadek**himself has no time for the order, however, calling its members “symposium-holding nincompoops.” ##**Adventure Hooks**
 
-The public mages’ guild in **Yggsburgh**, the **Order of Gemini**, has a large guildhall in the richer part of the **Merchants’ Quarter**, dominated by a broad circular chamber not unlike the meeting-place of a senate or city council that is vaulted over in a magnificent and accurate jeweled representation of a starry sky with Mercury ascending in the house of Gemini. The Order provides all mages in the city with a meeting-place to discuss the practice of magic both in formal session and by informal groups in its many galleries and lounges, the use of its library of astrological and theoretical texts, and the opportunity to mingle and argue business at regular social functions. Wizards must pay annual dues, pass an examination on their skills by a committee of masters, and attend a ceremony of recognizance to become **Worshipful Journeymen** of the guild with the right to use the facilities of the guildhall. Those who wish to speak in council or acquire offices of the Order may ask the approval of **Old Preceptor Coroneos** and the assembled masters to pass through the more stringent requirements of becoming **Master Magicians**.
-
-The **Order of Gemini** encompasses everything from tradesman mages who are careful to sacrifice to Hecate to maintain the potency of their dowsings for lost trinkets and curses-for-hire, to aristocratic scholars of theurgia who feel that the only proper use of magical theory is the refinement of the soul under the tutelage of Apollo, Athena, or Zeus. The guild thus harbors any number of cliques, interest groups, and intrigues, which greatly increases the length and acrimony of its council meetings. Indeed, apart from almost yearly revisions to the Master rites and occasional acquisitions for the library, the Order of Gemini is practically incapable of making decisions on any difficult issue. Everyone assumes that in the case of a serious threat to the city, the mages would vote in favor of action to support its defense, but there is no record in history of them doing so (although many individual members work as paid consultants to the City Guard or serve as volunteer members of the City Watch).
-
-The secret **Circle of the Black Moon**, on the other hand, is decisive and resolute in its allegiance to Hecate, loyal to its coven-master **Zadek of Messene**, and capable of significant feats of magic. The goëtists in Yggsburgh city and surrounding towns meet for worship and to receive encouragement and instructions on each dark of the moon at midnight outside the hillside village of **Zipari**, about six miles from the city, where three roads meet — a place sacred to Hecate, three-faced goddess of the crossroads. Most of the circle members ride from Yggsburgh city at sunset and spend the time until their appointed hour sheltering in nearby crofts with the connivance of local shepherds. The Black Moon mages take care not to damage the herms (pillars dedicated to Hermes) beside the roads and go as far as clearing weeds and repairing any that are neglected.
-
-**Zadek** keeps the coven’s most rare and potent books and scrolls at his mansion near Zipari. This sumptuous abode has a suite of rooms in one of its wings where lesser mages can stay while studying and copying passages from the books, or preparing for their induction into higher grades of the black arts.
-
-Most senior members of the **Circle of the Black Moon** are careful to maintain their standing as Journeymen of the **Order of Gemini** to take advantage of its various privileges and contacts. **Zadek** himself has no time for the order, however, calling its members “symposium-holding nincompoops.”
-
-## **Adventure
-
-Hooks**
-
-* **Membership or advancement in a mage’s guild might require a certain amount of volunteer service at its facilities,** perhaps as much as one month a year in total (on the other hand, if the officials of the guild demand that members carry out field work, it will always be fairly recompensed in some way). This could lead to involvement in any number of encounters, and the characters may have to respond to the demands of imperious visitors, rescue and assist members who are injured in the course of experiments that they attempt in the guildhall’s workrooms, or help suppress the results of summonings gone awry.
-
-## **Specific to the Order of Gemini**
+* **Membership or advancement in a mage’s guild might require a certain amount of volunteer service at its facilities,**perhaps as much as one month a year in total (on the other hand, if the officials of the guild demand that members carry out field work, it will always be fairly recompensed in some way). This could lead to involvement in any number of encounters, and the characters may have to respond to the demands of imperious visitors, rescue and assist members who are injured in the course of experiments that they attempt in the guildhall’s workrooms, or help suppress the results of summonings gone awry. ##**Specific to the Order of Gemini**
 
 * An elderly mage acquainted with the characters asks their help in arranging a discreditable incident for one of his rivals in the Order, perhaps by arranging for the watch to catch the rival mage in a compromising position with several hetaeras or stealing the rival mage’s latest shipment of fine cheese, in order for their friend to deliver to the Council a satirical speech that he has already written for the purpose.
 
@@ -1323,9 +1117,7 @@ Hooks**
 
 1. His mages are trying to gain knowledge from the shades of the Hadeopolis by successive necromantic rituals in the old cemetery. The archmage suspects that these efforts might reveal secrets about treasures and magical items hidden around Yggsburgh. More importantly, however, these activities are also part of an ongoing attempt to gain enough knowledge about the ancient dead interred in the Old Tomb for Zadek and his most skilled necromancers to invoke their spirits, which he hopes can identify magical sites used during the early ages of Yggsburgh island. If the Circle of the Black Moon successfully learns of a tomb or fane unknown to other looters, they may prefer to send hired swords to face any possible dangers, rather than risk their own necks.
 
-2. Another venture involves attempts, which a group of his underlings have suggested and Zadek has sanctioned, to make direct contact with the minds of the Titans in their prison plane of **Tarterus**. The goëtists hope that they can persuade these terrible beings to grant them the benefits of their vast mental abilities and command over the elements. Despite some terrifying experiences, the Black Moon mages seem to be making progress toward sustained mental rapport with the Titans **Coeus**, ruler of intellect; **Iapetus**, ruler of mountains; and **Polyvotis**, lord of profanity (who some of the mages believe is actually trapped beneath the nearby island of **Porphyris**). They may, on the other hand, merely be inviting possession of their chosen medium by an angry supernatural force that is eager to wreak havoc on the material plane.
-
-# **SCRIPTORIUM/SCROLLSHOP**
+2. Another venture involves attempts, which a group of his underlings have suggested and Zadek has sanctioned, to make direct contact with the minds of the Titans in their prison plane of **Tarterus**. The goëtists hope that they can persuade these terrible beings to grant them the benefits of their vast mental abilities and command over the elements. Despite some terrifying experiences, the Black Moon mages seem to be making progress toward sustained mental rapport with the Titans **Coeus**, ruler of intellect; **Iapetus**, ruler of mountains; and **Polyvotis**, lord of profanity (who some of the mages believe is actually trapped beneath the nearby island of **Porphyris**). They may, on the other hand, merely be inviting possession of their chosen medium by an angry supernatural force that is eager to wreak havoc on the material plane. #**SCRIPTORIUM/SCROLLSHOP**
 
 Scriptoriums, or scriptoria, are rooms or facilities devoted to the hand-copying and illustration of books. Pages prepared in scriptoriums are fashioned into complete books by usually-resident bookbinders, who may contract out to other craftsmen the additional work required to make fancy covers of different materials and to provide tomes with secure bindings and clasps, including locks if desired. Scrollshops sell either copies of scrolls, supplies for writing scrolls and other texts, or both, as well as peripheral items like scroll cases, inkwells, and pen knives. Specialists within this trade include vendors of art and drafting supplies, sellers of sheet music or religious tracts, and illicit suppliers to forgers who are experts in matching papers, inks, and sealing- waxes.
 
@@ -1351,39 +1143,19 @@ Proprietors of scrollshops more often possess the expertise of scribes or bookbi
 
 Although much of a scrollshop’s or scriptorium’s stock are very valuable and expensive, their uses are also very specialized and a thief would have considerable trouble effectively fencing them. Thus, it is usually uneconomical for owners of such places to employ complex security precautions beyond shuttered windows, locked doors, and inducing the city watch to keep an eye on the place during their nightly patrols. However, if a scrollshop holds highly valuable items, such as finished magic scrolls or gemstones, the place may have protections equivalent to those of a jeweler or pawnbroker — including keeping only a few sample items on display in sealed cases and fetching goods from a more secure back-office on request — and the proprietor might take the expensive items home at night if he lives elsewhere, accompanied by guards of whatever number and competence are required to assure his safety.
 
-## **Example:
+## **Example: The Sign of the Heron**
 
-The Sign of the Heron**
-
-The scrollshop known as the **Sign of the Heron** occupies a narrow, three-storey row house in the **Merchants’ Quarter** of **Yggsburgh**, on a cross street from the great hall of the **Order of Gemini** mage’s guild (q.v.) among several specialist booksellers, curiosity shops, a cheap restaurant, and similar stores of interest to scholars. Its proprietor is an **Elf** who uses the name **Vellurial Reedcutter**. The Sign of the Heron caters primarily to wizards and their apprentices, selling arcane writing supplies, prepared spell-scrolls that are useful for magical study and research (such as spells to analyze, alter, or remove magical effects, and those simple spells that beginning students typically learn), and copies of monographs on such subjects as proper preparation of spell inks.
-
-Due to its owner’s appreciation of fine calligraphy, the **Sign of the Heron** has long had a sideline catering to mundane scribes and collectors, providing ornamental scrolls, rare and antique texts, and supplies for the calligraphic art. **Vellurial** is also rumored to be an expert in several of the celestial and infernal languages spoken on other planes of existence, although he publicly holds such knowledge to be dangerous to meddle with and if he actually has such skills, he shares and discusses them only with well-trusted associates and in private.
-
-The ground floor of the shop is open to customers from before dawn and into late evening. The front section sells primarily linen- and reed-based papers and calfskin vellum — mostly manufactured locally but with some particularly high-grade imported papers as well — various inks and ink components, quills and pens, and prepared scroll-blanks and blank spellbooks. Scrolls, texts, and antiques are displayed on a series of shelves at the rear, close to where Vellurial maintains his usual day-office in a small alcove next to a stair up to the second floor. Apart from the owner, two Human clerks work alternate shifts, and a skilled journeyman bookbinder and restorer, **Jacob Manzin**, has an arrangement with the Elf to use a back room to finish scrolls with rollers and edging, bind spell-tomes for customers, and to carry out any necessary repairs. Vellurial can assist clients further through contacts and arrangements with a number of craftsmen and tradesmen, including jewelers, locksmiths, and traders in rare items.
+The scrollshop known as the **Sign of the Heron** occupies a narrow, three-storey row house in the **Merchants’ Quarter** of **Yggsburgh**, on a cross street from the great hall of the **Order of Gemini** mage’s guild (q.v.) among several specialist booksellers, curiosity shops, a cheap restaurant, and similar stores of interest to scholars. Its proprietor is an **Elf** who uses the name **Vellurial Reedcutter**. The Sign of the Heron caters primarily to wizards and their apprentices, selling arcane writing supplies, prepared spell-scrolls that are useful for magical study and research (such as spells to analyze, alter, or remove magical effects, and those simple spells that beginning students typically learn), and copies of monographs on such subjects as proper preparation of spell inks. Due to its owner’s appreciation of fine calligraphy, the**Sign of the Heron** has long had a sideline catering to mundane scribes and collectors, providing ornamental scrolls, rare and antique texts, and supplies for the calligraphic art. **Vellurial**is also rumored to be an expert in several of the celestial and infernal languages spoken on other planes of existence, although he publicly holds such knowledge to be dangerous to meddle with and if he actually has such skills, he shares and discusses them only with well-trusted associates and in private. The ground floor of the shop is open to customers from before dawn and into late evening. The front section sells primarily linen- and reed-based papers and calfskin vellum — mostly manufactured locally but with some particularly high-grade imported papers as well — various inks and ink components, quills and pens, and prepared scroll-blanks and blank spellbooks. Scrolls, texts, and antiques are displayed on a series of shelves at the rear, close to where Vellurial maintains his usual day-office in a small alcove next to a stair up to the second floor. Apart from the owner, two Human clerks work alternate shifts, and a skilled journeyman bookbinder and restorer,**Jacob Manzin**, has an arrangement with the Elf to use a back room to finish scrolls with rollers and edging, bind spell-tomes for customers, and to carry out any necessary repairs. Vellurial can assist clients further through contacts and arrangements with a number of craftsmen and tradesmen, including jewelers, locksmiths, and traders in rare items.
 
 The second floor contains Vellurial’s private rooms and secure storage. On the top floor, Vellurial uses the front garret as a scriptorium where at any time several apprentice wizards work part-time as copyists, refreshing his stock of scrolls in return for needed funds, accommodation at the rear of the building, and the opportunity to copy magical texts for their own studies. Although he hires such scribes essentially on the basis of willingness to work for low pay, Vellurial has more than enough wizardly skill to check on their production and weed out employees who lack the magical aptitude to produce workable spell-texts. He is also known to value and reward particularly skillful work with more interesting tasks and ongoing collaboration. The copyists work partly from a number of middle-ranking wizards’ spellbooks that Vellurial has acquired over the years through his practice of lending money to impoverished spellcasters against the collateral of a clause in their will leaving their tomes to the Sign of the Heron on their demise — an arrangement that suits both impatient Human wizards and the long-lived Elf.
 
-**Vellurial** has also, for the past 250 years, been **Keeper of Records** for the **Bookbinders’ Guild**, an organization with much influence in Yggsburgh. In fact, after a regrettable dispute in the last century, the founders of the magical **Order of Gemini** swore fealty as an affiliate sub-guild to the Bookbinders, though the city’s wizards today find it in poor taste to mention the connection.
-
-In recent years, the scrollshop has become an infamous location for jibes, pranks, and arguments between disparate mages and their apprentices from the ever-factious **Order of Gemini**. Notable participants include the **Steward of the Order, Argathrax**, and the outspoken **Master Wizard Sholo**, who have adopted some of the distinctive clothing and sayings of the Green and Blue chariot-racing factions, respectively. When dealing with such subtle and willful intellects, it is difficult for anyone to say how seriously the two mages take this low-brow contention, although many apprentices have followed their lead and become fully-involved members of the factions.
-
-The sharply-sloping street outside has come to be known as **Wizards’ Walk** for the number of junior mages and apprentices who lounge around and sit on the neighbors’ steps in cliques, awaiting any sign of trouble or amusement, and for the dangerous spells unleashed there with alarming frequency in student brawls and magical duels. While a realization that damaging the scrollshop would be an inexcusable career blunder has held back the wizards from unleashing spells of wide-scale destruction, there have been a number of transmogrifications and several summonings of unpleasant things that have rampaged up and down Wizards’ Walk for as long as their connection to the material plane allowed.
-
-## **Adventure
-
-Hooks General**
+**Vellurial** has also, for the past 250 years, been **Keeper of Records** for the **Bookbinders’ Guild**, an organization with much influence in Yggsburgh. In fact, after a regrettable dispute in the last century, the founders of the magical **Order of Gemini**swore fealty as an affiliate sub-guild to the Bookbinders, though the city’s wizards today find it in poor taste to mention the connection. In recent years, the scrollshop has become an infamous location for jibes, pranks, and arguments between disparate mages and their apprentices from the ever-factious**Order of Gemini**. Notable participants include the **Steward of the Order, Argathrax**, and the outspoken **Master Wizard Sholo**, who have adopted some of the distinctive clothing and sayings of the Green and Blue chariot-racing factions, respectively. When dealing with such subtle and willful intellects, it is difficult for anyone to say how seriously the two mages take this low-brow contention, although many apprentices have followed their lead and become fully-involved members of the factions. The sharply-sloping street outside has come to be known as**Wizards’ Walk**for the number of junior mages and apprentices who lounge around and sit on the neighbors’ steps in cliques, awaiting any sign of trouble or amusement, and for the dangerous spells unleashed there with alarming frequency in student brawls and magical duels. While a realization that damaging the scrollshop would be an inexcusable career blunder has held back the wizards from unleashing spells of wide-scale destruction, there have been a number of transmogrifications and several summonings of unpleasant things that have rampaged up and down Wizards’ Walk for as long as their connection to the material plane allowed. ##**Adventure Hooks General**
 
 * **A party might be hired to investigate the theft of a shipment of books from a wagon traveling between a monastery that possesses a scriptorium and a noble with a good-sized library.** The bandits most likely were tipped off by someone with direct knowledge of the wagon’s time of departure, route, and the contents of the consignment. This might be a corrupt individual on one side of the business arrangement between the monks and the nobleman who wished to renege on the deal and pocket the profits, or by some third party who wanted to seize the books and make use of the information contained in them.
 
-* **Scriptoria and scrollshops involved in the production or sale of magical scrolls, spellbooks, and other written works may constantly be in need of appropriate exotic components for inks, quills, writing media, and the like** (e.g., kraken sepia as the basis for any special ink, cockatrice feathers for penning spells related to petrification, flayed demon hide for parchment of scrolls inscribed with protections against such monsters). Obtaining such materials might form the basis of complete adventures or periodically serve as a source of additional income for characters.
+* **Scriptoria and scrollshops involved in the production or sale of magical scrolls, spellbooks, and other written works may constantly be in need of appropriate exotic components for inks, quills, writing media, and the like**(e.g., kraken sepia as the basis for any special ink, cockatrice feathers for penning spells related to petrification, flayed demon hide for parchment of scrolls inscribed with protections against such monsters). Obtaining such materials might form the basis of complete adventures or periodically serve as a source of additional income for characters. ##**Specific to the Sign of the Heron**
 
-## **Specific to the Sign of the Heron**
-
-* **The Sign of the Heron is a likely place for player characters to sell any magical writings or fine calligraphy that they acquire in their adventures and do not wish to use themselves, provided they are in good condition. Vellurial Reedcutter** is also probably not above buying possibly-stolen property if its source is concealed discreetly enough and its arcane content or workmanship is sufficiently interesting to him.
-
-# **WIZARD’S
-
-TOWER**
+* **The Sign of the Heron is a likely place for player characters to sell any magical writings or fine calligraphy that they acquire in their adventures and do not wish to use themselves, provided they are in good condition. Vellurial Reedcutter**is also probably not above buying possibly-stolen property if its source is concealed discreetly enough and its arcane content or workmanship is sufficiently interesting to him. #**WIZARD’S TOWER**
 
 Professional wizards’ establishments are often constructed in the form of towers, buildings that are generally well-suited for the requirements of their sorcerous occupants. Adventurers might visit the towers of consulting wizards for any number of reasons, including access to various useful magical effects that party members may not have the magical skill or particular spell knowledge to cast (e.g., removal of magical curses or conditions, scrying, summoning of extra-dimensional servants, temporary strengthening of characters and their equipment); identification of the nature and abilities of magic items they have obtained; in-depth advice on different forms of magic that can complement the characters’ own experiences and specialties; a chance to trade in spells or even become a part-time apprentice to a more knowledgeable mage, for player characters interested to develop their spellcasting abilities; and the opportunity to commission the creation of magical items. Wizards also often provide related services, such as reading and translating obscure languages relevant to magical practice, that player characters may want to avail themselves of on a case-by-case basis.
 
@@ -1399,9 +1171,7 @@ As their title suggests, wizards’ haunts often take the form of multi-story bu
 
 The occupant of a wizard’s tower is generally a spellcaster of at least middling ability. If such a character makes his living by selling magical services, what he lacks in development of raw spell-power (and perhaps in respect among his peers) could be more than made up for by the breadth and practicality of his knowledge of magic. Occasionally, several such qualified mages might share the use of a tower (in an arrangement not unlike lawyers’ chambers) or a nobleman might provide his house wizard with accommodation in part of his manor house (q.v.), palace (q.v.), or fortress. Wizards often share their dwellings with one or more apprentices of beginning to moderate spellcasting ability; familiars, unusual steeds, summoned beings (who may serve the wizard, receive his supplication for increased power, or perhaps some of both), or other more or less magical creatures; servants and guards performing mundane duties, who may either be members of the common races or more unusual individuals; and consorts or family members (unless the practice of magic in the society somehow discourages or prevents ordinary family relations). A wizard’s tower is almost always his home as well as his place of work.
 
-## **Example:
-
-Belsor’s Tower**
+## **Example: Belsor’s Tower**
 
 The tower of **Master Belsor** is a tall, skinny structure of closely-fitted stone, square in profile and with four storeys, near the end of the **Street of the Gargoyles** in the **Merchants’ Quarter** of **Yggsburgh**. Like many of its neighbors, the tower is richly ornamented with carvings of foliage and fantastic creatures. Adventurers can periodically be seen entering or departing the tower of the consulting wizard, who sells his knowledge and services to those able to afford them.
 
@@ -1409,43 +1179,25 @@ A narrow door off the street opens into a small, austere parlor, decorated with 
 
 The second level of the tower contains quarters for Belsor’s apprentices and servants. The third storey comprises the wizard’s chambers, library, and workrooms. The top floor serves as a scriptorium by day and an observatory at night, and is outfitted with furniture that can easily be moved aside so that the area can also be used for summoning rituals.
 
-The professional mage **Belsor** is a tall, saturnine individual of Syrian ancestry with long, straight black hair and moustaches, who wears semi-formal, close-fitting wizards’ robes of maroon and black, brocaded in gold thread. He is a **Master Magician** of the **Order of Gemini**, although he has little interest in guild politics.
-
-Belsor’s subordinates include three short, lithe, deeply tanned fey beings of uncertain racial affinity, the brothers **Loosestrife**, **Lichtdwee**, and **Surlylip**. Two of the brothers are apprentices to Master Belsor, but Surlylip is uninterested in spellcasting and serves as Belsor’s butler. Their natures are diverse. **Lichtdwee** is a cheerful fellow whose spells often employ dazzling bursts of radiance. **Loosestrife** is tricky, sarcastic, a fair illusionist, and wickedly skilful knife-fighter. **Surlylip** is a sturdy swordsman and as sour as his name implies to anyone who he thinks he can get away with insulting — a trait in a butler that generally suits Belsor, who is impatient with those visitors who bring scanty funds and minor commissions of little profit or interest. He fobs off such time-wasters to his apprentices or has the butler eject them empty-handed.
-
-A **Half-Orc** named **Slafast** also serves as apprentice to Belsor, though he does not make obvious his considerable magical ability, employed in a distinctive forceful style, and acts as cook and butler during the hours of full daylight when Surlylip is resting.
+The professional mage **Belsor** is a tall, saturnine individual of Syrian ancestry with long, straight black hair and moustaches, who wears semi-formal, close-fitting wizards’ robes of maroon and black, brocaded in gold thread. He is a **Master Magician** of the **Order of Gemini**, although he has little interest in guild politics. Belsor’s subordinates include three short, lithe, deeply tanned fey beings of uncertain racial affinity, the brothers**Loosestrife**, **Lichtdwee**, and **Surlylip**. Two of the brothers are apprentices to Master Belsor, but Surlylip is uninterested in spellcasting and serves as Belsor’s butler. Their natures are diverse. **Lichtdwee** is a cheerful fellow whose spells often employ dazzling bursts of radiance. **Loosestrife** is tricky, sarcastic, a fair illusionist, and wickedly skilful knife-fighter. **Surlylip**is a sturdy swordsman and as sour as his name implies to anyone who he thinks he can get away with insulting — a trait in a butler that generally suits Belsor, who is impatient with those visitors who bring scanty funds and minor commissions of little profit or interest. He fobs off such time-wasters to his apprentices or has the butler eject them empty-handed. A**Half-Orc** named **Slafast** also serves as apprentice to Belsor, though he does not make obvious his considerable magical ability, employed in a distinctive forceful style, and acts as cook and butler during the hours of full daylight when Surlylip is resting.
 
 The three apprentices perform chores with varying efficiency according to their individual natures, assist Belsor in his spellcasting, and sometimes take on lesser commissions in their own right, such as making minor magic items suitable to their skills.
 
 Master Belsor has undoubted competence with a full range of magical abilities, including spells of protection, puissance in battle, breaking of curses, divination, consulting the spirits of the dead, and summoning fey beings to carry out various tasks. He can provide sigils of protection against a variety of supernatural creatures or classes of mundane harm, inscribed on squares of paper that, when unfurled to display their magical diagrams, radiate a protective aura for many hours.
 
-His apprentice **Lichtdwee** works with a variety of spell effects that involve radiance, color and light, confusing or dazzling foes, or repelling creatures of darkness. **Lichtdwee** has begun learning methods to instill his spells into crystals and gems to be released at need later, as well as making various temporary magical lanterns and glowing ornaments for the city’s more exclusive parties.
+His apprentice **Lichtdwee** works with a variety of spell effects that involve radiance, color and light, confusing or dazzling foes, or repelling creatures of darkness. **Lichtdwee**has begun learning methods to instill his spells into crystals and gems to be released at need later, as well as making various temporary magical lanterns and glowing ornaments for the city’s more exclusive parties. The second apprentice,**Loosestrife**, favors illusion, distraction, and enchantments that assist in combat, such as empowering weapons to deal more dangerous wounds, or increasing the strength and agility of a combatant.
 
-The second apprentice, **Loosestrife**, favors illusion, distraction, and enchantments that assist in combat, such as empowering weapons to deal more dangerous wounds, or increasing the strength and agility of a combatant.
+**Slafast**the Half-Orc prefers spells of direct attack or defense. He has the makings of a skilled abjurer, is learning many of Belsor’s stronger enchantments of protection and warding, and often assists Belsor in averting curses or removing magical taints upon objects. ##**Adventure Hooks General**
 
-**Slafast** the Half-Orc prefers spells of direct attack or defense. He has the makings of a skilled abjurer, is learning many of Belsor’s stronger enchantments of protection and warding, and often assists Belsor in averting curses or removing magical taints upon objects.
-
-## **Adventure
-
-Hooks General**
-
-* **Player characters who travel to a wizard’s tower to purchase some type of magical assistance might find the front door ajar and various signs of violence and disarray inside.** One of the wizard’s rivals has overcome the tower’s defenses, either battling and entrapping the wizard in some magical fashion, or entering to loot his goods while the wizard was kept away from his home as the result of some unexpected problem. If the adventurers take the opportunity to do some pilfering themselves, they are likely to run afoul of many un-triggered traps, curses, and other magical hazards in the tower — as well as earning the enmity of the tower’s owner when he returns. On the other hand, if they rescue the wizard from whatever peril he is in, the player characters can expect at least a little gratitude and perhaps some future collaboration.
-
-## **Specific to Belsor’s Tower**
+* **Player characters who travel to a wizard’s tower to purchase some type of magical assistance might find the front door ajar and various signs of violence and disarray inside.**One of the wizard’s rivals has overcome the tower’s defenses, either battling and entrapping the wizard in some magical fashion, or entering to loot his goods while the wizard was kept away from his home as the result of some unexpected problem. If the adventurers take the opportunity to do some pilfering themselves, they are likely to run afoul of many un-triggered traps, curses, and other magical hazards in the tower — as well as earning the enmity of the tower’s owner when he returns. On the other hand, if they rescue the wizard from whatever peril he is in, the player characters can expect at least a little gratitude and perhaps some future collaboration. ##**Specific to Belsor’s Tower**
 
 * **In the course of their other adventures, the player characters might be robbed, or discover someone who has been killed, by a mysterious assailant who is skilled in both magic and knife-work.** If they are able to track the escaped attacker — who is, in fact, the rogue-wizard **Loosestrife** — the trail will lead them to Belsor’s tower. Motives for the killing can vary according to the needs of the game master. Perhaps the fey acted without the master-wizard’s knowledge and will face punishment if the characters can convince Belsor of his apprentice’s involvement. If **Loosestrife** acted simply as a hired agent, the player characters might be able to bribe or induce him to give up the identity and purposes of his employers — provided that Belsor allows them to question his apprentice at length. Finally, **Loosestrife** may have acted directly on Belsor’s instructions and the characters might have to deal with the master wizard as an adversary.
 
-* **Known for being more than a little perverse, Belsor will every few years or so entice or otherwise arrange for one or more burglars to attempt to rob his tower** (e.g., he once had a third party approach the local **Thieves’ Guild** (q.v.) and commission a robbery). His main motivations are both to test the strength of his defenses and to secretly observe and derive pleasure from the efforts of the thieves. The wizard is unconcerned if would-be thieves are incidentally injured, killed, arrested, or otherwise incommoded while making such an attempt. He will not directly seek to slay or harm any of them, however, and will at the most inflict some magical punishment on those who successfully learn some of his secrets or steal from him (e.g., banish them to some faraway place, transmogrify them into an unfortunate form, imprison them).
-
-# **FINAL
-
-THOUGHTS**
+* **Known for being more than a little perverse, Belsor will every few years or so entice or otherwise arrange for one or more burglars to attempt to rob his tower** (e.g., he once had a third party approach the local **Thieves’ Guild**(q.v.) and commission a robbery). His main motivations are both to test the strength of his defenses and to secretly observe and derive pleasure from the efforts of the thieves. The wizard is unconcerned if would-be thieves are incidentally injured, killed, arrested, or otherwise incommoded while making such an attempt. He will not directly seek to slay or harm any of them, however, and will at the most inflict some magical punishment on those who successfully learn some of his secrets or steal from him (e.g., banish them to some faraway place, transmogrify them into an unfortunate form, imprison them). #**FINAL THOUGHTS**
 
 Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 
-# **CHAPTER
-
-9: RELIGIOUS PLACES**
+# **CHAPTER 9: RELIGIOUS PLACES**
 
 Some of the most immersive, varied, and interesting places in many role-playing game settings are those devoted to the mythical deities and fantastic moral codes to which player characters might variously be fanatically devoted or zealously opposed. Religious establishments within a campaign setting can provide many specific game benefits as well, such as dealing with serious ailments, injuries, spiritual distress, curses, or even, in some settings, untimely death; interaction with the leaders of religious sects in the setting, many of whom also wield considerable temporal authority; and advice from knowledgeable characters or extraplanar sources about dilemmas that characters face with regard to religion and the supernatural entities that form the elements of its mythoi.
 
@@ -1477,9 +1229,7 @@ An individual burial ground might be attached to a major church that claims pree
 
 Interred bodies are vulnerable to desecration or defilement by causes as diverse as disrespectful behavior, vandalism, scavenging animals, cannibalistic undead or people, or depraved beings like necromancers who seek to commune with the spirits of the dead or animate their remains. To prevent such abuses, the keepers of cemeteries generally rely on such measures as walls, fences, and regular inspection by attendants; ceremonial protections that dedicate burial places as holy ground; and possibly even various sorts of magical protection. When such measures are not adequate to prevent serious problems (e.g., infestations of undead beings who terrorize a community as much as anything by their appearance to once-living loved ones), religious and community leaders will generally respond in ways dictated by tradition and ritual (e.g., burning necromancers, de-animating bodies in a special religious ceremony).
 
-# **CRYPT
-
-HILL OF YGGSBURGH**
+# **CRYPT HILL OF YGGSBURGH**
 
 **Location and Setting:**
 
@@ -1499,14 +1249,10 @@ Superstitions abound regarding the hill. It’s said that harming the snakes inv
 
 The statue of Lord Yggg in the Upper Gardens reportedly hides a secret passage into the Thieves’ Underground, and sepulchral tones emanate from nearby Oldoaks Grove, suggesting deeper connections to the supernatural.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * **General:** The tranquility of Crypt Hill is shattered by grave robbers desecrating ancient tombs. Their thefts awaken restless spirits, drawing adventurers to restore order—or uncover a deeper conspiracy tied to Yggsburgh’s forgotten past.
-* **Specific to Crypt Hill:** Rumors spread of a hidden crypt beneath the Sepulcher of the First Kings, containing a treasure cursed to protect Yggsburgh. The adventurers must brave the sepulcher’s traps and lingering undead to retrieve it—or seal it forever.
-
-# **MONASTERY/CONVENT**
+* **Specific to Crypt Hill:**Rumors spread of a hidden crypt beneath the Sepulcher of the First Kings, containing a treasure cursed to protect Yggsburgh. The adventurers must brave the sepulcher’s traps and lingering undead to retrieve it—or seal it forever. #**MONASTERY/CONVENT**
 
 Monasteries are places where monks, nuns, or other people set apart for a religious purpose live and work. Monasteries are among the most restrictive sorts of religious communities and require their members to live on the premises, work and worship together collectively, and follow specific rules that are more severe than those applying to common worshippers of the deity. A religious community of this sort that exclusively admits women can be called a convent or nunnery. Other sorts of religious community have varying aims but tend to be somewhat more lenient than monasteries or to not require their members to share every aspect of their daily lives.
 
@@ -1526,9 +1272,7 @@ Backgrounds of monks vary widely and the personality and motivations of those wh
 
 The daily activities of monks depend on the specific rules of their order, but usually include many sessions of organized prayer, lessons, meditation, common meals, chores, and manual labor. Many of the latter sorts of activities are with an eye to providing for the monastery, both by producing necessities for use within the community and by making items to sell outside of it. Beyond the grade of novice, this often still allows a good deal of time for monks to pursue individual interests and hobbies, to learn and practice many different crafts and to meditate on the mysteries of their religion. Unfortunately, if the personal inclinations of some monks are at odds with the prevailing dictates of their religion, they usually also have much time to misbehave and to develop and promote heterodox or rebellious opinions.
 
-# **MONASTERY
-
-OF THE SILVER COIN**
+# **MONASTERY OF THE SILVER COIN**
 
 **Location and Deity:**
 
@@ -1562,9 +1306,7 @@ The monastery is dedicated to Asterian, whose principles of prosperity through f
 
 The wealth and influence of the monastery demand formidable defenses. In addition to its imposing walls, the monastery is protected by a mix of physical and magical measures. Guards patrol the gates and inner courtyards, and trusted acolytes watch over the Hall of Contracts. Subtle magical wards ensure the safety of sensitive documents and sacred relics.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * **General:**
 
@@ -1572,22 +1314,14 @@ Hooks:**
 
 * ## **Specific to the Monastery of the Silver Coin:**
 
-* **An ancient artifact depicting Asterian’s symbol is discovered in a nearby ruin.** Believed to be a relic of the monastery’s founding, the monks seek the adventurers’ aid in retrieving it. However, a rival faction, possibly tied to the Astrological Readers (a cover for the Assassins’ Guild), also claims ownership, setting the stage for a high-stakes conflict.
-
-## **Expanded
-
-Interactions:**
+* **An ancient artifact depicting Asterian’s symbol is discovered in a nearby ruin.**Believed to be a relic of the monastery’s founding, the monks seek the adventurers’ aid in retrieving it. However, a rival faction, possibly tied to the Astrological Readers (a cover for the Assassins’ Guild), also claims ownership, setting the stage for a high-stakes conflict. ##**Expanded Interactions:**
 
 * **NPCs:**
   * **Abbot Linvar Carden:** A shrewd yet pious leader who oversees the monastery’s operations. Known for his calm demeanor and keen sense of justice.
 
 * **Master of Ledgers Berwin Talon:** The head librarian and keeper of trade records, often sought out for his knowledge of Yggsburgh’s trade routes and merchant families.
   * **Senior Guard Captain Elira Valen:** A former adventurer who trains the monastery’s guards and takes a personal interest in the security of its relics and ledgers.
-* **Visiting Merchants:** Pilgrims and traders regularly visit the monastery for spiritual guidance or to finalize deals in the Hall of Contracts. Some bring news of distant lands or rumors of threats to Yggsburgh’s commerce.
-
-## **Enhancements
-
-Based on Yggsburgh's Setting:**
+* **Visiting Merchants:**Pilgrims and traders regularly visit the monastery for spiritual guidance or to finalize deals in the Hall of Contracts. Some bring news of distant lands or rumors of threats to Yggsburgh’s commerce. ##**Enhancements Based on Yggsburgh's Setting:**
 
 * The monastery plays an integral role in Yggsburgh’s economy, acting as a neutral ground for trade negotiations and a safe haven for merchants during times of political or economic unrest.
 * The cobblestone streets and limestone sidewalks leading to the monastery reflect Yggsburgh’s orderly and prosperous aesthetic.
@@ -1607,9 +1341,7 @@ Shrines dedicated to special purposes include wedding or funeral chapels in loca
 
 Shrines often exist alone on city streets or in the countryside, or within ordinary buildings, for the use of any passersby who may happen upon them, and as such few of them have any specific security precautions. Occasionally, a shrine of special virtue might have an individual hermit-priest or holy warrior under a special vow — or even a more unusual creature — dwelling near the shrine to maintain and protect it, or a curse of divine origin might be known to befall those who damage the shrine or steal its offerings. Defilers might also be subject to retribution from locals angered by those presuming to profane their deities.
 
-# **SHRINE
-
-OF ST. ALARIC THE NAVIGATOR**
+# **SHRINE OF ST. ALARIC THE NAVIGATOR**
 
 **Location and Patron:**
 
@@ -1623,14 +1355,10 @@ The shrine is a modest stone structure, its walls carved with celestial patterns
 
 Before embarking on dangerous voyages, mariners and adventurers gather here to offer prayers, seeking the saint’s protection. The shrine hosts an annual ceremony where sailors light lanterns and float them out to sea, symbolizing safe passage and remembrance of those lost to the waves.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * **General:** A storm reveals a hidden chamber beneath the shrine, containing an ancient artifact tied to St. Alaric’s legend. Adventurers must determine whether it should be kept safe—or returned to the sea.
-* **Specific to the Shrine of St. Alaric:** A sailor claims to have seen the statue of St. Alaric come to life during a storm, pointing toward a sunken shipwreck. The adventurers are hired to investigate the wreck and retrieve its mysterious cargo.
-
-# **TEMPLE**
+* **Specific to the Shrine of St. Alaric:**A sailor claims to have seen the statue of St. Alaric come to life during a storm, pointing toward a sunken shipwreck. The adventurers are hired to investigate the wreck and retrieve its mysterious cargo. #**TEMPLE**
 
 Temples are grand and sumptuous religious buildings or complexes used as sites of devotion for large numbers of faithful. Such a place usually indicates the presence of a particular community or region’s leading religion and serves as a major center of its worship. A temple almost always guarantees the presence of a high priest or an even more exalted ecclesiast capable of performing the highest functions of the religion in question and of granting the highest blessings it can bestow.
 
@@ -1648,9 +1376,7 @@ Wealthy worshippers like nobles, national rulers, or rich guilds — particularl
 
 The chief official of a temple might be an ordained member holding rank in the hierarchy of his religion, such as a high priest, or might hold a separate but equally high-status position created solely to oversee the temple, such as a provost or keeper of the shrine. Below this hierarch, a temple is generally served by a number of experienced priests (a group sometimes known as a chapter), and numerous trainees, acolytes, attendants, musicians, temple-servants, laborers, guards, and agents, who play various roles in elaborate ceremonies or support the temple’s material and security needs.
 
-# **TEMPLE
-
-OF THE SERENE WATERS**
+# **TEMPLE OF THE SERENE WATERS**
 
 **Location and Patron:**
 
@@ -1664,22 +1390,14 @@ The temple’s centerpiece is the Fountain of Serenity, a sacred spring said to 
 
 The priests of Naera welcome all who seek solace, regardless of status or wealth. Visitors perform rituals of cleansing—washing their hands and faces—before approaching the fountain for prayer. The infirmary tends to the city’s sick and injured, while the apothecary supplies adventurers with healing potions and salves.
 
-## **Adventure
-
-Hooks:**
+## **Adventure Hooks:**
 
 * **General:** An outbreak of disease threatens Yggsburgh, and the temple calls upon adventurers to retrieve a rare herb rumored to grow in the treacherous depths of the Wynchwood Forest.
-* **Specific to the Temple of the Serene Waters:** A rival sect spreads rumors that the Fountain of Serenity has been tainted. The adventurers must uncover the truth and protect the temple’s reputation—or deal with the consequences of its corruption.
-
-# **FINAL
-
-THOUGHTS**
+* **Specific to the Temple of the Serene Waters:**A rival sect spreads rumors that the Fountain of Serenity has been tainted. The adventurers must uncover the truth and protect the temple’s reputation—or deal with the consequences of its corruption. #**FINAL THOUGHTS**
 
 Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 
-# **CHAPTER
-
-10: GOVERNMENTAL PLACES**
+# **CHAPTER 10: GOVERNMENTAL PLACES**
 
 In addition to the quintessential taverns, inns, marketplaces, and other commercial places so familiar to characters, there are many sorts of public buildings or structures representing the government of the city or region that they might need to visit in the course of their urban adventures.
 
@@ -1703,9 +1421,7 @@ In addition to anything else they might contain, governmental places almost alwa
 
 Security is usually significant at governmental places, many of which are built like fortresses. This is not a coincidence, as in many societies major public buildings are designed to serve as strongpoints during times of civil or political unrest. Defensive elements are likely to include thick stone walls, a lack of windows on ground floors, bars on the windows of upper floors, and solid metal doors that can be both locked and barred. Such places also usually have full-time complements of guards assigned to them, or even permanent garrisons who live at the site.
 
-# **AUDIENCE
-
-CHAMBER**
+# **AUDIENCE CHAMBER**
 
 Audience chambers are places designed for formal meetings between heads of states, ruling nobles, major religious figures like high priests, or other important personages and those they have invited to meet with them — an invitation that is sometimes in response to a request for a meeting from the other party, or sometimes a standing custom, especially in the form of public sessions to settle disputes or receive pleas for assistance. Anytime player characters receive a commission from a noble or approach a similar personage with some petition, it is likely that their official interactions will take place in some sort of audience chamber.
 
@@ -1721,9 +1437,7 @@ In addition to the audience chamber proper, other features of such places typica
 
 Security — especially with regard to the person for whom the place exists — is of paramount importance at audience chambers, and the most stringent measures available will be employed, likely with no regard for cost. Magical measures, to include protective and perhaps even illusory effects, will definitely be employed if they are available in the milieu in question.
 
-## **Example:
-
-The Hall of Petition**
+## **Example: The Hall of Petition**
 
 Located in a wing of the **Elysian Hall** (q.v.) — the official seat of the oligarchic rulers of **Yggsburgh** — the **Hall of Petition** is the de facto court of the government and the primary venue for public interaction between the oligarchy and everyone from members of the public to diplomatic legations.
 
@@ -1739,9 +1453,7 @@ All of the staff members assigned to the Hall of Petition are drawn from the nea
 
 In addition to the force of templars, security measures at the Hall of Petition include a number of potent magical effects, including those associated with priestly spellcasting in general and with the esoteric worship of Hermes in particular.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * In the course of their adventures, player characters might either be summoned to an audience with a major noble or find it necessary to petition for one. Preparing for and then participating in such an audience can provide an interesting and unusual series of role-playing encounters. These might include determining and acquiring the apparel most appropriate for their meeting, convincing chamberlains and other officials to arrange the meeting, identifying which advisors could assist or impede them in achieving their ends, and finally interacting face-to-face with the liege in question.
 
@@ -1749,9 +1461,7 @@ Hooks General**
 
 ## **Specific to the Hall of Petition:**
 
-* The Hall of Petition in Yggsburgh, a vaulted chamber in the **Citadel Ward**, has become the center of political tensions as factions within the council vie for influence. Adventurers might find themselves embroiled in disputes between council members or drawn into investigations of bribery and corruption. Additionally, rumors persist of a hidden door behind a fresco depicting the founding of Yggsburgh, said to lead to forgotten catacombs or vaults beneath the chamber.
-
-# **BARRACKS**
+* The Hall of Petition in Yggsburgh, a vaulted chamber in the **Citadel Ward**, has become the center of political tensions as factions within the council vie for influence. Adventurers might find themselves embroiled in disputes between council members or drawn into investigations of bribery and corruption. Additionally, rumors persist of a hidden door behind a fresco depicting the founding of Yggsburgh, said to lead to forgotten catacombs or vaults beneath the chamber. #**BARRACKS**
 
 Barracks are facilities used to house military and paramilitary troops of various sorts, including soldiers, marines, and city guardsmen (this term is also often used to refer to the individual buildings used to quarter personnel). Some of the earliest examples of barracks were those built by the Roman armies for their legionaries and little has changed in either the form or function of such places in the last two millennia.
 
@@ -1767,9 +1477,7 @@ In addition to sleeping quarters, barracks will usually also include features li
 
 Security is important at barracks, and individual buildings will either be sturdy enough to serve as strongpoints or, if relatively flimsy, will be located in secure complexes. Security is also usually important from the point of view of maintaining discipline and regulations will likely prohibit visits by people other than those assigned to the barracks — especially civilians — or limit them to certain areas or times of the day. Measures are likely to include locking down the facility at night, posting guards at entrances to both the complex and individual buildings, and armed patrols. Magical measures may also be used if spellcasting personnel are associated with the military unit in question.
 
-## **Example:
-
-Barracks of Yggsburgh**
+## **Example: Barracks of Yggsburgh**
 
 Situated near the North Gate, the main barracks of Yggsburgh is a two-story limestone structure that houses the city’s garrison. This bastion of security serves as both the home and training ground for two companies of guards charged with protecting the city’s walls and streets.
 
@@ -1796,9 +1504,7 @@ Areas within a guardhouse typically include an arsenal where — depending on th
 
 Most guardhouses also include bunkrooms where guard or watch personnel can sleep and day rooms where they can relax in between their patrols or other duties. Such places are almost never permanent homes for the troops who use them, however, watchmen generally returning to their private homes and guardsmen to their barracks when their tours of duty at a guardhouse are completed. Such tours generally range from one day to a week, with the watchmen or guardsmen typically patrolling or standing guard for a specific amount of time followed by a rest period in the guardhouse (e.g., six hours on and six hours off).
 
-## **Example:
-
-The Hippodrome Commanderie**
+## **Example: The Hippodrome Commanderie**
 
 This largest of the dozen commanderies in the city of **Yggsburgh** is built into the two large, identical five-story limestone towers flanking the main entrance to the **Grand Hippodrome**, a locale that is a frequent site of civil unrest between the rambunctious Blue and Green factions of chariot racing fans. Both towers are connected at their third and fourth stories by a two-level bridge that contains mechanisms for opening and closing the main entrance gates.
 
@@ -1812,9 +1518,7 @@ The guard officer in charge of this commanderie — **Ivan Pieger**, a foreign-b
 
 Civilians are generally prohibited from coming into any city commanderies without an escort or an appropriate pass — especially this one — but it is not uncommon for a noncommissioned officer or officer to bring a companion by during quiet times.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * Characters with a criminal or unscrupulous bent might be tempted to break into or infiltrate a guardhouse to obtain any number of useful things, including weapons, uniforms, passes, and the like.
 
@@ -1824,9 +1528,7 @@ Hooks General**
 
 * Hardcore racetrack fans of the characters’ acquaintance approach them with a challenge to mark up one of both of the gray towers of the Hippodrome Commanderie with the colors of their team (e.g., write a slogan in large green letters). Repercussions for this act could range from beating and possible arrest by the city guard, jailing, and a fine if they are caught by the authorities, to a bloody brawl with fans of the opposing racing club if spotted or found out by some of them.
 
-# **HARBOR
-
-AND HARBORMASTER’S OFFICE**
+# **HARBOR AND HARBORMASTER’S OFFICE**
 
 Natural, manmade, and augmented harbors of all sorts, which provide places for ships to berth or drop anchor where they are sheltered from bad weather, are both the lifeblood and raison d’etre of many coastal communities and allow them to thrive as centers of trade. In civilized societies with complex economic systems, traffic in and out of harbors and activities within them are regulated and monitored by government officials called harbormasters.
 
@@ -1836,13 +1538,9 @@ Infrastructure maintained by a harbormaster’s office generally includes breakw
 
 Harbormasters themselves are often experienced sailors or lighthouse keepers, and many also have military or administrative backgrounds (e.g., ships’ pursers).
 
-## **Example:
+## **Example: The Harbor District of Yggsburgh**
 
-The Harbor District of Yggsburgh**
-
-**Yggsburgh** owes much of its success as a prominent trading city to its deep natural harbor and the shoal-free approaches to it (factors which are also, to some extent, a military liability). Mooring areas maintained by the **Harbor District of Yggsburgh** include piers in a sheltered harbor where large, deep-draft ships can berth, beaches to the east of the harbor where galleys and vessels of similar design can be drawn up on shore, and designated areas where vessels can stand off shore on the hook. Within any of these areas, ships are grouped together based on the locations from which they have most recently arrived (e.g., all those from Stygia and the Red Sea will be berthed in one location, those from the rest of Africa will be berthed another).
-
-Other facilities associated with the area — all located on **Cyclops Point** at the approach to the sheltered harbor — include a tall, fortified lighthouse, a small temple to the sea god Poseidon, a barracks for the district’s military forces, and the offices of the harbormaster and his staff.
+**Yggsburgh** owes much of its success as a prominent trading city to its deep natural harbor and the shoal-free approaches to it (factors which are also, to some extent, a military liability). Mooring areas maintained by the **Harbor District of Yggsburgh**include piers in a sheltered harbor where large, deep-draft ships can berth, beaches to the east of the harbor where galleys and vessels of similar design can be drawn up on shore, and designated areas where vessels can stand off shore on the hook. Within any of these areas, ships are grouped together based on the locations from which they have most recently arrived (e.g., all those from Stygia and the Red Sea will be berthed in one location, those from the rest of Africa will be berthed another). Other facilities associated with the area — all located on**Cyclops Point** at the approach to the sheltered harbor — include a tall, fortified lighthouse, a small temple to the sea god Poseidon, a barracks for the district’s military forces, and the offices of the harbormaster and his staff.
 
 **Theto Poseidonius**, harbormaster of Yggsburgh, is a member of the local aristocracy and a veteran officer of the city’s naval forces. He is a loyal servant of the community and a sturdy sailor and soldier. He is also devoted to an aspect of the god Poseidon — from whom his family claims to trace their lineage — and is known for giving preferential treatment to inspectors, marines, and other subordinates who are active in the sect of Poseidon the Preserver. Theto is a few years past middle age and distinguished by a flowing white beard.
 
@@ -1852,9 +1550,7 @@ Responsibilities accorded to the harbormaster of Yggsburgh by law and custom inc
 
 Theto has recently begun to detect evidence of organized, sinister activity in the Harbor District of Yggsburgh that smacks less of criminality than outright evil. The incidents he has begun to link mentally are, in fact, all associated with a cult devoted to the worship of undeath. This foul group has been using facilities in or near the port both as lairs and as staging areas for the collection of common supplies — as well as stolen bodies and other necromantic materials — which they ship to their headquarters on an island a few days sail away to the west. Its members are also not averse to kidnapping victims for their insatiable undead masters…
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * Unscrupulous adventurers hoping to smuggle goods or passengers into a particular port or coast — whether for purposes of evading taxation, importing contraband, or infiltrating undesirable persons — may have to deal with the officials affiliated with the local harbor district. Sailing skill, ability to hide or disguise cargo, guile, and possibly even force might all come into play in the accomplishment of such an undertaking.
 
@@ -1862,17 +1558,9 @@ Hooks General**
 
 ## **Specific to the Harbor District of Yggsburgh**
 
-* **Theto Poseidonius**, harbormaster of Yggsburgh, is concerned about the growing level of cult activity within his area of responsibility but believes his staff may somehow be compromised and is unwilling to entrust an investigation to it. With that in mind, he is seeking an independent group of characters to get to the bottom of the disappearances and other strange activities that have been occurring around the port district. Player characters might also independently encounter this cult in any number of ways, whether in the course of a particular adventure or just by randomly falling afoul of it.
+* **Theto Poseidonius**, harbormaster of Yggsburgh, is concerned about the growing level of cult activity within his area of responsibility but believes his staff may somehow be compromised and is unwilling to entrust an investigation to it. With that in mind, he is seeking an independent group of characters to get to the bottom of the disappearances and other strange activities that have been occurring around the port district. Player characters might also independently encounter this cult in any number of ways, whether in the course of a particular adventure or just by randomly falling afoul of it. #**THE VELVET DICE (GAMBLING DEN)**
 
-# **THE
-
-VELVET DICE (GAMBLING DEN)**
-
-Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice** stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities.
-
-## **Example:
-
-The Velvet Dice**
+Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice**stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities. ##**Example: The Velvet Dice**
 
 Tucked away in a nondescript townhouse in the **Mercantile Ward**, the **Velvet Dice** is Yggsburgh’s premier gambling den, catering to the city’s elite. Owned by the mysterious **Madame Valeria**, the establishment offers high-stakes games of dice, cards, and roulette, all under the guise of a private social club.
 
@@ -1882,24 +1570,12 @@ The main floor features plush seating, fine tapestries, and tables arranged for 
 
 * **Informant Network:** Madame Valeria employs a network of informants and enforcers to protect her interests, ensuring that cheats are dealt with swiftly and quietly.
 * **Hidden Vault:** A concealed area below the establishment houses valuable items, records of high-stakes games, and magical artifacts.
-* **Magical Surveillance:** Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access.
-
-## **Adventure
-
-Hooks**
+* **Magical Surveillance:**Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access. ##**Adventure Hooks**
 
 * **A Game of Deception:** The adventurers must infiltrate the Velvet Dice to recover a stolen heirloom lost in a high-stakes game.
-* **The House Always Wins:** Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city.
+* **The House Always Wins:**Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city. #**BLACK MARKET BAZAAR**
 
-# **BLACK
-
-MARKET BAZAAR**
-
-Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar** is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors.
-
-## **Example:
-
-The Black Market Bazaar**
+Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar**is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors. ##**Example: The Black Market Bazaar**
 
 Though it appears and disappears like a ghost, the **Black Market Bazaar** remains the favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. Its location shifts weekly, announced only through whispered rumors and cryptic messages passed among trusted contacts.
 
@@ -1909,67 +1585,35 @@ The Bazaar’s stalls are manned by a motley assortment of smugglers, fences, an
 
 * **Dynamic Locations:** The Bazaar sets up in different abandoned courtyards, deserted warehouses, or hidden alleys each week, making it difficult for authorities to track.
 * **Security Measures:** Runners and lookouts warn of approaching authorities, allowing the Bazaar to pack up and vanish swiftly. Bribes to certain officials ensure some level of protection.
-* **Diverse Offerings:** From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods.
-
-## **Adventure
-
-Hooks**
+* **Diverse Offerings:**From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods. ##**Adventure Hooks**
 
 * **The Hidden Vendor:** The adventurers hear rumors of a rare artifact for sale at the Bazaar, only to discover that acquiring it comes with unexpected consequences.
-* **Market Mayhem:** A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene.
+* **Market Mayhem:**A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene. #**BOOTLEG TAVERNS**
 
-# **BOOTLEG
+Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises. ##**Example: The Hidden Tankard**
 
-TAVERNS**
-
-Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises.
-
-## **Example:
-
-The Hidden Tankard**
-
-Located in the rougher parts of the **Outs**, the **Hidden Tankard** appears to be a run- down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place.
-
-## **Adventure
-
-Hooks**
+Located in the rougher parts of the **Outs**, the **Hidden Tankard**appears to be a run- down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place. ##**Adventure Hooks**
 
 * **Undercover Revelry:** The adventurers are hired to infiltrate the Hidden Tankard to gather information on a smuggling ring, navigating the tavern’s secret passages and avoiding detection by the guards.
-* **Smuggler’s Request:** A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance.
-
-# **FINAL
-
-THOUGHTS**
+* **Smuggler’s Request:**A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance. #**FINAL THOUGHTS**
 
 In Yggsburgh, commerce and custom follow daylight; but in the city’s gated quarters and beneath its flagstone streets, other trades flourish. Dealers slip between market stalls and old brickwork, offering goods more valuable than law allows—amber drafts, forbidden tomes, a knife for hire. Adventurers willing to descend into these hidden places step off the path of public order and into a web of shifting debts. Behind every shuttered grate or cellar door, allies are weighed by reputation and caution, and each pact struck in the shadows carries the risk as well as the possibility of true powerWhether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 
-# **CHAPTER
-
-11: UNDERWORLD PLACES**
+# **CHAPTER 11: UNDERWORLD PLACES**
 
 Underworld places of various sorts cater to the unsavory or illegal needs and desires of a society’s members. Adventurers might have any number of reasons for visiting such places, from taking a walk on the wild side to conducting business with the sorts of people who frequent them. Indeed, characters with certain occupations — or inclinations toward criminal or immoral tendencies — might even spend a significant amount of their non-adventuring time in such places. Roleplaying some of the activities associated with underworld places can contribute to a lively game, add a new dimension to scenarios, and allow for some interesting and lively interactions. Such episodes can also allow characters to utilize skills that they might not routinely have the opportunity to use in the field (e.g., those geared toward sensing the motives of others or to deceiving or intimidating them).
 
 Various kinds of underworld places are likely to be found in communities ranging in size from hamlets to megalopolises; where people congregate in groups of any size, it is likely that some will cater to the illicit needs of the others.
 
-While many underworld places are devoted to activities that are actually illegal, some are venues for practices that are merely considered sleazy or immoral. Some underworld places of these sorts might be allowed to exist only in designated areas or be limited in to whom they can provide their services (e.g., the **Crimson Veil** in a particular port city might be prohibited from serving anyone but non-residents).
-
-Underworld places that characters might visit in the course of their inter-adventure activities include the **Crimson Veil** (brothel), the **Pit of Shadows** (pit-fighting arena), and the **Thieves’ Underground** (thieves’ and assassins’ guild), all of which are described in this chapter. Other sorts of places might include gambling establishments like the **Velvet Dice** or marketplaces such as the **Black Market Bazaar**. Many of the legitimate businesses described elsewhere in this book might also have unlawful, underworld counterparts. In societies where intoxicants are prohibited, for example, any existing taverns would necessarily be illicit and secretive. Other underworld institutions might essentially conform to the characteristics of legal counterparts (e.g., fences, a likely destination for characters of a larcenous nature, operate pretty much like Brokerages and Pawnbrokerages, as described in Chapter 6: Mercantile Places).
+While many underworld places are devoted to activities that are actually illegal, some are venues for practices that are merely considered sleazy or immoral. Some underworld places of these sorts might be allowed to exist only in designated areas or be limited in to whom they can provide their services (e.g., the **Crimson Veil**in a particular port city might be prohibited from serving anyone but non-residents). Underworld places that characters might visit in the course of their inter-adventure activities include the**Crimson Veil** (brothel), the **Pit of Shadows** (pit-fighting arena), and the **Thieves’ Underground** (thieves’ and assassins’ guild), all of which are described in this chapter. Other sorts of places might include gambling establishments like the **Velvet Dice** or marketplaces such as the **Black Market Bazaar**. Many of the legitimate businesses described elsewhere in this book might also have unlawful, underworld counterparts. In societies where intoxicants are prohibited, for example, any existing taverns would necessarily be illicit and secretive. Other underworld institutions might essentially conform to the characteristics of legal counterparts (e.g., fences, a likely destination for characters of a larcenous nature, operate pretty much like Brokerages and Pawnbrokerages, as described in Chapter 6: Mercantile Places).
 
 Underworld places, by definition, are often run by criminals of various sorts — depending on the enterprise in question, these might include thugs, thieves, assassins, pimps, or prostitutes. Characters of any background or vocation, however, might be associated with underworld places of specific types or under particular circumstances (e.g., a scofflaw brewer might be the proprietor of a bootleg tavern).
 
-Depending on the goods, services, or functions they provide — along with whether those are actually illegal or merely unsavory — underworld places can vary widely in size, construction, and appearance. Many will be established in structures similar to those described under “Buildings” in Chapter 1: Communities (e.g., the **Crimson Veil** in a city might operate out of a townhouse, while one in a village might be run out of a wattle-and-daub longhouse).
-
-Furnishings at underworld places will be appropriate to their functions, such as beds or couches in the **Crimson Veil**. Other items might include equipment of the sorts used at such places, such as boxing gloves or appropriate sorts of weapons at the **Pit of Shadows**. What such places usually do not include, especially if they are actually illegal in nature, are records or other things that could prove a connection between them and their owners or clients (and, to the extent that such records do exist, they are often to the detriment of those they implicate).
+Depending on the goods, services, or functions they provide — along with whether those are actually illegal or merely unsavory — underworld places can vary widely in size, construction, and appearance. Many will be established in structures similar to those described under “Buildings” in Chapter 1: Communities (e.g., the **Crimson Veil**in a city might operate out of a townhouse, while one in a village might be run out of a wattle-and-daub longhouse). Furnishings at underworld places will be appropriate to their functions, such as beds or couches in the**Crimson Veil**. Other items might include equipment of the sorts used at such places, such as boxing gloves or appropriate sorts of weapons at the **Pit of Shadows**. What such places usually do not include, especially if they are actually illegal in nature, are records or other things that could prove a connection between them and their owners or clients (and, to the extent that such records do exist, they are often to the detriment of those they implicate).
 
 Security at underworld places, particularly from legal or moral forces opposed to them, is paramount. The first line of defense at many underworld places is that their existence is not obvious or that they are disguised to look like — or make a plausible case in a court to be — something other than what they really are (e.g., to passersby, the
 
-**Crimson Veil** might look like nothing more than a members-only bathhouse, or its function might be quite obvious to a knowledgeable observer but difficult to pin down by any specific declaration). Fear of incurring the wrath of local organized crime organizations is another significant protection enjoyed by many such places. Other measures are likely to include secret doors, passageways, and chambers; barred windows and reinforced doors; and the presence of armed thugs. Magical safeguards, to the extent that they exist in the milieu in question, will likely be rare at underworld places but might be present if one of the proprietors is a spellcaster of some sort.
-
-Whether the proprietors and personnel associated with various underworld places also dwell in them varies by their type. The **Crimson Veil** might also be home to the prostitutes who work there, but the **Pit of Shadows** might have no place for accommodations and be completely unoccupied when not in use.
-
-# **CRIMSON
-
-VEIL (BROTHEL)**
+**Crimson Veil**might look like nothing more than a members-only bathhouse, or its function might be quite obvious to a knowledgeable observer but difficult to pin down by any specific declaration). Fear of incurring the wrath of local organized crime organizations is another significant protection enjoyed by many such places. Other measures are likely to include secret doors, passageways, and chambers; barred windows and reinforced doors; and the presence of armed thugs. Magical safeguards, to the extent that they exist in the milieu in question, will likely be rare at underworld places but might be present if one of the proprietors is a spellcaster of some sort. Whether the proprietors and personnel associated with various underworld places also dwell in them varies by their type. The**Crimson Veil** might also be home to the prostitutes who work there, but the **Pit of Shadows**might have no place for accommodations and be completely unoccupied when not in use. #**CRIMSON VEIL (BROTHEL)**
 
 Brothels are underworld places specifically designed to provide prostitutes with places to meet, negotiate with, and engage in sex acts with customers. Such places are also variously known — in some cases somewhat euphemistically — as bordellos, cathouses, bawdyhouses, houses of ill repute, houses of prostitution, knocking shops, pleasure houses, sporting houses, and whorehouses.
 
@@ -1989,9 +1633,7 @@ Prostitutes might have one of several relationships with the brothels at which t
 
 Security at brothels is often provided by hoodlums or other sorts of guards. Prostitutes and their panderers also often keep various sorts of weapons close to hand in the event that they are menaced or attacked by clients or refused payment by them.
 
-## **Example:
-
-The Crimson Veil**
+## **Example: The Crimson Veil**
 
 Located in an opulent townhouse in the **Silverleaf District**, the **Crimson Veil** is a brothel owned and run by the enigmatic Madam Elara, a former adventurer with a network of contacts across Yggsburgh. All of the women and the handful of men working at the establishment, about thirty total, are willing, freelance professional prostitutes who must be accepted by Madam Elara, negotiate terms with her, and pay her accordingly for their use of the house. About half of them are non-Human or from cities other than Yggsburgh, and this variety makes the Crimson Veil popular with adventurers, merchants, nobles, and other people whose travels take them through the city.
 
@@ -2009,21 +1651,15 @@ Below this level is the true namesake of the Crimson Veil, a large, natural, sec
 
 Few security precautions are employed at the Crimson Veil; it is open all the time and no one can remember the last time its doors were closed. There are periodically problems with clients or intruders, but the fact that Madam Elara is a seasoned spellcaster and many of the resident prostitutes have some experience as adventurers have, to date, made all of these manageable. Madam Elara also owns a magical pendant that she can transform into a chimerical creature that combines aspects of both a cat and a phoenix.
 
-## **Adventure
-
-Hooks General**
+## **Adventure Hooks General**
 
 * A mischievous and greedy but otherwise willing prostitute at the Crimson Veil might give a hard-luck story to gullible-looking clients about being forced into selling herself, in hopes they will give her more money. If convincingly told to the wrong character, however, such stories might inadvertently lead to any number of unfortunate consequences (e.g., misconceived rescue attempts).
 
-* The **Harlots’ Guild** of the city might approach the player characters for help, after these adventurers have become well-known by giving some sort of assistance to a guild member or the poor and oppressed. A new criminal organization that is trying to establish its influence in the city has begun to take control of formerly guild-run brothels through intimidation, violence, and murder. Enlisting the player characters to protect them in this underworld war, the Harlots’ Guild can provide not only gold, but also a good deal of expertise in gathering and passing along information from a surprising range of influential citizens.
-
-## **Specific to the Crimson Veil**
+* The **Harlots’ Guild**of the city might approach the player characters for help, after these adventurers have become well-known by giving some sort of assistance to a guild member or the poor and oppressed. A new criminal organization that is trying to establish its influence in the city has begun to take control of formerly guild-run brothels through intimidation, violence, and murder. Enlisting the player characters to protect them in this underworld war, the Harlots’ Guild can provide not only gold, but also a good deal of expertise in gathering and passing along information from a surprising range of influential citizens. ##**Specific to the Crimson Veil**
 
 * One of the independent prostitutes working at the Crimson Veil is the mysterious courtesan Seraphine, who is lying low in Yggsburgh after being implicated in a number of high-profile thefts across the city. Apart from a beguiling charm and some magical talents that attract a certain clientele and repulse almost everyone else, her specialty is seducing and manipulating influential patrons to gain information or steal valuable items on her behalf. There is no limit to how far she will go or what she will encourage others to do for her.
 
-# **PIT
-
-OF SHADOWS (PIT-FIGHTING RING)**
+# **PIT OF SHADOWS (PIT-FIGHTING RING)**
 
 Pit-fighting rings are underworld places used for all sorts of blood sports, including bare-knuckle fisticuffs, no-holds-barred fights, gladiatorial combats, bear-baiting matches, dogfights, cockfights, and the like. Specific events held at any particular pit- fighting arena will vary from culture-to-culture and be influenced by local tastes and conditions. Grievous injuries and deaths tend to be typical at such places, however. Places of this sort appear in a wide variety of books, games, and other media, including the films *Brotherhood of the Wolf*, *Escape from New York*, *Mad Max: Beyond Thunderdome*, and *Unleashed*.
 
@@ -2039,9 +1675,7 @@ Pit-fighting rings could have several different sorts of proprietors, including 
 
 Other personnel present at pit-fighting arenas might include bouncers, thugs, or other sorts of muscle, to keep fighters and spectators alike in line and collect entry fees if these are being charged; bookmakers and their assistants to take, hold, and pay out bets and perhaps post odds or results on a board or some other obvious place; and perhaps vendors of various sorts selling food, beverages, or other amenities.
 
-## **Example:
-
-Pit of Shadows**
+## **Example: Pit of Shadows**
 
 Located beneath a dilapidated warehouse in the **Wharf District**, the **Pit of Shadows** is Yggsburgh’s most infamous pit-fighting arena. Owned and operated by the ruthless ex-fighter **Gallows**, the Pit serves as a battleground for gladiators, monsters, and mercenaries seeking fame and fortune. The arena itself is a rough, circular pit surrounded by makeshift wooden benches for spectators and illuminated by flickering lanterns that cast eerie shadows over the combatants.
 
@@ -2054,11 +1688,7 @@ Gallows enforces strict rules and tolerates no treachery. Fighters range from de
 * **Special Matches:** The Pit occasionally hosts “special matches” featuring monstrous creatures smuggled into the city, attracting wealthy patrons and creating opportunities for intrigue and sabotage.
 * **Secret Chambers:** Hidden areas beneath the arena house imprisoned creatures, forbidden artifacts, and the Pit’s darker secrets.
 
-* **Security Measures:** Tight security with guards patrolling the area and ensuring no one disrupts the spectacle, including magical wards and enchanted barriers.
-
-## **Adventure
-
-Hooks**
+* **Security Measures:**Tight security with guards patrolling the area and ensuring no one disrupts the spectacle, including magical wards and enchanted barriers. ##**Adventure Hooks**
 
 **General**
 
@@ -2072,9 +1702,7 @@ Hooks**
 
 * Captured by thugs, the adventurers are forced to fight in the Pit of Shadows, uncovering a smuggling operation tied to the arena in the process.
 
-# **THE
-
-THIEVES’ UNDERGROUND (THIEVES’ GUILD)**
+# **THE THIEVES’ UNDERGROUND (THIEVES’ GUILD)**
 
 Thieves’ guilds are organizations that control and monitor various sorts of illegal activity. Such organizations might be true guilds that regulate the activities of dues- paying members and provide them with training and other services in return; convocations of leaders from competing organized crime families that meet periodically in order to keep peace between their various factions; or simply powerful gangs that force lesser criminals to pay a portion of their revenues to avoid violent reprisals. Only rarely, of course — and only then in a society where the guild has an unusually well- accepted role — will a thieves’ guild likely be referred to overtly as such.
 
@@ -2090,13 +1718,9 @@ Security measures in a thieves’ guild are likely to be stringent and include s
 
 The master of a thieves’ guild might be a veteran burglar or other kind of specialist criminal, a beggar or other type of rogue affiliated with the local criminal underworld, an experienced assassin or other sort of enforcer, or a prominent and trusted member of society (e.g., a nobleman).
 
-## **Example:
+## **Example: The Thieves’ Underground**
 
-The Thieves’ Underground**
-
-Criminal activity in Yggsburgh is fairly widely known to be controlled by the city’s shadowy organization, the **Thieves’ Underground**, which actually does have chapters devoted to various forms of illicit trade and services. Its headquarters is located in the somewhat run-down area where the mercantile quarter converges with the slum quarter, and it has chapter townhouses throughout the city devoted to different aspects of its operations.
-
-The current leader of the Thieves’ Underground is **Silas "Shadowstep" Marlowe**, a charismatic and elusive half-elf rogue who rose through the ranks by his cunning and ruthless efficiency. Silas is rumored to have connections with high-ranking officials and other influential figures, allowing the guild to operate with a degree of impunity that other criminal organizations lack.
+Criminal activity in Yggsburgh is fairly widely known to be controlled by the city’s shadowy organization, the **Thieves’ Underground**, which actually does have chapters devoted to various forms of illicit trade and services. Its headquarters is located in the somewhat run-down area where the mercantile quarter converges with the slum quarter, and it has chapter townhouses throughout the city devoted to different aspects of its operations. The current leader of the Thieves’ Underground is**Silas "Shadowstep" Marlowe**, a charismatic and elusive half-elf rogue who rose through the ranks by his cunning and ruthless efficiency. Silas is rumored to have connections with high-ranking officials and other influential figures, allowing the guild to operate with a degree of impunity that other criminal organizations lack.
 
 Virtually all the pickpockets, thieves, and various other criminals active in the city are members of the Thieves’ Underground, along with a handful of assassins, thugs, and the like (prostitutes, whose activities are not illegal in Yggsburgh, have their own organizations, which are unaffiliated with the Thieves’ Underground). There are also a significant number of Goblinoid toughs more-or-less recently arrived from the mainland regions, but very few of these seem to actually be involved in crime in Yggsburgh and are apparently mostly concerned with supporting and advising Silas.
 
@@ -2106,9 +1730,7 @@ No one lives in the guildhouse permanently (Silas has a small apartment in the s
 
 Membership in the Thieves’ Underground really does have some tangible benefits. One is the fact that the guild is a legitimate, recognized entity — albeit a somewhat disingenuous one — which means that even when individual members are caught involved in some criminal activity they generally end up suffering penalties about half as great as do non-members. Another is that members are generally allowed to conduct their daily activities unmolested (e.g., pickpockets carrying guide medallions don’t have to worry about being rousted for loitering, burglars with locksmith’s papers don’t have to explain their ownership of equipment that might be used for breaking-and-entering, and assassins licensed as exterminators can openly keep all sorts of poisons).
 
-## **Adventure
-
-Hooks**
+## **Adventure Hooks**
 
 **General**
 
@@ -2120,15 +1742,9 @@ Hooks**
 
 * Concerned that the Thieves’ Underground may have been suborned by an unfriendly foreign power, elements within the normally laissez-faire government of Yggsburgh are more determined than usual to infiltrate the guild and learn more about what is going on in it. Needless to say, this assignment — whether undertaken by a government agent or a freelancer — could be extremely dangerous.
 
-# **THE
+# **THE VELVET DICE (GAMBLING DEN)**
 
-VELVET DICE (GAMBLING DEN)**
-
-Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice** stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities.
-
-## **Example:
-
-The Velvet Dice**
+Gambling establishments are another common type of underworld place, catering to those who seek fortune or enjoy the thrill of risk. In Yggsburgh, the **Velvet Dice**stands out as a premier gambling den, offering high-stakes games and attracting the city’s elite and its shadier elements alike. These establishments often operate under the guise of legitimate gaming halls or private clubs, allowing them to blend into the social fabric of the city while conducting illicit activities. ##**Example: The Velvet Dice**
 
 Tucked away in a nondescript townhouse in the **Mercantile Ward**, the **Velvet Dice** is Yggsburgh’s premier gambling den, catering to the city’s elite. Owned by the mysterious **Madame Valeria**, the establishment offers high-stakes games of dice, cards, and roulette, all under the guise of a private social club.
 
@@ -2138,24 +1754,12 @@ The main floor features plush seating, fine tapestries, and tables arranged for 
 
 * **Informant Network:** Madame Valeria employs a network of informants and enforcers to protect her interests, ensuring that cheats are dealt with swiftly and quietly.
 * **Hidden Vault:** A concealed area below the establishment houses valuable items, records of high-stakes games, and magical artifacts.
-* **Magical Surveillance:** Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access.
-
-## **Adventure
-
-Hooks**
+* **Magical Surveillance:**Subtle enchantments monitor the den for unwanted intrusions and protect the vault from unauthorized access. ##**Adventure Hooks**
 
 * **A Game of Deception:** The adventurers must infiltrate the Velvet Dice to recover a stolen heirloom lost in a high-stakes game.
-* **The House Always Wins:** Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city.
+* **The House Always Wins:**Madame Valeria hires the adventurers to eliminate a rival gambling operation threatening her dominance in the city. #**BLACK MARKET BAZAAR**
 
-# **BLACK
-
-MARKET BAZAAR**
-
-Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar** is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors.
-
-## **Example:
-
-The Black Market Bazaar**
+Black market bazaars are transient marketplaces where illicit goods and services are traded under the cover of darkness. In Yggsburgh, the **Black Market Bazaar**is a favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. These bazaars move locations frequently to evade the city’s authorities, setting up in abandoned courtyards, deserted warehouses, or hidden alleys based on cryptic clues and whispered rumors. ##**Example: The Black Market Bazaar**
 
 Though it appears and disappears like a ghost, the **Black Market Bazaar** remains the favored haunt of contraband merchants, unscrupulous alchemists, and artifact smugglers. Its location shifts weekly, announced only through whispered rumors and cryptic messages passed among trusted contacts.
 
@@ -2165,45 +1769,23 @@ The Bazaar’s stalls are manned by a motley assortment of smugglers, fences, an
 
 * **Dynamic Locations:** The Bazaar sets up in different abandoned courtyards, deserted warehouses, or hidden alleys each week, making it difficult for authorities to track.
 * **Security Measures:** Runners and lookouts warn of approaching authorities, allowing the Bazaar to pack up and vanish swiftly. Bribes to certain officials ensure some level of protection.
-* **Diverse Offerings:** From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods.
-
-## **Adventure
-
-Hooks**
+* **Diverse Offerings:**From counterfeit documents and rare magical items to forbidden potions and stolen relics, the Bazaar offers a wide array of illicit goods. ##**Adventure Hooks**
 
 * **The Hidden Vendor:** The adventurers hear rumors of a rare artifact for sale at the Bazaar, only to discover that acquiring it comes with unexpected consequences.
-* **Market Mayhem:** A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene.
+* **Market Mayhem:**A rival gang stages a raid on the Bazaar, sparking chaos and offering the adventurers a chance to profit—or intervene. #**BOOTLEG TAVERNS**
 
-# **BOOTLEG
+Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises. ##**Example: The Hidden Tankard**
 
-TAVERNS**
-
-Bootleg taverns provide illicit alcohol and serve as meeting points for various underworld activities. In Yggsburgh, these establishments are often hidden in less reputable areas such as the **Outs** or near the **River**, masquerading as ordinary taverns while operating as fronts for smuggling, information brokering, or other criminal enterprises.
-
-## **Example:
-
-The Hidden Tankard**
-
-Located in the rougher parts of the **Outs**, the **Hidden Tankard** appears to be a run- down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place.
-
-## **Adventure
-
-Hooks**
+Located in the rougher parts of the **Outs**, the **Hidden Tankard**appears to be a run- down tavern to the casual observer. However, those in the know recognize it as a hub for bootlegging and underground dealings. The establishment is guarded by loyal thugs, and secret doors lead to hidden cellars where illicit activities take place. ##**Adventure Hooks**
 
 * **Undercover Revelry:** The adventurers are hired to infiltrate the Hidden Tankard to gather information on a smuggling ring, navigating the tavern’s secret passages and avoiding detection by the guards.
-* **Smuggler’s Request:** A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance.
-
-# **FINAL
-
-THOUGHTS**
+* **Smuggler’s Request:**A smuggler seeks the party’s help in transporting a valuable shipment through the tavern’s hidden network, offering a hefty reward for their assistance. #**FINAL THOUGHTS**
 
 Whether in a lawful realm that only tolerates a criminal element on the fringes or in a city like Yggsburgh where entire quarters are rife with underground dealings, these places form a shadow world. Adventurers enter underworld establishments at their own risk, but also with the promise of rewards unattainable in polite society. Each hidden alley or discreet doorway might be the threshold to dark alliances, forbidden secrets, or even a path to power — if they can survive the dangers.
 
 1
 
-## **Armorer’s
-
-Shop**
+## **Armorer’s Shop**
 
 **Role in the Campaign**
 
@@ -2227,9 +1809,7 @@ It can add color to a campaign to designate certain exotic types of armor as bei
 
 Other possible reasons for visiting an armorer include maintenance and repair, commissioning of particularly extravagant items (solid gold breastplates etc), or appraising or selling loot acquired from the latest dungeon crawl. Especially creative players may want to design and have made a brand new style of armor, and will need to find a craftsman to transform their brilliant ideas into cold steel.
 
-## **Sample
-
-Armorer’s Shop: The Talon Turned**
+## **Sample Armorer’s Shop: The Talon Turned**
 
 ((Text to be read to players))
 
@@ -2247,9 +1827,7 @@ Coralon’s shop is run by the master himself, and his much younger and prettier
 
 Although his shop holds very valuable merchandise, Coralon employs no visible security. Even at night, the only visible sign of protection is the closed and locked doors and shutters. This is possible because of the invisible protection Coralon enjoys – a close and personal relationship with both the legal authorities and the powers that rule the underworld. Between the two, these groups see that Coralon’s riches tempt no one. He considers the occasional gifts of some of his better work to be a small price to pay to cultivate these relations.
 
-## **Commissioning
-
-Armor**
+## **Commissioning Armor**
 
 As noted above, Coralon does not sell “off the shelf”. Anyone seeking to engage the armorer to create a suit or piece of armor will need to come equipped with both patience and money. Coralon is constantly busy and there is generally a waiting list for his work. When accepting a commission he will warn the purchaser that it will be 1d6 months before he can even start on the project due to previous commitments. Coralon takes these commitments very seriously and rumor has it he has even made kings wait their turn, though few believe that to be true.
 
@@ -2265,17 +1843,13 @@ Standard	3 X Masterwork	\+1 Exceptional	6 X Masterwork	\+2 or \+3 Extravagant	10
 
 ((End Table))
 
-## **Shop
-
-Exterior**
+## **Shop Exterior**
 
 Coralon’s shop is housed in a sturdy, well-made building of timber construction. The building has a small loft above the shop where the apprentice’s sleep, and a basement where coal and raw materials are stored. Outside the rear of the shop there is a double door for deliveries of supplies a set of door into the ground covering a chute that allows coal to be shoveled directly into the basement.
 
 The building is tastefully in burgundy with beige trim. A fancifully lettered sign showing an ornate shield hangs in front of the shop, proclaiming “Coralon’s”. No one who has need off, and can afford, his services would need any further clarification.
 
-## **Showroom
-
-Interior.**
+## **Showroom Interior.**
 
 Entry to the shop is through a set of double doors in the front of the building. When the shop is open these are usually flung open to the street. Inside the double doors is the small showroom where examples of Coralon’s work are displayed. The showroom is relatively cramped, being an add-on to the original shop. It has a low ceiling (8’) and thin but sturdy wooden walls. Two windows in the front wall let light into the shop.
 
@@ -2299,9 +1873,7 @@ $100 in silver pennies. Coralon’s creations cost a great deal of money and pay
 
 The showroom is separated from the workshop by two heavy black curtains which hang from the ceiling.
 
-## **Workshop
-
-Interior**
+## **Workshop Interior**
 
 Once past the black curtain, one enters the workshop of Coralon the armorer. The room is well lit by large windows as well as the rear double doors which are generally open to allow cooler air into the room. The center of the floor is dominated by a large stone furnace and a large metal-hooded chimney which hangs above it.
 
@@ -2317,9 +1889,7 @@ Once past the black curtain, one enters the workshop of Coralon the armorer. The
 
 13) This ladder leads upstairs to a small attic loft shared by the three apprentices, Wilf, Jon, and Kyle. These youngsters are at varying points in their studies with one, Jon, almost ready to strike out on his own.
 
-## **D20
-
-Stats**
+## **D20 Stats**
 
 ##
 
@@ -2327,9 +1897,7 @@ Stats**
 
 Male  Human  Exp15:  Skills:  Craft  (Armorsmithing)  \+  18,  Craft (Blacksmithing) \+ 18, Craft (Metalworking) \+ 18, Craft (Weaponsmithing) \+ 7
 
-## **City
-
-Garrison Barracks**
+## **City Garrison Barracks**
 
 **Role in the Campaign**
 
@@ -2351,9 +1919,7 @@ In some campaigns, the law is kept by garrisons headed by nobles, knights, or Pa
 
 The quality of the law enforcement in a city often depends upon the quality of the laws. In some cities, the garrisons will be made up of fanatics, religious or otherwise, whose sole goal in life is to make sure that everyone conforms to a very strict code of conduct. Unwary travelers entering a city with odd and vigorously enforced bylaws, may soon find themselves on the wrong end of an encounter with the Watch.
 
-## **Sample:
-
-City Barracks**
+## **Sample: City Barracks**
 
 ((begin text to be read to players))
 
@@ -2363,9 +1929,7 @@ You stand before the imposing façade of the central barracks. Although only a l
 
 This garrison consists of four squads of twenty guardsmen each. The building is divided into four squad bays with two common areas and a central hall holding the sergeants’ quarters as well as the stairs down to a small armory. Meals are taken in a separate mess hall and privies are located behind the building in a large communal outhouse. A well is also located in the rear courtyard.
 
-## **Barracks
-
-Exterior**
+## **Barracks Exterior**
 
 The barracks building is built of grim, grey stone and is a bleak and dark single story affair that is part dormitory and part police station. The only windows are small and narrow, located high up on the walls to allow a little air and even less light to enter. These windows are less than 6 inches wide and about eight inches long. From the exterior it is readily apparent that no adult human could squeeze through these openings.
 
@@ -2375,9 +1939,7 @@ At the end of the square is the main entrance to the building. There are always 
 
 The opposite side of the building also has a pair of heavy iron-reinforced doors, but these are normally closed. A single guard stands here, directing any visitors to the main doors at the front. This guard post is generally used as punishment duty because it is inevitably dull and, because the building’s outdoor latrine is located in the courtyard behind the building, the stench is particularly foul.
 
-## **Barracks
-
-Interior**
+## **Barracks Interior**
 
 The inside of the barracks is similarly Spartan in design and decoration. Ceilings are eight feet high and the floors are well-worn hardwood planks. The basement armory is considerably more cramped, with barely a six foot ceiling and a packed earth floor.
 
@@ -2405,9 +1967,7 @@ Against another wall sits a large chest in which the sergeant keeps his personal
 
 All of the room’s furnishings are similar to those in Sergeant Amos’ room but are generally better maintained and in better repair. The large chest contains a variety of personal items including a small hand-written volume of surprisingly good quality poetry which the Sergeant will adamantly deny being the author of (though he is). There are two coin pouches containing $200 and $600 respectively, as well as a good quality pair of soft leather boots.
 
-5. **Stairs to Armory.** These stairs lead down into the basement armory where the garrison stocks large quantities of common weapons and some basic supplies to withstand a short siege. Anyone searching the room can find basic provisions (iron rations, barrels of water etc) as well as spears, daggers, maces, cudgels, staves, short swords, and helms and shields.
-
-6. **Squad Bays.**  The four squad bays are essentially identical. The contents of the various personal lockers can be determined on the random contents table in Appendix A (assumes the random item tables are completed\!).
+5. **Stairs to Armory.**These stairs lead down into the basement armory where the garrison stocks large quantities of common weapons and some basic supplies to withstand a short siege. Anyone searching the room can find basic provisions (iron rations, barrels of water etc) as well as spears, daggers, maces, cudgels, staves, short swords, and helms and shields. 6.**Squad Bays.**  The four squad bays are essentially identical. The contents of the various personal lockers can be determined on the random contents table in Appendix A (assumes the random item tables are completed\!).
 
 Each bay contains ten bunk beds and twenty personal lockers. The beds are wood- framed and covered with thin mattresses and personal linens and blankets. The lockers are six feet tall and are divided vertically into two halves. The left half contains 4 evenly spaced shelves while the right half holds clothing hanging from a series of hooks.
 
@@ -2421,17 +1981,11 @@ At night however, given Sergeant Amos’ disinterest in his men, there is a 30% 
 
 The courtyard contains the garrison’s well. Given the proximity to the outhouse, no one in their right mind drinks this water. It is generally used for washing and cleaning but will only be consumed in an emergency. Anyone drinking from the well has a 20% chance of getting a debilitating case of diarrhea and vomiting.
 
-8. **Latrine.**	This wooden structure holds a common latrine with six individual stations. Two large barrels of well water are kept filled for washing up.
-
-## **Major
-
-Characters Sergeant Elmore Sergeant Amos**
+8. **Latrine.**This wooden structure holds a common latrine with six individual stations. Two large barrels of well water are kept filled for washing up. ##**Major Characters Sergeant Elmore Sergeant Amos**
 
 Average Guard,
 
-## **General
-
-Store**
+## **General Store**
 
 **Role in the Campaign**
 
@@ -2457,9 +2011,7 @@ The general store in particularly remote villages may be sources of work for adv
 
 Maybe the general store holds monthly estate auctions of locals (and/or hapless adventurers) who have passed away recently. These events could include the local equivalent of community garage-sales, in which villagers spent a festive day browsing their neighbors tables, loaded down with assorted unwanted paraphernalia. The day could culminate in the estate auction, with some potentially valuable items going up for bid unrecognized by the unsophisticated country folks.
 
-## **Wilberforge’s
-
-General Store**
+## **Wilberforge’s General Store**
 
 ((begin text to be read to players))
 
@@ -2473,9 +2025,7 @@ The general store is a relatively large building by rural standards, usually cen
 
 Like many such stores, the one owned by Mabel Wilberforge is a moderately successful business and the central meeting point for her community. Mabel, and her late husband Hans, first established the store some forty years ago, when the region was considerably less settled, and watched a thriving village grow up around them. Any outsiders asking questions about the area or its inhabitants are well advised to go directly to Mabel. Local lore has it that she knows everyone within twenty miles and can tell you what each of them had for breakfast. If her actual knowledge of local culinary habits falls a bit short of this boast, there is no question that she is a fountain of knowledge of value to the astute adventurer.
 
-## **Shop
-
-Exterior**
+## **Shop Exterior**
 
 The Wilberforge General Store is a two-story wood framed building built to last. The exterior shows the care with which the family has maintained their shop. The bright red and white paint on the walls and trim is only a couple of years old, and the front veranda remains proudly level without a hint of sag. The large front windows display a multitude of goods and the glass is clean and clear. The craftsmanship of the panes suggests that they were imported from outside the small community, as no one has the skill to produce large sheets of glass locally.
 
@@ -2483,9 +2033,7 @@ The first floor of the store is public space, used for the storage, display, and
 
 The front of the store includes a large porch with a short staircase on each side. Several benches and chairs sit on the porch, usually occupied by locals, stopping by for their daily dose of news and gossip. Mabel herself is often found on the porch, holding for on any number of subjects upon which she considers herself an expert.
 
-## **Shop
-
-Interior**
+## **Shop Interior**
 
 Customers enter the store via two large double doors off of the porch. Immediately in front of them is a long counter where Mabel usually sits (when not jawing on the porch). From her perch on a stool behind the counter, she greets regular customers warmly and strangers diffidently. Over the years she has seen every shade of character come through the door and she is an excellent judge of character. She is a pious woman who is appropriately deferential to ecclesiastic characters such as good-aligned clerics. She will watch “undesirable” types closely to try to prevent thefts.
 
@@ -2584,9 +2132,7 @@ Outdoors/Travelling Goods Section
 
 Another important part of the store is the section full of all the essentials for camping, travelling, or even dungeon delving. Although Mabel and her family are dismissive of adventurers as a group, they are well aware that fat purses generally accompany such customers. Most of the items in this section are overpriced (though locals will never pay full price). Mabel recognizes that adventurers are usually in a hurry and not big on comparison shopping. Where else are you going to get those torches anyway?
 
-## **Item
-
-Cost**
+## **Item Cost**
 
 Arrows, 24	$240
 
@@ -2620,9 +2166,7 @@ By far the most important section for the local community, this area of the stor
 
 ((begin table))
 
-## **Item
-
-Cost**
+## **Item Cost**
 
 | Chain, iron link (per foot) |  |  | $10 |
 | :---- | ----- | :---- | :---- |
@@ -2703,9 +2247,7 @@ Luxury Items Section
 
 Items too precious to be made locally, or specific items from far away can be found here. Mabel is always happy to special order items for this section, though the length of time it takes to procure the item (not to mention the cost) can vary considerably.
 
-## **Item
-
-Cost**
+## **Item Cost**
 
 Book, blank, cloth cover, 100p	$100 Book, blank, leather cover, 100p $200
 
@@ -2766,9 +2308,7 @@ This can be played as what it appears, or the daughter could have eloped and has
 
 * One or more of the adventurers are arrested for breaking an obscure local bylaw and are given only a day’s sentence to be served in the Gaol. The Gaol, unlike most of its kind, is clean and the prisoners are well treated. This could make party members suspicious, and the GM can have as much fun with this as they wish. Maybe the Reeve is a pious person and believes in treating people fairly? Maybe the Reeve has mistaken one of the PCs for a local noble who’s notorious for traveling in disguise and so he doesn’t want to chance being cruel to an aristocrat. Or maybe late in the night the PCs will find themselves bustled off into a slave caravan traveling through the village late at night, with the Reeve pocketing the commission (and the PC’s gear) while telling the villagers that the party left early. There are lots of angles that can be played on with the simple Village Gaol\!
 
-## **Rural
-
-Inn**
+## **Rural Inn**
 
 **Role in the Campaign**
 
@@ -2794,9 +2334,7 @@ The establishment and protection of an inn in a remote, dangerous region would s
 
 Different races conceive of hospitality differently and each will have its own variation on the local inn. Some, like dwarves, will likely have large taverns with sleeping accommodations available, while comfort-loving halflings will have elaborate, high-class inns with excellent kitchens.
 
-## **Sample:
-
-The Hog’s Wattle Inn**
+## **Sample: The Hog’s Wattle Inn**
 
 ((text to be read to players))
 
@@ -2812,9 +2350,7 @@ As an adventurer, Jolly stayed at many an inn, and he has used that experience t
 
 The Hog is also a well-established gathering place for adventuring parties seeking new opportunities. Jolly has a special place in his heart for adventurers and is always ready to listen to even the most exaggerated tales of dungeon delving. In truth, he misses the life and tries to live vicariously through the exploits of others.
 
-## **Inn
-
-Exterior**
+## **Inn Exterior**
 
 The Hog is a three story, sturdy structure of wooden beam construction. Although every effort has been made to make the building look both inviting and aesthetically pleasing, a close examination will reveal that the inn is also easily defendable. Heavy wooden shutters complete with arrow slits can be quickly swung shut in front of the inn’s many windows. Being out in the wilds, the inn has on occasion had to fend off attacks by various raiders.
 
@@ -2822,9 +2358,7 @@ Around the outside of two sides of the building runs a sturdy, five-foot wide po
 
 Off to one side of the main building is a similarly built and maintained barn which functions as a stable for guests. Like the main building it is built to be defensible in the event of a raid.
 
-## **Inn
-
-Interior Ground Floor**
+## **Inn Interior Ground Floor**
 
 The inside of the inn is decorated as a testament to its owner’s career as an adventurer. The walls are adorned with trophies, weapons, paintings (most depicting various heroic scenes from popular stories and songs) and assorted dungeon delving accoutrements. Truth be told, most of these keepsakes were in fact purchased by the owner, a fact that enterprising adventuring parties might file away for a day when they need a little extra cash.
 
@@ -2880,9 +2414,7 @@ Particularly popular are the tall tales told by Old Jake, a grizzled and bedragg
 
 The inn maintains its own stables, room for up to ten horses indoors. Most travelers choose to leave their animals in the outdoor corral, but those concerned about losing their mounts to thieves or predators will pay extra for the security of the stable. The Ostler, Karl, and his two sons, Jurgen and William, maintain the stables and care for the animals left in their care.
 
-## **Upper
-
-Floor**
+## **Upper Floor**
 
 9. Landing
 
@@ -2916,9 +2448,7 @@ The private rooms contain two large comfortable beds with real mattresses, a lar
 
 14. Private Room B
 
-## **Magic
-
-Guild**
+## **Magic Guild**
 
 **Role in the Campaign**
 
@@ -2942,9 +2472,7 @@ Practitioners of magic are notoriously eccentric. The local guild might well be 
 
 FILENAME \\p C:\\Documents and Settings\\John\\My Documents\\Roleplaying Games\\Backup GFW Essential Places Jan 17\\Role in Campaign v10\\Magic Guild v1.0.doc
 
-## **Noble
-
-Manor House**
+## **Noble Manor House**
 
 **Role in the Campaign**
 
@@ -2968,9 +2496,7 @@ Some manor houses have been handed down through families for centuries. Often an
 
 One time-honored rite of passage for all adventuring parties is the establishment of their own stronghold and domain. Perhaps having rendered some service to their liege lord, the adventurers will be granted permission to claim a piece of wilderness as their own and build their own keep. Alternately, they might be granted title to an existing manor, and have to take on the existing house and lands with their existing staff and subjects.
 
-## **Sample:
-
-Cheltingdon Manor**
+## **Sample: Cheltingdon Manor**
 
 ((begin text to be read to players))
 
@@ -2982,17 +2508,13 @@ Atop a small hill, looking out over the crops of the tenant farmers, the manor h
 
 This manor house belongs to Sir Percival Drakeson, only recently raised to hold this fief after long years service to the crown. Formerly a key member of the King’s privy council, Drakeson was named Lord of Cheltingdon Manor six months ago due to failing health. Bad lungs caused by an arrow wound many years ago, and worsened by the damp air of the royal castle, have left Drakeson without much hope of long life. He sought a hereditary manorial grant to ensure that his wife and three children would be comfortable after his impending demise.
 
-## **Manor
-
-Exterior**
+## **Manor Exterior**
 
 Cheltingdon Manor is a typical unfortified manor house. Its location deep inside the settled boundaries of the Kingdom, far from raiders or border strife, allows its holder to live without some of the more martial trappings of manors on the frontier. The house is built in a typical style, sitting up high upon the top of a small knoll.
 
 As is common in such buildings, the ground floor is a windowless cellar with a long, narrow, exterior staircase leading up the outside of the manor house to the main floor, some ten feet above the ground. This provides security to the occupants by putting the door and windows out of easy reach of anyone seeking an illicit entry into the manor. The two floors above the cellar have numerous windows, though those on the main floor are barred on the outside to further discourage unwanted guests. Only the windows on the top floor are without grills. The exterior walls are thick, sturdy stone from the local quarry.
 
-## **Manor
-
-Interior – Main Floor**
+## **Manor Interior – Main Floor**
 
 1. Entry Stairs
 
@@ -3094,9 +2616,7 @@ As is the tradition, Lord Cheltingdon has taken in the eldest son of his friend 
 
 Like the other bedrooms, the squire’s room is Spartan, with only a couple of dressers and chairs in addition to the simple bed.
 
-## **Money
-
-Changer**
+## **Money Changer**
 
 **Role in the Campaign**
 
@@ -3130,9 +2650,7 @@ The party’s latest haul included some very rare, ancient coins. The local mone
 
 A local evil cult has set up a money changer’s shop in the city with the intention of handing out coins tainted with the evil essence of their deity/master/demonic presence. These coins are spreading across the city, insinuating dark thoughts and emotions into those who handle them. The rate of violent crime has shot up across the city as the evil works its way into the minds of the populace.
 
-## **Gimble’s
-
-Coin Emporium**
+## **Gimble’s Coin Emporium**
 
 ((begin text to be read to players))
 
@@ -3148,17 +2666,13 @@ A colorful member of the local merchant’s guild, Gimble is widely known throug
 
 Gimble’s saving grace is that while he is willing to buy and sell to anyone without asking too many questions, he does actually deal honestly with his own customers. His rates are quite reasonable (falling squarely into the average commission rate of around 10%) and he is often willing to haggle.
 
-## **Shop
-
-Exterior**
+## **Shop Exterior**
 
 Gimble’s Coin Emporium is a very sturdy structure, as one might well expect from an establishment within the walls of which so much money is kept. The walls are built of thick stone and the ground floor is windowless. An iron-bound thick wooden door serves as the only obvious entrance into the shop.
 
 The stern, imposing nature of the structure is offset by the almost random selection of paints which have been splashed across the walls. Although some local merchants wrinkle their noses in disdain at what they deem Gimble’s lack of “seriousness” as a businessman, they cannot argue with his success. Faced with stiff competition, Gimble has deliberately set out to ensure that his shop stands out. In this he has succeeded as no one enters this city gate without marveling at the spectacle.
 
-## **Shop
-
-Interior**
+## **Shop Interior**
 
 1. Door
 
@@ -3208,9 +2722,7 @@ The local smith might also be a former adventurer. Warriors who have given up th
 
 The smithy is controlled by local law and custom and is forbidden, under pain of death, to provide service to outlanders without a special permit. If the party is in dire need to the services of a smith, they may need to approach the local Lord to get approval, and he may require them to perform some service in exchange. Alternately, they might appeal to the smith to flout the law, either for money or due to the noble nature of the cause.
 
-## **Sample
-
-– The Rusty Nail**
+## **Sample – The Rusty Nail**
 
 ((Text to be read to players))
 
@@ -3226,9 +2738,7 @@ The smithy is a small, simple building divided between Gulliver’s shop and his
 
 Though it is unusual to see a woman in the role of a smith, Rezellda has silenced any murmurs or snickers through her diligent work, her serious attitude, and through a couple of well-placed thrashings of particularly obnoxious young men. She is tall, muscular, intelligent, and completely devoted to Gulliver and his shop. Though tongues do still wag after a few ales too many, no one with a strong attachment to their teeth is foolish enough to suggest that anything improper occurs between the smith and his apprentice.
 
-## **Shop
-
-Exterior**
+## **Shop Exterior**
 
 The shop is solidly built of wood with a well-shingled roof. The windows have sturdy shutters and the doors appear squarely hung. All in all, the shop give the impression of being well maintained by a competent workman.
 
@@ -3236,9 +2746,7 @@ Beside the shop is a small courtyard area where Gulliver’s forge can be found 
 
 The area around the forge also serves as something of a hangout for several of Gulliver’s friends. Chances are, if there is gossip to be heard, someone at the forge will be more than willing to pass it on. This has lead to a local expression, “I heard it at the forge”, which is understood to mean that one has confidence in the accuracy of a statement. At any give time during the day there is a 75% chance that 1d3 townsfolk will be lounging near the forge.
 
-## **Shop
-
-Interior**
+## **Shop Interior**
 
 The interior of the shop is simple in the extreme. Basic wood paneled walls and a rough wood floor frame Gulliver’s few possessions. Over half of the building is given over to the smithy, while the rest serves as living quarters.
 
@@ -3288,17 +2796,13 @@ The suit of armor is an exquisitely made set of plate armor, obviously crafted b
 
 Gulliver keeps this armor as a symbol of his refusal to make implements of war.
 
-## **D20
-
-Game Information**
+## **D20 Game Information**
 
 Gulliver Dornal, Male Human Exp9: CR 8; Medium Humanoid ; hp 35; Fort \+4, Ref \+2, Will \+7; STR 16, DEX 9, CON 13, INT 12, WIS 13, CHA 11\.
 
 Skills: Appraise \+10, Craft (Blacksmithing) \+11, Craft (Carpentry) \+8, Craft (Leatherworking) \+6, Craft (Locksmithing) \+10.
 
-## **Trading
-
-Post**
+## **Trading Post**
 
 **Role in the Campaign**
 
@@ -3320,9 +2824,7 @@ The party may stumble upon a trading post which offers bounties on the heads of 
 
 Trading posts needn’t deal solely in the mundane. A wizard might well set up a trading post in a region where particularly rare or valuable magical components might be found, and do a brisk business trading mundane items and equipment for gems, herbs, flowers, insects, body parts, or other things with arcane potential.
 
-## **Toll
-
-Road/Bridge**
+## **Toll Road/Bridge**
 
 **NOTE: The floorplan for this locale was done at a scale of 1 square \= 10 feet – different than all the others\!**
 
@@ -3346,9 +2848,7 @@ Characters arriving at a toll station discover the station manager and all his a
 
 A monastery of spiritually pure, but obnoxiously self-righteous monks have established a toll booth of sorts across a mountain pass that the party simply must get through. Not interested in monetary tolls, the monks insist that anyone passing through must agree to perform a service “for the good of all”. Creative parties might think up relatively impressive sounding, but not very taxing, services.
 
-## **The
-
-Troll Bridge**
+## **The Troll Bridge**
 
 (Text to be read to players)
 
@@ -3376,9 +2876,7 @@ It is built of mixed field-stones, and held together by marvelous dwarven engine
 
 The river is currently up and running high due to recent rains, and there is a barely a five foot gap between the rushing current and the bottom of the bridge. The water roars angrily between the spans, swirling madly before calming once past the structure. The water is stirred up and murky, with much debris and not a few small tree trucks bobbing past the bridge.
 
-## **Cottage
-
-Exterior**
+## **Cottage Exterior**
 
 The cottage is clearly built for giant-sized occupants. Its style and architecture, however, are standard human design. It is a well-built, sturdy-looking peasant home, made of simple wood frame construction and a surprisingly sophisticated tin roof. Someone has clearly gone to some trouble to build this home, as materials for the roof would have to have been brought in at great expense from a skilled metal smith.
 
@@ -3388,9 +2886,7 @@ To either side of the front door of the cottage, inside a neat wooden fence, are
 
 (Boxed Text)
 
-## **Name
-
-Usage	Folklore Property**
+## **Name Usage	Folklore Property**
 
 01 Marigold	Fresh Flowers	Comprehend language of birds 02 Columbine	Fresh Flowers	Courage
 
@@ -3405,25 +2901,13 @@ Usage	Folklore Property**
 
 20. Amaranth	Fresh Leaves	Invisibility (End boxed text)
 
-## **Cottage
+## **Cottage Interior**
 
-Interior**
-
-1) **Entryway**. Inside the cottage, visitors will find a neat living space, with sparse but stylish furnishings. Naturally, all of the furniture is also giant sized. Upon entering, visitors are greeted by a cheerfully lit scene as light pours in through the four windows. The colorfully sewn curtains are pulled back and restrained by small knit ropes to allow the light and air to enter. In front of the door, a rectangular rug, apparently Elvish in make, greets visitors.
-
-2) **Kitchen.** The kitchen area is tidy but obviously much used. Knives and other utensils are hung from hooks beside the hearth and the cooking fireplace. A counter along the south wall holds jars and bottles and boxes filled with spices, roots, vegetables, and other food stuffs. A loaf of bread, apparently freshly baked, sits on a wooden cutting board next to a slab of butter. An amphora of cold, clear water rests to one side of the kitchen table and a keg of decent Halfling cider stands on the other.
+1) **Entryway**. Inside the cottage, visitors will find a neat living space, with sparse but stylish furnishings. Naturally, all of the furniture is also giant sized. Upon entering, visitors are greeted by a cheerfully lit scene as light pours in through the four windows. The colorfully sewn curtains are pulled back and restrained by small knit ropes to allow the light and air to enter. In front of the door, a rectangular rug, apparently Elvish in make, greets visitors. 2)**Kitchen.** The kitchen area is tidy but obviously much used. Knives and other utensils are hung from hooks beside the hearth and the cooking fireplace. A counter along the south wall holds jars and bottles and boxes filled with spices, roots, vegetables, and other food stuffs. A loaf of bread, apparently freshly baked, sits on a wooden cutting board next to a slab of butter. An amphora of cold, clear water rests to one side of the kitchen table and a keg of decent Halfling cider stands on the other.
 
 The table is apparently where most of the food preparation takes place, and it appears that the homeowner was in the midst of brewing a pot of herbal tea when the party arrived. A cast iron kettle rests on a flat stone tile, still very hot from the fire. A teapot stands ready to receive the hot water, and a jar of dried Lemon Balm leaves is open beside it.
 
-3) **Eating Area.** To the east of the door, an enormous table and four chairs occupy the corner. The table stands some seven feet tall and the chairs are similarly massive. On top of the table rests a leather pouch containing pipeweed as well as a tankard of cider.
-
-4) **Study.** In the northeast corner of the room, a utilitarian desk is cluttered with books, scrolls, papers, and jars of ink. A cursory inspection of the books will reveal that most of the works relate to historical dissertations on an ancient tribe of hunter- gatherers who once inhabited the local area. Closer inspection will reveal many passages apparently highlighted by the reader, dealing with the shamanistic spirit magic of these peoples. Finally, a sustained study of all the works and the highlighted passages will reveal that the reader was particularly interested in burial rites and related curses. The materials might prove valuable if the collection were taken to a large city where sages or loremasters might have an interest in their historical value. Also on the desk, hidden by the clutter, is a large key which opens the chest described in area 5\.
-
-5) **Chest.** Between the desk and the bed is a very large wooden chest. It is securely locked and will require a skilled hand to open without the key. Inside are a variety of troll-sized items of clothing, as well as some older, much smaller personal items. Someone schooled in matters related to clothing or materials might realize that these items are of gnomish make. A moneybox lies at the bottom of the chest, beneath all of the clothes and other personal items. It contains a variety of coins and other valuable items collected from travelers.  Random coins from many different nations add up to approximately $20000 in various denominations. A pearl necklace worth at least $3000 and several gold rings set with various stones, each valued at $1000, complete the collection.
-
-6) **Sleeping Area.** A large bed, some twelve feet long, lies behind a curtain divider. The bed is neatly made, its two pillows freshly plumped and fluffed, with the comforter turned back at one corner. The mattress is a simple one stuffed with straw, but is comfortable and warm.
-
-## **Arturus the Troll**
+3) **Eating Area.**To the east of the door, an enormous table and four chairs occupy the corner. The table stands some seven feet tall and the chairs are similarly massive. On top of the table rests a leather pouch containing pipeweed as well as a tankard of cider. 4)**Study.**In the northeast corner of the room, a utilitarian desk is cluttered with books, scrolls, papers, and jars of ink. A cursory inspection of the books will reveal that most of the works relate to historical dissertations on an ancient tribe of hunter- gatherers who once inhabited the local area. Closer inspection will reveal many passages apparently highlighted by the reader, dealing with the shamanistic spirit magic of these peoples. Finally, a sustained study of all the works and the highlighted passages will reveal that the reader was particularly interested in burial rites and related curses. The materials might prove valuable if the collection were taken to a large city where sages or loremasters might have an interest in their historical value. Also on the desk, hidden by the clutter, is a large key which opens the chest described in area 5\. 5)**Chest.**Between the desk and the bed is a very large wooden chest. It is securely locked and will require a skilled hand to open without the key. Inside are a variety of troll-sized items of clothing, as well as some older, much smaller personal items. Someone schooled in matters related to clothing or materials might realize that these items are of gnomish make. A moneybox lies at the bottom of the chest, beneath all of the clothes and other personal items. It contains a variety of coins and other valuable items collected from travelers.  Random coins from many different nations add up to approximately $20000 in various denominations. A pearl necklace worth at least $3000 and several gold rings set with various stones, each valued at $1000, complete the collection. 6)**Sleeping Area.**A large bed, some twelve feet long, lies behind a curtain divider. The bed is neatly made, its two pillows freshly plumped and fluffed, with the comforter turned back at one corner. The mattress is a simple one stuffed with straw, but is comfortable and warm. ##**Arturus the Troll**
 
 The cottage belongs to Arturus the troll, but things are not quite what they seem. Arturus started life as a gnome, and was an eager though inexperienced young thief when he made the mistake of seeking to pilfer the burial treasures of a tribal shaman’s tomb not far from the bridge. In centuries past, a nomadic tribe of animistic barbarians lived in these lands, and one of their most powerful shamans was put to rest in an elaborate cave tomb, well protected by magic and spirits.
 
@@ -3441,15 +2925,11 @@ Should the party offer up sufficient treasure to buy passage, Arturus wishes the
 
 ##
 
-**Reforged
-
-C\&C Stats**
+**Reforged C\&C Stats**
 
 **Arturus**: male troll (Giant 6/Rogue 2), HP 93; AC 18; lawful evil; Primary attributes: Strength, Constitution, Dexterity; Significant attributes: Strength 23, Constitution 23, Dexterity 14, Intelligence 12, Wisdom 14, Charisma 10; Natural attacks: two claws (1d6+6) and a bite (1d6+3); Equipment: *bag of holding* (Bag 1 – 250 pounds), *bracers of armor \+2*, *ring of invisibility* (grants invisibility at will).
 
-## **Audience
-
-Chamber**
+## **Audience Chamber**
 
 **Role in the Campaign**
 
@@ -3469,9 +2949,7 @@ Another possible variation is the religious audience, in which members of the fa
 
 Some authority figures will insist on payment for any services rendered to a petitioner. Perhaps in exchange for the use of one of the manorial oxen, a peasant might be expected to work an extra week on the Lord’s fields. Or an adventuring party, petitioning for access to the Duke’s library where a crucial map is believe to be, might be asked to first find out exactly what has been eating people in the depths of the local wood.
 
-## **Sample:
-
-Underworld Audience Chamber**
+## **Sample: Underworld Audience Chamber**
 
 This audience chamber belongs to a petty urban crime lord, but could easily be adapted to any other powerful figure such as a feudal nobleman or religious leader. The room serves as a place for petitioners to meet with the leader and seek favors.
 
@@ -3527,9 +3005,7 @@ Have someone killed Have something valuable stolen
 
 Defy or oppose the will of a nobleman or rich merchant Retrieve loved one (either kidnapped or willingly departed) Discredit rival Frame someone for a crime Seek protection from a rival gang
 
-## **Special
-
-Favors**
+## **Special Favors**
 
 Defy the sovereign
 
@@ -3549,9 +3025,7 @@ Replace a valuable object with a valueless duplicate and return with the origina
 
 FILENAME \\p C:\\Documents and Settings\\John\\My Documents\\Roleplaying Games\\Backup GFW Essential Places Jan 17\\Awaiting Game Info v12\\Underworld Audience Chamber v1.2.doc
 
-## **Wizard’s
-
-Tower**
+## **Wizard’s Tower**
 
 **Role in the Campaign**
 
@@ -3575,9 +3049,7 @@ Powerful wizards may make their homes in various locations. One possibility for 
 
 Similarly, a wizard’s tower might well move through time and space. Perhaps the entire tower moves via teleportation either at its master’s whim or in relation to an external phenomena, like the phase of the moon. If an adventuring party is in need of assistance from a Wizard who lives in such a tower, their first quest might well be to figure out the pattern of movement of the tower and arrange to be in an appropriate location when it arrives\!
 
-## **Sample:
-
-The Peculiar Tower of Petronious Prime**
+## **Sample: The Peculiar Tower of Petronious Prime**
 
 ((Text to be read to players))
 
@@ -3603,9 +3075,7 @@ This mysterious link between Petronious and the tower surprises and awes most vi
 
 For anyone other than Petronious, the experience of his tower usually starts out as amusing, but often turns frustrating or even terrifying. Tales tell of one particular visitor, a distant and unpopular relative of Petronious, who spent a month seeking an exit. The wise man always looks to see what is on the opposite side of any door in the tower before passing through.
 
-## **Tower
-
-Exterior**
+## **Tower Exterior**
 
 The tower of Petronious Prime looks to be five stories tall, with an open roof-top garden. The walls are made of slick black stone of a variety unknown to any geologists in the party. The walls appear seamless, giving the appearance that the entire building is carved from solid rock, and the only clue to its bizarre nature is the way in which windows randomly appear and disappear around the tower.
 
@@ -3615,9 +3085,7 @@ The keeper of the door is Willis, a chaos golem. Chaos golems are magical constr
 
 The position of the front door never appears to change – at least from the outside. It is always on the southern wall of the tower and it is surrounded by pleasant flower beds.
 
-## **Tower
-
-Interior**
+## **Tower Interior**
 
 How does one describe the interior of rooms which may well change at any moment? Visitors to Petronious’ tower can count on few immutable facts, but there are a couple of things which appear to remain constant. Rooms within the tower are all round, approximately sixty feet in diameter, with a spiral stone staircase rising through the center of the room. Most rooms will have 1-3 windows, though the shape, location, and form of those windows may vary.
 
@@ -3693,9 +3161,7 @@ These are standard cupboards containing the necessary utensils and flatware of a
 
 It appears that the kitchen has recently been resupplies, as bags of flour and boxes of various foodstuffs have been piled here pending unpacking. Several small kegs of fine brandy are included in the jumble.
 
-## **Magical
-
-Laboratory**
+## **Magical Laboratory**
 
 This floor is dedicated to Petronious’ ongoing magical research. As might be expected, much of his work relates to multi-dimensional spaces and teleportation. The lab should contain at least 3 minor and 1 major magic items in a functional condition and a similar number of non-functional prototypes.
 
@@ -3727,9 +3193,7 @@ Needless to say, adventurers are strongly advised against entering the portal. A
 
 If asked, Petronious will be unable to explain the origin of the portal. If pressed about his apparently unique relationship with the chaos of the portal, such as its apparent ability to anticipate his desires and reshape items at his whim, he will speculate that the portal itself has a limited sentience. The study of the Chaos Portal in fact makes up the bulk of his life’s work.
 
-# **ESSENTIAL
-
-PLACES BIBLE MATERIAL**
+# **ESSENTIAL PLACES BIBLE MATERIAL**
 
 What is needed is a book full of locations with floor plans in varied scale as appropriate to the size of the place/levels or floors depicted, each plan showing fixtures, furniture, doors and windows, etc. With that depiction there needs be s selection of persons, several each proprietor and worker types and their general abilities, and guidelines for the numbers and sorts of other persons likely encountered in the establishment. With that information for commercial places there needs be a list of goods purveyed and/or services offered. Concluding the treatment for a location, a few brief adventure hooks.
 
@@ -3737,9 +3201,7 @@ About the only prefatory text really needed is an introductory bit, a discussion
 
 On request Gary Gygax will supply electronic files from his mss. for the information in the works cited hereafter, and more details of the LA game monetary system if needed.
 
-# **ESSENTIAL
-
-PLACES: LIKELY LOCATIONS**
+# **ESSENTIAL PLACES: LIKELY LOCATIONS**
 
 Audience chamber/great hall (for placement anywhere) Barn Barracks Bed chamber (inn-type, private)
 
@@ -3761,9 +3223,7 @@ Tavern (see *Yggsburgh* book) Temple Throne room Town house Warehouse ***See als
 
 John Morrow for his initial work on this project. Gary Gygax for the monetary system locations, and extensive lists of prices for goods and services.
 
-## **EQUIPMENT
-
-LISTS**
+## **EQUIPMENT LISTS**
 
 **Note on Prices and Selling**
 
@@ -3793,9 +3253,7 @@ Markets may shift, demand may vanish, or fakes may circulate. The Game Master sh
 
 *Powers and Like Extraordinary Ability Related Knowledge:* If for example, your campaign assumes that any Power or the like is worth about at least $1,000 per Grade or AEP it costs to use it, then the sale of such thing to a guild will fetch about half price, to an individual whatever that one will pay. Unique ones, though, are worth at least double the price of the “known and standard” ones. *Extraordinary Items:* These are not considered as things one is able to purchase. Their sale value to other than an Avatar is basically the sum of the price of a non- Extraordinary item of the same sort, plus from $1,000 to $10,000 for each special feature. Consider protection bonuses and striking plus harm ones at about the middle to top range and multiply per point. A long spear that adds 10 to weapon precision and 6-8 points of harm is thus worth its normal weapon base plus $72,000 to $90,000 more for its addition to success in striking and its harm. A sword surely has the $10,000 per point addition. Use common sense and base it on the way you want your campaign to run. Any supernatural bonus, 25 or more precision bonus, 17 or more harm bonus, *doubles* the cost for such. If the long spear noted above was \+25 weapon precision and added 17-20 harm. The price would be normal weapon base plus $150,000 to $200,000 doubled, i.e. $300,000 to $400,000.
 
-# **ITEMS
-
-BY COMMERCIAL LOCATION, LOCATION NAME ALPHABETICAL**
+# **ITEMS BY COMMERCIAL LOCATION, LOCATION NAME ALPHABETICAL**
 
 Legend Masters might find this particularly helpful in setting up the various shops and stores in communities. Listings include some few priced items not shown above, and also extensive but unpriced additions to what each location might also offer.
 
@@ -4065,21 +3523,15 @@ WINE MERCHANT
 
 Brandy, fine old, one-quart flask: $100. Brandy, one-quart flask: $30. Wine, one-quart flask, common: $10. Wine, one-quart flask, good: $50. Wine, 10-gallon keg, common: $300. Wine, 10-gallon keg, fine: $1,500. Wine, 60-gallon butt, common: $1,500. brandy, rare wine, rare wine, sparkling wine, sweet fruit wine vinegar
 
-# **EQUIPMENT
+# **EQUIPMENT LISTS BY LOCATION, NEW BUYING THINGS**
 
-LISTS BY LOCATION, NEW BUYING THINGS**
-
-## **Stabling
-
-Costs/Mount:**
+## **Stabling Costs/Mount:**
 
 One Night: Low $15. Average $20. High $25. Extravagant: $50. One Week: Low $100. Average $130. High $160. Extravagant: $300. One Month: Low $375. Average $500. High $625. Extravagant: $1,100.
 
 \*Chatelaines are belt accessories, a case that fits on the belt, with various items depending from it. The various sorts include: a dining one with fork, knife, spoon depending from the case; a medicinal one with containers depending from the case; a sewing one with scissors, crochet hook, etc. depending from the case; and a social one with pen, ink vial, etc. depending from the case. The case proper contains napery, bandages and medicines, sewing items and material, or paper and like stationery materials, according to kind.
 
-## **APOTHECARY
-
-(or HERBALIST SHOP)**
+## **APOTHECARY (or HERBALIST SHOP)**
 
 Bicarbonate of soda, one pound: $10. Glycerin, pint: $10. Kobold fixative powder (stops *vanishing in vapor* for 24 hours): $100.
 
@@ -4091,17 +3543,13 @@ Jimmy, large (four-foot): $200. Rook (bar to raise grates, six-foot length): $30
 
 *Special Items Possibly Found Herein, cost per available item at $1,000 per Grade, \+ 10 to 40% (d4):* Dartlets, Extraordinary, Pneumatic Hand Catapult Darts, Extraordinary, Pneumatic Shoulder Catapult Pellets, Extraordinary, Light Pellet Crossbow Sling Bullets, Extraordinary
 
-# **BOOK
-
-SHOP**
+# **BOOK SHOP**
 
 Book, literature/fiction: $75 to $150. Book: maps/atlas: $500 to $1,000 Book, non-fiction: $200 to $500. Book, rare: $1,000 to $5,000. Chart, harbor: $50 to $150. Chart, river: $100 to $300. Chart, sea/ocean: $1,500 to $10,000. Map, city/town: $100 to $250. Map, continental: $500 to $2,500. Map, local: $50 to $150. Map, regional: $250 to $500.
 
 Map, state/national: $600 to $850. Map, world: $500 to $15,000.
 
-# **CABINET
-
-MAKER**
+# **CABINET MAKER**
 
 Chest, 2’ x 3’ x 4’ $350. Chest, Sea 2’ x 2.5’ x 3’ $300. Chest, Small 1.5’ x 2’ x 2.5’ $200. Chest, Footlocker 2’ x 2’ x 3’ $250. Chest, Trunk 3’ x 3’ x 4’ $600.
 
@@ -4111,17 +3559,13 @@ Chest, Wagon, 2’ x 1.5’ x 5’ $400. armoire bookcase cabinet chest of drawe
 
 ***Clock, carriage, small***: $3,000 to $7,000.
 
-***Clock, floor, tall***: $8,750 to $25,000. ***Clock, table, large***: $2,500 to $7,500. ***Clock, table, small***: $2,250 to $6,500. ***Clock, table, small***: $2,000 to $5,000. ***Clock, wall, large***: $1,500 to $5,000. ***Clock, wall, small***: $1,250 to $4,000. ***Clock, wall, small***: $1,000 to $3,000.
-
-# **COOPER**
+***Clock, floor, tall***: $8,750 to $25,000. ***Clock, table, large***: $2,500 to $7,500. ***Clock, table, small***: $2,250 to $6,500. ***Clock, table, small***: $2,000 to $5,000. ***Clock, wall, large***: $1,500 to $5,000. ***Clock, wall, small***: $1,250 to $4,000. ***Clock, wall, small***: $1,000 to $3,000. #**COOPER**
 
 Barrel of 40 gallon capacity: $80.
 
 Barrel, Butt of 180 gallon capacity: $540. Barrel, Cade of 12 gallon capacity $36. Barrel, Firkin of 8 gallon capacity: $24. Barrel, Hogshead of 120 gallon capacity: $320. Barrel, Keg of 30 gallon capacity: $90. Barrel, Kilderkin of 20 gallon capacity: $60. Barrel, Pipe of 130 gallon capacity: $390. Barrel, Puncheon of 80 gallon capacity: $240. Barrel, Runlet of 18 gallon capacity: $54. Barrel, Tierce of 45 gallon capacity: $135. Barrel, Tun of 252 gallon capacity: $756. casks and kegs of any size from .5 gallon capacity to 100 gallons spigot tap
 
-# **COPPER,
-
-BRASS & PEWTER SMITHS**
+# **COPPER, BRASS & PEWTER SMITHS**
 
 Chatelaine\*, ordinary, dining: $125. Chatelaine\*, ordinary, medicinal: $150. Chatelaine\*, ordinary, sewing: $75. Chatelaine\*, ordinary, social: $100.
 
@@ -4129,17 +3573,13 @@ Matchbox, brass: $45. Matchbox, copper: $65. Matchbox, pewter: $30. Snuff box, m
 
 # **CUTLER**
 
-***Cigar cutter, steel***: $125. ***Corkscrew, fancy silver***: $75. Corkscrew: $15. ***Razor, straight-edge, folding, gold handle***. $2,750. ***Razor, straight-edge, folding, ivory handle***. $750. ***Razor, straight-edge, folding, silver handle***. $1,000. ***Shaving kit, leather deluxe***; silver-handled razor and shaving brush, shaving soap in silver box, silver mirror, silver containers with alum, cologne, lotion, and talc plus tortoiseshell comb and brush: $4,500. ***Shaving kit, leather***; bone-handled razor and shaving brush, shaving soap in bone box, steel mirror, bone containers with alum, cologne, lotion, and talc plus bone comb and brush: $1,250. Tweezers, large, steel: $75. Tweezers, small, steel: $35.
-
-# **DRESSMAKER**
+***Cigar cutter, steel***: $125. ***Corkscrew, fancy silver***: $75. Corkscrew: $15. ***Razor, straight-edge, folding, gold handle***. $2,750. ***Razor, straight-edge, folding, ivory handle***. $750. ***Razor, straight-edge, folding, silver handle***. $1,000. ***Shaving kit, leather deluxe***; silver-handled razor and shaving brush, shaving soap in silver box, silver mirror, silver containers with alum, cologne, lotion, and talc plus tortoiseshell comb and brush: $4,500. ***Shaving kit, leather***; bone-handled razor and shaving brush, shaving soap in bone box, steel mirror, bone containers with alum, cologne, lotion, and talc plus bone comb and brush: $1,250. Tweezers, large, steel: $75. Tweezers, small, steel: $35. #**DRESSMAKER**
 
 ***Cloak, finest fur***: $50,000 to $100,000. ***Cloak, fur***: $15,000 to $25,000. ***Cloak, light, finest dress***: $4,000. ***Cloak, warm, finest dress, fur trimmed***: $7,500. ***Cloak, warm, finest dress***: $5,000. ***Dress, cloth of gold***: $5,000.
 
 ***Dress, cloth of silver***: $2,750. Dress, cotton, fine: $600. ***Dress, lace***: $2,500. Dress, linen, fine: $500. ***Dress, satin brocade***: $1,500. ***Dress, satin***: $850. ***Dress, silk brocade***: $3,250.
 
-***Dress, silk***: $2,000. ***Dress, taffeta***: $750. ***Dress, velvet***: $1,000. ***Fan, folding, amber handled***: $4,000. ***Fan, folding, coral handled***: $2,250. ***Fan, folding, gold and gems handled***: $25,000. ***Fan, folding, gold handled***: $5,000. ***Fan, folding, ivory and gems handled***: $15,000. ***Fan, folding, ivory handled***: $2,000. ***Fan, folding, jade handled***: $5,000. ***Fan, folding, mother-of-pearl handled***: $1,000.
-
-Fan, folding, ordinary: $50 to $100. Dressmaker. ***Fan, folding, platinum and gems handled***: $35,000. ***Fan, folding, platinum handled***: $7,500. ***Fan, folding, silver and gems handled***: $10,000. ***Fan, folding, silver handled***: $750. ***Fan, folding, tortoise shell handled***: $1,500.
+***Dress, silk***: $2,000. ***Dress, taffeta***: $750. ***Dress, velvet***: $1,000. ***Fan, folding, amber handled***: $4,000. ***Fan, folding, coral handled***: $2,250. ***Fan, folding, gold and gems handled***: $25,000. ***Fan, folding, gold handled***: $5,000. ***Fan, folding, ivory and gems handled***: $15,000. ***Fan, folding, ivory handled***: $2,000. ***Fan, folding, jade handled***: $5,000. ***Fan, folding, mother-of-pearl handled***: $1,000. Fan, folding, ordinary: $50 to $100. Dressmaker.***Fan, folding, platinum and gems handled***: $35,000. ***Fan, folding, platinum handled***: $7,500. ***Fan, folding, silver and gems handled***: $10,000. ***Fan, folding, silver handled***: $750. ***Fan, folding, tortoise shell handled***: $1,500.
 
 ***Gown, cloth of gold***: $6,250. ***Gown, cloth of silver***: $3,750. ***Gown, lace***: $3,750. ***Gown, linen, fine***: $1,250. ***Gown, satin brocade***: $2,750. ***Gown, satin***: $1,750. ***Gown, silk brocade***: $4,500.
 
@@ -4153,33 +3593,23 @@ Fan, folding, ordinary: $50 to $100. Dressmaker. ***Fan, folding, platinum and g
 
 ***Scarf, cloth of gold***: $525. ***Scarf, cloth of silver***: $325. ***Scarf, lace***: $350. ***Scarf, satin, embroidered***: $175. ***Scarf, satin***: $100. ***Scarf, silk, embroidered***: $425. ***Scarf, silk:*** $300.
 
-***Shawl, cloth of gold***: $1,500. ***Shawl, cloth of silver***: $650. ***Shawl, lace***: $750. ***Shawl, satin, embroidered***: $475. ***Shawl, satin***: $250. ***Shawl, silk, embroidered***: $925. ***Shawl, Silk***: $500. ***Shawl, Silk***: $600.
-
-# **FLETCHER**
+***Shawl, cloth of gold***: $1,500. ***Shawl, cloth of silver***: $650. ***Shawl, lace***: $750. ***Shawl, satin, embroidered***: $475. ***Shawl, satin***: $250. ***Shawl, silk, embroidered***: $925. ***Shawl, Silk***: $500. ***Shawl, Silk***: $600. #**FLETCHER**
 
 *Special Items Possibly Found Herein, cost per available item at $1,000 per* *Grade, \+ 10 to 40% (d4):* Arrows, Extraordinary
 
 Quarrels, Extraordinary, Hand Catapult Quarrels, Extraordinary
 
-# **GAME
-
-& TOY SHOP**
+# **GAME & TOY SHOP**
 
 Backgammon set, common, complete, in box/board: $150. ***Backgammon set, deluxe ivory, complete, in box/board: $1,250.*** Board, backgammon: $85 Board, large, wood, chequered red and black, 8 x 8 squares: $75 Board, small, wood, chequered red and black, 8 x 8 squares: $50 Cards, playing, pasteboard, fine: $15 Cards, playing, pasteboard, average: $10 ***Chess set, standard, ivory, large: $1,250. Chess set, standard, ivory, large: $550.*** Chess set, standard, wood, large: $150. Chess set, standard, wood, large: $100. Dice, large bone, pair: $15 Dice, large ivory, pair: $40 ***Dice, large jade, gold inlay spots, pair: $2,000***
 
 Dice, large wooden, pair: $7. Dice, small bone, pair: $10 Dice, small ivory, pair: $25 ***Dice, small jade, gold inlay spots, pair: $1,000*** Dice, small wooden, pair: $5
 
-***Dominoes, set, ivory: $950.*** Dominoes, set, wood: $75. ***Draughts, set, ivory: $350.*** Draughts, set, wood: $25. ***badminton sets billiards tables*** bowls balls bowls pins cards caroms chess, other types: board (four player), three ranks of eight squares added to each side board, circular, 16 squares by 4 squares deep board, great, squared 14 x 14 with two added “citadel” squares and men chaturanga men Chinese, board and men courier board and men Korean, board and men
-
-# **GLOVER** shogi, board and men chips, gaming ***croquet sets*** darts dart boards go sets (board and stones)
+***Dominoes, set, ivory: $950.*** Dominoes, set, wood: $75. ***Draughts, set, ivory: $350.*** Draughts, set, wood: $25. ***badminton sets billiards tables***bowls balls bowls pins cards caroms chess, other types: board (four player), three ranks of eight squares added to each side board, circular, 16 squares by 4 squares deep board, great, squared 14 x 14 with two added “citadel” squares and men chaturanga men Chinese, board and men courier board and men Korean, board and men #**GLOVER** shogi, board and men chips, gaming ***croquet sets*** darts dart boards go sets (board and stones)
 
 ***golf clubs golf balls*** mancala sets ***mah jong sets*** parcheesi games ***pool tables roulette wheels*** senet games skittles pins skittles disks ***snooker sets tennis balls tennis raquets*** tiddledy winks sets Toys: blocks, wooden boats, wooden dolls figures, animal, wooden figures, human, wooden horses, rocking marbles, agate marbles. clay puppets ships, miniature, wooden, floating ships, miniature, wooden, wheeled bottom soldiers, toy, wooden (various kinds, mounted and afoot) swords, wooden vehicles, miniature, wooden wagons, toy ***Gloves, calfskin, pair***: $175. Gloves, fine cotton, pair: $30. ***Gloves, fine suede***, pair: $225. ***Gloves, linen, embroidered, lace trimmed, pair***: $325.
 
-***Gloves, linen, embroidered, pair***: $125. Gloves, linen, pair: $50. ***Gloves, silk, embroidered, pair***: $450. ***Gloves, silk, pair***: $250.
-
-# **GENERAL
-
-MERCHANT**
+***Gloves, linen, embroidered, pair***: $125. Gloves, linen, pair: $50. ***Gloves, silk, embroidered, pair***: $450. ***Gloves, silk, pair***: $250. #**GENERAL MERCHANT**
 
 Brush, hair, ordinary, various materials: $5 to $50. Comb, ordinary, various materials: $1 to $20. Comb & brush, currying, various materials: $10 to $40. Flask, ordinary ceramic, eight-ounce capacity: $45. Flask, ordinary ceramic, four-ounce capacity: $25. Hatpin, 7- or 9-inch, ladies, ordinary: $15 to $30. Shawl, ordinary (cotton, linen, wool): $40 to $100.
 
@@ -4189,11 +3619,7 @@ Brush, hair, ordinary, various materials: $5 to $50. Comb, ordinary, various mat
 
 ***Chatelaine\*, gold, dining***: $1,325. ***Chatelaine\*, gold, medicinal***: $1,350. ***Chatelaine\*, gold, sewing***: $1,275. ***Chatelaine\*, gold, social***: $1,300. ***Hatpin, 7- or 9-inch, ladies, gold head***: $500. ***Matchbox, gold***: $1,250.
 
-***Ring, signet (seal), gold***: $2,750. ***Snuff box, gold, engraved***: $1,350. ***Snuff box, gold, plain***: $1,250. ***Snuff box, gold, relief work***: $1,750. boxes	needles cases	tea balls game counters	thimbles
-
-## **HABERDASHERY,
-
-GENTLEMEN’S/HABERDASHERY (Ordinary)**
+***Ring, signet (seal), gold***: $2,750. ***Snuff box, gold, engraved***: $1,350. ***Snuff box, gold, plain***: $1,250. ***Snuff box, gold, relief work***: $1,750. boxes	needles cases	tea balls game counters	thimbles ##**HABERDASHERY, GENTLEMEN’S/HABERDASHERY (Ordinary)**
 
 ***Handkerchief, fine linen, embroidered, lace trimmed***: $150. ***Handkerchief, fine linen, embroidered***: $50.
 
@@ -4224,9 +3650,7 @@ Hat, broad brimmed, felt: $150.
 
 Hat, broad brimmed, fine felt, plumed: $230. ***Hat, broad brimmed, fine fur, plumed***: $775. ***Hat, broad brimmed, fine fur***: $700. ***Hat, broad brimmed, silk, embroidered, plumed***: $1,550. ***Hat, broad brimmed, silk, embroidered***: $1,350. ***Hat, broad brimmed, silk, plumed***: $550.
 
-***Hat, broad brimmed, silk***: $450. Hat, narrow brimmed, felt: $125. Hat, narrow brimmed, fine felt, plumed: $185. ***Hat, narrow brimmed, fine fur, plumed***: $670. ***Hat, narrow brimmed, fine fur***: $600. ***Hat, narrow brimmed, silk, embroidered, plumed***: $1,300. ***Hat, narrow brimmed, silk, embroidered***: $1,150. ***Hat, narrow brimmed, silk, plumed***: $425. ***Hat, narrow brimmed, silk***: $375.
-
-# **HERBALIST**
+***Hat, broad brimmed, silk***: $450. Hat, narrow brimmed, felt: $125. Hat, narrow brimmed, fine felt, plumed: $185. ***Hat, narrow brimmed, fine fur, plumed***: $670. ***Hat, narrow brimmed, fine fur***: $600. ***Hat, narrow brimmed, silk, embroidered, plumed***: $1,300. ***Hat, narrow brimmed, silk, embroidered***: $1,150. ***Hat, narrow brimmed, silk, plumed***: $425. ***Hat, narrow brimmed, silk***: $375. #**HERBALIST**
 
 ***Truffle, fist sized***: $3,000 to $5,000.
 
@@ -4242,21 +3666,15 @@ Healing herbs (many sorts) Wolvesbane
 
 ***Comb, tortoise shell with jewel inlays***: $2,750 to $6,500. ***Cosmetic case, gold, enameled, inlaid gems***: $3,250 to $14,000. ***Cosmetic case, gold, enameled***: $2,475. ***Cosmetic case, gold, inlaid gems***: $3,000 to $13,500. ***Cosmetic case, ivory, carved relief***: $1,250. ***Cosmetic case, ivory, engraved***: $750. ***Cosmetic case, ivory, inlaid gems***: $1,750 to $10,000. ***Cosmetic case, ivory, plain***: $525. ***Cosmetic case, platinum, enameled, inlaid gems***: $5,500 to $15,750. ***Cosmetic case, platinum, enameled***: $4,250. ***Cosmetic case, platinum, engraved***: $2,750. ***Cosmetic case, platinum, inlaid gems***: $6,000 to $25,000. ***Cosmetic case, platinum, plain***: $4,000. ***Cosmetic case, platinum, relief work***: $5,000. ***Cosmetic case, silver, enameled, inlaid gems***: $2,500 to $9,750. ***Cosmetic case, silver, inlaid gems***: $2,000 to $8,500. ***Cosmetic case, silver, enameled***: $700. ***Cosmetic case, tortoise shell, carved relief***: $1,975. ***Cosmetic case, tortoise shell, engraved***: $1,250. ***Cosmetic case, tortoise shell, inlaid gems***: $4,500 to $10,000. ***Cosmetic case, tortoise shell, plain***: $850. ***Hatpin, 7- or 9-inch, ladies, gold head with gems***: $1,000 to $5,000. ***Hatpin, 7- or 9-inch, ladies, silver head with gems***: $300 to $1,500. ***Matchbox, gold, enameled***: $1,500. ***Matchbox, silver, enameled***: $450.
 
-***Perfume bottle, crystal and gold***: $1,500. ***Perfume bottle, crystal and silver***: $750. ***Perfume bottle, crystal***: $500. ***Perfume bottle, gold with gemstone stopper***: $2,500. ***Perfume bottle, platinum***: $3,250. ***Perfume bottle, silver with gemstone***: $250. ***Ring, any metal, plain or jeweled, with secret compartment***: $2,500 to $50,000. ***Ring, signet (seal), platinum***: $4,000. ***Snuff box, gold, enameled, inlaid gems***: $2,250 to $12,250. ***Snuff box, gold, enameled***: $1,475. ***Snuff box, gold, inlaid gems***: $2,000 to $12,000. ***Snuff box, ivory, carved relief***: $750. ***Snuff box, ivory, engraved***: $450. ***Snuff box, ivory, inlaid gems***: $1,500 to $6,500. ***Snuff box, ivory, plain***: $325. ***Snuff box, platinum, enameled, inlaid gems***: $3,250 to $13,250. ***Snuff box, platinum, enameled***: $2,450. ***Snuff box, platinum, engraved***: $2,250. ***Snuff box, platinum, inlaid gems***: $3,000 to $13,000. ***Snuff box, platinum, plain***: $2,100. ***Snuff box, platinum, relief work***: $3,000. ***Snuff box, silver, enameled, inlaid gems***: $1,250 to $6,250. ***Snuff box, silver, enameled***: $400. ***Snuff box, silver, inlaid gems***: $1,000 to $6,000. ***Snuff box, tortoise shell, carved relief***: $875. ***Snuff box, tortoise shell, engraved***: $550. ***Snuff box, tortoise shell, inlaid gems***: $2,000 to $7,000. ***Snuff box, tortoise shell, plain***: $375.
+***Perfume bottle, crystal and gold***: $1,500. ***Perfume bottle, crystal and silver***: $750. ***Perfume bottle, crystal***: $500. ***Perfume bottle, gold with gemstone stopper***: $2,500. ***Perfume bottle, platinum***: $3,250. ***Perfume bottle, silver with gemstone***: $250. ***Ring, any metal, plain or jeweled, with secret compartment***: $2,500 to $50,000. ***Ring, signet (seal), platinum***: $4,000. ***Snuff box, gold, enameled, inlaid gems***: $2,250 to $12,250. ***Snuff box, gold, enameled***: $1,475. ***Snuff box, gold, inlaid gems***: $2,000 to $12,000. ***Snuff box, ivory, carved relief***: $750. ***Snuff box, ivory, engraved***: $450. ***Snuff box, ivory, inlaid gems***: $1,500 to $6,500. ***Snuff box, ivory, plain***: $325. ***Snuff box, platinum, enameled, inlaid gems***: $3,250 to $13,250. ***Snuff box, platinum, enameled***: $2,450. ***Snuff box, platinum, engraved***: $2,250. ***Snuff box, platinum, inlaid gems***: $3,000 to $13,000. ***Snuff box, platinum, plain***: $2,100. ***Snuff box, platinum, relief work***: $3,000. ***Snuff box, silver, enameled, inlaid gems***: $1,250 to $6,250. ***Snuff box, silver, enameled***: $400. ***Snuff box, silver, inlaid gems***: $1,000 to $6,000. ***Snuff box, tortoise shell, carved relief***: $875. ***Snuff box, tortoise shell, engraved***: $550. ***Snuff box, tortoise shell, inlaid gems***: $2,000 to $7,000. ***Snuff box, tortoise shell, plain***: $375. #**SHOEMAKER**
 
-# **SHOEMAKER**
-
-***Boots, high, fancy dress with gold trimming***: $5,500. ***Boots, high, fancy dress with silver trimming***: $2,250. ***Boots, high, fancy dress***: $1,500. Boots, high, hard soled, iron toe-capped: $750. ***Boots, low, fancy dress with gold trimming***: $4,000. ***Boots, low, fancy dress with silver trimming***: $1,500. ***Boots, low, fancy dress***: $1,000. Boots, low, hard soled, iron toe-capped: $650. Shoes, iron toe-capped, \+1 to Harm: $325. ***Shoes, leather, fancy dress, with gold trimming***: $3,000. ***Shoes, leather, fancy dress, with silver trimming***: $1,000. ***Shoes, leather, fancy dress***: $450. ***Shoes, suede, fancy dress, with gold trimming***: $3,250. ***Shoes, suede, fancy dress, with silver trimming***: $1,250. ***Shoes, suede, fancy dress***: $550.
-
-# **SILVERSMITH**
+***Boots, high, fancy dress with gold trimming***: $5,500. ***Boots, high, fancy dress with silver trimming***: $2,250. ***Boots, high, fancy dress***: $1,500. Boots, high, hard soled, iron toe-capped: $750. ***Boots, low, fancy dress with gold trimming***: $4,000. ***Boots, low, fancy dress with silver trimming***: $1,500. ***Boots, low, fancy dress***: $1,000. Boots, low, hard soled, iron toe-capped: $650. Shoes, iron toe-capped, \+1 to Harm: $325. ***Shoes, leather, fancy dress, with gold trimming***: $3,000. ***Shoes, leather, fancy dress, with silver trimming***: $1,000. ***Shoes, leather, fancy dress***: $450. ***Shoes, suede, fancy dress, with gold trimming***: $3,250. ***Shoes, suede, fancy dress, with silver trimming***: $1,250. ***Shoes, suede, fancy dress***: $550. #**SILVERSMITH**
 
 ***Chatelaine\*, silver, dining***: $325. ***Chatelaine\*, silver, medicinal***: $350. ***Chatelaine\*, silver, sewing***: $275. ***Chatelaine\*, silver, social***: $300. ***Cigar case, silver engraved***: $825. ***Cigar case, silver relief work***: $975. ***Cigar case, silver***: $600. ***Cigar cutter, fancy silver***: $125.
 
 ***Cosmetic case, silver, plain***: $475. ***Cosmetic case, silver, engraved***: $1,150. ***Cosmetic case, silver, relief work***: $875. ***Flask, silver, four-ounce capacity, relief work***: $875. ***Flask, silver, four-ounce capacity, engraved***: $625. ***Flask, silver, four-ounce capacity***: $400. ***Flask, silver, eight \-ounce capacity, relief work***: $1,525. ***Flask, silver, eight \-ounce capacity, engraved***: $1,150. ***Flask, silver, eight-ounce capacity***: $750. ***Hatpin, 7- or 9-inch, ladies, silver head***: $75. ***Matchbox, silver***: $200.
 
-***Ring, signet (seal), silver***: $850. ***Snuff box, silver, engraved***: $350. ***Snuff box, silver, plain***: $250. ***Snuff box, silver, relief work***: $500. boxes	needles cases	tea balls game counters	thimbles
-
-# **TOBACCONIST**
+***Ring, signet (seal), silver***: $850. ***Snuff box, silver, engraved***: $350. ***Snuff box, silver, plain***: $250. ***Snuff box, silver, relief work***: $500. boxes	needles cases	tea balls game counters	thimbles #**TOBACCONIST**
 
 ***Cigar box, humidor, large*** (100-cigar capacity): $150 to $500. ***Cigar box, humidor, small*** (25-cigar capacity): $100 to $300. Cigar case, leather: $50. Cigar cutter: $25.
 
@@ -4268,9 +3686,7 @@ Pipe, meerschaum: $50 to $500. Snuff box, wood, plain: $25. Snuff, one-ounce: $1
 
 Tobacco pouch, leather, three-ounce capacity: $30. Tobacco, chewing, one-half pound twist: $5 to $20. Tobacco, pipe, one pound: $15 to $50.
 
-# **TRADERS
-
-STORE**
+# **TRADERS STORE**
 
 Backpack, cloth (capacity c. four cubic feet): $100.
 
@@ -4290,9 +3706,7 @@ Sack, large, heavy cloth (100-pound weight capacity, one-bushel volume): $20. Sw
 
 Torch, wood and resin-soaked rope, 30 minute burn time: $1. animals, small bandor birds carpet carving exotic handicrafts hammock harp livestock, small mat rug spices tambor tapestry
 
-# **WATCHMAKER
-
-& JEWELER**
+# **WATCHMAKER & JEWELER**
 
 ***Music box, large, gold, enameled, inlaid gems***: $55,000 to $250,000. ***Music box, large, gold, enameled***: $23,000. ***Music box, large, gold, engraved***: $15,250. ***Music box, large, gold, inlaid gems***: $51,500 to $300,000. ***Music box, large, gold, plain***: $10,750.
 
@@ -4344,9 +3758,7 @@ Icon (drawing, etching, painting etc.) Icon (statuette) Incense Mantle Mask Perf
 
 Powder (special—colored, dust of sacred sort, etc.) Prayer beads Prayer book Prayer wheel Shawl Small sacrificial of things (drink, flowers, food, paper depictions, etc.) Thurible
 
-## **Votive
-
-Summoning Materials:**
+## **Votive Summoning Materials:**
 
 Bell(s) Brazier Breviary
 
@@ -4362,9 +3774,7 @@ Small sacrificial of things (drink, flowers, food, paper depictions, etc.) Thuri
 
 As indicated on the above lists, some things will be of double duty, while others will be unique in either serving to propitiate or be of votive summoning use.
 
-## **Craftsmanship
-
-& Rarity Multiplier to Artistic Item Value,**
+## **Craftsmanship & Rarity Multiplier to Artistic Item Value,**
 
 **Including Fine Furniture, Jewelry, Porcelain, Pottery, and Table Service Ware:**
 

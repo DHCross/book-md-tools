@@ -59,6 +59,54 @@ def fix_broken_chapter_titles(text: str) -> str:
     )
 
 
+def merge_multiline_headers(text: str) -> str:
+    """Join header lines that were split across multiple lines."""
+
+    lines = text.split('\n')
+    merged_lines: List[str] = []
+    i = 0
+    header_pattern = re.compile(r'^\s*#{1,6}\s+')
+
+    while i < len(lines):
+        line = lines[i]
+
+        if header_pattern.match(line) and line.count('**') % 2 == 1:
+            header = line.rstrip()
+            j = i + 1
+
+            while j < len(lines):
+                stripped = lines[j].strip()
+
+                if stripped == '':
+                    j += 1
+                    continue
+
+                header = header.rstrip() + ' ' + stripped
+                j += 1
+
+                if header.count('**') % 2 == 0:
+                    break
+
+            merged_lines.append(header)
+            i = j
+            continue
+
+        merged_lines.append(line)
+        i += 1
+
+    return '\n'.join(merged_lines)
+
+
+def fix_broken_bold_titles(text: str) -> str:
+    """Merge bold titles that were split across lines without hashes."""
+
+    return re.sub(
+        r'\*\*([^\n*]+?)\s*\n\s*([^\n*]+?)\*\*',
+        lambda m: f"**{m.group(1).strip()} {m.group(2).strip()}**",
+        text,
+    )
+
+
 def is_structural_line(line: str) -> bool:
     """Check if a line is a structural element that should be preserved as-is."""
     stripped = line.lstrip()
@@ -212,6 +260,10 @@ def normalize_markdown(text: str, max_paragraph_length: int = 800) -> str:
     
     # Restore protected blocks
     result = restore_protected_blocks(protected_text, protected_blocks)
+
+    # Merge headers/bold titles that were split across lines
+    result = merge_multiline_headers(result)
+    result = fix_broken_bold_titles(result)
 
     # Merge any multi-line chapter titles that slipped through
     result = fix_broken_chapter_titles(result)
