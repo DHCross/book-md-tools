@@ -87,6 +87,54 @@ This suite is designed to work with any TRPG book or markdown-formatted publicat
 
 Yggsburgh and Essential Places were proof-of-concept test cases demonstrating the tools' effectiveness. The suite is ready for production use with any similar publication.
 
+## Post-conversion numeric tagging for layout handoff (`<1>`, `<2>`, `<3>`)
+
+**The Edmunds System Bridge** — named after layout artist Bill Edmunds — automates the insertion and removal of numeric hierarchy tags for professional layout workflows.
+
+These tags are a post-processing aid for layout (e.g., InDesign). They do not replace Markdown headers. The following sequence describes how numeric tags are introduced after export to preserve heading order through layout import.
+
+When: after conversion to Word (`.docx`) or to plain `.txt` (bridge file).
+
+**📖 Documentation:**
+- Core protocol: [`docs/EDMUNDS_SYSTEM_CORE_PROTOCOL.md`](docs/EDMUNDS_SYSTEM_CORE_PROTOCOL.md) — The three operations and three guarantees
+- Quick reference: [`docs/EDMUNDS_SYSTEM_QUICK_REFERENCE.md`](docs/EDMUNDS_SYSTEM_QUICK_REFERENCE.md) — Command-line examples
+- GUI specification: [`docs/EDMUNDS_SYSTEM_MODULE.md`](docs/EDMUNDS_SYSTEM_MODULE.md) — Future workbench module design
+
+Workflow:
+1) Draft in Markdown/plain text with normal headers (`#`, `##`, `###`).
+2) Convert to Word (`.docx`) for editorial review (Markdown structure may flatten).
+3) Tagging pass in Word or plain text: insert `<1>`, `<2>`, `<3>` at the start of heading lines to encode hierarchy.
+4) Layout Mapping: map tags to paragraph styles, then remove tags.
+
+Plain-text example (bridge file, before layout):
+```
+<1> CHAPTER 3: GOVERNMENT AND RULERSHIP
+
+<2> Feudal Structures
+The feudal order represents the dominant social model in many realms...
+
+<3> The Manor Lord
+Each manor is presided over by a landed knight or noble whose obligations...
+
+<3> Duties and Oaths
+Vassals are bound by oaths of service to their liege lord...
+
+<2> Monarchies
+Monarchies come in many forms, from elective kingships to absolute dynasties...
+```
+
+InDesign import mapping:
+- Find `<1>` → apply `H1_Main` → remove tag
+- Find `<2>` → apply `H2_Section` → remove tag
+- Find `<3>` → apply `H3_Subsection` → remove tag
+
+Notes:
+- Tags are literal text; headings are otherwise unstyled at this stage. Lines above/below headings are blank; body paragraphs are clean text (inline italics are fine).
+- Some Markdown renderers treat bare `<1>` like HTML. In prose, show tags as `` `<1>` ``, `` `<2>` ``, `` `<3>` `` to avoid parsing issues. The files themselves should contain the literal forms for search/replacement.
+- Automation (optional): use `scripts/inject_numeric_tags.py` to create a tagged bridge from Markdown (default backticked tags for renderer safety), and `scripts/strip_numeric_tags.py` to remove tags if needed. These scripts are idempotent; you can safely rerun them without duplicating or corrupting tags.
+
+> Documentation and production workflow derived from Gygax Archive editorial standards (Troll Lord Games, 2025).
+
 ## Repo hygiene
 - Keep large PDFs and full books out of public repos; include samples/snippets only.
 - Use `reports/` for generated QC artifacts (gitignored if public).

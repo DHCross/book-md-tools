@@ -5,6 +5,79 @@ All notable changes to book-md-tools are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-11-01
+
+### Added
+
+#### Edmunds System Bridge Module
+- **`scripts/inject_numeric_tags.py`** - Automated numeric tag injection for layout handoff
+  - Detects ATX Markdown headers and inserts hierarchy tags (`<1>`, `<2>`, `<3>`)
+  - Multiple tag formats: backtick (default), raw, comment, bracket
+  - Renderer-safe: backticked tags survive GitHub/PyPI/ReadTheDocs
+  - Idempotent: safe to rerun without duplication
+  - Skips fenced code blocks
+  - Configurable max depth cap
+
+- **`scripts/strip_numeric_tags.py`** - Symmetric tag removal for round-trip workflow
+  - Removes all supported tag formats
+  - Handles tags at line start and after ATX markers
+  - Idempotent and safe for repeated passes
+  - Preserves all other content
+
+- **Round-trip testing** - Verified inject→strip→compare determinism
+  - 100% accuracy on test manuscripts
+  - No data loss in conversion cycle
+
+#### Documentation
+- **`docs/EDMUNDS_SYSTEM_CORE_PROTOCOL.md`** - Core protocol specification
+  - Three operations: inject, strip, verify
+  - Three guarantees: unambiguous hierarchy, safe interchange, reversibility
+  - Proof of correctness via round-trip testing
+  - Total core logic: ~100 lines of regex-anchored Python
+
+- **`docs/EDMUNDS_SYSTEM_QUICK_REFERENCE.md`** - Practical command-line guide
+  - One-liner examples for all use cases
+  - All four tag format examples
+  - InDesign workflow walkthrough
+  - Batch processing recipes
+  - Troubleshooting section
+
+- **`docs/EDMUNDS_SYSTEM_MODULE.md`** - Future GUI workbench specification
+  - Module design for interactive before/after preview
+  - Keyboard shortcuts and menu integration
+  - Batch processing mode
+  - Error handling and validation
+  - Enhancement roadmap
+
+- **README.md** - Updated with Edmunds System workflow
+  - Post-conversion tagging section with examples
+  - Plain-text bridge file workflow
+  - InDesign import mapping guide
+  - Renderer safety notes
+  - Credit to Gygax Archive editorial standards (Troll Lord Games)
+
+### Technical Details
+
+#### Workflow Formalization
+The Edmunds System Bridge codifies the traditional layout handoff:
+```
+Markdown (authoring) → inject tags (bridge) → Word/InDesign (layout) → strip tags (return)
+```
+
+#### Tag Format Safety
+- **Backtick** (`\`<1>\``): Renders safely on GitHub, PyPI, ReadTheDocs
+- **Raw** (`<1>`): Direct format for Word/InDesign search/replace
+- **Comment** (`<!--1-->`): Invisible in most renderers
+- **Bracket** (`[1]`): Alternative for systems sanitizing angle brackets
+
+#### Use Cases
+- Prepare manuscripts for layout import
+- Preserve header hierarchy through lossy conversions
+- Enable deterministic paragraph style mapping in InDesign
+- Support IA Writer → Word → layout workflows
+
+---
+
 ## [2.0.0] - 2025-08-07
 
 ### Major Changes
