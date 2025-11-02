@@ -95,6 +95,18 @@ These tags are a post-processing aid for layout (e.g., InDesign). They do not re
 
 When: after conversion to Word (`.docx`) or to plain `.txt` (bridge file).
 
+### Safe Interchange and Clean Files
+
+At its heart, the Edmunds System is a minimalist handshake between editorial precision and design automation:
+
+> **"Structure survives. Style can be rebuilt."**
+
+The system's philosophy rests on three principles:
+
+1. **Tags for Hierarchy** — Numeric markers preserve semantic meaning through lossy conversions
+2. **Safe Interchange** — Multiple tag formats survive any renderer or export stage
+3. **Clean Files** — Reversible operations ensure manuscripts remain canonical
+
 **📖 Documentation:**
 - Core protocol: [`docs/EDMUNDS_SYSTEM_CORE_PROTOCOL.md`](docs/EDMUNDS_SYSTEM_CORE_PROTOCOL.md) — The three operations and three guarantees
 - Quick reference: [`docs/EDMUNDS_SYSTEM_QUICK_REFERENCE.md`](docs/EDMUNDS_SYSTEM_QUICK_REFERENCE.md) — Command-line examples

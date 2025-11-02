@@ -4,6 +4,10 @@
 
 The Edmunds System is a **human-readable bridge protocol** between editorial text and professional layout. It consists of three operations and three guarantees—nothing more, nothing less.
 
+At its heart, this is a minimalist handshake between editorial precision and design automation:
+
+> **"Structure survives. Style can be rebuilt."**
+
 ## The Three Operations
 
 ### 1. Tag Injection
@@ -31,7 +35,9 @@ diff original.md restored.md  # no differences
 
 ## The Three Guarantees
 
-### 1. Unambiguous Hierarchy
+This philosophy manifests in three concrete guarantees:
+
+### 1. Tags for Hierarchy (Unambiguous Hierarchy)
 Numeric tags replace visual formatting as the single source of truth for heading levels. Layout tools can map `<1>` → `H1_Main`, `<2>` → `H2_Section` without ambiguity.
 
 ### 2. Safe Interchange
@@ -41,7 +47,7 @@ Tags survive any renderer or export stage:
 - `<!--1-->` for invisible HTML comments
 - `[1]` for angle-bracket sanitization
 
-### 3. Reversibility
+### 3. Clean Files (Reversibility)
 A clean restore path ensures manuscripts remain canonical. No matter what happens in layout, the source file can be recovered.
 
 ## That's It

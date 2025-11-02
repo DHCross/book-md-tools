@@ -64,15 +64,19 @@ def inject_stream(lines: list[str], form: str, max_level: int | None) -> list[st
             continue
 
         hashes = m.group("hashes")
-        rest = m.group("rest").lstrip()
+        rest = m.group("rest")
         level = len(hashes)
         if max_level is not None:
             level = min(level, max_level)
 
         # If a tag already exists at start of rest, strip it first (normalize), then re-add in desired form
-        rest_norm = TAG_PREFIX_RE.sub("", rest, count=1)
+        rest_stripped = rest.lstrip()
+        rest_norm = TAG_PREFIX_RE.sub("", rest_stripped, count=1).rstrip()  # Strip trailing before adding back
         tag = make_tag(level, form)
-        new_line = f"{hashes} {tag} {rest_norm}".rstrip()
+        # Preserve trailing whitespace from original rest
+        trailing = rest[len(rest.rstrip()):]
+        # Build new line: hashes, space, tag, space, content, original trailing
+        new_line = f"{hashes} {tag} {rest_norm}{trailing}"
         out.append(new_line + "\n")
     return out
 

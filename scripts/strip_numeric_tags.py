@@ -34,7 +34,9 @@ def strip_stream(lines: list[str]) -> list[str]:
         # Then, if it's an ATX heading with a tag right after hashes, remove that
         m = TAG_AFTER_ATX_RE.match(tmp)
         if m:
-            tmp = f"{m.group('Hashes')} {m.group('Rest').strip()}"
+            # Preserve trailing whitespace from Rest
+            rest = m.group('Rest')
+            tmp = f"{m.group('Hashes')} {rest}"
         out.append(tmp + "\n")
     return out
 
