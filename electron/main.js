@@ -130,6 +130,57 @@ ipcMain.handle('paragraph-breaks', async (event, inputPath) => {
   return { success: result.success, message: result.message };
 });
 
+// IPC: Quick Tools (unified handler with section support)
+ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, options = {}) => {
+  const toolMap = {
+    'header-depth': 'tools/markdown_header_depth_corrector.py',
+    'long-line': 'tools/long_line_detector.py',
+    'paragraph-break': 'tools/paragraph_break_detector.py',
+    'spell-check': 'tools/spell_check.py'
+  };
+  
+  const scriptPath = toolMap[tool];
+  if (!scriptPath) {
+    return { success: false, message: `Unknown tool: ${tool}` };
+  }
+  
+  let actualInputPath = inputPath;
+  
+  // If filtered content provided (selected sections), write to temp file
+  if (options.filteredContent) {
+    const tempPath = inputPath.replace(/\.(md|markdown)$/i, `_temp_sections${outputSuffix}.$1`);
+    try {
+      fs.writeFileSync(tempPath, options.filteredContent, 'utf-8');
+      actualInputPath = tempPath;
+    } catch (err) {
+      return { success: false, message: `Failed to create temp file: ${err.message}` };
+    }
+  }
+  
+  // Build arguments based on tool
+  const args = [actualInputPath];
+  
+  if (tool === 'header-depth') {
+    args.push('--max-depth', '4');
+  } else if (tool === 'long-line') {
+    args.push('--threshold', '150', '--ignore-headers', '--ignore-code');
+  }
+  
+  // Run the tool
+  const result = await runPythonScript(scriptPath, args);
+  
+  // Clean up temp file if created
+  if (options.filteredContent && actualInputPath !== inputPath) {
+    try {
+      fs.unlinkSync(actualInputPath);
+    } catch (err) {
+      // Ignore cleanup errors
+    }
+  }
+  
+  return { success: result.success, message: result.message, output: result.output };
+});
+
 // IPC: Document Comparator
 ipcMain.handle('compare-documents', async (event, doc1Path, doc2Path, options = {}) => {
   const args = [doc1Path, doc2Path];

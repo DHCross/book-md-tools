@@ -348,6 +348,168 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
 });
 
 // ============================================================================
+// SECTION PICKER
+// ============================================================================
+
+let selectedSections = []; // Array of {header, startLine, endLine}
+let allSections = [];
+
+function extractSections(content) {
+  const lines = content.split('\n');
+  const sections = [];
+  let currentSection = null;
+  
+  lines.forEach((line, index) => {
+    // Match headers (# , ## , ### , etc.)
+    const headerMatch = line.match(/^(#{1,6})\s+(.+)/);
+    
+    if (headerMatch) {
+      // Save previous section
+      if (currentSection) {
+        currentSection.endLine = index - 1;
+        sections.push(currentSection);
+      }
+      
+      // Start new section
+      const level = headerMatch[1].length;
+      const title = headerMatch[2].trim();
+      currentSection = {
+        header: title,
+        level: level,
+        startLine: index + 1, // 1-indexed
+        endLine: lines.length // Will be updated
+      };
+    }
+  });
+  
+  // Save last section
+  if (currentSection) {
+    currentSection.endLine = lines.length;
+    sections.push(currentSection);
+  }
+  
+  return sections;
+}
+
+function renderSectionList() {
+  const sectionList = document.getElementById('sectionList');
+  if (!sectionList) return;
+  
+  if (allSections.length === 0) {
+    sectionList.innerHTML = `
+      <p style="color: #6c757d; text-align: center; padding: 40px 20px;">
+        No headers found in document. Add # headers to see sections here.
+      </p>
+    `;
+    return;
+  }
+  
+  let html = '<div style="font-family: monospace; font-size: 13px;">';
+  allSections.forEach((section, index) => {
+    const indent = (section.level - 1) * 20;
+    const isSelected = selectedSections.includes(index);
+    const icon = '📄'.repeat(Math.min(section.level, 3));
+    
+    html += `
+      <div style="display: flex; align-items: center; padding: 6px 0; margin-left: ${indent}px;">
+        <input type="checkbox" id="section_${index}" data-index="${index}" 
+               ${isSelected ? 'checked' : ''} 
+               style="margin-right: 8px; cursor: pointer;" />
+        <label for="section_${index}" style="flex: 1; cursor: pointer; color: #212529;">
+          ${icon} ${section.header}
+          <span style="color: #6c757d; font-size: 11px; margin-left: 8px;">
+            (lines ${section.startLine}-${section.endLine})
+          </span>
+        </label>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  sectionList.innerHTML = html;
+  
+  // Bind checkbox events
+  sectionList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => {
+      const index = parseInt(e.target.dataset.index, 10);
+      if (e.target.checked) {
+        if (!selectedSections.includes(index)) {
+          selectedSections.push(index);
+        }
+      } else {
+        selectedSections = selectedSections.filter(i => i !== index);
+      }
+      updateSectionCount();
+    });
+  });
+  
+  updateSectionCount();
+}
+
+function updateSectionCount() {
+  const msg = document.getElementById('sectionCountMsg');
+  if (msg) {
+    msg.textContent = `${selectedSections.length} of ${allSections.length} sections selected`;
+  }
+}
+
+// Open section picker
+document.getElementById('openSectionPickerBtn')?.addEventListener('click', () => {
+  // Close quick tools modal
+  const quickToolsModal = document.getElementById('quickToolsModal');
+  if (quickToolsModal) quickToolsModal.style.display = 'none';
+  
+  // Extract sections from current document
+  if (currentContent) {
+    allSections = extractSections(currentContent);
+    selectedSections = allSections.map((_, i) => i); // Select all by default
+    renderSectionList();
+  }
+  
+  // Show section picker modal
+  const modal = document.getElementById('sectionPickerModal');
+  if (modal) modal.style.display = 'flex';
+});
+
+document.getElementById('closeSectionPickerBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('sectionPickerModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('cancelSectionsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('sectionPickerModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('selectAllSectionsBtn')?.addEventListener('click', () => {
+  selectedSections = allSections.map((_, i) => i);
+  renderSectionList();
+});
+
+document.getElementById('deselectAllSectionsBtn')?.addEventListener('click', () => {
+  selectedSections = [];
+  renderSectionList();
+});
+
+document.getElementById('applySectionsBtn')?.addEventListener('click', () => {
+  if (selectedSections.length === 0) {
+    alert('Please select at least one section to process.');
+    return;
+  }
+  
+  // Close modal
+  const modal = document.getElementById('sectionPickerModal');
+  if (modal) modal.style.display = 'none';
+  
+  // Show quick tools again with section selection applied
+  const quickToolsModal = document.getElementById('quickToolsModal');
+  if (quickToolsModal) quickToolsModal.style.display = 'flex';
+  
+  log(`Section selection applied: ${selectedSections.length} sections`, 'info');
+  updateStatus(`${selectedSections.length} sections selected for processing`, 'info');
+});
+
+// ============================================================================
 // QUICK TOOLS MODAL
 // ============================================================================
 
@@ -367,8 +529,31 @@ async function runQuickTool(toolName) {
     return;
   }
   
+  // Close modal immediately so user can see progress
+  const quickToolsModal = document.getElementById('quickToolsModal');
+  if (quickToolsModal) quickToolsModal.style.display = 'none';
+  
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   const options = {};
+  
+  // If sections are selected, prepare filtered content
+  if (selectedSections.length > 0 && selectedSections.length < allSections.length) {
+    // Extract only selected sections
+    const lines = currentContent.split('\n');
+    const selectedLines = [];
+    
+    selectedSections.forEach(index => {
+      const section = allSections[index];
+      // Extract lines for this section (0-indexed in array, but section uses 1-indexed)
+      const startIdx = section.startLine - 1;
+      const endIdx = section.endLine;
+      selectedLines.push(...lines.slice(startIdx, endIdx));
+    });
+    
+    options.filteredContent = selectedLines.join('\n');
+    options.sectionCount = selectedSections.length;
+    log(`Processing ${selectedSections.length} of ${allSections.length} sections`, 'info');
+  }
   
   log(`Running ${toolName}...`, 'info');
   updateStatus(`Running ${toolName}...`, 'processing');
@@ -381,15 +566,16 @@ async function runQuickTool(toolName) {
   if (result.success) {
     log(`${toolName} completed successfully`, 'success');
     updateStatus(`${toolName} complete`, 'success');
-    addChangeLogEntry('Quick Tool', `Ran ${toolName}`);
+    
+    if (options.sectionCount) {
+      addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${options.sectionCount} sections`);
+    } else {
+      addChangeLogEntry('Quick Tool', `Ran ${toolName}`);
+    }
   } else {
     log(`${toolName} failed: ${result.message}`, 'error');
     updateStatus(`${toolName} failed`, 'error');
   }
-  
-  // Close modal
-  const modal = document.getElementById('quickToolsModal');
-  if (modal) modal.style.display = 'none';
 }
 
 // Bind all quick tool buttons

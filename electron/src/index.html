@@ -289,6 +289,10 @@
         </div>
         <div class="modal-body">
           <p>Select a quick tool to run on the current file:</p>
+          <div style="margin-bottom: 16px; padding: 12px; background-color: #f0f7ff; border-left: 4px solid #0066cc; border-radius: 4px;">
+            <strong>💡 Tip:</strong> Want to process specific sections only? 
+            <button id="openSectionPickerBtn" class="btn-link" style="color: #0066cc; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: 600;">Select Sections...</button>
+          </div>
           <div class="quick-tools-grid">
             <button id="qtHeaderDepthBtn" class="tool-card">
               <div class="tool-icon">📐</div>
@@ -419,6 +423,35 @@
         <div class="modal-footer">
           <button id="runCompareBtn" class="btn primary">🔍 Run Comparison</button>
           <button id="cancelCompareBtn" class="btn secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Picker Modal -->
+    <div id="sectionPickerModal" class="modal" style="display: none;">
+      <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2>📑 Select Sections to Process</h2>
+          <button id="closeSectionPickerBtn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin-bottom: 16px; color: #6c757d;">Choose which sections of your document to process. Works like Microsoft Word's Outline view.</p>
+          
+          <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+            <button id="selectAllSectionsBtn" class="btn secondary" style="flex: 1;">✓ Select All</button>
+            <button id="deselectAllSectionsBtn" class="btn secondary" style="flex: 1;">✗ Deselect All</button>
+          </div>
+          
+          <div id="sectionList" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; background-color: #f8f9fa;">
+            <p style="color: #6c757d; text-align: center; padding: 40px 20px;">
+              No file loaded. Load a document to see its outline.
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <p id="sectionCountMsg" style="flex: 1; color: #6c757d; margin: 0; font-size: 14px;">0 sections selected</p>
+          <button id="applySectionsBtn" class="btn primary">Apply Selection</button>
+          <button id="cancelSectionsBtn" class="btn secondary">Cancel</button>
         </div>
       </div>
     </div>
