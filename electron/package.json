@@ -1,0 +1,26 @@
+{
+  "name": "book-md-workbench",
+  "version": "1.0.0",
+  "description": "Markdown book formatting and Edmunds tagging workbench",
+  "main": "main.js",
+  "homepage": "./",
+  "author": "TLG",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --debug",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "publish": "electron-forge publish"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-dmg": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "electron": "^31.0.0"
+  },
+  "dependencies": {}
+}

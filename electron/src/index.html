@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book MD Workbench</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>📚 Book MD Workbench</h1>
+        <p>Markdown formatting, tagging, and layout prep</p>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Sidebar: Tools & Actions -->
+      <aside class="sidebar">
+        <!-- Input Section -->
+        <div class="sidebar-section">
+          <h3>Input File</h3>
+          <input type="text" id="inputPath" placeholder="No file selected" readonly class="sidebar-input" />
+          <button id="browseInputBtn" class="tool-btn secondary full-width">Browse…</button>
+        </div>
+
+        <!-- Output Section -->
+        <div class="sidebar-section">
+          <h3>Output Suffix</h3>
+          <input type="text" id="outputSuffix" placeholder="_output" class="sidebar-input" />
+        </div>
+
+        <!-- Main Actions -->
+        <div class="sidebar-section">
+          <h3>Actions</h3>
+          <button id="runPipelineBtn" class="tool-btn primary full-width">🔄 Full Pipeline</button>
+          <button id="formatTextBtn" class="tool-btn secondary full-width">✏️ Format Text</button>
+          <button id="fixTocBtn" class="tool-btn secondary full-width">📑 Fix TOC</button>
+        </div>
+
+        <!-- Edmunds Tagging -->
+        <div class="sidebar-section">
+          <h3>Edmunds Tagging</h3>
+          <button id="injectTagsBtn" class="tool-btn secondary full-width">🏷 Inject Tags</button>
+          <button id="stripTagsBtn" class="tool-btn secondary full-width">✂️ Strip Tags</button>
+        </div>
+
+        <!-- QC Tools -->
+        <div class="sidebar-section">
+          <h3>QC Tools</h3>
+          <button id="spellCheckBtn" class="tool-btn secondary full-width">📖 Spell Check</button>
+          <button id="longLinesBtn" class="tool-btn secondary full-width">📏 Long Lines</button>
+          <button id="pbreaksBtn" class="tool-btn secondary full-width">¶ Paragraph Breaks</button>
+        </div>
+
+        <!-- Layout -->
+        <div class="sidebar-section">
+          <h3>Layout</h3>
+          <button id="openOutputBtn" class="tool-btn secondary full-width">📂 Open Output</button>
+          <button id="settingsBtn" class="tool-btn secondary full-width">⚙️ Settings</button>
+        </div>
+      </aside>
+
+      <!-- Main Panel: Logs, Preview, Tabs -->
+      <section class="content">
+        <!-- Action Buttons Bar -->
+        <div class="action-bar">
+          <button id="clearLogBtn" class="btn secondary">Clear Log</button>
+          <button id="exportMarkdownBtn" class="btn secondary">Export</button>
+          <span id="statusText" class="status-text">Ready</span>
+        </div>
+
+        <!-- Tabbed Interface -->
+        <div class="tab-container">
+          <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="log-tab">Log</button>
+            <button class="tab-btn" data-tab="preview-tab">Preview</button>
+            <button class="tab-btn" data-tab="rendered-tab">Rendered</button>
+            <button class="tab-btn" data-tab="summary-tab">Summary</button>
+          </div>
+
+          <!-- Log Tab -->
+          <div id="log-tab" class="tab-content active">
+            <div id="logContainer" class="log-container">
+              <p class="log-entry info">Ready. Select a file and an action.</p>
+            </div>
+          </div>
+
+          <!-- Preview Tab (Raw Markdown) -->
+          <div id="preview-tab" class="tab-content">
+            <div id="previewContainer" class="preview-container">
+              <p class="log-entry info">Select a file to preview raw markdown.</p>
+            </div>
+          </div>
+
+          <!-- Rendered Tab (HTML) -->
+          <div id="rendered-tab" class="tab-content">
+            <div id="renderedContainer" class="rendered-container"></div>
+          </div>
+
+          <!-- Summary Tab -->
+          <div id="summary-tab" class="tab-content">
+            <div id="summaryContainer" class="summary-container">
+              <p class="log-entry info">No summary available yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progress" class="progress-bar hidden"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

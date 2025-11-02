@@ -480,6 +480,45 @@ class DocWorkbenchApp(tk.Tk):
         
         ttk.Button(left_actions, text="📑 Fix TOC", 
                  command=self.quick_fix_toc, style='Secondary.TButton').pack(side='left', padx=8)
+
+    # Edmunds Tagging Button
+    ttk.Button(left_actions, text="🏷 Inject Edmunds Tags", 
+         command=self.inject_edmunds_tags, style='Secondary.TButton').pack(side='left', padx=8)
+    def inject_edmunds_tags(self):
+        from tkinter import filedialog, messagebox
+        import subprocess
+        # Prompt for input file
+        input_path = filedialog.askopenfilename(
+            title="Select Markdown file to tag",
+            filetypes=[("Markdown files", "*.md"), ("All files", "*.*")]
+        )
+        if not input_path:
+            return
+        # Prompt for output file
+        output_path = filedialog.asksaveasfilename(
+            title="Save tagged output as",
+            defaultextension=".md",
+            filetypes=[("Markdown files", "*.md"), ("All files", "*.*")]
+        )
+        if not output_path:
+            return
+        self.log.insert('end', f"[Edmunds] Tagging: {input_path} → {output_path}\n")
+        self.log.see('end')
+        try:
+            result = subprocess.run([
+                sys.executable, "scripts/inject_numeric_tags.py",
+                input_path, "-o", output_path
+            ], capture_output=True, text=True)
+            if result.returncode == 0:
+                self.log.insert('end', f"[Edmunds] Success! Output: {output_path}\n")
+                messagebox.showinfo("Edmunds Tagging", f"Tagging complete!\nOutput: {output_path}")
+            else:
+                self.log.insert('end', f"[Edmunds] Error: {result.stderr}\n")
+                messagebox.showerror("Edmunds Tagging Failed", result.stderr)
+        except Exception as e:
+            self.log.insert('end', f"[Edmunds] Exception: {e}\n")
+            messagebox.showerror("Edmunds Tagging Exception", str(e))
+        self.log.see('end')
         
         # Right action buttons
         right_actions = ttk.Frame(actions_frame)
