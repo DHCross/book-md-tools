@@ -23,6 +23,9 @@ function createWindow() {
   });
 
   mainWindow.loadFile('src/index.html');
+  
+  // Disable cache for development
+  mainWindow.webContents.session.clearCache();
   // mainWindow.webContents.openDevTools(); // Remove this in production
 }
 
