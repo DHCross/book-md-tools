@@ -20,6 +20,7 @@ import threading
 from pathlib import Path
 from datetime import datetime
 import re
+from itertools import zip_longest
 from typing import Any, Dict, List, Tuple
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
@@ -43,6 +44,7 @@ from scripts.book_pipeline import REPORTS_DIR as PIPE_REPORTS_DIR
 
 # Import the enhanced formatter
 from scripts.fix_formatting import MarkdownFormattingFixer
+from scripts.convert_to_markdown_hierarchy import convert_stream as convert_markdown_hierarchy
 
 # Optional: direct tool imports for partial runs
 from tools import fix_toc_plain
@@ -474,6 +476,9 @@ class DocWorkbenchApp(tk.Tk):
         
         ttk.Button(left_actions, text="✏️  Format Text", 
                  command=self.quick_format, style='Secondary.TButton').pack(side='left', padx=8)
+        
+        ttk.Button(left_actions, text="🏗 Build Headers", 
+                 command=self.build_header_structure, style='Secondary.TButton').pack(side='left', padx=8)
         
         ttk.Button(left_actions, text="🛠 Quick Tools…", 
                  command=self.open_quick_tools, style='Secondary.TButton').pack(side='left', padx=8)
@@ -1035,6 +1040,48 @@ class DocWorkbenchApp(tk.Tk):
             new_text += '\n'
 
         return new_text, changed, total_breaks
+
+    def build_header_structure(self):
+        input_md = self._validate_input()
+        if not input_md:
+            return
+
+        def worker():
+            try:
+                self._log(f"Building header hierarchy for: {input_md.name}")
+                source_text = input_md.read_text(encoding="utf-8")
+                original_lines = source_text.splitlines(True)
+                converted_lines = convert_markdown_hierarchy(original_lines)
+                converted_text = "".join(converted_lines)
+                changed_lines = sum(
+                    1 for before, after in zip_longest(original_lines, converted_lines) if before != after
+                )
+                out_path = input_md.with_name(f"{input_md.stem}_headers.md")
+                out_path.write_text(converted_text, encoding="utf-8")
+                summary_payload = {
+                    "quick": "header_builder",
+                    "output": str(out_path),
+                    "changed_lines": int(changed_lines),
+                }
+                self.last_summary = summary_payload
+                self._set_summary(summary_payload)
+                self._set_preview(converted_text)
+                if changed_lines:
+                    change_note = f"Header builder wrote {out_path.name} ({changed_lines} lines updated)"
+                    status_msg = "Header structure ready"
+                else:
+                    change_note = f"Header builder wrote {out_path.name} (no changes detected)"
+                    status_msg = "Headers already normalized"
+                self._append_change_log(change_note)
+                self._log(f"{change_note}")
+                self._stop_busy(status_msg)
+            except Exception as exc:
+                self._stop_busy("Error")
+                messagebox.showerror("Header builder error", str(exc))
+                self._log(f"ERROR: {exc}")
+
+        self._start_busy("Building header structure…")
+        threading.Thread(target=worker, daemon=True).start()
 
     def quick_fix_toc(self):
         input_md = self._validate_input()

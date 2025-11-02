@@ -11,6 +11,75 @@ let config = {
 };
 
 // ============================================================================
+// DRAG & DROP HANDLING
+// ============================================================================
+
+function initializeDragAndDrop() {
+  const dropOverlay = document.getElementById('dropOverlay');
+  let dragCounter = 0;
+
+  // Prevent default drag behaviors on the entire document
+  document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  // Show overlay when dragging over window
+  document.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragCounter++;
+    if (dragCounter === 1) {
+      dropOverlay.classList.add('active');
+    }
+  });
+
+  // Hide overlay when dragging out of window
+  document.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dragCounter--;
+    if (dragCounter === 0) {
+      dropOverlay.classList.remove('active');
+    }
+  });
+
+  // Handle file drop
+  document.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter = 0;
+    dropOverlay.classList.remove('active');
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
+
+    // Take the first file
+    const file = files[0];
+    const filePath = file.path;
+
+    // Check if it's a valid markdown/text file
+    const validExtensions = ['.md', '.markdown', '.txt'];
+    const hasValidExtension = validExtensions.some(ext => 
+      filePath.toLowerCase().endsWith(ext)
+    );
+
+    if (!hasValidExtension) {
+      log(`Unsupported file type: ${file.name}. Please drop a .md, .markdown, or .txt file.`, 'error');
+      updateStatus('❌ Unsupported file type', 'error');
+      return;
+    }
+
+    // Load the dropped file
+    log(`File dropped: ${file.name}`, 'info');
+    await loadFile(filePath);
+  });
+}
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
