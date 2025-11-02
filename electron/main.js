@@ -1,13 +1,14 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 let mainWindow;
 
 // Get repo root (parent of electron folder)
 const REPO_ROOT = path.join(__dirname, '..');
 const PYTHON_SCRIPTS = path.join(REPO_ROOT, 'scripts');
+const TOOLS_DIR = path.join(REPO_ROOT, 'tools');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -22,7 +23,7 @@ function createWindow() {
   });
 
   mainWindow.loadFile('src/index.html');
-  mainWindow.webContents.openDevTools(); // Remove this in production
+  // mainWindow.webContents.openDevTools(); // Remove this in production
 }
 
 app.on('ready', createWindow);
@@ -40,32 +41,32 @@ app.on('activate', () => {
 });
 
 // Helper: Run Python script
-function runPythonScript(script, args = []) {
+function runPythonScript(scriptPath, args = []) {
   return new Promise((resolve) => {
-    const pythonScript = path.join(PYTHON_SCRIPTS, script);
-    const process = spawn('python3', [pythonScript, ...args]);
+    const fullPath = path.isAbsolute(scriptPath) ? scriptPath : path.join(REPO_ROOT, scriptPath);
+    const pythonProcess = spawn('python3', [fullPath, ...args]);
 
     let stdout = '';
     let stderr = '';
 
-    process.stdout.on('data', (data) => {
+    pythonProcess.stdout.on('data', (data) => {
       stdout += data.toString();
     });
 
-    process.stderr.on('data', (data) => {
+    pythonProcess.stderr.on('data', (data) => {
       stderr += data.toString();
     });
 
-    process.on('close', (code) => {
+    pythonProcess.on('close', (code) => {
       if (code === 0) {
-        resolve({ success: true, message: 'Success', stdout, stderr });
+        resolve({ success: true, message: 'Success', output: stdout, stderr });
       } else {
-        resolve({ success: false, message: stderr || stdout || 'Unknown error', stdout, stderr });
+        resolve({ success: false, message: stderr || stdout || 'Unknown error', output: stdout, stderr });
       }
     });
 
-    process.on('error', (err) => {
-      resolve({ success: false, message: err.message, stdout: '', stderr: err.message });
+    pythonProcess.on('error', (err) => {
+      resolve({ success: false, message: err.message, output: '', stderr: err.message });
     });
   });
 }
