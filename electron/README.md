@@ -1,4 +1,26 @@
-# Electron app for Book MD Workbench
+# Book MD Workbench - Electron App
+
+A professional desktop application for markdown document processing and layout preparation.
+
+## Features
+
+- **Full Pipeline Processing** - Run complete document processing pipeline
+- **Document Comparator** - Compare document versions with four diagnostic checks:
+  - Symmetry & Sequence Check
+  - Structural Parity Check
+  - Content Volume Comparison
+  - Cross-Reference Check
+- **Edmunds Tagging System** - Inject/strip numeric hierarchy tags
+- **Text Formatting** - Advanced markdown formatting and normalization
+- **Quality Control Tools**:
+  - Header Depth Corrector
+  - Long Line Detector
+  - Paragraph Break Detector
+  - Spell Checker
+- **TOC Management** - Table of contents correction
+- **Visual Preview** - Preview raw markdown and rendered HTML
+- **Document Statistics** - Comprehensive document analysis
+- **Change Logging** - Track all operations and modifications
 
 ## Setup
 

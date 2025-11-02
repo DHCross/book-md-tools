@@ -1,217 +1,927 @@
-// Log helper
+// ============================================================================
+// STATE & CONFIGURATION
+// ============================================================================
+
+let currentFilePath = null;
+let currentContent = '';
+let changeLog = [];
+let config = {
+  defaultOutputSuffix: '_cleaned',
+  tablesInline: true,
+};
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
 function log(message, type = 'info') {
-  const logContainer = document.getElementById('logContainer');
-  const entry = document.createElement('p');
-  entry.className = `log-entry ${type}`;
+  const logContainer = document.getElementById('logContent');
+  if (!logContainer) return;
+  
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${type}`;
   const timestamp = new Date().toLocaleTimeString();
   entry.textContent = `[${timestamp}] ${message}`;
   logContainer.appendChild(entry);
   logContainer.scrollTop = logContainer.scrollHeight;
 }
 
-// State
-let inputPath = null;
-let outputSuffix = '_output';
+function updateStatus(message, type = 'info') {
+  const statusBar = document.getElementById('statusBar');
+  if (!statusBar) return;
+  
+  statusBar.textContent = message;
+  statusBar.className = `status-bar status-${type}`;
+}
 
-// Tab switching
+function showProgress(visible = true) {
+  const progress = document.getElementById('progressIndicator');
+  if (progress) {
+    progress.style.display = visible ? 'block' : 'none';
+  }
+}
+
+function addChangeLogEntry(action, details) {
+  const timestamp = new Date().toLocaleString();
+  changeLog.push({ timestamp, action, details });
+  updateChangeLogTab();
+}
+
+function updateChangeLogTab() {
+  const changeLogContent = document.getElementById('changeLogContent');
+  if (!changeLogContent) return;
+  
+  changeLogContent.innerHTML = changeLog.map(entry => `
+    <div class="change-entry">
+      <strong>${entry.timestamp}</strong> - ${entry.action}<br>
+      <span class="change-details">${entry.details}</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================================
+// TAB MANAGEMENT
+// ============================================================================
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
     const tabId = btn.dataset.tab;
-    document.getElementById(tabId).classList.add('active');
+    
+    // Update button states
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) targetTab.classList.add('active');
+    
+    // Refresh rendered tab if switching to it
+    if (tabId === 'renderedTab' && currentContent) {
+      updateRenderedTab(currentContent);
+    }
   });
 });
 
-// Browse input file
-document.getElementById('browseInputBtn').addEventListener('click', async () => {
-  const path = await window.electronAPI.openFileDialog('Select Markdown file', [
-    { name: 'Markdown', extensions: ['md'] },
-    { name: 'All Files', extensions: ['*'] },
-  ]);
-  if (path) {
-    inputPath = path;
-    document.getElementById('inputPath').value = path.split('/').pop();
-    log(`Input: ${path}`, 'info');
-    // Load file content for preview
-    await loadFilePreview(path);
+// ============================================================================
+// FILE OPERATIONS
+// ============================================================================
+
+document.getElementById('browseBtn')?.addEventListener('click', async () => {
+  const filePath = await window.electronAPI.selectFile();
+  if (filePath) {
+    currentFilePath = filePath;
+    document.getElementById('inputPath').value = filePath;
+    await loadFile(filePath);
+    updateStatus(`Loaded: ${filePath.split('/').pop()}`, 'success');
+    log(`Loaded file: ${filePath}`, 'info');
+    
+    // Switch to Preview tab to show the loaded content
+    const previewTab = document.querySelector('[data-tab="previewTab"]');
+    if (previewTab) previewTab.click();
   }
 });
 
-// Load file preview
-async function loadFilePreview(filePath) {
+async function loadFile(filePath) {
+  showProgress(true);
   const content = await window.electronAPI.readFile(filePath);
+  showProgress(false);
+  
   if (content) {
-    // Raw markdown preview
-    document.getElementById('previewContainer').textContent = content;
-    // Rendered HTML preview
-    renderMarkdown(content);
+    currentContent = content;
+    updatePreviewTab(content);
+    updateRenderedTab(content);
+    updateSummaryTab(content);
+    addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
+  } else {
+    log('Failed to read file', 'error');
   }
 }
 
-// Render markdown to HTML
-function renderMarkdown(markdown) {
-  const renderedContainer = document.getElementById('renderedContainer');
-  
-  // Simple markdown to HTML conversion (basic support)
-  let html = markdown
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    // Headers
-    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    // Bold
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/__(.+?)__/g, '<strong>$1</strong>')
-    // Italic
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/_(.+?)_/g, '<em>$1</em>')
-    // Code
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // Line breaks
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>');
-  
-  html = '<p>' + html + '</p>';
-  renderedContainer.innerHTML = html;
+function updatePreviewTab(content) {
+  const preview = document.getElementById('previewContent');
+  if (preview) preview.textContent = content;
 }
 
-// Output suffix
-document.getElementById('outputSuffix').addEventListener('change', (e) => {
-  outputSuffix = e.target.value || '_output';
-});
+function updateRenderedTab(content) {
+  const rendered = document.getElementById('renderedContent');
+  if (!rendered) return;
+  
+  // Use marked library for proper Markdown rendering
+  if (typeof marked !== 'undefined') {
+    rendered.innerHTML = marked.parse(content);
+  } else {
+    // Fallback basic rendering
+    rendered.innerHTML = content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>');
+  }
+}
 
-// Run Full Pipeline
-document.getElementById('runPipelineBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
+function updateSummaryTab(content) {
+  const summary = document.getElementById('summaryContent');
+  if (!summary) return;
+  
+  const lines = content.split('\n');
+  const headers = lines.filter(line => line.startsWith('#'));
+  const words = content.split(/\s+/).length;
+  const chars = content.length;
+  
+  summary.innerHTML = `
+    <h3>Document Statistics</h3>
+    <p><strong>Lines:</strong> ${lines.length}</p>
+    <p><strong>Words:</strong> ${words}</p>
+    <p><strong>Characters:</strong> ${chars}</p>
+    <p><strong>Headers:</strong> ${headers.length}</p>
+    <h3>Document Structure</h3>
+    <pre>${headers.slice(0, 20).join('\n')}${headers.length > 20 ? '\n... (more)' : ''}</pre>
+  `;
+}
+
+document.getElementById('exportMarkdownBtn')?.addEventListener('click', async () => {
+  if (!currentContent) {
+    log('No content to export', 'error');
     return;
   }
-  log('Starting full pipeline...', 'info');
-  document.getElementById('progress').classList.remove('hidden');
-  const result = await window.electronAPI.runPipeline(inputPath, outputSuffix);
-  log(`Pipeline: ${result.message}`, result.success ? 'success' : 'error');
-  document.getElementById('progress').classList.add('hidden');
+  
+  const defaultName = currentFilePath ? 
+    currentFilePath.split('/').pop().replace('.md', '_export.md') : 
+    'export.md';
+  
+  const savePath = await window.electronAPI.selectSaveLocation(defaultName);
+  if (savePath) {
+    showProgress(true);
+    const result = await window.electronAPI.saveFile(savePath, currentContent);
+    showProgress(false);
+    
+    if (result.success) {
+      updateStatus('Exported successfully', 'success');
+      log(`Exported to: ${savePath}`, 'success');
+      addChangeLogEntry('Export', `Saved to: ${savePath}`);
+    } else {
+      log(`Export failed: ${result.message}`, 'error');
+    }
+  }
 });
 
-// Format Text
-document.getElementById('formatTextBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
+document.getElementById('openOutputBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('No file selected', 'warning');
     return;
   }
-  log('Formatting text...', 'info');
-  document.getElementById('progress').classList.remove('hidden');
-  const result = await window.electronAPI.formatText(inputPath, outputSuffix);
-  log(`Format: ${result.message}`, result.success ? 'success' : 'error');
-  document.getElementById('progress').classList.add('hidden');
-});
-
-// Fix TOC
-document.getElementById('fixTocBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  log('Fixing table of contents...', 'info');
-  document.getElementById('progress').classList.remove('hidden');
-  const result = await window.electronAPI.fixToc(inputPath, outputSuffix);
-  log(`TOC: ${result.message}`, result.success ? 'success' : 'error');
-  document.getElementById('progress').classList.add('hidden');
-});
-
-// Inject Tags
-document.getElementById('injectTagsBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  const outputPath = await window.electronAPI.saveFileDialog('Save tagged output as', [
-    { name: 'Markdown', extensions: ['md'] },
-  ]);
-  if (!outputPath) return;
-  log('Injecting Edmunds tags...', 'info');
-  const result = await window.electronAPI.injectEdmundsTags(inputPath, outputPath);
-  log(`Tags: ${result.message}`, result.success ? 'success' : 'error');
-});
-
-// Strip Tags
-document.getElementById('stripTagsBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  const outputPath = await window.electronAPI.saveFileDialog('Save cleaned output as', [
-    { name: 'Markdown', extensions: ['md'] },
-  ]);
-  if (!outputPath) return;
-  log('Stripping Edmunds tags...', 'info');
-  const result = await window.electronAPI.stripEdmundsTags(inputPath, outputPath);
-  log(`Strip: ${result.message}`, result.success ? 'success' : 'error');
-});
-
-// Spell Check
-document.getElementById('spellCheckBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  log('Running spell check...', 'info');
-  const result = await window.electronAPI.spellCheck(inputPath);
-  log(`Spell Check: ${result.message}`, result.success ? 'success' : 'error');
-});
-
-// Long Lines
-document.getElementById('longLinesBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  log('Detecting long lines...', 'info');
-  const result = await window.electronAPI.longLines(inputPath);
-  log(`Long Lines: ${result.message}`, result.success ? 'success' : 'error');
-});
-
-// Paragraph Breaks
-document.getElementById('pbreaksBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('Please select an input file', 'error');
-    return;
-  }
-  log('Analyzing paragraph breaks...', 'info');
-  const result = await window.electronAPI.paragraphBreaks(inputPath);
-  log(`Paragraph Breaks: ${result.message}`, result.success ? 'success' : 'error');
-});
-
-// Open Output
-document.getElementById('openOutputBtn').addEventListener('click', async () => {
-  if (!inputPath) {
-    log('No file selected yet', 'warning');
-    return;
-  }
-  const folderPath = inputPath.substring(0, inputPath.lastIndexOf('/'));
+  
+  const folderPath = currentFilePath.substring(0, currentFilePath.lastIndexOf('/'));
   await window.electronAPI.openFolder(folderPath);
+  log(`Opened folder: ${folderPath}`, 'info');
 });
 
-// Clear Log
-document.getElementById('clearLogBtn').addEventListener('click', () => {
-  const logContainer = document.getElementById('logContainer');
-  logContainer.innerHTML = '';
-  log('Log cleared.', 'info');
+// ============================================================================
+// PIPELINE OPERATIONS
+// ============================================================================
+
+document.getElementById('runPipelineBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
+  const tablesInline = document.getElementById('tablesInlineCheck')?.checked ?? config.tablesInline;
+  
+  log('Starting full pipeline...', 'info');
+  updateStatus('Running pipeline...', 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.runPipeline(currentFilePath, outputSuffix, tablesInline);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log('Pipeline completed successfully', 'success');
+    updateStatus('Pipeline complete', 'success');
+    addChangeLogEntry('Pipeline', `Completed with suffix: ${outputSuffix}`);
+    
+    // Reload the output file
+    const outputPath = currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
+    await loadFile(outputPath);
+  } else {
+    log(`Pipeline failed: ${result.message}`, 'error');
+    updateStatus('Pipeline failed', 'error');
+  }
 });
 
-// Settings
-document.getElementById('settingsBtn').addEventListener('click', async () => {
-  log('Settings not yet implemented', 'warning');
+document.getElementById('formatTextBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
+  
+  log('Formatting text...', 'info');
+  updateStatus('Formatting...', 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.formatText(currentFilePath, outputSuffix);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log('Text formatted successfully', 'success');
+    updateStatus('Format complete', 'success');
+    addChangeLogEntry('Format Text', `Applied formatting with suffix: ${outputSuffix}`);
+  } else {
+    log(`Format failed: ${result.message}`, 'error');
+    updateStatus('Format failed', 'error');
+  }
 });
 
-// Export
-document.getElementById('exportMarkdownBtn').addEventListener('click', async () => {
-  log('Export not yet implemented', 'warning');
+document.getElementById('fixTOCBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
+  
+  log('Fixing table of contents...', 'info');
+  updateStatus('Fixing TOC...', 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.fixTOC(currentFilePath, outputSuffix);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log('TOC fixed successfully', 'success');
+    updateStatus('TOC fix complete', 'success');
+    addChangeLogEntry('Fix TOC', `Fixed TOC with suffix: ${outputSuffix}`);
+  } else {
+    log(`TOC fix failed: ${result.message}`, 'error');
+    updateStatus('TOC fix failed', 'error');
+  }
 });
 
-log('Welcome to Book MD Workbench!', 'info');
+// ============================================================================
+// EDMUNDS TAGGING
+// ============================================================================
+
+document.getElementById('injectTagsBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || '_tagged';
+  
+  log('Injecting Edmunds tags...', 'info');
+  updateStatus('Injecting tags...', 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.injectTags(currentFilePath, outputSuffix);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log('Tags injected successfully', 'success');
+    updateStatus('Tag injection complete', 'success');
+    addChangeLogEntry('Inject Tags', `Added Edmunds tags with suffix: ${outputSuffix}`);
+  } else {
+    log(`Tag injection failed: ${result.message}`, 'error');
+    updateStatus('Tag injection failed', 'error');
+  }
+});
+
+document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || '_stripped';
+  
+  log('Stripping Edmunds tags...', 'info');
+  updateStatus('Stripping tags...', 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.stripTags(currentFilePath, outputSuffix);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log('Tags stripped successfully', 'success');
+    updateStatus('Tag stripping complete', 'success');
+    addChangeLogEntry('Strip Tags', `Removed Edmunds tags with suffix: ${outputSuffix}`);
+  } else {
+    log(`Tag stripping failed: ${result.message}`, 'error');
+    updateStatus('Tag stripping failed', 'error');
+  }
+});
+
+// ============================================================================
+// QUICK TOOLS MODAL
+// ============================================================================
+
+document.getElementById('quickToolsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('quickToolsModal');
+  if (modal) modal.style.display = 'flex';
+});
+
+document.getElementById('closeQuickToolsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('quickToolsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+async function runQuickTool(toolName) {
+  if (!currentFilePath) {
+    log('Please select an input file first', 'error');
+    return;
+  }
+  
+  const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
+  const options = {};
+  
+  log(`Running ${toolName}...`, 'info');
+  updateStatus(`Running ${toolName}...`, 'processing');
+  showProgress(true);
+  
+  const result = await window.electronAPI.runQuickTool(toolName, currentFilePath, outputSuffix, options);
+  
+  showProgress(false);
+  
+  if (result.success) {
+    log(`${toolName} completed successfully`, 'success');
+    updateStatus(`${toolName} complete`, 'success');
+    addChangeLogEntry('Quick Tool', `Ran ${toolName}`);
+  } else {
+    log(`${toolName} failed: ${result.message}`, 'error');
+    updateStatus(`${toolName} failed`, 'error');
+  }
+  
+  // Close modal
+  const modal = document.getElementById('quickToolsModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Bind all quick tool buttons
+const quickToolButtons = [
+  { id: 'qtHeaderDepthBtn', tool: 'header-depth' },
+  { id: 'qtLongLineBtn', tool: 'long-line' },
+  { id: 'qtParagraphBreakBtn', tool: 'paragraph-break' },
+  { id: 'qtSpellCheckBtn', tool: 'spell-check' },
+];
+
+quickToolButtons.forEach(({ id, tool }) => {
+  document.getElementById(id)?.addEventListener('click', () => runQuickTool(tool));
+});
+
+// Quick tool for Document Comparator (special case - opens modal instead)
+document.getElementById('qtCompareDocsBtn')?.addEventListener('click', () => {
+  // Close quick tools modal
+  const quickToolsModal = document.getElementById('quickToolsModal');
+  if (quickToolsModal) quickToolsModal.style.display = 'none';
+  
+  // Open comparator modal
+  document.getElementById('compareDocsBtn')?.click();
+});
+
+// ============================================================================
+// DOCUMENT COMPARATOR
+// ============================================================================
+
+let compareDoc1Path = null;
+let compareDoc2Path = null;
+
+document.getElementById('compareDocsBtn')?.addEventListener('click', () => {
+  // Pre-fill with current file if available
+  if (currentFilePath) {
+    compareDoc1Path = currentFilePath;
+    document.getElementById('compareDoc1Path').value = currentFilePath;
+  }
+  
+  // Show modal
+  const modal = document.getElementById('compareDocsModal');
+  if (modal) modal.style.display = 'flex';
+});
+
+document.getElementById('closeCompareDocsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('compareDocsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('cancelCompareBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('compareDocsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('browseDoc1Btn')?.addEventListener('click', async () => {
+  const filePath = await window.electronAPI.selectFile();
+  if (filePath) {
+    compareDoc1Path = filePath;
+    document.getElementById('compareDoc1Path').value = filePath;
+  }
+});
+
+document.getElementById('browseDoc2Btn')?.addEventListener('click', async () => {
+  const filePath = await window.electronAPI.selectFile();
+  if (filePath) {
+    compareDoc2Path = filePath;
+    document.getElementById('compareDoc2Path').value = filePath;
+  }
+});
+
+document.getElementById('runCompareBtn')?.addEventListener('click', async () => {
+  const doc1 = document.getElementById('compareDoc1Path').value;
+  const doc2 = document.getElementById('compareDoc2Path').value;
+  const threshold = parseFloat(document.getElementById('compareThreshold').value) / 100;
+  const format = document.getElementById('compareFormat').value;
+  const autoSave = document.getElementById('compareAutoSave').checked;
+  
+  // Validation
+  if (!doc1 || !doc2) {
+    alert('Please select both documents to compare.');
+    return;
+  }
+  
+  if (doc1 === doc2) {
+    alert('Cannot compare a document with itself. Please select different documents.');
+    return;
+  }
+  
+  // Close modal
+  const modal = document.getElementById('compareDocsModal');
+  if (modal) modal.style.display = 'none';
+  
+  // Show progress
+  showProgress(true);
+  updateStatus('Running document comparison...', 'info');
+  log(`Comparing documents: ${doc1.split('/').pop()} vs ${doc2.split('/').pop()}`, 'info');
+  
+  try {
+    // Prepare options
+    const options = {
+      threshold: threshold,
+      format: format
+    };
+    
+    // Add output path if auto-save is enabled
+    if (autoSave) {
+      const doc1Name = doc1.split('/').pop().replace(/\.[^/.]+$/, '');
+      const doc2Name = doc2.split('/').pop().replace(/\.[^/.]+$/, '');
+      const ext = format === 'markdown' ? '.md' : '.txt';
+      const outputDir = doc1.substring(0, doc1.lastIndexOf('/'));
+      options.outputPath = `${outputDir}/comparison_${doc1Name}_vs_${doc2Name}${ext}`;
+    }
+    
+    // Run comparison
+    const result = await window.electronAPI.compareDocuments(doc1, doc2, options);
+    
+    showProgress(false);
+    
+    if (result.success) {
+      updateStatus('Comparison complete', 'success');
+      log('Document comparison completed successfully', 'success');
+      
+      // Parse the output to extract issue count
+      const output = result.output || '';
+      const issueMatch = output.match(/Found (\d+) issues/);
+      const issueCount = issueMatch ? issueMatch[1] : 'unknown';
+      
+      // Display results in comparison tab
+      const comparisonContent = document.getElementById('comparisonContent');
+      if (comparisonContent) {
+        let html = '<div class="comparison-results">';
+        html += `<h3>Comparison Results</h3>`;
+        html += `<div class="comparison-summary">`;
+        html += `<p><strong>Baseline:</strong> ${doc1.split('/').pop()}</p>`;
+        html += `<p><strong>Comparison:</strong> ${doc2.split('/').pop()}</p>`;
+        html += `<p><strong>Issues Found:</strong> ${issueCount}</p>`;
+        html += `<p><strong>Threshold:</strong> ${(threshold * 100).toFixed(0)}%</p>`;
+        html += `</div>`;
+        
+        if (result.reportContent) {
+          html += '<div class="comparison-report">';
+          if (format === 'markdown') {
+            // Use marked.js to render markdown
+            html += marked.parse(result.reportContent);
+          } else {
+            html += `<pre>${result.reportContent}</pre>`;
+          }
+          html += '</div>';
+          
+          if (result.reportPath) {
+            html += `<div class="comparison-footer">`;
+            html += `<p>Report saved to: <code>${result.reportPath}</code></p>`;
+            html += `</div>`;
+          }
+        } else {
+          html += '<div class="comparison-output">';
+          html += `<pre>${output}</pre>`;
+          html += '</div>';
+        }
+        
+        html += '</div>';
+        comparisonContent.innerHTML = html;
+      }
+      
+      // Switch to comparison tab
+      const comparisonTab = document.querySelector('[data-tab="comparisonTab"]');
+      if (comparisonTab) comparisonTab.click();
+      
+      // Add to change log
+      addChangeLogEntry(
+        'Document Comparison',
+        `Compared ${doc1.split('/').pop()} vs ${doc2.split('/').pop()} - ${issueCount} issues found`
+      );
+      
+    } else {
+      updateStatus('Comparison failed', 'error');
+      log(`Comparison failed: ${result.message}`, 'error');
+      
+      // Show error in comparison tab
+      const comparisonContent = document.getElementById('comparisonContent');
+      if (comparisonContent) {
+        comparisonContent.innerHTML = `
+          <div class="comparison-error">
+            <h3>Comparison Failed</h3>
+            <p>${result.message}</p>
+            <pre>${result.output || result.stderr || ''}</pre>
+          </div>
+        `;
+      }
+    }
+  } catch (error) {
+    showProgress(false);
+    updateStatus('Comparison error', 'error');
+    log(`Error during comparison: ${error.message}`, 'error');
+  }
+});
+
+// ============================================================================
+// SETTINGS MODAL
+// ============================================================================
+
+document.getElementById('settingsBtn')?.addEventListener('click', async () => {
+  // Load current config
+  const loadedConfig = await window.electronAPI.loadConfig();
+  if (loadedConfig) {
+    config = { ...config, ...loadedConfig };
+  }
+  
+  // Populate settings form
+  document.getElementById('settingOutputSuffix').value = config.defaultOutputSuffix || '_cleaned';
+  document.getElementById('settingTablesInline').checked = config.tablesInline ?? true;
+  
+  // Show modal
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.style.display = 'flex';
+});
+
+document.getElementById('closeSettingsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('saveSettingsBtn')?.addEventListener('click', async () => {
+  // Gather settings
+  config.defaultOutputSuffix = document.getElementById('settingOutputSuffix')?.value || '_cleaned';
+  config.tablesInline = document.getElementById('settingTablesInline')?.checked ?? true;
+  
+  // Save config
+  const result = await window.electronAPI.saveConfig(config);
+  
+  if (result.success) {
+    log('Settings saved successfully', 'success');
+    updateStatus('Settings saved', 'success');
+  } else {
+    log(`Failed to save settings: ${result.message}`, 'error');
+  }
+  
+  // Close modal
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+document.getElementById('cancelSettingsBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.style.display = 'none';
+});
+
+  // ============================================================================
+  // TABLE TOOLS
+  // ============================================================================
+
+  // Sidebar button: Open Table Tools tab
+  document.getElementById('tableToolsBtn')?.addEventListener('click', () => {
+    const tabBtn = document.querySelector('[data-tab="tableToolsTab"]');
+    tabBtn?.click();
+  });
+
+  // Tool selector buttons
+  document.querySelectorAll('.tool-select-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const toolName = btn.dataset.tool;
+    
+      // Update active button
+      document.querySelectorAll('.tool-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    
+      // Show corresponding tool panel
+      document.querySelectorAll('.table-tool-panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById(`${toolName}Tool`)?.classList.add('active');
+    });
+  });
+
+  // --- Tool 1: Markdown Table to TSV ---
+
+  let mdTableInputPath = null;
+  let mdTableOutputPath = null;
+  let mdTableResultContent = null;
+
+  document.getElementById('browseMdTableBtn')?.addEventListener('click', async () => {
+    const result = await window.electronAPI.selectFile({ 
+      filters: [
+        { name: 'Markdown Files', extensions: ['md', 'markdown'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    const selectedPath = (result && result.filePath) ? result.filePath : result;
+  
+    if (selectedPath) {
+      mdTableInputPath = selectedPath;
+      document.getElementById('mdTableInput').value = selectedPath;
+    
+      // Auto-generate output path
+      const baseName = selectedPath.replace(/\.(md|markdown)$/i, '');
+      mdTableOutputPath = `${baseName}.txt`;
+      document.getElementById('mdTableOutput').value = mdTableOutputPath;
+    
+      document.getElementById('runMdTableConvertBtn').disabled = false;
+    }
+  });
+
+  document.getElementById('browseMdTableOutputBtn')?.addEventListener('click', async () => {
+    const fileName = mdTableInputPath ? 
+      mdTableInputPath.split('/').pop().replace(/\.(md|markdown)$/i, '.txt') : 
+      'table_output.txt';
+  
+    const result = await window.electronAPI.selectSaveLocation(fileName);
+    const savePath = (result && result.filePath) ? result.filePath : result;
+  
+    if (savePath) {
+      mdTableOutputPath = savePath;
+      document.getElementById('mdTableOutput').value = savePath;
+    }
+  });
+
+  document.getElementById('runMdTableConvertBtn')?.addEventListener('click', async () => {
+    if (!mdTableInputPath) return;
+  
+    const noHeaders = document.getElementById('mdTableNoHeaders')?.checked || false;
+    const outputPath = mdTableOutputPath || `${mdTableInputPath.replace(/\.(md|markdown)$/i, '')}.txt`;
+  
+    log(`Converting markdown table: ${mdTableInputPath}`, 'info');
+    showProgress(true);
+  
+    try {
+      const result = await window.electronAPI.convertMdTableToTsv(mdTableInputPath, {
+        outputPath,
+        noHeaders
+      });
+    
+      showProgress(false);
+    
+      if (result.success) {
+        mdTableResultContent = result.content;
+        document.getElementById('mdTableResultContent').textContent = result.content;
+        document.getElementById('mdTableResult').style.display = 'block';
+        document.getElementById('copyMdTableResultBtn').disabled = false;
+      
+        log(`Conversion successful: ${outputPath}`, 'success');
+        updateStatus(`Converted to ${outputPath}`, 'success');
+      } else {
+        log(`Conversion failed: ${result.message}`, 'error');
+        updateStatus('Conversion failed', 'error');
+        alert(`Conversion failed: ${result.message}`);
+      }
+    } catch (error) {
+      showProgress(false);
+      log(`Error: ${error.message}`, 'error');
+      alert(`Error: ${error.message}`);
+    }
+  });
+
+  document.getElementById('copyMdTableResultBtn')?.addEventListener('click', () => {
+    if (mdTableResultContent) {
+      navigator.clipboard.writeText(mdTableResultContent);
+      updateStatus('Copied to clipboard', 'success');
+      log('Result copied to clipboard', 'info');
+    }
+  });
+
+  // --- Tool 2: Names to Columns ---
+
+  let namesInputPath = null;
+  let namesOutputPath = null;
+  let namesResultContent = null;
+
+  document.getElementById('browseNamesBtn')?.addEventListener('click', async () => {
+    const result = await window.electronAPI.selectFile({ 
+      filters: [
+        { name: 'Text Files', extensions: ['txt', 'md'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    const selectedPath = (result && result.filePath) ? result.filePath : result;
+  
+    if (selectedPath) {
+      namesInputPath = selectedPath;
+      document.getElementById('namesInput').value = selectedPath;
+    
+      // Auto-generate output path
+      const baseName = selectedPath.replace(/\.[^.]+$/, '');
+      namesOutputPath = `${baseName}-Columns.txt`;
+      document.getElementById('namesOutput').value = namesOutputPath;
+    
+      document.getElementById('runNamesConvertBtn').disabled = false;
+    }
+  });
+
+  document.getElementById('browseNamesOutputBtn')?.addEventListener('click', async () => {
+    const fileName = namesInputPath ? 
+      namesInputPath.split('/').pop().replace(/\.[^.]+$/, '-Columns.txt') : 
+      'names-columns.txt';
+  
+    const result = await window.electronAPI.selectSaveLocation(fileName);
+    const savePath = (result && result.filePath) ? result.filePath : result;
+  
+    if (savePath) {
+      namesOutputPath = savePath;
+      document.getElementById('namesOutput').value = savePath;
+    }
+  });
+
+  document.getElementById('runNamesConvertBtn')?.addEventListener('click', async () => {
+    if (!namesInputPath) return;
+  
+    const columns = parseInt(document.getElementById('namesColumns')?.value || '4', 10);
+    const outputPath = namesOutputPath || `${namesInputPath.replace(/\.[^.]+$/, '')}-Columns.txt`;
+  
+    log(`Converting names to columns: ${namesInputPath}`, 'info');
+    showProgress(true);
+  
+    try {
+      const result = await window.electronAPI.convertNamesToColumns(namesInputPath, {
+        outputPath,
+        columns
+      });
+    
+      showProgress(false);
+    
+      if (result.success) {
+        namesResultContent = result.content;
+        document.getElementById('namesResultContent').textContent = result.content;
+        document.getElementById('namesResult').style.display = 'block';
+        document.getElementById('copyNamesResultBtn').disabled = false;
+      
+        log(`Conversion successful: ${outputPath}`, 'success');
+        updateStatus(`Converted to ${outputPath}`, 'success');
+      } else {
+        log(`Conversion failed: ${result.message}`, 'error');
+        updateStatus('Conversion failed', 'error');
+        alert(`Conversion failed: ${result.message}`);
+      }
+    } catch (error) {
+      showProgress(false);
+      log(`Error: ${error.message}`, 'error');
+      alert(`Error: ${error.message}`);
+    }
+  });
+
+  document.getElementById('copyNamesResultBtn')?.addEventListener('click', () => {
+    if (namesResultContent) {
+      navigator.clipboard.writeText(namesResultContent);
+      updateStatus('Copied to clipboard', 'success');
+      log('Result copied to clipboard', 'info');
+    }
+  });
+
+  // --- Tool 3: Multi-Format Converter ---
+
+  let multiFormatResultContent = null;
+
+  document.getElementById('runMultiFormatBtn')?.addEventListener('click', async () => {
+    const inputText = document.getElementById('multiFormatInput')?.value;
+    const format = document.getElementById('multiFormatOutput')?.value || 'tsv';
+  
+    if (!inputText || !inputText.trim()) {
+      alert('Please enter input text');
+      return;
+    }
+  
+    log(`Converting table to ${format.toUpperCase()}`, 'info');
+    showProgress(true);
+  
+    try {
+      const result = await window.electronAPI.convertTableMultiFormat(inputText, format);
+    
+      showProgress(false);
+    
+      if (result.success) {
+        multiFormatResultContent = result.output;
+        document.getElementById('multiFormatResultContent').textContent = result.output;
+        document.getElementById('multiFormatResult').style.display = 'block';
+        document.getElementById('copyMultiFormatResultBtn').disabled = false;
+      
+        // Show orphans if any
+        if (result.orphans && result.orphans.length > 0) {
+          document.getElementById('multiFormatOrphansList').textContent = result.orphans.join('\n');
+          document.getElementById('multiFormatOrphans').style.display = 'block';
+        } else {
+          document.getElementById('multiFormatOrphans').style.display = 'none';
+        }
+      
+        log(`Conversion successful (${format.toUpperCase()})`, 'success');
+        updateStatus('Conversion complete', 'success');
+      } else {
+        log(`Conversion failed: ${result.message}`, 'error');
+        updateStatus('Conversion failed', 'error');
+        alert(`Conversion failed: ${result.message}`);
+      }
+    } catch (error) {
+      showProgress(false);
+      log(`Error: ${error.message}`, 'error');
+      alert(`Error: ${error.message}`);
+    }
+  });
+
+  document.getElementById('copyMultiFormatResultBtn')?.addEventListener('click', () => {
+    if (multiFormatResultContent) {
+      navigator.clipboard.writeText(multiFormatResultContent);
+      updateStatus('Copied to clipboard', 'success');
+      log('Result copied to clipboard', 'info');
+    }
+  });
+
+  document.getElementById('clearMultiFormatBtn')?.addEventListener('click', () => {
+    document.getElementById('multiFormatInput').value = '';
+    document.getElementById('multiFormatResult').style.display = 'none';
+    document.getElementById('multiFormatOrphans').style.display = 'none';
+    multiFormatResultContent = null;
+    document.getElementById('copyMultiFormatResultBtn').disabled = true;
+    updateStatus('Cleared input', 'info');
+  });
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+async function initialize() {
+  log('Book MD Workbench ready', 'info');
+  updateStatus('Ready', 'success');
+  
+  // Load config
+  const loadedConfig = await window.electronAPI.loadConfig();
+  if (loadedConfig) {
+    config = { ...config, ...loadedConfig };
+    
+    // Apply config to UI
+    const outputSuffixInput = document.getElementById('outputSuffix');
+    if (outputSuffixInput) outputSuffixInput.value = config.defaultOutputSuffix || '_cleaned';
+    
+    const tablesInlineCheck = document.getElementById('tablesInlineCheck');
+    if (tablesInlineCheck) tablesInlineCheck.checked = config.tablesInline ?? true;
+  }
+}
+
+// Start app
+initialize();

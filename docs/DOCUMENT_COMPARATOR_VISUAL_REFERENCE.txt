@@ -1,0 +1,239 @@
+# Document Comparator - Visual Quick Reference
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    📊 DOCUMENT COMPARATOR                            │
+│              Comparative Document Auditor System                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  THE FOUR DIAGNOSTIC CHECKS                                          │
+└─────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  SYMMETRY & SEQUENCE CHECK
+  ────────────────────────────────
+  Detects: Missing sequential elements
+  
+  Examples:
+  ✓ Chapter I, II, IV    → Missing Chapter III
+  ✓ Part 1, Part 3       → Missing Part 2
+  ✓ Table 2A, 2C         → Missing Table 2B
+  ✓ Section 1.1, 1.3     → Missing Section 1.2
+  
+  Patterns: Roman numerals, Arabic, letters, compounds, dotted
+
+  
+  2️⃣  STRUCTURAL PARITY CHECK
+  ─────────────────────────────
+  Detects: Incomplete tables, lists, markup
+  
+  Examples:
+  ✓ Table with 4 header cols, 3 data cols → Incomplete
+  ✓ Missing table separator line          → Invalid
+  ✓ <table> without </table>              → Unbalanced
+  ✓ Odd number of ** (bold markers)       → Unbalanced
+  
+  Checks: MD tables, HTML tables, lists, markup balance
+
+  
+  3️⃣  CONTENT VOLUME COMPARISON
+  ───────────────────────────────
+  Detects: Content loss or additions >threshold
+  
+  Metrics:
+  • Lines count
+  • Word count
+  • Paragraph count
+  • Character count
+  
+  Threshold: Default 15% (configurable 5-50%)
+  Scope: Overall document + section-by-section
+
+
+  4️⃣  CROSS-REFERENCE CHECK
+  ──────────────────────────
+  Detects: Missing continuations of multi-part content
+  
+  Examples:
+  ✓ "Part 1 of 3" without Part 2 and 3
+  ✓ "Aristocratic Titles - Part 1" with Ottoman/Indian 
+     entries but no Part 2
+  
+  Smart: Recognizes cultural keywords for table continuations
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  SEVERITY LEVELS                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+  🔴 CRITICAL    Major content loss (>30%), missing continuations
+  🟠 MAJOR       Missing sequences, significant changes (15-30%)
+  🟡 MODERATE    Formatting issues, minor gaps, sequence jumps
+  🟢 MINOR       Potential issues (may be intentional edits)
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  COMMAND LINE USAGE                                                  │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Basic:
+  $ python3 tools/document_comparator.py doc1.md doc2.md
+
+  With markdown report:
+  $ python3 tools/document_comparator.py doc1.md doc2.md \
+      --format markdown --output report.md
+
+  Custom threshold (10%):
+  $ python3 tools/document_comparator.py doc1.md doc2.md --threshold 0.10
+
+  Quiet mode (for scripts):
+  $ python3 tools/document_comparator.py doc1.md doc2.md --quiet
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  ELECTRON APP USAGE                                                  │
+└─────────────────────────────────────────────────────────────────────┘
+
+  1. Open Book MD Workbench
+  2. Click "🔍 Compare Documents" in sidebar
+     OR: Quick Tools → Document Comparator
+  3. Select baseline document (auto-fills current file)
+  4. Select comparison document
+  5. Adjust threshold (5-50%, default 15%)
+  6. Choose format (Markdown/Text)
+  7. Toggle auto-save (saves with smart naming)
+  8. Click "🔍 Run Comparison"
+  9. View results in Comparison tab
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  COMMON SCENARIOS                                                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+  📄 POST-CONVERSION VALIDATION
+     pandoc source.pdf -o converted.md
+     python3 tools/document_comparator.py reference.md converted.md
+
+  🔄 PIPELINE VERIFICATION
+     python3 scripts/book_pipeline.py book.md --out-suffix _cleaned
+     python3 tools/document_comparator.py book.md book_cleaned.md
+
+  ✏️  EDITORIAL REVIEW
+     python3 tools/document_comparator.py draft_v1.md draft_v2.md
+
+  📦 ARCHIVE VERIFICATION
+     python3 tools/document_comparator.py complete.md recovered.md
+
+  🔁 BATCH PROCESSING
+     for f in chapters/*.md; do
+       python3 tools/document_comparator.py \
+         "reference/$(basename $f)" "$f" --quiet >> report.txt
+     done
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  OPTIONS REFERENCE                                                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+  --threshold <float>    Volume difference threshold (default: 0.15)
+  --format <type>        Report format: text | markdown (default: text)
+  --output <path>        Output file path (default: stdout)
+  --quiet                Suppress progress messages
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  EXIT CODES                                                          │
+└─────────────────────────────────────────────────────────────────────┘
+
+  0    Success - No critical or major issues
+  1    Issues found - Critical or major issues detected
+
+  Perfect for CI/CD:
+  if python3 tools/document_comparator.py doc1.md doc2.md --quiet; then
+    echo "✓ Validation passed"
+  else
+    echo "✗ Issues found - check report"
+    exit 1
+  fi
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  WHAT GETS DETECTED                                                  │
+└─────────────────────────────────────────────────────────────────────┘
+
+  ✅ Missing chapters, sections, parts, tables, appendices
+  ✅ Gaps in numbered sequences
+  ✅ Incomplete table structures
+  ✅ Unbalanced HTML/markdown tags
+  ✅ Content volume differences >threshold
+  ✅ Orphaned multi-part references
+  ✅ Missing table continuations
+  ✅ Structural inconsistencies
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  THRESHOLD GUIDELINES                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+  0.05 (5%)     Very strict - Minimal acceptable changes
+  0.10 (10%)    Strict validation
+  0.15 (15%)    ⭐ DEFAULT - Good balance for most cases
+  0.25 (25%)    Permissive - Expect significant edits
+  0.50 (50%)    Very permissive - Only catch major problems
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  AUTO-SAVE NAMING (Electron App)                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Pattern: comparison_{doc1name}_vs_{doc2name}.{ext}
+  
+  Examples:
+  • comparison_original_vs_revised.md
+  • comparison_v1_vs_v2.txt
+  • comparison_chapter1_vs_chapter1_edited.md
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  DOCUMENTATION                                                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+  📘 Full Guide:       docs/DOCUMENT_COMPARATOR.md
+  🚀 Quick Start:      docs/DOCUMENT_COMPARATOR_QUICKSTART.md
+  📋 Reference Card:   docs/DOCUMENT_COMPARATOR_REFERENCE.md
+  🔧 Implementation:   docs/DOCUMENT_COMPARATOR_IMPLEMENTATION.md
+  💻 Electron Guide:   docs/DOCUMENT_COMPARATOR_ELECTRON_INTEGRATION.md
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIPS & BEST PRACTICES                                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+  💡 Start with defaults (15% threshold)
+  💡 Use markdown format for sharing reports
+  💡 Run after major pipeline operations
+  💡 Combine with other QC tools (spell-check, long-lines)
+  💡 Review reports manually - not all issues are errors
+  💡 Lower threshold for conversions, higher for editing
+  💡 Use --quiet in scripts for cleaner output
+  💡 Check exit codes in automated workflows
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  REAL-WORLD EXAMPLE: Aristocratic Titles                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Scenario:
+  Table "Aristocratic Titles - Part 1" has Ottoman/Indian entries
+  but Part 2 is missing from the document.
+
+  Detection:
+  ✓ Symmetry & Sequence Check → Missing "Part 2"
+  ✓ Content Volume Comparison → 42% content loss
+  ✓ Cross-Reference Check → Part 1 with cultural keywords but no Part 2
+
+  Result:
+  CRITICAL/MAJOR issues flagged
+  Line numbers provided for location
+  Detailed report generated
+
+  This is the EXACT use case that inspired this tool! ✨
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  NEED HELP?                                                          │
+└─────────────────────────────────────────────────────────────────────┘
+
+  Check the comprehensive documentation in docs/ folder
+  All tools use Python standard library only - no dependencies needed
+  Works on macOS, Linux, Windows
+
+  Happy comparing! 🎉
+```

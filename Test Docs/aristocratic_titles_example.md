@@ -1,0 +1,30 @@
+### **Aristocratic Titles**
+
+**Part 1 – European and Fantasy Titles**
+
+| English  | French    | German    | Spanish   | Magocracy of Babylon |
+| :------- | :-------- | :-------- | :-------- | :------------------- |
+| Emperor  | Empereur  | Kaiser    | Emperador | Ipsissimus           |
+| King     | Roi       | König     | Rey       | Magus                |
+| Duke     | Duc       | Pfalzgraf | Duque     | Magister             |
+| Prince   | Prince    | Herzog    | Príncipe  | Adeptus Exemptus     |
+| Marquis  | Marquis   | Markgraf  | Marqués   | Adeptus Major        |
+| Earl     | Comte     | Graf      | Conde     | Adeptus Minor        |
+| Viscount | Vicomte   | Waldgraf  | Vizconde  | Philosophus          |
+| Baron    | Baron     | Freiherr  | Barón     | Practicus            |
+| Baronet  | Baronnet  | Freier    | —         | Theoricus            |
+| Knight   | Chevalier | Ritter    | Caballero | Zelator              |
+| Squire   | Seigneur  | —         | Hacendado | Neophyte             |
+
+**Part 2 – Ottoman, Indian, Persian, and Mongolian Titles**
+
+| Ottoman / Arab  | Indian           | Persian         | Mongolian          |
+| :-------------- | :--------------- | :-------------- | :----------------- |
+| Sultan / Caliph | Maharaja / Rajah | Padishah / Shah | Kha-Khan / Tarkhan |
+| Emir            | Rajput           | Caliph          | —                  |
+| Sharif          | Amir             | Ilkhan          | —                  |
+| Dey             | —                | —               | Orkhon             |
+| Bey             | —                | —               | —                  |
+| Bashaw          | —                | —               | —                  |
+| Pasha           | Nawab            | Malik           | Khan               |
+| Sheikh          | Nizam            | Sheikh          | —                  |

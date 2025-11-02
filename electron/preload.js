@@ -1,37 +1,44 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  // Edmunds Tagging
-  injectEdmundsTags: (inputPath, outputPath) =>
-    ipcRenderer.invoke('inject-edmunds-tags', inputPath, outputPath),
-  stripEdmundsTags: (inputPath, outputPath) =>
-    ipcRenderer.invoke('strip-edmunds-tags', inputPath, outputPath),
+  // File Operations
+  selectFile: () => ipcRenderer.invoke('select-file'),
+  readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
+  saveFile: (filePath, content) => ipcRenderer.invoke('save-file', filePath, content),
+  selectSaveLocation: (defaultName) => ipcRenderer.invoke('select-save-location', defaultName),
+  openFolder: (folderPath) => ipcRenderer.invoke('open-folder', folderPath),
 
-  // Pipeline
-  runPipeline: (inputPath, outputSuffix) =>
-    ipcRenderer.invoke('run-pipeline', inputPath, outputSuffix),
+  // Pipeline Operations
+  runPipeline: (inputPath, outputSuffix, tablesInline) =>
+    ipcRenderer.invoke('run-pipeline', inputPath, outputSuffix, tablesInline),
   formatText: (inputPath, outputSuffix) =>
     ipcRenderer.invoke('format-text', inputPath, outputSuffix),
-  fixToc: (inputPath, outputSuffix) =>
+  fixTOC: (inputPath, outputSuffix) =>
     ipcRenderer.invoke('fix-toc', inputPath, outputSuffix),
 
-  // QC Tools
-  spellCheck: (inputPath) =>
-    ipcRenderer.invoke('spell-check', inputPath),
-  longLines: (inputPath) =>
-    ipcRenderer.invoke('long-lines', inputPath),
-  paragraphBreaks: (inputPath) =>
-    ipcRenderer.invoke('paragraph-breaks', inputPath),
+  // Edmunds Tagging
+  injectTags: (inputPath, outputSuffix) =>
+    ipcRenderer.invoke('inject-tags', inputPath, outputSuffix),
+  stripTags: (inputPath, outputSuffix) =>
+    ipcRenderer.invoke('strip-tags', inputPath, outputSuffix),
 
-  // File dialogs
-  openFileDialog: (title, filters) =>
-    ipcRenderer.invoke('open-file-dialog', title, filters),
-  saveFileDialog: (title, filters, defaultName) =>
-    ipcRenderer.invoke('save-file-dialog', title, filters, defaultName),
-  openFolder: (folderPath) =>
-    ipcRenderer.invoke('open-folder', folderPath),
+  // Quick Tools
+  runQuickTool: (tool, inputPath, outputSuffix, options) =>
+    ipcRenderer.invoke('run-quick-tool', tool, inputPath, outputSuffix, options),
 
-  // File I/O
-  readFile: (filePath) =>
-    ipcRenderer.invoke('read-file', filePath),
+  // Document Comparator
+  compareDocuments: (doc1Path, doc2Path, options) =>
+    ipcRenderer.invoke('compare-documents', doc1Path, doc2Path, options),
+
+    // Table Tools
+    convertMdTableToTsv: (inputPath, options) =>
+      ipcRenderer.invoke('convert-md-table-to-tsv', inputPath, options),
+    convertNamesToColumns: (inputPath, options) =>
+      ipcRenderer.invoke('convert-names-to-columns', inputPath, options),
+    convertTableMultiFormat: (inputText, format) =>
+      ipcRenderer.invoke('convert-table-multi-format', inputText, format),
+
+  // Config Operations
+  loadConfig: () => ipcRenderer.invoke('load-config'),
+  saveConfig: (config) => ipcRenderer.invoke('save-config', config),
 });

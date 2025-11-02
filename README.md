@@ -24,6 +24,7 @@ We've consolidated several single-purpose scripts into a more powerful and maint
 
 ## Features
 - **Unified Formatting Tool** (`fix_formatting.py`): All-in-one Markdown formatter
+- **Document Comparison** (`document_comparator.py`): Four-part diagnostic auditor for detecting content loss and structural breaks
 - **Orchestrated Pipeline** (`book-pipeline`): End-to-end processing with reports
 - **Header Management**: Depth correction with hierarchy validation
 - **Content Processing**: Paragraph, table, and list fixers
@@ -56,6 +57,35 @@ python scripts/fix_formatting.py --max-paragraph-length 600 input.md
 python scripts/fix_formatting.py --no-normalize-paragraphs --no-fix-ghost-blanks input.md
 ```
 
+### Document Comparison & Quality Control
+```bash
+# Compare two document versions (detects missing content, structural breaks, sequence gaps)
+python tools/document_comparator.py original.md revised.md
+
+# Generate markdown report
+python tools/document_comparator.py original.md revised.md \
+  --format markdown --output comparison-report.md
+
+# Adjust sensitivity threshold (default 15%)
+python tools/document_comparator.py doc1.md doc2.md --threshold 0.10
+```
+
+See [docs/DOCUMENT_COMPARATOR.md](docs/DOCUMENT_COMPARATOR.md) for detailed usage.
+
+### Table Conversion Tools
+```bash
+# Convert markdown tables to tab-delimited (TSV) for InDesign import
+python tools/md_table_to_tsv.py input.md -o output.txt
+
+# Copy to clipboard (requires: pip install pyperclip)
+python tools/md_table_to_tsv.py input.md --clipboard
+
+# Convert Book of Names lists to multi-column format
+python tools/convert_names_to_columns.py names.md -o names_columns.txt
+```
+
+See [docs/MD_TABLE_TO_TSV.md](docs/MD_TABLE_TO_TSV.md) for detailed usage.
+
 ### Other Tools
 ```bash
 # Run the full processing pipeline
@@ -74,6 +104,18 @@ remove-daggers <in.md> [out.md]
 
 ### Deprecated Scripts
 Deprecated scripts will continue to work but will show a warning. Please update your workflows to use the new `fix_formatting.py` tool.
+
+## Electron Desktop App
+
+**Book MD Workbench** provides a visual interface for all tools with drag-and-drop file loading, real-time preview, and integrated table converters.
+
+```bash
+cd electron
+npm install  # first time only
+npm start
+```
+
+**📖 Quick Start Guide:** [docs/ELECTRON_APP_QUICK_START.md](docs/ELECTRON_APP_QUICK_START.md)
 
 ## Universal TRPG & Markdown Book Support
 
