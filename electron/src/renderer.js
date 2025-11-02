@@ -926,6 +926,7 @@ document.getElementById('cancelSettingsBtn')?.addEventListener('click', () => {
     const result = await window.electronAPI.selectFile({ 
       filters: [
         { name: 'Markdown Files', extensions: ['md', 'markdown'] },
+        { name: 'Text Files', extensions: ['txt'] },
         { name: 'All Files', extensions: ['*'] }
       ]
     });
@@ -1157,12 +1158,79 @@ document.getElementById('cancelSettingsBtn')?.addEventListener('click', () => {
   });
 
 // ============================================================================
+// DRAG AND DROP FILE HANDLING
+// ============================================================================
+
+function initializeDragAndDrop() {
+  const dropOverlay = document.getElementById('dropOverlay');
+  let dragCounter = 0;
+
+  // Prevent default drag behaviors on the entire document
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    document.body.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+
+  // Show overlay when dragging over the window
+  document.body.addEventListener('dragenter', (e) => {
+    dragCounter++;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      dropOverlay.classList.add('active');
+    }
+  });
+
+  // Hide overlay when leaving the window
+  document.body.addEventListener('dragleave', (e) => {
+    dragCounter--;
+    if (dragCounter === 0) {
+      dropOverlay.classList.remove('active');
+    }
+  });
+
+  // Handle drop
+  document.body.addEventListener('drop', async (e) => {
+    dragCounter = 0;
+    dropOverlay.classList.remove('active');
+
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    const filePath = file.path;
+    
+    // Check if it's a markdown/text file
+    const validExtensions = ['.md', '.markdown', '.txt'];
+    const hasValidExtension = validExtensions.some(ext => filePath.toLowerCase().endsWith(ext));
+    
+    if (!hasValidExtension) {
+      alert('Please drop a markdown file (.md, .markdown, or .txt)');
+      log(`Invalid file type: ${filePath}`, 'error');
+      return;
+    }
+
+    // Load the dropped file
+    log(`Loading dropped file: ${filePath}`, 'info');
+    await loadFile(filePath);
+  });
+
+  // Highlight effect on dragover
+  document.body.addEventListener('dragover', (e) => {
+    e.dataTransfer.dropEffect = 'copy';
+  });
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
 async function initialize() {
   log('Book MD Workbench ready', 'info');
   updateStatus('Ready', 'success');
+  
+  // Initialize drag and drop
+  initializeDragAndDrop();
   
   // Load config
   const loadedConfig = await window.electronAPI.loadConfig();
