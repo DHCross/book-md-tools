@@ -65,6 +65,12 @@ def inject_stream(lines: list[str], form: str, max_level: int | None) -> list[st
 
         hashes = m.group("hashes")
         rest = m.group("rest")
+        
+        # Skip empty headings (just # with no content)
+        if not rest.strip():
+            out.append(line + "\n")
+            continue
+            
         level = len(hashes)
         if max_level is not None:
             level = min(level, max_level)
