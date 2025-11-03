@@ -181,6 +181,7 @@ async function loadFile(filePath) {
     updatePreviewTab(content);
     updateRenderedTab(content);
     updateSummaryTab(content);
+    updateHeaderNavigator();
     addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
   } else {
     log('Failed to read file', 'error');
@@ -198,6 +199,8 @@ function updateRenderedTab(content) {
   
   // Use marked library for proper Markdown rendering
   if (typeof marked !== 'undefined') {
+    // Ensure headings have ids for navigation
+    marked.use({ headerIds: true, mangle: false });
     rendered.innerHTML = marked.parse(content);
   } else {
     // Fallback basic rendering
@@ -644,6 +647,7 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
         updatePreviewTab(outputContent);
         updateRenderedTab(outputContent);
         updateSummaryTab(outputContent);
+        updateHeaderNavigator();
 
         // Show success message
         const fileName = result.outputPath.split('/').pop();
@@ -1308,6 +1312,81 @@ function initializeDragAndDrop() {
   document.body.addEventListener('dragover', (e) => {
     e.dataTransfer.dropEffect = 'copy';
   });
+}
+
+// ============================================================================
+// HEADER NAVIGATOR (RIGHT PANE)
+// ============================================================================
+
+function updateHeaderNavigator() {
+  const container = document.getElementById('navigatorList');
+  if (!container) return;
+
+  const sections = extractSections(currentContent || '');
+  allSections = sections; // reuse existing sections array
+
+  if (!sections || sections.length === 0) {
+    container.innerHTML = '<p class="placeholder" style="padding: 12px;">No headers found in document.</p>';
+    return;
+  }
+
+  let html = '';
+  sections.forEach((s, idx) => {
+    const levelClass = `nav-level-${Math.min(s.level, 6)}`;
+    html += `
+      <div class="nav-item ${levelClass}" data-index="${idx}">
+        <div class="nav-dot"></div>
+        <div class="nav-text">
+          <div class="nav-title" title="${s.header.replace(/\"/g, '&quot;')}">${s.header}</div>
+          <div class="nav-meta">H${s.level} · line ${s.startLine}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  // Bind clicks
+  container.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.getAttribute('data-index'), 10);
+      navigateToSection(idx);
+      container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+    });
+  });
+}
+
+function navigateToSection(index) {
+  const sections = allSections || [];
+  if (!sections[index]) return;
+  const target = sections[index];
+
+  // Scroll Preview (text) proportionally by line
+  const preview = document.getElementById('previewContent');
+  if (preview) {
+    const linesTotal = (currentContent || '').split('\n').length || 1;
+    const ratio = Math.min(1, Math.max(0, (target.startLine - 1) / linesTotal));
+    const maxScroll = preview.scrollHeight - preview.clientHeight;
+    preview.scrollTop = Math.floor(ratio * maxScroll);
+  }
+
+  // Scroll Rendered to the matching heading element
+  const rendered = document.getElementById('renderedContent');
+  if (rendered) {
+    const headings = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    let match = null;
+    for (const h of headings) {
+      const text = (h.textContent || '').trim();
+      if (text === target.header || text.startsWith(target.header)) {
+        match = h;
+        break;
+      }
+    }
+    if (match) {
+      match.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 }
 
 // ============================================================================

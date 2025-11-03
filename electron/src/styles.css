@@ -135,6 +135,83 @@ body {
   gap: 16px;
 }
 
+/* ============================================================================
+   RIGHT NAVIGATOR
+   ============================================================================ */
+
+.navigator {
+  width: 280px;
+  background: white;
+  border-left: 1px solid #d1d1d6;
+  padding: 12px 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.navigator-header {
+  padding: 0 12px 8px 12px;
+  border-bottom: 1px solid #e5e5ea;
+}
+
+.navigator-header h3 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #86868b;
+}
+
+.navigator-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #1d1d1f;
+  user-select: none;
+}
+
+.nav-item:hover {
+  background-color: #f5f5f7;
+}
+
+.nav-item.active {
+  background-color: #e7f0ff;
+  border-left: 3px solid #667eea;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #c0c0c8;
+}
+
+.nav-title {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-meta {
+  color: #86868b;
+  font-size: 11px;
+}
+
+.nav-level-1 { padding-left: 8px; }
+.nav-level-2 { padding-left: 20px; }
+.nav-level-3 { padding-left: 32px; }
+.nav-level-4 { padding-left: 44px; }
+.nav-level-5 { padding-left: 56px; }
+.nav-level-6 { padding-left: 68px; }
+
 .sidebar-section {
   display: flex;
   flex-direction: column;
