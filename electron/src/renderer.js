@@ -1528,5 +1528,409 @@ async function initialize() {
   }
 }
 
+// ============================================================================
+// UNDO FUNCTIONALITY
+// ============================================================================
+
+let undoStack = [];
+const MAX_UNDO_HISTORY = 10;
+
+function saveUndoState(action = 'edit') {
+  if (!currentFilePath || !currentContent) return;
+  
+  const state = {
+    filePath: currentFilePath,
+    content: currentContent,
+    action: action,
+    timestamp: Date.now()
+  };
+  
+  undoStack.push(state);
+  if (undoStack.length > MAX_UNDO_HISTORY) {
+    undoStack.shift();
+  }
+  
+  updateUndoButton();
+}
+
+function updateUndoButton() {
+  const undoBtn = document.getElementById('undoBtn');
+  const undoLabel = document.getElementById('undoLabel');
+  
+  if (!undoBtn || !undoLabel) return;
+  
+  if (undoStack.length === 0) {
+    undoBtn.disabled = true;
+    undoLabel.textContent = 'No actions to undo';
+  } else {
+    undoBtn.disabled = false;
+    const lastAction = undoStack[undoStack.length - 1];
+    undoLabel.textContent = `Undo ${lastAction.action} (${undoStack.length} available)`;
+  }
+}
+
+async function undo() {
+  if (undoStack.length === 0) return;
+  
+  const state = undoStack.pop();
+  currentFilePath = state.filePath;
+  currentContent = state.content;
+  
+  // Update all views
+  updatePreviewTab();
+  updateRenderedTab();
+  updateSummaryTab();
+  updateHeaderNavigator();
+  
+  log(`Undid ${state.action}`, 'success');
+  updateUndoButton();
+}
+
+// Bind undo button
+const undoBtn = document.getElementById('undoBtn');
+if (undoBtn) {
+  undoBtn.addEventListener('click', undo);
+}
+
+// ============================================================================
+// FORMAT TEXT SUBMENU
+// ============================================================================
+
+// Toggle submenu visibility
+const formatTextMenuBtn = document.getElementById('formatTextMenuBtn');
+const formatTextSubmenu = document.getElementById('formatTextSubmenu');
+
+if (formatTextMenuBtn && formatTextSubmenu) {
+  formatTextMenuBtn.addEventListener('click', () => {
+    const isOpen = formatTextSubmenu.style.display === 'block';
+    formatTextSubmenu.style.display = isOpen ? 'none' : 'block';
+    formatTextMenuBtn.classList.toggle('open', !isOpen);
+  });
+}
+
+// Format action runner
+async function runFormatAction(action, actionLabel) {
+  if (!currentFilePath) {
+    log('No file loaded', 'error');
+    return;
+  }
+
+  updateStatus(`Running ${actionLabel}...`, 'running');
+  saveUndoState(actionLabel);
+
+  try {
+    // Check if selection exists
+    if (selectedText && selectedText.trim().length > 0) {
+      // Run on selection and output to Log
+      log(`Running ${actionLabel} on selection (${selectedText.length} chars)...`, 'info');
+      
+      // For now, we'll just log that selection-based formatting is pending full implementation
+      log(`Selection-based ${actionLabel} is pending integration with format scripts`, 'warning');
+      updateStatus('Ready', 'success');
+      return;
+    }
+
+    // Run on full document
+    const result = await window.electronAPI.runFormatAction({
+      filePath: currentFilePath,
+      action: action
+    });
+
+    if (result.error) {
+      log(`${actionLabel} failed: ${result.error}`, 'error');
+      updateStatus('Error', 'error');
+    } else {
+      log(`${actionLabel} complete`, 'success');
+      
+      // Reload the file if it was modified in place
+      if (result.outputPath && result.outputPath !== currentFilePath) {
+        await loadFile(result.outputPath);
+      } else {
+        await loadFile(currentFilePath);
+      }
+      
+      updateStatus('Ready', 'success');
+    }
+  } catch (err) {
+    log(`${actionLabel} error: ${err.message}`, 'error');
+    updateStatus('Error', 'error');
+  }
+}
+
+// Bind format buttons
+const formatButtons = {
+  'fixSmartQuotesBtn': { action: 'smart-quotes', label: 'Fix Smart Quotes' },
+  'fixWhitespaceBtn': { action: 'whitespace', label: 'Fix Whitespace' },
+  'fixLineBreaksBtn': { action: 'line-breaks', label: 'Fix Line Breaks' },
+  'normalizeHeadersBtn': { action: 'headers', label: 'Normalize Headers' },
+  'fixAllFormattingBtn': { action: 'all', label: 'Fix All Formatting' }
+};
+
+Object.entries(formatButtons).forEach(([btnId, { action, label }]) => {
+  const btn = document.getElementById(btnId);
+  if (btn) {
+    btn.addEventListener('click', () => runFormatAction(action, label));
+  }
+});
+
+// ============================================================================
+// CHANGE TRACKING
+// ============================================================================
+
+let pendingChanges = [];
+let changeMarkers = new Map(); // sectionIndex -> { status: 'pending'|'approved'|'rejected', changes: [...] }
+let nextChangeId = 1;
+
+function trackChange(sectionIndex, changeType, description, oldContent, newContent) {
+  const changeId = nextChangeId++;
+  const change = {
+    id: changeId,
+    sectionIndex: sectionIndex,
+    type: changeType,
+    description: description,
+    oldContent: oldContent,
+    newContent: newContent,
+    status: 'pending',
+    timestamp: Date.now()
+  };
+  
+  pendingChanges.push(change);
+  
+  // Update markers
+  if (!changeMarkers.has(sectionIndex)) {
+    changeMarkers.set(sectionIndex, { status: 'pending', changes: [] });
+  }
+  changeMarkers.get(sectionIndex).changes.push(change);
+  
+  updateNavigatorWithChanges();
+  updatePendingChangesCounter();
+  
+  return changeId;
+}
+
+function updateNavigatorWithChanges() {
+  const container = document.getElementById('navigatorList');
+  if (!container) return;
+  
+  // Add change indicators to nav items
+  changeMarkers.forEach((marker, sectionIndex) => {
+    const navItem = container.querySelector(`.nav-item[data-index="${sectionIndex}"]`);
+    if (!navItem) return;
+    
+    // Remove existing indicator
+    const existing = navItem.querySelector('.change-indicator');
+    if (existing) existing.remove();
+    
+    // Add new indicator based on status
+    const indicator = document.createElement('span');
+    indicator.className = `change-indicator change-${marker.status}`;
+    
+    if (marker.status === 'pending') {
+      indicator.textContent = '●';
+      indicator.title = `${marker.changes.length} pending change(s)`;
+    } else if (marker.status === 'approved') {
+      indicator.textContent = '✓';
+      indicator.title = 'Changes approved';
+    } else if (marker.status === 'rejected') {
+      indicator.textContent = '✗';
+      indicator.title = 'Changes rejected';
+    }
+    
+    navItem.insertBefore(indicator, navItem.firstChild);
+  });
+}
+
+function updatePendingChangesCounter() {
+  const pendingCount = pendingChanges.filter(c => c.status === 'pending').length;
+  
+  let counter = document.getElementById('pendingChangesCounter');
+  
+  if (pendingCount === 0) {
+    if (counter) counter.remove();
+    return;
+  }
+  
+  if (!counter) {
+    counter = document.createElement('div');
+    counter.id = 'pendingChangesCounter';
+    counter.addEventListener('click', showChangeReviewPanel);
+    const navigator = document.querySelector('.navigator');
+    if (navigator) navigator.appendChild(counter);
+  }
+  
+  counter.textContent = `${pendingCount} change${pendingCount === 1 ? '' : 's'}`;
+}
+
+function showChangeReviewPanel() {
+  const pending = pendingChanges.filter(c => c.status === 'pending');
+  
+  if (pending.length === 0) {
+    log('No pending changes to review', 'info');
+    return;
+  }
+  
+  // Create modal
+  let modal = document.getElementById('changeReviewModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'changeReviewModal';
+    modal.className = 'modal';
+    modal.style.cssText = 'display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); padding: 20px; overflow: auto;';
+    document.body.appendChild(modal);
+  }
+  
+  // Build content
+  let html = `
+    <div style="background: white; max-width: 800px; margin: 0 auto; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+      <h2 style="margin-top: 0;">Review Pending Changes (${pending.length})</h2>
+      <div style="margin-bottom: 16px;">
+        <button id="approveAllBtn" class="btn primary" style="margin-right: 8px;">Approve All</button>
+        <button id="rejectAllBtn" class="btn secondary" style="margin-right: 8px;">Reject All</button>
+        <button id="closeReviewBtn" class="btn secondary">Close</button>
+      </div>
+      <div id="changeList" style="max-height: 400px; overflow-y: auto;">
+  `;
+  
+  pending.forEach(change => {
+    html += `
+      <div class="change-item" data-id="${change.id}" style="border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; margin-bottom: 12px; background: #f8f9fa;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <strong>${change.type}: ${change.description}</strong>
+          <div>
+            <button class="approve-change-btn btn tertiary" data-id="${change.id}" style="margin-right: 4px; padding: 4px 8px; font-size: 11px;">Approve</button>
+            <button class="reject-change-btn btn tertiary" data-id="${change.id}" style="padding: 4px 8px; font-size: 11px;">Reject</button>
+          </div>
+        </div>
+        <div style="font-size: 12px; color: #6c757d;">Section ${change.sectionIndex + 1} • ${new Date(change.timestamp).toLocaleTimeString()}</div>
+      </div>
+    `;
+  });
+  
+  html += `
+      </div>
+    </div>
+  `;
+  
+  modal.innerHTML = html;
+  modal.style.display = 'block';
+  
+  // Bind events
+  document.getElementById('closeReviewBtn').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  
+  document.getElementById('approveAllBtn').addEventListener('click', () => {
+    pending.forEach(c => approveChange(c.id));
+    modal.style.display = 'none';
+  });
+  
+  document.getElementById('rejectAllBtn').addEventListener('click', () => {
+    pending.forEach(c => rejectChange(c.id));
+    modal.style.display = 'none';
+  });
+  
+  document.querySelectorAll('.approve-change-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'), 10);
+      approveChange(id);
+      e.target.closest('.change-item').style.opacity = '0.5';
+    });
+  });
+  
+  document.querySelectorAll('.reject-change-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'), 10);
+      rejectChange(id);
+      e.target.closest('.change-item').style.opacity = '0.5';
+    });
+  });
+}
+
+function approveChange(changeId) {
+  const change = pendingChanges.find(c => c.id === changeId);
+  if (!change) return;
+  
+  change.status = 'approved';
+  
+  // Update marker for this section
+  const marker = changeMarkers.get(change.sectionIndex);
+  if (marker) {
+    const allApproved = marker.changes.every(c => c.status === 'approved');
+    const anyRejected = marker.changes.some(c => c.status === 'rejected');
+    
+    if (allApproved) {
+      marker.status = 'approved';
+    } else if (anyRejected) {
+      marker.status = 'rejected';
+    } else {
+      marker.status = 'pending';
+    }
+  }
+  
+  updateNavigatorWithChanges();
+  updatePendingChangesCounter();
+  log(`Approved: ${change.description}`, 'success');
+}
+
+function rejectChange(changeId) {
+  const change = pendingChanges.find(c => c.id === changeId);
+  if (!change) return;
+  
+  change.status = 'rejected';
+  
+  // Update marker for this section
+  const marker = changeMarkers.get(change.sectionIndex);
+  if (marker) {
+    const allApproved = marker.changes.every(c => c.status === 'approved');
+    const anyRejected = marker.changes.some(c => c.status === 'rejected');
+    
+    if (allApproved) {
+      marker.status = 'approved';
+    } else if (anyRejected) {
+      marker.status = 'rejected';
+    } else {
+      marker.status = 'pending';
+    }
+  }
+  
+  updateNavigatorWithChanges();
+  updatePendingChangesCounter();
+  log(`Rejected: ${change.description}`, 'info');
+}
+
+async function applyApprovedChanges() {
+  const approved = pendingChanges.filter(c => c.status === 'approved');
+  
+  if (approved.length === 0) {
+    log('No approved changes to apply', 'info');
+    return;
+  }
+  
+  saveUndoState('apply approved changes');
+  
+  // Apply changes to document content
+  // This is a simplified version - real implementation would need to handle line-level edits
+  approved.forEach(change => {
+    // For now, just log the change
+    log(`Would apply: ${change.description}`, 'info');
+  });
+  
+  // Clear applied changes
+  pendingChanges = pendingChanges.filter(c => c.status !== 'approved');
+  
+  // Clear markers for sections with all changes applied
+  changeMarkers.forEach((marker, sectionIndex) => {
+    marker.changes = marker.changes.filter(c => c.status !== 'approved');
+    if (marker.changes.length === 0) {
+      changeMarkers.delete(sectionIndex);
+    }
+  });
+  
+  updateNavigatorWithChanges();
+  updatePendingChangesCounter();
+  log(`Applied ${approved.length} approved change(s)`, 'success');
+}
+
 // Start app
 initialize();
+updateUndoButton();

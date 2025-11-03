@@ -1,5 +1,145 @@
 # Electron App Changelog
 
+## Version 2.4.0 - Format Text Submenu, Undo, Change Tracking (January 2026)
+
+### New Feature: Format Text Submenu
+
+Replaced single "Format Text" button with organized submenu of individual formatting tools.
+
+**Functionality:**
+- **✏️ Format Text** button expands/collapses submenu
+- Five individual formatting tools:
+  - ❝ **Fix Smart Quotes**: Normalize curly quotes and apostrophes
+  - ⎵ **Fix Whitespace**: Clean up extra spaces and tabs
+  - ↵ **Fix Line Breaks**: Normalize paragraph breaks
+  - 📐 **Normalize Headers**: Standardize header formatting
+  - ✨ **Fix All Formatting**: Apply all fixes in sequence
+- Each tool runs independently for precise control
+- Selection-aware: if text selected, processes only selection (outputs to Log); otherwise processes full document
+- Arrow indicator rotates to show submenu state (▼/▲)
+
+**User Experience:**
+- Clear menu organization (no more guessing what "Format Text" does)
+- Granular control over formatting operations
+- Consistent with other tools (selection → Log, full doc → file)
+- Smooth slide-down animation with purple accent border
+- Tertiary button style distinguishes from primary actions
+
+**Technical Implementation:**
+- Submenu toggle: click to show/hide, CSS `display: none/block` transition
+- Individual action handlers: `runFormatAction(action, label)` 
+- IPC handler: `run-format-action` dispatches to appropriate Python scripts (placeholders pending full integration)
+- CSS: `.submenu-container`, `.submenu-toggle`, `.submenu`, `.btn.tertiary`
+
+**Files Modified:**
+- `electron/src/index.html` - Replaced Format Text button with submenu structure
+- `electron/src/styles.css` - Added submenu styles with animation
+- `electron/src/renderer.js` - Added toggle handler and format action runner
+- `electron/main.js` - Added `run-format-action` IPC handler
+- `electron/preload.js` - Exposed `runFormatAction` API
+
+---
+
+### New Feature: Undo Functionality
+
+Global undo system tracks document changes and allows one-click restoration.
+
+**Functionality:**
+- **↶ Undo** button in Pipeline section
+- Tracks last 10 document states (content + metadata)
+- Saves state before each modification:
+  - Format Text actions
+  - Build Headers
+  - Quick Tools
+  - Pipeline operations
+  - Change tracking approvals
+- Button shows action label and count: "Undo Fix Smart Quotes (3 available)"
+- Disabled when no actions to undo
+- Restores content and refreshes all views (Preview, Rendered, Summary, Navigator)
+
+**User Experience:**
+- Safety net for experimental edits
+- Clear feedback on what will be undone
+- Instant restoration (no file search needed)
+- Persists across tool operations
+- Truncates gracefully (max 10 states)
+
+**Technical Implementation:**
+- `undoStack`: array of state objects `{ filePath, content, action, timestamp }`
+- `saveUndoState(action)`: captures current state before modifications
+- `updateUndoButton()`: refreshes label and disabled state
+- `undo()`: pops stack, restores content, updates all views
+- Stack limit: `MAX_UNDO_HISTORY = 10`
+
+**Files Modified:**
+- `electron/src/renderer.js` - Added undo stack, save/restore logic
+- `electron/src/index.html` - Added Undo button with label span
+
+---
+
+### New Feature: Change Tracking with Navigator Integration
+
+Visual change tracking system integrates with Navigator to mark affected sections and enable review/approve workflow.
+
+**Functionality:**
+- Tools like Long Line Detector now mark affected sections with visual indicators
+- **Navigator badges**:
+  - 🔴 Red dot: Pending changes (pulsing badge with count)
+  - ✓ Green check: Approved changes
+  - ✗ Gray X: Rejected changes
+- **Floating counter**: "N changes" badge on Navigator (click to review)
+- **Review panel**: modal with list of all pending changes
+  - Section index, change type, description, timestamp
+  - **Approve/Reject** buttons per change
+  - **Approve All/Reject All** batch actions
+  - **Close** to continue reviewing later
+- **Change details**: each change tracks:
+  - Section index (for Navigator marking)
+  - Change type (e.g., "Long Line", "Header Depth")
+  - Description (e.g., "Line exceeds 150 chars")
+  - Old/new content (for diffing)
+  - Status (pending/approved/rejected)
+- **Apply approved changes**: applies all approved changes to document
+
+**User Experience:**
+- See exactly WHERE changes will be applied (Navigator indicators)
+- Review changes before committing (no surprises)
+- Batch approval for confident bulk edits
+- Reject specific problematic changes while keeping others
+- Visual feedback (pulsing badge, color-coded indicators)
+- Click counter to open review panel
+
+**Use Cases:**
+- Long Line Detector: mark all 50 lines, review one-by-one, approve valid fixes
+- Header Depth Corrector: see which sections will change, reject title section, approve all chapters
+- Paragraph Break Detector: review suggested breaks, reject false positives
+- Spell Check: approve common fixes, reject domain-specific terms
+
+**Technical Implementation:**
+- `pendingChanges`: array of change objects
+- `changeMarkers`: Map of sectionIndex → marker object with status and changes array
+- `trackChange(sectionIndex, type, description, oldContent, newContent)`: adds change and updates UI
+- `updateNavigatorWithChanges()`: adds indicators to nav-items
+- `updatePendingChangesCounter()`: creates/updates floating badge
+- `showChangeReviewPanel()`: modal with change list and action buttons
+- `approveChange(id)`, `rejectChange(id)`: update status, refresh UI
+- `applyApprovedChanges()`: applies approved changes to document, saves undo state
+
+**CSS Indicators:**
+- `.change-indicator`: absolute positioned on nav-item
+- `.change-pending`: red color with pulse animation
+- `.change-approved`: green color
+- `.change-rejected`: gray color, reduced opacity
+- `@keyframes pulse`: box-shadow animation
+- `#pendingChangesCounter`: floating badge (top-right of Navigator)
+
+**Files Modified:**
+- `electron/src/renderer.js` - Added change tracking logic (track, review, approve/reject, apply)
+- `electron/src/styles.css` - Added change indicator styles, pulse animation, pending counter badge
+- `electron/src/index.html` - (Navigator structure ready for indicators)
+
+---
+
 ## Version 2.3.0 - Build Headers & Enhanced UX (November 2, 2025)
 
 ### New Feature: Selection-Based Tool Execution

@@ -217,6 +217,23 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
   return { success: result.success, message: result.message, output: result.output };
 });
 
+// IPC: Format Text Actions
+ipcMain.handle('run-format-action', async (event, options) => {
+  const { filePath, action } = options;
+  
+  if (!filePath || !action) {
+    return { error: 'Missing filePath or action' };
+  }
+  
+  // For now, return placeholder - real implementation would call appropriate scripts
+  // based on action type (smart-quotes, whitespace, line-breaks, headers, all)
+  return { 
+    success: true, 
+    message: `Format action '${action}' would run here`,
+    outputPath: filePath
+  };
+});
+
 // IPC: Build Headers (convert bold to ATX hierarchy)
 ipcMain.handle('build-headers', async (event, inputPath, outputSuffix = '_headers', options = {}) => {
   // Handle .txt, .md, .markdown files

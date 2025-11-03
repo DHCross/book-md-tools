@@ -67,8 +67,31 @@
         <div class="sidebar-section">
           <h3>Pipeline</h3>
           <button id="runPipelineBtn" class="btn primary full-width">🔄 Run Full Pipeline</button>
-          <button id="formatTextBtn" class="btn secondary full-width">✏️ Format Text</button>
+          
+          <!-- Format Text Submenu -->
+          <div class="submenu-container">
+            <button id="formatTextMenuBtn" class="btn secondary full-width submenu-toggle">
+              ✏️ Format Text
+              <span class="submenu-arrow">▼</span>
+            </button>
+            <div id="formatTextSubmenu" class="submenu" style="display: none;">
+              <button id="fixSmartQuotesBtn" class="btn tertiary full-width">❝ Fix Smart Quotes</button>
+              <button id="fixWhitespaceBtn" class="btn tertiary full-width">⎵ Fix Whitespace</button>
+              <button id="fixLineBreaksBtn" class="btn tertiary full-width">↵ Fix Line Breaks</button>
+              <button id="normalizeHeadersBtn" class="btn tertiary full-width">📐 Normalize Headers</button>
+              <button id="fixAllFormattingBtn" class="btn tertiary full-width">✨ Fix All Formatting</button>
+            </div>
+          </div>
+          
           <button id="fixTOCBtn" class="btn secondary full-width">📑 Fix TOC</button>
+          
+          <!-- Undo Section -->
+          <div class="undo-container" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+            <button id="undoBtn" class="btn secondary full-width" disabled title="No action to undo">
+              ↶ Undo
+              <span id="undoLabel" style="font-size: 11px; opacity: 0.7; display: block; margin-top: 2px; font-weight: normal;"></span>
+            </button>
+          </div>
         </div>
 
         <!-- Edmunds Tagging -->

@@ -147,6 +147,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .navigator-header {
@@ -162,6 +163,36 @@ body {
   color: #86868b;
 }
 
+#pendingChangesCounter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #dc3545;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  animation: pulse 2s infinite;
+  cursor: pointer;
+  z-index: 10;
+}
+
+#pendingChangesCounter:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(220,53,69,0.6);
+  }
+}
+
 .navigator-list {
   flex: 1;
   overflow-y: auto;
@@ -171,10 +202,11 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 6px 12px 6px 24px;
   cursor: pointer;
   color: #1d1d1f;
   user-select: none;
+  position: relative;
 }
 
 .nav-item:hover {
@@ -237,6 +269,28 @@ body {
   text-transform: none;
   font-weight: normal;
   transition: transform 0.2s ease;
+}
+
+/* Change tracking indicators */
+.change-indicator {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+}
+
+.change-pending {
+  color: #dc3545;
+}
+
+.change-approved {
+  color: #28a745;
+}
+
+.change-rejected {
+  color: #6c757d;
+  opacity: 0.5;
 }
 
 .info-icon:hover {
@@ -350,6 +404,80 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.btn.tertiary {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #495057;
+  border: 1px solid #dee2e6;
+  font-size: 12px;
+  padding: 6px 12px;
+  margin-bottom: 4px;
+}
+
+.btn.tertiary:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  transform: translateX(2px);
+}
+
+.btn.tertiary:active {
+  background: linear-gradient(135deg, #dee2e6 0%, #ced4da 100%);
+}
+
+/* ============================================================================
+   SUBMENU STYLES
+   ============================================================================ */
+
+.submenu-container {
+  margin-bottom: 8px;
+}
+
+.submenu-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submenu-arrow {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.submenu-toggle.open .submenu-arrow {
+  transform: rotate(-180deg);
+}
+
+.submenu {
+  margin-top: 4px;
+  padding-left: 12px;
+  border-left: 2px solid #667eea;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.undo-container {
+  position: relative;
+}
+
+#undoBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#undoLabel {
+  display: block;
+  font-weight: normal;
 }
 
 /* ============================================================================
