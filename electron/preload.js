@@ -25,6 +25,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Quick Tools
   runQuickTool: (tool, inputPath, outputSuffix, options) =>
     ipcRenderer.invoke('run-quick-tool', tool, inputPath, outputSuffix, options),
+  buildHeaders: (inputPath, outputSuffix, options) =>
+    ipcRenderer.invoke('build-headers', inputPath, outputSuffix, options),
 
   // Document Comparator
   compareDocuments: (doc1Path, doc2Path, options) =>

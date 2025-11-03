@@ -1,5 +1,136 @@
 # Electron App Changelog
 
+## Version 2.3.0 - Build Headers & Enhanced UX (November 2, 2025)
+
+### New Feature: Build Headers (Bold to ATX Converter)
+
+Integrated the bold-to-ATX markdown hierarchy converter directly into the Electron app toolbar.
+
+**Functionality:**
+- **🏗 Build Headers** button in main toolbar
+- Converts bold markdown headings to proper ATX hierarchy:
+  - `**ALL_CAPS_SECTION**` → `## Heading` (H2)
+  - `**Title Case Subsection**` → `### Heading` (H3)
+  - `**_Example (...)_**` → `#### Heading` (H4)
+- Creates `_headers` output file automatically
+- **Auto-loads output file** after conversion for immediate review
+- Supports `.md`, `.markdown`, and `.txt` files (iA Writer compatibility)
+- Smart change detection with line-by-line comparison
+- Comprehensive feedback for zero-change scenarios
+
+**User Experience Improvements:**
+- Output file automatically becomes the active document
+- All tabs (Preview, Rendered, Summary) update with new content
+- Input path field shows current file
+- Alert shows change statistics and new filename
+- Log entries track file switches
+- Helpful messages explain why no changes occurred
+
+**Technical Implementation:**
+- IPC handler: `build-headers` calls `scripts/convert_to_markdown_hierarchy.py`
+- Extension handling for `.txt`, `.md`, `.markdown` files
+- Automatic file loading after conversion
+- Change counting with detailed statistics
+
+**Files Modified:**
+- `electron/main.js` - Added build-headers IPC handler
+- `electron/preload.js` - Exposed buildHeaders API
+- `electron/src/index.html` - Added 🏗 Build Headers button to toolbar
+- `electron/src/renderer.js` - Added 60+ lines for build headers logic with auto-load
+
+### Enhancement: Drag & Drop File Loading
+
+Added native drag-and-drop support for loading markdown files into the app.
+
+**Features:**
+- Drag `.md`, `.markdown`, or `.txt` files from Finder onto app window
+- Visual overlay with bouncing 📁 icon during drag
+- Blue overlay shows "Drop markdown file here" message
+- Automatic file validation and loading
+- Cross-platform support (macOS, Windows, Linux)
+- Seamless integration with existing file loading
+
+**Technical Implementation:**
+- HTML5 drag events (dragenter, dragover, dragleave, drop)
+- Drag counter prevents flicker on child elements
+- Extension validation before loading
+- Reuses existing `loadFile()` function
+- Inline-styled overlay for cache-busting
+
+**Files Modified:**
+- `electron/src/index.html` - Added drop overlay HTML structure
+- `electron/src/styles.css` - Added drop overlay styles with animation
+- `electron/src/renderer.js` - Added 60+ lines drag-and-drop handling with `initializeDragAndDrop()`
+
+### Enhancement: Section Picker with Filtered Processing
+
+Added Word Outline-style section picker to Quick Tools for selective document processing.
+
+**Features:**
+- **Select Sections...** link in Quick Tools modal
+- Hierarchical outline view of document structure (H1-H6)
+- Checkbox tree with visual nesting and icons (📄)
+- Line range display for each section
+- Select All / Deselect All bulk actions
+- Section count indicator in footer
+- Filtered content processing (selected sections only)
+
+**Workflow:**
+1. Open Quick Tools → Click "Select Sections..."
+2. Review document outline with checkboxes
+3. Select specific chapters/sections to process
+4. Apply selection and choose a Quick Tool
+5. Tool processes only selected sections via temp file
+
+**Technical Implementation:**
+- `extractSections()` parses markdown headers with regex
+- Section objects store title, level, startLine, endLine
+- `renderSectionList()` generates checkbox UI with indentation
+- `runQuickTool()` extracts filtered content for selected sections
+- Temp file approach: creates `_temp_sections` file, processes, auto-cleanup
+- IPC handler creates and cleans up temp files automatically
+
+**Supported Tools:**
+- ✅ Header Depth Corrector (full support)
+- ✅ Long Line Detector (full support)
+- ✅ Paragraph Break Detector (full support)
+- ✅ Spell Check (full support)
+
+**Files Modified:**
+- `electron/main.js` - Enhanced run-quick-tool handler with temp file support
+- `electron/src/index.html` - Added Section Picker modal with outline view
+- `electron/src/renderer.js` - Added 150+ lines for section extraction, selection, filtering
+- `electron/src/styles.css` - Added section picker styles
+
+**Documentation:**
+- `docs/SECTION_PICKER_GUIDE.md` - Comprehensive user guide with examples
+- `docs/ELECTRON_APP_QUICK_START.md` - Updated with section picker workflows
+
+### Enhancement: Text File Support
+
+Extended file picker dialogs to properly support `.txt` files from iA Writer exports.
+
+**Changes:**
+- Main file picker now includes "Text Files (.txt)" filter
+- Table Tools file pickers accept `.txt` files
+- Build Headers properly handles `.txt` extension for output naming
+- Consistent `.txt` support across all tools
+
+**Files Modified:**
+- `electron/main.js` - Updated select-file handler filters
+- `electron/src/renderer.js` - Updated browseMdTableBtn filter
+
+### Bug Fixes
+
+- Fixed `setPreview is not defined` error (changed to `updatePreviewTab`)
+- Fixed `appendChangeLog is not defined` error (changed to `addChangeLogEntry`)
+- Fixed `left_actions` undefined error in doc_workbench_app.py
+- Fixed `inject_edmunds_tags` method indentation in doc_workbench_app.py
+- Added missing `tomli_w` dependency installation
+- Fixed Build Headers output suffix to always use `_headers`
+
+---
+
 ## Version 2.2.0 - Table Tools Module (November 2, 2025)
 
 ### New Feature: Unified Table Tools Module

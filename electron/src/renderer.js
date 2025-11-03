@@ -582,6 +582,95 @@ document.getElementById('applySectionsBtn')?.addEventListener('click', () => {
 // QUICK TOOLS MODAL
 // ============================================================================
 
+// Build Headers button
+document.getElementById('buildHeadersBtn')?.addEventListener('click', async () => {
+  if (!currentFilePath) {
+    alert('Please select an input file first');
+    log('No file selected', 'error');
+    return;
+  }
+
+  // Always use _headers suffix for this operation
+  const outputSuffix = '_headers';
+  const loose = !!document.getElementById('buildHeadersLooseCheck')?.checked;
+  
+  log('Building header structure...', 'info');
+  showProgress(true);
+  updateStatus('Building headers...', 'info');
+
+  try {
+  const result = await window.electronAPI.buildHeaders(currentFilePath, outputSuffix, { loose });
+    
+    showProgress(false);
+    
+    if (result.success) {
+      log(`Headers built successfully: ${result.outputPath}`, 'success');
+      updateStatus('Headers built', 'success');
+      
+      // Load and preview the output file
+      let outputContent = await window.electronAPI.readFile(result.outputPath);
+      if (outputContent) {
+        // Parse the output to count changes
+        const originalLines = currentContent.split('\n');
+        let convertedLines = outputContent.split('\n');
+        let changedLines = originalLines.reduce((count, line, i) => {
+          return count + (line !== convertedLines[i] ? 1 : 0);
+        }, 0);
+
+        // Auto-fallback: if strict made no changes and loose wasn't requested, retry with loose
+        if (changedLines === 0 && !loose) {
+          log("No changes with strict mode; retrying with 'Infer headings (no Markdown)'…", 'info');
+          const resultLoose = await window.electronAPI.buildHeaders(currentFilePath, outputSuffix, { loose: true });
+          if (resultLoose && resultLoose.success) {
+            outputContent = await window.electronAPI.readFile(resultLoose.outputPath);
+            convertedLines = (outputContent || '').split('\n');
+            changedLines = originalLines.reduce((count, line, i) => count + (line !== convertedLines[i] ? 1 : 0), 0);
+          }
+        }
+
+        const changeMsg = changedLines > 0 
+          ? `Built headers: ${changedLines} lines updated`
+          : `Built headers: no changes detected`;
+
+        addChangeLogEntry('Build Headers', changeMsg);
+        log(changeMsg, changedLines > 0 ? 'info' : 'warning');
+
+        // Switch to the new output file
+        currentFilePath = result.outputPath;
+        currentContent = outputContent;
+        document.getElementById('inputPath').value = result.outputPath;
+
+        // Update all tabs with the new content
+        updatePreviewTab(outputContent);
+        updateRenderedTab(outputContent);
+        updateSummaryTab(outputContent);
+
+        // Show success message
+        const fileName = result.outputPath.split('/').pop();
+        updateStatus(`Loaded: ${fileName}`, 'success');
+        log(`Switched to output file: ${fileName}`, 'info');
+
+        // Show alert with more helpful message
+        if (changedLines > 0) {
+          alert(`Header structure built successfully!\n\nSwitched to: ${fileName}\nLines changed: ${changedLines}\n\nThe new file is now loaded in the editor.`);
+        } else {
+          const hint = "\n• If your headings aren’t bold (**Heading**), enable 'Infer headings (no Markdown)' or share a sample heading and I’ll tune the matcher";
+          alert(`Build Headers completed with no changes.\n\nSwitched to: ${fileName}\n\nPossible reasons:\n• File already has proper ATX headers (# ## ###)\n• No bold headings found (**text**)\n• Bold text doesn't match detection patterns${hint}\n\nThe output file is now loaded for your review.`);
+        }
+      }
+    } else {
+      log(`Header building failed: ${result.message}`, 'error');
+      updateStatus('Header building failed', 'error');
+      alert(`Header building failed: ${result.message}`);
+    }
+  } catch (error) {
+    showProgress(false);
+    log(`Error: ${error.message}`, 'error');
+    updateStatus('Error', 'error');
+    alert(`Error: ${error.message}`);
+  }
+});
+
 document.getElementById('quickToolsBtn')?.addEventListener('click', () => {
   const modal = document.getElementById('quickToolsModal');
   if (modal) modal.style.display = 'flex';

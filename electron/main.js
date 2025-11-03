@@ -14,6 +14,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
+    center: true,
+    show: false, // show when ready to avoid flashes and ensure focus
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -22,7 +24,21 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile('src/index.html');
+  // Always load index.html from an absolute path to avoid CWD issues
+  const indexPath = path.join(__dirname, 'src', 'index.html');
+  mainWindow.loadFile(indexPath);
+
+  // Show when ready to ensure it's visible and focused
+  mainWindow.once('ready-to-show', () => {
+    if (!mainWindow) return;
+    mainWindow.show();
+    mainWindow.focus();
+  });
+
+  // Ensure reference is cleared when closed (macOS activate will recreate)
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
   
   // Disable cache for development
   mainWindow.webContents.session.clearCache();
@@ -38,10 +54,30 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  // On macOS re-create a window in the app when the dock icon is clicked
+  // and there are no other windows open, or bring the existing to front
+  if (mainWindow === null || BrowserWindow.getAllWindows().length === 0) {
     createWindow();
+  } else if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
   }
 });
+
+// Ensure single instance and focus existing window if re-launched
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
 
 // Helper: Run Python script
 function runPythonScript(scriptPath, args = [], env = null) {
@@ -179,6 +215,32 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
   }
   
   return { success: result.success, message: result.message, output: result.output };
+});
+
+// IPC: Build Headers (convert bold to ATX hierarchy)
+ipcMain.handle('build-headers', async (event, inputPath, outputSuffix = '_headers', options = {}) => {
+  // Handle .txt, .md, .markdown files
+  const outputPath = inputPath.replace(/\.(md|markdown|txt)$/i, `${outputSuffix}.$1`);
+  const args = [inputPath, '-o', outputPath];
+  if (options && options.loose) {
+    args.push('--loose');
+  }
+  
+  const result = await runPythonScript('scripts/convert_to_markdown_hierarchy.py', args);
+  
+  if (result.success) {
+    return { 
+      success: true, 
+      message: `Headers built successfully`,
+      outputPath: outputPath,
+      output: result.output
+    };
+  } else {
+    return { 
+      success: false, 
+      message: result.message || 'Header building failed'
+    };
+  }
 });
 
 // IPC: Document Comparator
@@ -435,9 +497,9 @@ ipcMain.handle('select-file', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     title: 'Select Markdown File',
     filters: [
+      { name: 'All Files', extensions: ['*'] },
       { name: 'Markdown Files', extensions: ['md', 'markdown'] },
-      { name: 'Text Files', extensions: ['txt'] },
-      { name: 'All Files', extensions: ['*'] }
+      { name: 'Text Files', extensions: ['txt'] }
     ],
     properties: ['openFile'],
   });
@@ -462,7 +524,10 @@ ipcMain.handle('select-save-location', async (event, defaultName) => {
 ipcMain.handle('open-file-dialog', async (event, title, filters) => {
   const result = await dialog.showOpenDialog(mainWindow, {
     title,
-    filters,
+    // Ensure 'All Files' is the default filter when no explicit order is provided
+    filters: (Array.isArray(filters) && filters.length)
+      ? ([{ name: 'All Files', extensions: ['*'] }, ...filters.filter(f => !(f && f.extensions && f.extensions.includes('*')))])
+      : [{ name: 'All Files', extensions: ['*'] }, { name: 'Markdown Files', extensions: ['md', 'markdown'] }, { name: 'Text Files', extensions: ['txt'] }],
     properties: ['openFile'],
   });
   return result.filePaths[0] || null;
@@ -472,7 +537,10 @@ ipcMain.handle('open-file-dialog', async (event, title, filters) => {
 ipcMain.handle('save-file-dialog', async (event, title, filters, defaultName) => {
   const result = await dialog.showSaveDialog(mainWindow, {
     title,
-    filters,
+    // Prefer 'All Files' first for consistency when saving
+    filters: (Array.isArray(filters) && filters.length)
+      ? ([{ name: 'All Files', extensions: ['*'] }, ...filters.filter(f => !(f && f.extensions && f.extensions.includes('*')))])
+      : [{ name: 'All Files', extensions: ['*'] }, { name: 'Markdown Files', extensions: ['md'] }, { name: 'Text Files', extensions: ['txt'] }],
     defaultPath: defaultName,
   });
   return result.filePath || null;

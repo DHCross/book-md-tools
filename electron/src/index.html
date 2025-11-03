@@ -25,6 +25,11 @@
         <p>Markdown document processing and layout preparation</p>
       </div>
       <div class="header-actions">
+        <label style="display:flex;align-items:center;gap:6px;margin-right:8px;font-size:12px;color:#555;" title="Use when your source is plain text without Markdown headers. Infers headings from: ALL CAPS lines (H2), Title Case lines ending with a colon (H3), and Setext underlines (===/---).">
+          <input type="checkbox" id="buildHeadersLooseCheck" />
+          Infer headings (no Markdown)
+        </label>
+        <button id="buildHeadersBtn" class="btn secondary">🏗 Build Headers</button>
         <button id="quickToolsBtn" class="btn secondary">⚡ Quick Tools</button>
         <button id="settingsBtn" class="btn secondary">⚙️ Settings</button>
       </div>

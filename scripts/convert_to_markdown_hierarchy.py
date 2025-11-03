@@ -136,6 +136,10 @@ def main() -> None:
     ap.add_argument(
         "-i", "--in-place", action="store_true", help="Modify input file in place"
     )
+    ap.add_argument(
+        "--loose", action="store_true",
+        help="Looser detection: convert likely headings even if not bold-only (e.g., SETEXT underlines, ALL CAPS lines, Title Case ending with colon)."
+    )
     args = ap.parse_args()
 
     if args.in_place and not args.input:
@@ -149,14 +153,69 @@ def main() -> None:
     else:
         data = sys.stdin.read().splitlines(True)
 
-    converted = convert_stream(data)
+    # Choose conversion mode
+    if args.loose:
+        out: list[str] = []
+        n = len(data)
+        i = 0
+        while i < n:
+            raw = data[i]
+            line = raw.rstrip("\n")
 
-    if args.in_place and args.input:
-        Path(args.input).write_text("".join(converted), encoding="utf-8")
-    elif args.output:
-        Path(args.output).write_text("".join(converted), encoding="utf-8")
+            # If already ATX, keep
+            if ATX_RE.match(line):
+                out.append(line + "\n")
+                i += 1
+                continue
+
+            # SETEXT underlines: === => H1, --- => H2
+            if i + 1 < n:
+                nxt = data[i + 1].rstrip("\n")
+                if re.fullmatch(r"=+", nxt):
+                    out.append(f"# {line}\n")
+                    # skip underline
+                    i += 2
+                    continue
+                if re.fullmatch(r"-+", nxt):
+                    out.append(f"## {line}\n")
+                    i += 2
+                    continue
+
+            # Bold-only line handled by stricter converter below
+            m = BOLD_RE.match(line)
+            if m:
+                level = detect_heading_level(m.group(1))
+                if level:
+                    out.append(f"{'#'*level} {m.group(1)}\n")
+                    i += 1
+                    continue
+
+            # ALL CAPS standalone line (length heuristic)
+            letters = re.sub(r"[^A-Za-z]", "", line)
+            if letters and letters.isupper() and len(letters) >= 6:
+                out.append(f"## {line}\n")
+                i += 1
+                continue
+
+            # Title Case line ending with colon: treat as H3
+            if line.endswith(":") and line[:1].isupper() and not line.strip().startswith("#"):
+                out.append(f"### {line[:-1]}\n")
+                i += 1
+                continue
+
+            # Default: keep line
+            out.append(line + "\n")
+            i += 1
     else:
-        sys.stdout.write("".join(converted))
+        out = convert_stream(data)
+
+    # Write output
+    if args.in_place and args.input:
+        Path(args.input).write_text("".join(out), encoding="utf-8")
+    elif args.output:
+        Path(args.output).write_text("".join(out), encoding="utf-8")
+    else:
+        sys.stdout.write("".join(out))
 
 
 if __name__ == "__main__":
