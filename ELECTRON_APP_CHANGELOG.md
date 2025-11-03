@@ -2,6 +2,94 @@
 
 ## Version 2.3.0 - Build Headers & Enhanced UX (November 2, 2025)
 
+### New Feature: Selection-Based Tool Execution
+
+Run any Quick Tool on selected text without creating files—perfect for micro-adjustments and rapid testing.
+
+**Functionality:**
+- **Select text** in Preview or Rendered pane (click-drag or keyboard)
+- **Open Quick Tools** (⚡ button)
+- **Selection Mode indicator** shows character count and preview
+- **Choose any tool** (Header Depth, Long Line, Paragraph Break, Spell Check)
+- **Results display in Log tab** (no temporary files created)
+- Auto-switches to Log tab to show output
+
+**Priority Order:**
+1. **Selection** (if text is selected) - processes only selection, outputs to Log
+2. **Section filter** (from Section Picker) - processes selected sections, creates file
+3. **Full document** (default) - processes entire file, creates file
+
+**User Experience:**
+- No file clutter when testing small changes
+- Instant feedback in Log tab with formatted output
+- Selection automatically cleared after processing
+- Visual preview of selected text in modal (50-char truncation)
+- Blue ✂️ indicator distinguishes selection mode
+
+**Use Cases:**
+- Quick spell-check on one paragraph without saving
+- Test header depth fixes on sample sections
+- Validate long line detection on problematic blocks
+- Iterate on paragraph breaks with immediate feedback
+
+**Technical Implementation:**
+- `captureSelection()` tracks text selection via `window.getSelection()`
+- `mouseup` and `keyup` events on Preview and Rendered panes
+- `isSelectionMode` flag determines output destination
+- Tool output parsed and logged line-by-line with separators
+- Automatic tab switch to Log for visibility
+
+**Files Modified:**
+- `electron/src/renderer.js` - Enhanced `runQuickTool()` with log-based output for selection mode
+- `electron/src/index.html` - Added selection mode indicator to Quick Tools modal
+
+---
+
+### New Feature: Document Navigator
+
+Added a right-side Navigator pane that displays document headers in an interactive outline, enabling quick navigation through long documents.
+
+**Functionality:**
+- **Right sidebar** shows all markdown headers (H1-H6) in hierarchical view
+- Click any header to instantly jump to that section in both:
+  - **Preview pane**: scrolls proportionally to the line position
+  - **Rendered pane**: smooth-scrolls to the matching HTML heading
+- Active header is highlighted with blue background
+- Headers are visually indented by level (H1 → H6)
+- Line numbers displayed for each header
+- Updates automatically when loading files or after Build Headers
+
+**User Experience:**
+- Word-style Outline navigation for markdown documents
+- Synchronized scrolling across Preview and Rendered views
+- Visual feedback (active header highlight)
+- Compact display with truncation for long titles
+- Hover tooltips show full header text
+
+**Use Cases:**
+- Navigate 100+ page book manuscripts instantly
+- Jump between chapters without scrolling
+- Review document structure at a glance
+- Quick access to any section during editing
+
+**Technical Implementation:**
+- Reuses `extractSections()` to parse headers from current content
+- Navigator updates on:
+  - File load (`loadFile()`)
+  - After Build Headers operation
+  - Any content change that rebuilds document structure
+- Preview scroll: proportional positioning by line number
+- Rendered scroll: text-matching query to find DOM heading element
+- Marked.js configured with `headerIds: true` for reliable targeting
+- CSS indentation classes: `.nav-level-1` through `.nav-level-6`
+
+**Files Modified:**
+- `electron/src/index.html` - Added `<aside class="navigator">` with header/list structure
+- `electron/src/styles.css` - Added Navigator styles (280px width, indentation, hover, active states)
+- `electron/src/renderer.js` - Added `updateHeaderNavigator()` and `navigateToSection()` functions
+
+---
+
 ### New Feature: Build Headers (Bold to ATX Converter)
 
 Integrated the bold-to-ATX markdown hierarchy converter directly into the Electron app toolbar.

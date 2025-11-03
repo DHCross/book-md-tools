@@ -5,6 +5,7 @@
 let currentFilePath = null;
 let currentContent = '';
 let changeLog = [];
+let selectedText = ''; // Current text selection (from Preview or Rendered)
 let config = {
   defaultOutputSuffix: '_cleaned',
   tablesInline: true,
@@ -190,7 +191,13 @@ async function loadFile(filePath) {
 
 function updatePreviewTab(content) {
   const preview = document.getElementById('previewContent');
-  if (preview) preview.textContent = content;
+  if (preview) {
+    preview.textContent = content;
+    
+    // Track selection changes in Preview
+    preview.addEventListener('mouseup', captureSelection);
+    preview.addEventListener('keyup', captureSelection);
+  }
 }
 
 function updateRenderedTab(content) {
@@ -217,6 +224,19 @@ function updateRenderedTab(content) {
       .replace(/\n\n/g, '</p><p>')
       .replace(/\n/g, '<br>');
   }
+  
+  // Track selection changes in Rendered
+  rendered.addEventListener('mouseup', captureSelection);
+  rendered.addEventListener('keyup', captureSelection);
+}
+
+function captureSelection() {
+  const selection = window.getSelection();
+  const text = (selection && selection.toString()) || '';
+  selectedText = text.trim();
+  
+  // Update Quick Tools modal hint if open
+  updateSelectionModeIndicator();
 }
 
 function updateSummaryTab(content) {
@@ -387,6 +407,27 @@ document.getElementById('injectTagsBtn')?.addEventListener('click', async () => 
     log('Tags injected successfully', 'success');
     updateStatus('Tag injection complete', 'success');
     addChangeLogEntry('Inject Tags', `Added Edmunds tags with suffix: ${outputSuffix}`);
+    
+    // Auto-load the output file to show tagged content
+    const outputPath = result.output || currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
+    const outputContent = await window.electronAPI.readFile(outputPath);
+    
+    if (outputContent) {
+      // Switch to the new output file
+      currentFilePath = outputPath;
+      currentContent = outputContent;
+      document.getElementById('inputPath').value = outputPath;
+      
+      // Update all tabs with the tagged content
+      updatePreviewTab(outputContent);
+      updateRenderedTab(outputContent);
+      updateSummaryTab(outputContent);
+      updateHeaderNavigator();
+      
+      const fileName = outputPath.split('/').pop();
+      log(`Switched to tagged file: ${fileName}`, 'info');
+      alert(`Tags injected successfully!\n\nSwitched to: ${fileName}\n\nThe tagged file is now loaded in the editor.`);
+    }
   } else {
     log(`Tag injection failed: ${result.message}`, 'error');
     updateStatus('Tag injection failed', 'error');
@@ -413,6 +454,27 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
     log('Tags stripped successfully', 'success');
     updateStatus('Tag stripping complete', 'success');
     addChangeLogEntry('Strip Tags', `Removed Edmunds tags with suffix: ${outputSuffix}`);
+    
+    // Auto-load the output file to show stripped content
+    const outputPath = result.output || currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
+    const outputContent = await window.electronAPI.readFile(outputPath);
+    
+    if (outputContent) {
+      // Switch to the new output file
+      currentFilePath = outputPath;
+      currentContent = outputContent;
+      document.getElementById('inputPath').value = outputPath;
+      
+      // Update all tabs with the stripped content
+      updatePreviewTab(outputContent);
+      updateRenderedTab(outputContent);
+      updateSummaryTab(outputContent);
+      updateHeaderNavigator();
+      
+      const fileName = outputPath.split('/').pop();
+      log(`Switched to stripped file: ${fileName}`, 'info');
+      alert(`Tags stripped successfully!\n\nSwitched to: ${fileName}\n\nThe stripped file is now loaded in the editor.`);
+    }
   } else {
     log(`Tag stripping failed: ${result.message}`, 'error');
     updateStatus('Tag stripping failed', 'error');
@@ -677,13 +739,34 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
 
 document.getElementById('quickToolsBtn')?.addEventListener('click', () => {
   const modal = document.getElementById('quickToolsModal');
-  if (modal) modal.style.display = 'flex';
+  if (modal) {
+    modal.style.display = 'flex';
+    updateSelectionModeIndicator();
+  }
 });
 
 document.getElementById('closeQuickToolsBtn')?.addEventListener('click', () => {
   const modal = document.getElementById('quickToolsModal');
   if (modal) modal.style.display = 'none';
 });
+
+function updateSelectionModeIndicator() {
+  const indicator = document.getElementById('selectionModeIndicator');
+  if (!indicator) return;
+  
+  if (selectedText && selectedText.length > 0) {
+    const preview = selectedText.length > 50 
+      ? selectedText.substring(0, 50) + '...' 
+      : selectedText;
+    indicator.innerHTML = `
+      <strong>✂️ Selection Mode:</strong> Processing ${selectedText.length} characters<br>
+      <code style="font-size: 11px; background: #f5f5f7; padding: 2px 6px; border-radius: 3px;">${preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>
+    `;
+    indicator.style.display = 'block';
+  } else {
+    indicator.style.display = 'none';
+  }
+}
 
 async function runQuickTool(toolName) {
   if (!currentFilePath) {
@@ -697,9 +780,16 @@ async function runQuickTool(toolName) {
   
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   const options = {};
+  const isSelectionMode = selectedText && selectedText.length > 0;
   
-  // If sections are selected, prepare filtered content
-  if (selectedSections.length > 0 && selectedSections.length < allSections.length) {
+  // Priority 1: If text is selected, use selection
+  if (isSelectionMode) {
+    options.filteredContent = selectedText;
+    options.selectionMode = true;
+    log(`Processing ${selectedText.length} characters from selection`, 'info');
+  }
+  // Priority 2: If sections are selected, prepare filtered content
+  else if (selectedSections.length > 0 && selectedSections.length < allSections.length) {
     // Extract only selected sections
     const lines = currentContent.split('\n');
     const selectedLines = [];
@@ -729,11 +819,35 @@ async function runQuickTool(toolName) {
     log(`${toolName} completed successfully`, 'success');
     updateStatus(`${toolName} complete`, 'success');
     
-    if (options.sectionCount) {
+    // For selection mode, display output in Log tab instead of creating files
+    if (isSelectionMode) {
+      log('═══════════════════════════════════════════════════', 'info');
+      log(`SELECTION TOOL OUTPUT: ${toolName}`, 'info');
+      log(`Input: ${selectedText.length} characters`, 'info');
+      log('───────────────────────────────────────────────────', 'info');
+      
+      // Display the tool output
+      const output = result.output || result.message || 'No output';
+      output.split('\n').forEach(line => {
+        if (line.trim()) log(line, 'info');
+      });
+      
+      log('═══════════════════════════════════════════════════', 'info');
+      
+      // Switch to Log tab to show results
+      const logTab = document.querySelector('[data-tab="logTab"]');
+      if (logTab) logTab.click();
+      
+      addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${selectedText.length}-char selection (output in Log)`);
+    } else if (options.sectionCount) {
       addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${options.sectionCount} sections`);
     } else {
       addChangeLogEntry('Quick Tool', `Ran ${toolName}`);
     }
+    
+    // Clear selection after processing
+    selectedText = '';
+    window.getSelection()?.removeAllRanges();
   } else {
     log(`${toolName} failed: ${result.message}`, 'error');
     updateStatus(`${toolName} failed`, 'error');

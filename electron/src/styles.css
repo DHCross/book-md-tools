@@ -225,6 +225,23 @@ body {
   letter-spacing: 0.5px;
   color: #86868b;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-icon {
+  font-size: 14px;
+  color: #667eea;
+  cursor: help;
+  text-transform: none;
+  font-weight: normal;
+  transition: transform 0.2s ease;
+}
+
+.info-icon:hover {
+  transform: scale(1.2);
+  filter: brightness(1.2);
 }
 
 .file-input-group {

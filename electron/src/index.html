@@ -73,7 +73,9 @@
 
         <!-- Edmunds Tagging -->
         <div class="sidebar-section">
-          <h3>Edmunds Tagging</h3>
+          <h3>Edmunds Tagging
+            <span class="info-icon" title="Edmunds Tags add numeric hierarchy markers to headings for InDesign import.&#10;&#10;Default format: `&lt;1&gt;` (backticked)&#10;• Safe for markdown renderers&#10;• Prevents &lt;1&gt; being interpreted as HTML&#10;• Visible in plain text&#10;&#10;Alternative formats available via CLI:&#10;• Raw: &lt;1&gt; (clean, may be hidden in HTML)&#10;• Comment: &lt;!--1--&gt; (invisible in rendered view)&#10;• Bracket: [1] (always visible)">ℹ️</span>
+          </h3>
           <button id="injectTagsBtn" class="btn secondary full-width">🏷️ Inject Tags</button>
           <button id="stripTagsBtn" class="btn secondary full-width">✂️ Strip Tags</button>
         </div>
@@ -316,6 +318,9 @@
           <div style="margin-bottom: 16px; padding: 12px; background-color: #f0f7ff; border-left: 4px solid #0066cc; border-radius: 4px;">
             <strong>💡 Tip:</strong> Want to process specific sections only? 
             <button id="openSectionPickerBtn" class="btn-link" style="color: #0066cc; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: 600;">Select Sections...</button>
+          </div>
+          <div id="selectionModeIndicator" style="display: none; margin-bottom: 16px; padding: 12px; background-color: #e7f3ff; border-left: 4px solid #667eea; border-radius: 4px; font-size: 13px;">
+            <strong>✂️ Selection Mode:</strong> Processing selection
           </div>
           <div class="quick-tools-grid">
             <button id="qtHeaderDepthBtn" class="tool-card">
