@@ -171,7 +171,7 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
   const toolMap = {
     'header-depth': 'tools/markdown_header_depth_corrector.py',
     'long-line': 'tools/long_line_detector.py',
-    'paragraph-break': 'tools/paragraph_break_detector.py',
+    'paragraph-break': 'tools/fix_broken_paragraphs.py',
     'spell-check': 'tools/spell_check.py'
   };
   
@@ -200,6 +200,10 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
     args.push('--max-depth', '4');
   } else if (tool === 'long-line') {
     args.push('--threshold', '150', '--ignore-headers', '--ignore-code');
+  } else if (tool === 'paragraph-break') {
+    // fix_broken_paragraphs.py needs an output file path
+    const outputPath = actualInputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
+    args.push(outputPath);
   }
   
   // Run the tool
