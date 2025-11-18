@@ -839,10 +839,22 @@ async function runQuickTool(toolName) {
       if (logTab) logTab.click();
       
       addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${selectedText.length}-char selection (output in Log)`);
+      // If long-line tool and user selected sections or the selection corresponds to a single section,
+      // parse the output and add pending changes targets for review.
+      if (toolName === 'long-line' && options.sectionCount === 1) {
+        parseLongLineOutputAndTrack(result.output || result.message || '', selectedSections[0], true);
+      }
     } else if (options.sectionCount) {
       addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${options.sectionCount} sections`);
+      if (toolName === 'long-line' && result?.output) {
+        // Map output line numbers back into full document and create change markers
+        parseLongLineOutputAndTrack(result.output, null, false);
+      }
     } else {
       addChangeLogEntry('Quick Tool', `Ran ${toolName}`);
+      if (toolName === 'long-line' && result?.output) {
+        parseLongLineOutputAndTrack(result.output, null, false);
+      }
     }
     
     // Clear selection after processing
@@ -1624,8 +1636,30 @@ async function runFormatAction(action, actionLabel) {
       // Run on selection and output to Log
       log(`Running ${actionLabel} on selection (${selectedText.length} chars)...`, 'info');
       
-      // For now, we'll just log that selection-based formatting is pending full implementation
-      log(`Selection-based ${actionLabel} is pending integration with format scripts`, 'warning');
+        // Apply simple, in-memory formatting transforms to selection and log result
+        let transformed = selectedText;
+        if (action === 'smart-quotes') {
+          transformed = applySmartQuotes(transformed);
+        } else if (action === 'whitespace') {
+          transformed = fixWhitespace(transformed);
+        } else if (action === 'line-breaks') {
+          transformed = fixLineBreaks(transformed);
+        } else if (action === 'headers') {
+          transformed = normalizeHeaders(transformed);
+        } else if (action === 'all') {
+          transformed = applySmartQuotes(transformed);
+          transformed = fixWhitespace(transformed);
+          transformed = fixLineBreaks(transformed);
+          transformed = normalizeHeaders(transformed);
+        }
+
+        log('═══════════════════════════════════════════════════', 'info');
+        log(`TRANSFORMED SELECTION (${actionLabel})`, 'info');
+        log('───────────────────────────────────────────────────', 'info');
+        transformed.split('\n').forEach(line => log(line, 'info'));
+        log('═══════════════════════════════════════════════════', 'info');
+        updateStatus('Ready', 'success');
+        return;
       updateStatus('Ready', 'success');
       return;
     }
@@ -1672,6 +1706,40 @@ Object.entries(formatButtons).forEach(([btnId, { action, label }]) => {
     btn.addEventListener('click', () => runFormatAction(action, label));
   }
 });
+
+// Simple in-memory selection transforms
+function applySmartQuotes(text) {
+  // Basic toggling idea — not perfect but useful for selection preview
+  let open = true;
+  text = text.replace(/"/g, () => (open = !open, open ? '“' : '”'));
+  // Apostrophes: avoid touching common contractions by limiting single-quote replacements when surrounded by spaces
+  let sOpen = true;
+  text = text.replace(/\'/g, () => (sOpen = !sOpen, sOpen ? '‘' : '’'));
+  return text;
+}
+
+function fixWhitespace(text) {
+  return text.split('\n').map(line => line.replace(/[\t ]{2,}/g, ' ').trimRight()).join('\n');
+}
+
+function fixLineBreaks(text) {
+  // Normalize CRLF
+  let t = text.replace(/\r\n?/g, '\n');
+  // Collapse 3+ blank lines into exactly 2
+  t = t.replace(/\n{3,}/g, '\n\n');
+  // Remove trailing spaces
+  return t.replace(/[ \t]+$/gm, '');
+}
+
+function normalizeHeaders(text) {
+  return text.split('\n').map(line => {
+    const m = line.match(/^(#{1,6})\s*(.*)$/);
+    if (m) {
+      return `${m[1]} ${m[2].trim()}`;
+    }
+    return line;
+  }).join('\n');
+}
 
 // ============================================================================
 // CHANGE TRACKING
@@ -1896,6 +1964,49 @@ function rejectChange(changeId) {
   updateNavigatorWithChanges();
   updatePendingChangesCounter();
   log(`Rejected: ${change.description}`, 'info');
+}
+
+function parseLongLineOutputAndTrack(outputText, forcedSectionIdx = null, isSelection = false) {
+  if (!outputText || outputText.trim().length === 0) return;
+
+  // Regex matches lines like: Line 123: MODERATE (160 characters)
+  const regex = /Line\s+(\d+):\s+([A-Za-z]+)\s+\((\d+)\s+characters\)/g;
+  let m;
+  while ((m = regex.exec(outputText)) !== null) {
+    const lineNum = parseInt(m[1], 10);
+    const severity = m[2].toLowerCase();
+    const length = parseInt(m[3], 10);
+
+    // Map line number back into full document if needed
+    let mappedLine = lineNum;
+    if (forcedSectionIdx !== null) {
+      const s = (allSections || [])[forcedSectionIdx];
+      if (s) mappedLine = s.startLine + lineNum - 1;
+    }
+
+    // Find which section this belongs to in the full document
+    const sections = allSections || [];
+    let sectionIndex = null;
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      if (mappedLine >= sec.startLine && mappedLine <= sec.endLine) {
+        sectionIndex = i;
+        break;
+      }
+    }
+
+    // Compose description
+    const description = `${severity} long line (${length} chars) at line ${mappedLine}`;
+    const lines = (currentContent || '').split('\n');
+    const oldLine = lines[mappedLine - 1] || '';
+
+    if (sectionIndex !== null) {
+      trackChange(sectionIndex, 'Long Line', description, oldLine, '');
+    } else {
+      // If no section found, append a pending change for document root (index 0)
+      trackChange(0, 'Long Line', description, oldLine, '');
+    }
+  }
 }
 
 async function applyApprovedChanges() {
