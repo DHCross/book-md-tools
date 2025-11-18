@@ -113,14 +113,14 @@ function runPythonScript(scriptPath, args = [], env = null) {
 
 // IPC: Inject Edmunds Tags
 ipcMain.handle('inject-tags', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.md$/, `${outputSuffix}.md`);
+  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
   const result = await runPythonScript('scripts/inject_numeric_tags.py', [inputPath, '-o', outputPath]);
   return { success: result.success, message: result.message, output: outputPath };
 });
 
 // IPC: Strip Edmunds Tags
 ipcMain.handle('strip-tags', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.md$/, `${outputSuffix}.md`);
+  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
   const result = await runPythonScript('scripts/strip_numeric_tags.py', [inputPath, '-o', outputPath]);
   return { success: result.success, message: result.message, output: outputPath };
 });
@@ -138,14 +138,16 @@ ipcMain.handle('run-pipeline', async (event, inputPath, outputSuffix, tablesInli
 
 // IPC: Format Text
 ipcMain.handle('format-text', async (event, inputPath, outputSuffix) => {
-  const result = await runPythonScript('scripts/fix_formatting.py', [inputPath, '--out-suffix', outputSuffix]);
-  return { success: result.success, message: result.message };
+  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
+  const result = await runPythonScript('scripts/fix_formatting.py', [inputPath, '-o', outputPath]);
+  return { success: result.success, message: result.message, output: outputPath };
 });
 
 // IPC: Fix TOC
 ipcMain.handle('fix-toc', async (event, inputPath, outputSuffix) => {
-  const result = await runPythonScript('tools/toc_fixer.py', [inputPath, '--out-suffix', outputSuffix]);
-  return { success: result.success, message: result.message };
+  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
+  const result = await runPythonScript('tools/fix_toc_enhanced.py', [inputPath, outputPath]);
+  return { success: result.success, message: result.message, output: outputPath };
 });
 
 // IPC: Spell Check
@@ -160,10 +162,11 @@ ipcMain.handle('long-lines', async (event, inputPath) => {
   return { success: result.success, message: result.message };
 });
 
-// IPC: Paragraph Breaks
-ipcMain.handle('paragraph-breaks', async (event, inputPath) => {
-  const result = await runPythonScript('tools/paragraph_break_detector.py', [inputPath]);
-  return { success: result.success, message: result.message };
+// IPC: Paragraph Breaks (legacy - use Quick Tools instead)
+ipcMain.handle('paragraph-breaks', async (event, inputPath, outputSuffix = '_fixed_paragraphs') => {
+  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
+  const result = await runPythonScript('tools/fix_broken_paragraphs.py', [inputPath, outputPath]);
+  return { success: result.success, message: result.message, output: outputPath };
 });
 
 // IPC: Quick Tools (unified handler with section support)
