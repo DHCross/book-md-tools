@@ -1,0 +1,18 @@
+{
+  "name": "velocity-tooling",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Velocity tracking tools for development metrics",
+  "engines": {
+    "node": ">=18 <21",
+    "npm": ">=9"
+  },
+  "scripts": {
+    "velocity:run": "node scripts/velocity-tracker.js --analyze",
+    "velocity:estimate": "node scripts/velocity-tracker.js --estimate",
+    "velocity:all": "npm run velocity:run && npm run velocity:report",
+    "velocity:report": "node scripts/velocity-artifacts.js",
+    "velocity:notify": "node scripts/velocity-notifier.js",
+    "velocity:provenance": "node scripts/append-recognition-provenance.js"
+  }
+}

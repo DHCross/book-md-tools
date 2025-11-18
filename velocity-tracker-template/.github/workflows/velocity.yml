@@ -1,0 +1,73 @@
+name: Velocity Tracker
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  schedule:
+    - cron: "0 */12 * * *"  # every 12 hours
+
+jobs:
+  track_velocity:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Velocity Tracker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/velocity-tracker.js --analyze
+
+      - name: Generate Artifacts
+        run: node scripts/velocity-artifacts.js
+
+      - name: Append Recognition Provenance
+        run: node scripts/append-recognition-provenance.js
+
+      - name: Update Velocity Forecast Doc
+        run: |
+          if [ -f docs/velocity-forecast.md ]; then
+            echo "✅ docs/velocity-forecast.md regenerated"
+          else
+            echo "⚠️  docs/velocity-forecast.md not found after artifacts step";
+          fi
+
+      - name: Switch to telemetry branch
+        run: |
+          git fetch origin telemetry || true
+          git checkout -B telemetry
+
+      - name: Send Notifications
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: node scripts/velocity-notifier.js
+
+      - name: Commit Velocity Log
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add velocity-log.jsonl
+          git add velocity-artifacts/
+          git add docs/velocity-forecast.md || true
+          git add docs/RECOGNITION_EVENT_2025-11-11.md || true
+          git diff --quiet && git diff --staged --quiet || git commit -m "[AUTO] Update velocity tracking data"
+          git push origin telemetry
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: velocity-report-${{ github.run_number }}
+          path: velocity-artifacts/
+          retention-days: 90

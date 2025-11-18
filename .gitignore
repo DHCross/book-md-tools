@@ -37,3 +37,8 @@ reports/
 media/
 images/
 tables/
+
+# Velocity Tracker
+.logs/velocity-log.jsonl
+velocity-log.jsonl
+velocity-artifacts/
