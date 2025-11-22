@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Book MD Workbench</title>
+  <title>TRPG MD Workbench</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -21,15 +21,29 @@
     <!-- Header -->
     <header class="header">
       <div class="header-title">
-        <h1>📚 Book MD Workbench</h1>
-        <p>Markdown document processing and layout preparation</p>
+        <h1>⚔️ TRPG MD Workbench</h1>
+        <p>TRPG content authoring and editing</p>
       </div>
       <div class="header-actions">
-        <label style="display:flex;align-items:center;gap:6px;margin-right:8px;font-size:12px;color:#555;" title="Use when your source is plain text without Markdown headers. Infers headings from: ALL CAPS lines (H2), Title Case lines ending with a colon (H3), and Setext underlines (===/---).">
-          <input type="checkbox" id="buildHeadersLooseCheck" />
-          Infer headings (no Markdown)
-        </label>
-        <button id="buildHeadersBtn" class="btn secondary">🏗 Build Headers</button>
+        <!-- Mode Toggle -->
+        <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+          <button id="modeStructuralBtn" class="btn tertiary active">Structural Mode</button>
+          <button id="modeStatBtn" class="btn tertiary">Stat Block Mode</button>
+          <!-- Quick navigation for stat blocks -->
+          <button id="prevStatBtn" class="btn tertiary nav-action-btn" title="Previous Stat Block (Ctrl+Alt+↑)">◀ Prev</button>
+          <button id="nextStatBtn" class="btn tertiary nav-action-btn" title="Next Stat Block (Ctrl+Alt+↓)">Next ▶</button>
+        </div>
+        <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+          <button id="saveBtn" class="btn secondary">💾 Save</button>
+          <button id="saveAsBtn" class="btn secondary">📝 Save As</button>
+        </div>
+        <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+          <button id="buildHeadersBtn" class="btn secondary">🏗 Build Headers</button>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;" title="Use when your source is plain text without Markdown headers. Infers headings from: ALL CAPS lines (H2), Title Case lines ending with a colon (H3), and Setext underlines (===/---).">
+            <input type="checkbox" id="buildHeadersLooseCheck" />
+            Infer headings (no Markdown)
+          </label>
+        </div>
         <button id="quickToolsBtn" class="btn secondary">⚡ Quick Tools</button>
         <button id="settingsBtn" class="btn secondary">⚙️ Settings</button>
       </div>
@@ -137,32 +151,97 @@
         <!-- Tabs -->
         <div class="tabs">
           <div class="tab-buttons">
-            <button class="tab-btn active" data-tab="previewTab">Preview</button>
+            <button class="tab-btn active" data-tab="markdownTab">Markdown</button>
             <button class="tab-btn" data-tab="renderedTab">Rendered</button>
             <button class="tab-btn" data-tab="summaryTab">Summary</button>
             <button class="tab-btn" data-tab="comparisonTab">Comparison</button>
               <button class="tab-btn" data-tab="tableToolsTab">Table Tools</button>
-            <button class="tab-btn" data-tab="logTab">Log</button>
-            <button class="tab-btn" data-tab="changeLogTab">Change Log</button>
+            <button class="tab-btn" data-tab="logTab">Activity</button>
           </div>
 
           <div class="tab-contents">
-            <!-- Preview Tab (Raw Markdown) -->
-            <div id="previewTab" class="tab-content active">
-              <pre id="previewContent" class="preview-content">No file loaded. Select a file to preview.</pre>
+            <!-- Markdown Editor Tab (editable source of truth) -->
+            <div id="markdownTab" class="tab-content active">
+              <!-- TRPG Markdown Toolbar -->
+              <div id="markdownToolbar" class="markdown-toolbar">
+                <!-- Formatting Group -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnBold" title="Bold (Ctrl+B)" data-action="bold">
+                    <strong>B</strong>
+                  </button>
+                  <button class="toolbar-btn" id="btnItalic" title="Italic (Ctrl+I)" data-action="italic">
+                    <em>I</em>
+                  </button>
+                </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- Headings Group -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnH1" title="Heading 1" data-action="h1">H1</button>
+                  <button class="toolbar-btn" id="btnH2" title="Heading 2" data-action="h2">H2</button>
+                  <button class="toolbar-btn" id="btnH3" title="Heading 3" data-action="h3">H3</button>
+                </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- Area Header Dropdown -->
+                <div class="toolbar-group">
+                  <div class="dropdown">
+                    <button class="toolbar-btn dropdown-toggle" id="btnAreaDropdown" title="Insert Area Header">
+                      Area ▼
+                    </button>
+                    <div class="dropdown-menu" id="areaDropdownMenu">
+                      <button class="dropdown-item" data-action="area-h1">Major Section (H1)</button>
+                      <button class="dropdown-item" data-action="area-h2">Mid Section (H2)</button>
+                      <button class="dropdown-item" data-action="area-h3">Subsection (H3)</button>
+                      <button class="dropdown-item" data-action="area-h4"><strong>Keyed Area (H4)</strong></button>
+                      <button class="dropdown-item" data-action="area-bold">Bold Label Style</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- Block Elements Group -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnQuote" title="Blockquote" data-action="quote">❝</button>
+                  <button class="toolbar-btn trpg-specific" id="btnBoxedText" title="Insert Boxed Text" data-action="boxed">📦</button>
+                </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- GM Tools Group -->
+                <div class="toolbar-group trpg-specific">
+                  <button class="toolbar-btn" id="btnGMNote" title="Insert GM Note" data-action="gm-note">GM</button>
+                  <button class="toolbar-btn" id="btnStatBlock" title="Insert Stat Block Template" data-action="stat-block">⚔️</button>
+                </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- Label Tools -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnBoldLabel" title="Bold Label (text before colon)" data-action="bold-label">
+                    <strong>Label:</strong>
+                  </button>
+                </div>
+              </div>
+              
+              <textarea id="markdownEditor" class="markdown-editor" placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
+              <div id="editorStatus" class="editor-status">Ready</div>
             </div>
 
             <!-- Rendered Tab (HTML) -->
             <div id="renderedTab" class="tab-content">
               <div id="renderedContent" class="rendered-content">
-                <p class="placeholder">No file loaded. Select a file to see rendered HTML.</p>
+                <p class="placeholder">Start typing in the Markdown tab to see rendered output here.</p>
               </div>
             </div>
 
             <!-- Summary Tab -->
             <div id="summaryTab" class="tab-content">
               <div id="summaryContent" class="summary-content">
-                <p class="placeholder">No file loaded. Select a file to see document statistics.</p>
+                <p class="placeholder">Document statistics will appear here as you type.</p>
               </div>
             </div>
 
@@ -303,20 +382,25 @@
                 </div>
               </div>
 
-            <!-- Log Tab -->
+            <!-- Activity Tab -->
             <div id="logTab" class="tab-content">
-              <div id="logContent" class="log-content"></div>
-            </div>
-
-            <!-- Change Log Tab -->
-            <div id="changeLogTab" class="tab-content">
-              <div id="changeLogContent" class="change-log-content">
-                <p class="placeholder">No changes yet.</p>
+              <div class="activity-grid">
+                <div class="activity-panel">
+                  <h4>Event Log</h4>
+                  <div id="logContent" class="log-content"></div>
+                </div>
+                <div class="activity-panel">
+                  <h4>Change Log</h4>
+                  <div id="changeLogContent" class="change-log-content">
+                    <p class="placeholder">No changes yet.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
 
       <!-- Right Navigator: Headers & Stat Blocks -->
       <aside class="navigator">
@@ -340,6 +424,59 @@
           </div>
           <div id="statBlockList" class="navigator-list">
             <p class="placeholder" style="padding: 12px;">No stat blocks found.</p>
+
+      <!-- Right Navigator: Dual Column -->
+      <aside class="navigator">
+        <div class="navigator-columns">
+          <div class="nav-column stat-nav-column">
+            <div class="stat-nav-header">
+              <h3>Stat Block Navigator</h3>
+              <span id="statBlockCount" class="stat-count">0</span>
+            </div>
+            
+            <!-- Search and Filters -->
+            <div class="stat-nav-controls">
+              <input type="text" id="statBlockSearch" class="stat-search-input" placeholder="Search blocks..." />
+              
+              <div class="stat-filters">
+                <select id="statBlockTypeFilter" class="stat-filter-select">
+                  <option value="all">All Types</option>
+                  <option value="npc">NPCs</option>
+                  <option value="monster">Monsters</option>
+                  <option value="hazard">Hazards</option>
+                  <option value="trap">Traps</option>
+                  <option value="feature">Features</option>
+                </select>
+                
+                <label class="stat-filter-checkbox">
+                  <input type="checkbox" id="statBlockShowErrors" />
+                  <span>Errors only</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Navigator List -->
+            <div id="statBlockNavigator" class="stat-block-navigator">
+              <p class="placeholder" style="padding: 12px;">No stat blocks detected. Load a document to see navigation.</p>
+            </div>
+          </div>
+
+          <div class="nav-column header-nav-column">
+            <div class="navigator-header">
+              <h3>Navigator</h3>
+            </div>
+            <div id="navigatorList" class="navigator-list">
+              <p class="placeholder" style="padding: 12px;">Add headings (H1–H4) to see document structure here.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat Block Details Panel (appears in Stat Block Mode) -->
+        <div id="statDetailsPanel" class="stat-details-panel" style="display:none; padding:12px; border-top:1px solid #e9ecef;">
+          <h4>Stat Block Details</h4>
+          <div id="statDetailsContent">
+            <p class="placeholder">Select a stat block to see validation and quick-fix options.</p>
+
           </div>
         </div>
       </aside>
@@ -410,6 +547,13 @@
                 <input type="checkbox" id="settingTablesInline" checked />
                 Tables Inline (by default)
               </label>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="settingSyncEnabled" />
+                Sync Rendered → Markdown Editor
+              </label>
+              <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in Rendered pane jumps editor cursor to corresponding line. Default: ON in Stat Mode, OFF in Structural Mode.</p>
             </div>
           </div>
         </div>
@@ -512,7 +656,7 @@
           
           <div id="sectionList" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; background-color: #f8f9fa;">
             <p style="color: #6c757d; text-align: center; padding: 40px 20px;">
-              No file loaded. Load a document to see its outline.
+              No document loaded. Load a file to compare versions.
             </p>
           </div>
         </div>
@@ -520,6 +664,51 @@
           <p id="sectionCountMsg" style="flex: 1; color: #6c757d; margin: 0; font-size: 14px;">0 sections selected</p>
           <button id="applySectionsBtn" class="btn primary">Apply Selection</button>
           <button id="cancelSectionsBtn" class="btn secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Before Tool Modal -->
+    <div id="saveBeforeToolModal" class="modal" style="display: none;">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2>⚠️ Unsaved Changes</h2>
+          <button id="closeSaveBeforeToolBtn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin-bottom: 16px; font-size: 15px;">You have unsaved changes in the editor. Save your edits before running this tool?</p>
+          <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+            <strong>⚡ Warning:</strong> Running tools on unsaved content may lead to unexpected results.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="saveAndContinueBtn" class="btn primary">💾 Save & Continue</button>
+          <button id="discardAndContinueBtn" class="btn secondary">🗑️ Discard Changes</button>
+          <button id="cancelToolBtn" class="btn secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diff Preview Modal -->
+    <div id="diffPreviewModal" class="modal" style="display: none;">
+      <div class="modal-content large-modal">
+        <div class="modal-header">
+          <h2>📋 Review Changes</h2>
+          <button id="closeDiffPreviewBtn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="diffToolName" style="margin-bottom: 12px; font-weight: 600; color: #495057;"></p>
+          <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+            <button id="diffViewSideBySideBtn" class="btn tertiary active">Side-by-Side</button>
+            <button id="diffViewUnifiedBtn" class="btn tertiary">Unified Diff</button>
+          </div>
+          <div id="diffContainer" style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px;">
+            <!-- Diff content will be injected here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="applyDiffBtn" class="btn primary">✅ Apply Changes</button>
+          <button id="cancelDiffBtn" class="btn secondary">Cancel</button>
         </div>
       </div>
     </div>

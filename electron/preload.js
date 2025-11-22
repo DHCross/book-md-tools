@@ -11,16 +11,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Pipeline Operations
   runPipeline: (inputPath, outputSuffix, tablesInline) =>
     ipcRenderer.invoke('run-pipeline', inputPath, outputSuffix, tablesInline),
-  formatText: (inputPath, outputSuffix) =>
-    ipcRenderer.invoke('format-text', inputPath, outputSuffix),
-  fixTOC: (inputPath, outputSuffix) =>
-    ipcRenderer.invoke('fix-toc', inputPath, outputSuffix),
+  formatText: (content, outputSuffix) =>
+    ipcRenderer.invoke('format-text', content, outputSuffix),
+  fixTOC: (content, outputSuffix) =>
+    ipcRenderer.invoke('fix-toc', content, outputSuffix),
 
   // Edmunds Tagging
-  injectTags: (inputPath, outputSuffix) =>
-    ipcRenderer.invoke('inject-tags', inputPath, outputSuffix),
-  stripTags: (inputPath, outputSuffix) =>
-    ipcRenderer.invoke('strip-tags', inputPath, outputSuffix),
+  injectTags: (content, outputSuffix) =>
+    ipcRenderer.invoke('inject-tags', content, outputSuffix),
+  stripTags: (content, outputSuffix) =>
+    ipcRenderer.invoke('strip-tags', content, outputSuffix),
 
   // Quick Tools
   runQuickTool: (tool, inputPath, outputSuffix, options) =>
@@ -44,5 +44,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Config Operations
   loadConfig: () => ipcRenderer.invoke('load-config'),
-  saveConfig: (config) => ipcRenderer.invoke('save-config', config),
+  saveConfig: (config) => ipcRenderer.invoke('save-config'),
+
+  // Stat Block Analysis
+  analyzeStatBlock: (content) => ipcRenderer.invoke('analyze-stat-block', content),
+  validateStatBlock: (content) => ipcRenderer.invoke('validate-stat-block', content),
+  fixStatBlock: (content) => ipcRenderer.invoke('fix-stat-block', content),
 });

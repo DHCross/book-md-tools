@@ -3,6 +3,12 @@ const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
 
+// Set application name
+app.setName('TRPG MD Workbench');
+
+// Stat Block Parser
+const { analyzeStatBlock, analyzeBatch } = require('./lib/cnc-stat-block-parser');
+
 let mainWindow;
 
 // Get repo root (parent of electron folder)
@@ -16,6 +22,7 @@ function createWindow() {
     height: 900,
     center: true,
     show: false, // show when ready to avoid flashes and ensure focus
+    title: 'TRPG MD Workbench',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -111,19 +118,68 @@ function runPythonScript(scriptPath, args = [], env = null) {
   });
 }
 
+// Helper: Run a Python tool against provided content using temp files
+async function runContentTool(scriptPath, content, buildArgs, prefix = null) {
+  if (typeof content !== 'string') {
+    return { success: false, message: 'No content provided' };
+  }
+
+  let tempInputPath;
+  let tempOutputPath;
+
+  try {
+    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+    const safePrefix = prefix || path.basename(scriptPath, '.py');
+    tempInputPath = path.join(REPO_ROOT, `.tmp-${safePrefix}-input-${tempId}.md`);
+    tempOutputPath = path.join(REPO_ROOT, `.tmp-${safePrefix}-output-${tempId}.md`);
+
+    fs.writeFileSync(tempInputPath, content, 'utf-8');
+
+    const args = buildArgs(tempInputPath, tempOutputPath);
+    const result = await runPythonScript(scriptPath, args);
+
+    if (!result.success) {
+      return { success: false, message: result.message || 'Tool failed' };
+    }
+
+    const transformedContent = fs.readFileSync(tempOutputPath, 'utf-8');
+    return { success: true, content: transformedContent };
+  } catch (err) {
+    return { success: false, message: err.message };
+  } finally {
+    try {
+      if (tempInputPath && fs.existsSync(tempInputPath)) {
+        fs.unlinkSync(tempInputPath);
+      }
+    } catch (cleanupErr) {
+      console.error('Temp file cleanup error:', cleanupErr);
+    }
+
+    try {
+      if (tempOutputPath && fs.existsSync(tempOutputPath)) {
+        fs.unlinkSync(tempOutputPath);
+      }
+    } catch (cleanupErr) {
+      console.error('Temp file cleanup error:', cleanupErr);
+    }
+  }
+}
+
 // IPC: Inject Edmunds Tags
-ipcMain.handle('inject-tags', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
-  const result = await runPythonScript('scripts/inject_numeric_tags.py', [inputPath, '-o', outputPath]);
-  return { success: result.success, message: result.message, output: outputPath };
-});
+ipcMain.handle('inject-tags', async (event, content, _outputSuffix) => runContentTool(
+  'scripts/inject_numeric_tags.py',
+  content,
+  (inputPath, outputPath) => [inputPath, '-o', outputPath],
+  'inject-tags'
+));
 
 // IPC: Strip Edmunds Tags
-ipcMain.handle('strip-tags', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
-  const result = await runPythonScript('scripts/strip_numeric_tags.py', [inputPath, '-o', outputPath]);
-  return { success: result.success, message: result.message, output: outputPath };
-});
+ipcMain.handle('strip-tags', async (event, content, _outputSuffix) => runContentTool(
+  'scripts/strip_numeric_tags.py',
+  content,
+  (inputPath, outputPath) => [inputPath, '-o', outputPath],
+  'strip-tags'
+));
 
 // IPC: Run Full Pipeline
 ipcMain.handle('run-pipeline', async (event, inputPath, outputSuffix, tablesInline) => {
@@ -137,18 +193,20 @@ ipcMain.handle('run-pipeline', async (event, inputPath, outputSuffix, tablesInli
 });
 
 // IPC: Format Text
-ipcMain.handle('format-text', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
-  const result = await runPythonScript('scripts/fix_formatting.py', [inputPath, '-o', outputPath]);
-  return { success: result.success, message: result.message, output: outputPath };
-});
+ipcMain.handle('format-text', async (event, content, _outputSuffix) => runContentTool(
+  'scripts/fix_formatting.py',
+  content,
+  (inputPath, outputPath) => [inputPath, '-o', outputPath],
+  'format-text'
+));
 
 // IPC: Fix TOC
-ipcMain.handle('fix-toc', async (event, inputPath, outputSuffix) => {
-  const outputPath = inputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
-  const result = await runPythonScript('tools/fix_toc_enhanced.py', [inputPath, outputPath]);
-  return { success: result.success, message: result.message, output: outputPath };
-});
+ipcMain.handle('fix-toc', async (event, content, _outputSuffix) => runContentTool(
+  'tools/fix_toc_enhanced.py',
+  content,
+  (inputPath, outputPath) => [inputPath, outputPath],
+  'fix-toc'
+));
 
 // IPC: Spell Check
 ipcMain.handle('spell-check', async (event, inputPath) => {
@@ -242,29 +300,58 @@ ipcMain.handle('run-format-action', async (event, options) => {
 });
 
 // IPC: Build Headers (convert bold to ATX hierarchy)
-ipcMain.handle('build-headers', async (event, inputPath, outputSuffix = '_headers', options = {}) => {
-  // Handle .txt, .md, .markdown files
-  const outputPath = inputPath.replace(/\.(md|markdown|txt)$/i, `${outputSuffix}.$1`);
-  const args = [inputPath, '-o', outputPath];
-  if (options && options.loose) {
-    args.push('--loose');
+ipcMain.handle('build-headers', async (event, input, outputSuffix = '_headers', options = {}) => {
+  const loose = !!options.loose;
+
+  // In-memory content path
+  if (input && typeof input === 'object' && typeof input.content === 'string') {
+    return runContentTool(
+      'scripts/convert_to_markdown_hierarchy.py',
+      input.content,
+      (inputPath, outputPath) => {
+        const args = [inputPath, '-o', outputPath];
+        if (loose) args.push('--loose');
+        return args;
+      },
+      'build-headers'
+    );
   }
-  
-  const result = await runPythonScript('scripts/convert_to_markdown_hierarchy.py', args);
-  
-  if (result.success) {
-    return { 
-      success: true, 
-      message: `Headers built successfully`,
-      outputPath: outputPath,
-      output: result.output
-    };
-  } else {
-    return { 
-      success: false, 
-      message: result.message || 'Header building failed'
-    };
+
+  // File-based path (legacy)
+  if (typeof input === 'string') {
+    const inputPath = input;
+    if (!inputPath) {
+      return { success: false, message: 'No input path provided for build-headers' };
+    }
+    if (typeof inputPath.replace !== 'function') {
+      return { success: false, message: 'Invalid input path for build-headers' };
+    }
+
+    const outputPath = inputPath.replace(/\.(md|markdown|txt)$/i, `${outputSuffix}.$1`);
+    const args = [inputPath, '-o', outputPath];
+    if (loose) {
+      args.push('--loose');
+    }
+    
+    const result = await runPythonScript('scripts/convert_to_markdown_hierarchy.py', args);
+    
+    if (result.success) {
+      return { 
+        success: true, 
+        message: `Headers built successfully`,
+        outputPath: outputPath,
+        output: result.output
+      };
+    } else {
+      return { 
+        success: false, 
+        message: result.message || 'Header building failed'
+      };
+    }
   }
+
+  // If we reach here, the input wasn't usable
+  return { success: false, message: 'Invalid input for build-headers (expected content or file path)' };
 });
 
 // IPC: Document Comparator
@@ -516,7 +603,43 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
   }
 });
 
-// IPC: Select file
+// ============================================================================
+// STAT BLOCK ANALYSIS
+// ============================================================================
+
+// IPC: Analyze Stat Block
+ipcMain.handle('analyze-stat-block', async (event, content) => {
+  try {
+    const result = analyzeStatBlock(content);
+    return { success: true, result };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// IPC: Validate Stat Block (returns validation details only)
+ipcMain.handle('validate-stat-block', async (event, content) => {
+  try {
+    const result = analyzeStatBlock(content, { validateFormat: true, autoFix: false });
+    return { success: true, validation: result.validation, classification: result.classification };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// IPC: Fix Stat Block (attempt auto-fixes and return fixed text + applied fixes)
+ipcMain.handle('fix-stat-block', async (event, content) => {
+  try {
+    const result = analyzeStatBlock(content, { validateFormat: true, autoFix: true });
+    return { success: true, fixedText: result.fixedText || result.fullText, appliedFixes: result.appliedFixes || [] };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// ============================================================================
+// FILE OPERATIONS
+// ============================================================================
 ipcMain.handle('select-file', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     title: 'Select Markdown File',
