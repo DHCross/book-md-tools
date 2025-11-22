@@ -318,13 +318,29 @@
         </div>
       </section>
 
-      <!-- Right Navigator: Headers -->
+      <!-- Right Navigator: Headers & Stat Blocks -->
       <aside class="navigator">
-        <div class="navigator-header">
-          <h3>Navigator</h3>
+        <!-- Headers Pane -->
+        <div class="navigator-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+          <div class="navigator-header">
+            <h3>Headers</h3>
+          </div>
+          <div id="navigatorList" class="navigator-list">
+            <p class="placeholder" style="padding: 12px;">No file loaded. Headers will appear here.</p>
+          </div>
         </div>
-        <div id="navigatorList" class="navigator-list">
-          <p class="placeholder" style="padding: 12px;">No file loaded. Headers will appear here.</p>
+
+        <!-- Divider -->
+        <div class="navigator-divider" style="height: 1px; background: #d1d1d6; margin: 0;"></div>
+
+        <!-- Stat Blocks Pane -->
+        <div class="navigator-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+          <div class="navigator-header">
+            <h3>Stat Blocks</h3>
+          </div>
+          <div id="statBlockList" class="navigator-list">
+            <p class="placeholder" style="padding: 12px;">No stat blocks found.</p>
+          </div>
         </div>
       </aside>
     </main>

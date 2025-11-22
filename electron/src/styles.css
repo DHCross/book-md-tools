@@ -143,16 +143,33 @@ body {
   width: 280px;
   background: white;
   border-left: 1px solid #d1d1d6;
-  padding: 12px 0;
-  overflow-y: auto;
+  padding: 0; /* padding removed to allow full-height sections */
   display: flex;
   flex-direction: column;
   position: relative;
+  height: 100%; /* ensure it fills vertical space */
+}
+
+/* Divider between navigator sections */
+.navigator-divider {
+  height: 1px;
+  background: #e5e5ea;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Scrollable list area inside each navigator pane */
+.navigator-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 8px; /* Add some spacing top of list */
 }
 
 .navigator-header {
-  padding: 0 12px 8px 12px;
+  padding: 12px 12px 8px 12px;
   border-bottom: 1px solid #e5e5ea;
+  background: #fafafa; /* Slight background to distinguish header */
+  flex-shrink: 0; /* Don't shrink header */
 }
 
 .navigator-header h3 {
@@ -278,6 +295,15 @@ body {
   top: 50%;
   transform: translateY(-50%);
   font-size: 10px;
+}
+
+.highlight-flash {
+  animation: highlight-flash-animation 2s ease-out;
+}
+
+@keyframes highlight-flash-animation {
+  0% { background-color: rgba(255, 255, 0, 0.5); }
+  100% { background-color: transparent; }
 }
 
 .change-pending {

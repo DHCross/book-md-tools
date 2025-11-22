@@ -84,6 +84,55 @@ function initializeDragAndDrop() {
 // UTILITY FUNCTIONS
 // ============================================================================
 
+function jumpEditorToLine(line) {
+  const preview = document.getElementById('previewContent');
+  if (!preview) return;
+
+  const content = preview.textContent || '';
+  const lines = content.split('\n');
+  const totalLines = lines.length;
+
+  if (line < 1 || line > totalLines) return;
+
+  // 1. Scroll to approximate position
+  const ratio = (line - 1) / (totalLines || 1);
+  const maxScroll = preview.scrollHeight - preview.clientHeight;
+  const targetScroll = Math.floor(ratio * maxScroll);
+
+  preview.scrollTop = targetScroll;
+
+  // 2. Set cursor position (Selection Range)
+  // Calculate character offset for the start of the target line
+  let charOffset = 0;
+  for (let i = 0; i < line - 1; i++) {
+    charOffset += lines[i].length + 1; // +1 for newline character
+  }
+
+  // Ensure offset is within bounds
+  if (charOffset > content.length) charOffset = content.length;
+
+  // Create a text node range if possible (for contenteditable or simple text node)
+  // Since previewContent contains a Text Node inside <pre>, we need to target that.
+  if (preview.firstChild && preview.firstChild.nodeType === Node.TEXT_NODE) {
+    try {
+      const range = document.createRange();
+      const sel = window.getSelection();
+
+      range.setStart(preview.firstChild, charOffset);
+      range.setEnd(preview.firstChild, charOffset);
+
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      // Focus the element to make the caret visible (if it were editable)
+      // Even if not editable, this updates the internal selection state
+      preview.focus();
+    } catch (e) {
+      console.warn('Failed to set cursor position:', e);
+    }
+  }
+}
+
 function log(message, type = 'info') {
   const logContainer = document.getElementById('logContent');
   if (!logContainer) return;
@@ -183,6 +232,7 @@ async function loadFile(filePath) {
     updateRenderedTab(content);
     updateSummaryTab(content);
     updateHeaderNavigator();
+    updateStatBlockNavigator();
     addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
   } else {
     log('Failed to read file', 'error');
@@ -423,6 +473,7 @@ document.getElementById('injectTagsBtn')?.addEventListener('click', async () => 
       updateRenderedTab(outputContent);
       updateSummaryTab(outputContent);
       updateHeaderNavigator();
+      updateStatBlockNavigator();
       
       const fileName = outputPath.split('/').pop();
       log(`Switched to tagged file: ${fileName}`, 'info');
@@ -470,6 +521,7 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
       updateRenderedTab(outputContent);
       updateSummaryTab(outputContent);
       updateHeaderNavigator();
+      updateStatBlockNavigator();
       
       const fileName = outputPath.split('/').pop();
       log(`Switched to stripped file: ${fileName}`, 'info');
@@ -710,6 +762,7 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
         updateRenderedTab(outputContent);
         updateSummaryTab(outputContent);
         updateHeaderNavigator();
+        updateStatBlockNavigator();
 
         // Show success message
         const fileName = result.outputPath.split('/').pop();
@@ -1451,35 +1504,51 @@ function updateHeaderNavigator() {
   const sections = extractSections(currentContent || '');
   allSections = sections; // reuse existing sections array
 
+  // Clear existing content safely
+  container.textContent = '';
+
   if (!sections || sections.length === 0) {
-    container.innerHTML = '<p class="placeholder" style="padding: 12px;">No headers found in document.</p>';
+    const p = document.createElement('p');
+    p.className = 'placeholder';
+    p.style.padding = '12px';
+    p.textContent = 'No headers found in document.';
+    container.appendChild(p);
     return;
   }
 
-  let html = '';
   sections.forEach((s, idx) => {
-    const levelClass = `nav-level-${Math.min(s.level, 6)}`;
-    html += `
-      <div class="nav-item ${levelClass}" data-index="${idx}">
-        <div class="nav-dot"></div>
-        <div class="nav-text">
-          <div class="nav-title" title="${s.header.replace(/\"/g, '&quot;')}">${s.header}</div>
-          <div class="nav-meta">H${s.level} · line ${s.startLine}</div>
-        </div>
-      </div>
-    `;
-  });
+    const item = document.createElement('div');
+    item.className = `nav-item nav-level-${Math.min(s.level, 6)}`;
+    item.dataset.index = idx;
 
-  container.innerHTML = html;
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
 
-  // Bind clicks
-  container.querySelectorAll('.nav-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const idx = parseInt(el.getAttribute('data-index'), 10);
+    const textDiv = document.createElement('div');
+    textDiv.className = 'nav-text';
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'nav-title';
+    titleDiv.title = s.header;
+    titleDiv.textContent = s.header;
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'nav-meta';
+    metaDiv.textContent = `H${s.level} · line ${s.startLine}`;
+
+    textDiv.appendChild(titleDiv);
+    textDiv.appendChild(metaDiv);
+
+    item.appendChild(dot);
+    item.appendChild(textDiv);
+
+    item.addEventListener('click', () => {
       navigateToSection(idx);
       container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
+      item.classList.add('active');
     });
+
+    container.appendChild(item);
   });
 }
 
@@ -1488,29 +1557,29 @@ function navigateToSection(index) {
   if (!sections[index]) return;
   const target = sections[index];
 
-  // Scroll Preview (text) proportionally by line
-  const preview = document.getElementById('previewContent');
-  if (preview) {
-    const linesTotal = (currentContent || '').split('\n').length || 1;
-    const ratio = Math.min(1, Math.max(0, (target.startLine - 1) / linesTotal));
-    const maxScroll = preview.scrollHeight - preview.clientHeight;
-    preview.scrollTop = Math.floor(ratio * maxScroll);
-  }
+  // Scroll Preview (text) to the specific line
+  jumpEditorToLine(target.startLine);
 
   // Scroll Rendered to the matching heading element
   const rendered = document.getElementById('renderedContent');
   if (rendered) {
-    const headings = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    let match = null;
-    for (const h of headings) {
-      const text = (h.textContent || '').trim();
-      if (text === target.header || text.startsWith(target.header)) {
-        match = h;
-        break;
-      }
+    // Try to find exact match first, then fuzzy
+    const headings = Array.from(rendered.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    let match = headings.find(h => (h.textContent || '').trim() === target.header);
+
+    if (!match) {
+        match = headings.find(h => (h.textContent || '').trim().startsWith(target.header));
     }
+
+    // Fallback: use data-line attribute if available (requires renderer update to inject it)
+    if (!match) {
+        match = headings.find(h => h.getAttribute('data-line') == target.startLine);
+    }
+
     if (match) {
       match.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      match.classList.add('highlight-flash');
+      setTimeout(() => match.classList.remove('highlight-flash'), 2000);
     }
   }
 }
@@ -1593,6 +1662,7 @@ async function undo() {
   updateRenderedTab();
   updateSummaryTab();
   updateHeaderNavigator();
+  updateStatBlockNavigator();
   
   log(`Undid ${state.action}`, 'success');
   updateUndoButton();
@@ -1912,6 +1982,192 @@ function showChangeReviewPanel() {
       e.target.closest('.change-item').style.opacity = '0.5';
     });
   });
+}
+
+// ============================================================================
+// STAT BLOCK NAVIGATOR
+// ============================================================================
+
+let allStatBlocks = [];
+
+function extractStatBlocks(content) {
+  const lines = content.split('\n');
+  const blocks = [];
+
+  // State variables for context-aware parsing
+  let lastHeader = null;
+  let lastHeaderLine = -1;
+
+  // Keywords that signal a section start but are NOT the name of the block
+  const IGNORE_HEADERS = new Set(['SIEGE', 'ECOLOGY', 'Description']);
+
+  lines.forEach((line, index) => {
+    const lineNum = index + 1;
+    const stripped = line.trim();
+
+    // ---------------------------------------------------------
+    // 1. Analyze Line Type (Track Headers)
+    // ---------------------------------------------------------
+    const headerMatch = stripped.match(/^(#{1,6})\s+(.+)$/);
+    const boldMatch = stripped.match(/^\*\*(.+)\*\*$/);
+
+    let currentLineHeader = null;
+
+    if (headerMatch) {
+      currentLineHeader = headerMatch[2].trim();
+    } else if (boldMatch) {
+      currentLineHeader = boldMatch[1].trim();
+    }
+
+    // ---------------------------------------------------------
+    // 2. Detection Logic
+    // ---------------------------------------------------------
+
+    // Form 3: Markdown List (e.g. * **Type:** Humanoid)
+    if (stripped.startsWith('* **Type:**') || stripped.startsWith('* **Level')) {
+      // If this list immediately follows a header (within 1-2 lines), it's a stat block
+      if (lastHeader && (lineNum - lastHeaderLine <= 2)) {
+        // Check duplicates (prevent re-adding same block if multiple list items match)
+        if (blocks.length === 0 || blocks[blocks.length - 1].line !== lastHeaderLine) {
+          blocks.push({
+            name: lastHeader,
+            line: lastHeaderLine,
+            type: 'Stat Block (List)'
+          });
+        }
+        // Don't consume header here; allow subsequent list items to confirm it (deduplication handles it)
+      }
+    }
+
+    // Form 2: SIEGE Style
+    else if (stripped === '**SIEGE**') {
+      if (lastHeader) {
+        blocks.push({
+          name: lastHeader,
+          line: lastHeaderLine,
+          type: 'Stat Block (SIEGE)'
+        });
+      }
+    }
+
+    // Form 1: Inline/Paragraph Style (parenthetical stats)
+    else if (line.includes('vital stats are')) {
+      // Heuristic: Name is the start of the line up to the first comma, or first ~30 chars
+      const nameMatch = stripped.match(/^([^,(]+)/);
+      const name = nameMatch ? nameMatch[1].trim() : (stripped.substring(0, 30) + "...");
+
+      blocks.push({
+        name: name,
+        line: lineNum,
+        type: 'Stat Block (Inline)'
+      });
+    }
+
+    // Legacy Support: Blockquote headers (> ## Name)
+    else if (stripped.match(/^>\s*#{1,6}\s+(.+)$/)) {
+        const match = stripped.match(/^>\s*#{1,6}\s+(.+)$/);
+        blocks.push({
+            name: match[1].trim(),
+            line: lineNum,
+            type: 'Monster/NPC'
+        });
+    }
+
+    // ---------------------------------------------------------
+    // 3. State Update (Post-Detection)
+    // ---------------------------------------------------------
+    if (currentLineHeader) {
+      // Strip basic HTML tags if present
+      const cleanHeader = currentLineHeader.replace(/<[^>]+>/g, '').trim();
+
+      if (!IGNORE_HEADERS.has(cleanHeader)) {
+        lastHeader = cleanHeader;
+        lastHeaderLine = lineNum;
+      }
+    }
+  });
+
+  return blocks;
+}
+
+function updateStatBlockNavigator() {
+  const container = document.getElementById('statBlockList');
+  if (!container) return;
+
+  const blocks = extractStatBlocks(currentContent || '');
+  allStatBlocks = blocks;
+
+  // Clear existing content safely
+  container.textContent = '';
+
+  if (!blocks || blocks.length === 0) {
+    const p = document.createElement('p');
+    p.className = 'placeholder';
+    p.style.padding = '12px';
+    p.textContent = 'No stat blocks found.';
+    container.appendChild(p);
+    return;
+  }
+
+  blocks.forEach((b, idx) => {
+    const item = document.createElement('div');
+    item.className = 'nav-item stat-block-item';
+    item.dataset.index = idx;
+
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'nav-icon';
+    iconDiv.textContent = '👾';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'nav-text';
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'nav-title';
+    titleDiv.title = b.name;
+    titleDiv.textContent = b.name; // Safe: textContent escapes HTML
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'nav-meta';
+    metaDiv.textContent = `${b.type} · line ${b.line}`;
+
+    textDiv.appendChild(titleDiv);
+    textDiv.appendChild(metaDiv);
+
+    item.appendChild(iconDiv);
+    item.appendChild(textDiv);
+
+    item.addEventListener('click', () => {
+      navigateToStatBlock(idx);
+      container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+    });
+
+    container.appendChild(item);
+  });
+}
+
+function navigateToStatBlock(index) {
+  const blocks = allStatBlocks || [];
+  if (!blocks[index]) return;
+  const target = blocks[index];
+
+  // Sync editor
+  jumpEditorToLine(target.line);
+
+  // Sync rendered view
+  const rendered = document.getElementById('renderedContent');
+  if (rendered) {
+    // Search for blockquote containing the name
+    // or standard header
+    const headers = Array.from(rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, strong, p'));
+    let match = headers.find(el => el.textContent.includes(target.name));
+
+    if (match) {
+      match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      match.classList.add('highlight-flash');
+      setTimeout(() => match.classList.remove('highlight-flash'), 2000);
+    }
+  }
 }
 
 function approveChange(changeId) {
