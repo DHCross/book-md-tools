@@ -4,12 +4,76 @@
 
 let currentFilePath = null;
 let currentContent = '';
+let savedContent = ''; // Last version written to disk
 let changeLog = [];
 let selectedText = ''; // Current text selection (from Preview or Rendered)
 let config = {
   defaultOutputSuffix: '_cleaned',
   tablesInline: true,
 };
+
+// Sync control: determines if scrolling/clicking in Rendered pane jumps editor
+// Default: ON in Stat Mode (essential for stat-block editing workflow)
+//          OFF in Structural Mode (free scrolling for reading)
+let syncScrollEnabled = null; // null = use mode default, true/false = user override
+
+// Guard flags to prevent circular updates
+let isInternalEditorUpdate = false; // Set to true when we modify editor from code
+let isSyncingScroll = false; // Set to true during scroll sync to prevent re-entry
+let suppressStatAnalysis = false; // Set to true when doing bulk updates
+
+// Mode: 'structural' | 'stat'
+let currentMode = 'structural';
+
+// Stat block navigation state
+let statBlocks = [];
+let activeStatIndex = null; // index within statBlocks
+let statFilters = { type: 'all', onlyErrors: false, search: '' };
+
+function setMode(mode) {
+  if (mode !== 'structural' && mode !== 'stat') return;
+  currentMode = mode;
+  // Update UI classes
+  document.getElementById('modeStructuralBtn')?.classList.toggle('active', mode === 'structural');
+  document.getElementById('modeStatBtn')?.classList.toggle('active', mode === 'stat');
+  updateUIForMode();
+  
+  // Update toolbar visibility if toolbar is initialized
+  if (document.querySelector('.markdown-toolbar')) {
+    const trpgButtons = document.querySelectorAll('.trpg-specific');
+    if (currentMode === 'structural') {
+      trpgButtons.forEach(btn => btn.style.display = 'none');
+    } else {
+      trpgButtons.forEach(btn => btn.style.display = '');
+    }
+  }
+}
+
+// Get effective sync state: user override or mode default
+function isSyncEnabled() {
+  if (syncScrollEnabled !== null) return syncScrollEnabled; // User override
+  // Mode defaults: ON for Stat Mode, OFF for Structural Mode
+  return currentMode === 'stat';
+}
+
+// Check if editor has unsaved changes
+function hasUnsavedChanges() {
+  return currentContent !== savedContent;
+}
+
+function updateUIForMode() {
+  // Always show both navigators; just refresh mode-specific data
+  const navigator = document.querySelector('.navigator');
+  if (navigator) navigator.style.display = 'flex';
+
+  // Ensure header navigator stays fresh
+  updateHeaderNavigator();
+
+  // Run stat analysis only when in Stat mode to avoid extra work
+  if (currentMode === 'stat') {
+    analyzeDocumentStatBlocks();
+  }
+}
 
 // ============================================================================
 // DRAG & DROP HANDLING
@@ -130,6 +194,399 @@ function updateChangeLogTab() {
 }
 
 // ============================================================================
+// SAFETY SYSTEM: TOOL EXECUTION WITH UNSAVED PROTECTION
+// ============================================================================
+
+/**
+ * Prompt user to save unsaved changes before running a tool
+ * Returns: 'save' | 'discard' | 'cancel'
+ */
+function promptSaveBeforeTool() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('saveBeforeToolModal');
+    if (!modal) {
+      resolve('cancel');
+      return;
+    }
+
+    modal.style.display = 'flex';
+
+    const saveBtn = document.getElementById('saveAndContinueBtn');
+    const discardBtn = document.getElementById('discardAndContinueBtn');
+    const cancelBtn = document.getElementById('cancelToolBtn');
+    const closeBtn = document.getElementById('closeSaveBeforeToolBtn');
+
+    const cleanup = () => {
+      modal.style.display = 'none';
+      saveBtn.replaceWith(saveBtn.cloneNode(true));
+      discardBtn.replaceWith(discardBtn.cloneNode(true));
+      cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+      closeBtn.replaceWith(closeBtn.cloneNode(true));
+    };
+
+    document.getElementById('saveAndContinueBtn').onclick = () => {
+      cleanup();
+      resolve('save');
+    };
+
+    document.getElementById('discardAndContinueBtn').onclick = () => {
+      cleanup();
+      resolve('discard');
+    };
+
+    document.getElementById('cancelToolBtn').onclick = () => {
+      cleanup();
+      resolve('cancel');
+    };
+
+    document.getElementById('closeSaveBeforeToolBtn').onclick = () => {
+      cleanup();
+      resolve('cancel');
+    };
+  });
+}
+
+/**
+ * Show diff preview modal and get user approval
+ * Returns: true (apply) | false (cancel)
+ */
+function showDiffPreview(originalContent, toolOutput, toolName) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('diffPreviewModal');
+    if (!modal) {
+      resolve(false);
+      return;
+    }
+
+    // Set tool name
+    const toolNameEl = document.getElementById('diffToolName');
+    if (toolNameEl) toolNameEl.textContent = `Tool: ${toolName}`;
+
+    // Generate diff
+    renderDiff(originalContent, toolOutput);
+
+    modal.style.display = 'flex';
+
+    const applyBtn = document.getElementById('applyDiffBtn');
+    const cancelBtn = document.getElementById('cancelDiffBtn');
+    const closeBtn = document.getElementById('closeDiffPreviewBtn');
+
+    const cleanup = () => {
+      modal.style.display = 'none';
+      applyBtn.replaceWith(applyBtn.cloneNode(true));
+      cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+      closeBtn.replaceWith(closeBtn.cloneNode(true));
+    };
+
+    document.getElementById('applyDiffBtn').onclick = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    document.getElementById('cancelDiffBtn').onclick = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    document.getElementById('closeDiffPreviewBtn').onclick = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    // Diff view toggle buttons
+    document.getElementById('diffViewSideBySideBtn').onclick = () => {
+      document.getElementById('diffViewSideBySideBtn').classList.add('active');
+      document.getElementById('diffViewUnifiedBtn').classList.remove('active');
+      renderDiff(originalContent, toolOutput, 'side-by-side');
+    };
+
+    document.getElementById('diffViewUnifiedBtn').onclick = () => {
+      document.getElementById('diffViewUnifiedBtn').classList.add('active');
+      document.getElementById('diffViewSideBySideBtn').classList.remove('active');
+      renderDiff(originalContent, toolOutput, 'unified');
+    };
+  });
+}
+
+/**
+ * Render diff in the diff container
+ */
+function renderDiff(original, modified, mode = 'side-by-side') {
+  const container = document.getElementById('diffContainer');
+  if (!container) return;
+
+  const originalLines = original.split('\n');
+  const modifiedLines = modified.split('\n');
+
+  if (mode === 'side-by-side') {
+    container.innerHTML = `
+      <div class="diff-side-by-side">
+        <div class="diff-column">
+          <h4>Original</h4>
+          ${originalLines.map((line, i) => {
+            const modLine = modifiedLines[i];
+            const cssClass = !modLine ? 'diff-line-removed' : 
+                            line !== modLine ? 'diff-line-removed' : 
+                            'diff-line-unchanged';
+            return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
+          }).join('')}
+        </div>
+        <div class="diff-column">
+          <h4>Modified</h4>
+          ${modifiedLines.map((line, i) => {
+            const origLine = originalLines[i];
+            const cssClass = !origLine ? 'diff-line-added' : 
+                            line !== origLine ? 'diff-line-added' : 
+                            'diff-line-unchanged';
+            return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    // Unified diff
+    let diffHtml = '<div class="diff-unified"><pre>';
+    const maxLen = Math.max(originalLines.length, modifiedLines.length);
+    
+    for (let i = 0; i < maxLen; i++) {
+      const origLine = originalLines[i];
+      const modLine = modifiedLines[i];
+      
+      if (origLine === modLine) {
+        diffHtml += `<div class="diff-line diff-line-unchanged"> ${escapeHtml(origLine) || ''}</div>`;
+      } else {
+        if (origLine !== undefined) {
+          diffHtml += `<div class="diff-line diff-line-removed">- ${escapeHtml(origLine)}</div>`;
+        }
+        if (modLine !== undefined) {
+          diffHtml += `<div class="diff-line diff-line-added">+ ${escapeHtml(modLine)}</div>`;
+        }
+      }
+    }
+    
+    diffHtml += '</pre></div>';
+    container.innerHTML = diffHtml;
+  }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Save current editor content to disk
+ */
+async function saveCurrentFile() {
+  if (!currentFilePath) {
+    // Untitled document - trigger Save As
+    return await saveCurrentFileAs();
+  }
+
+  showProgress(true);
+  const result = await window.electronAPI.saveFile(currentFilePath, currentContent);
+  showProgress(false);
+
+  if (result.success) {
+    savedContent = currentContent;
+    clearEditorUnsavedState();
+    updateStatus('File saved', 'success');
+    log(`Saved: ${currentFilePath}`, 'success');
+    addChangeLogEntry('File Saved', `Saved to: ${currentFilePath}`);
+    return true;
+  } else {
+    log(`Save failed: ${result.message}`, 'error');
+    updateStatus('Save failed', 'error');
+    return false;
+  }
+}
+
+/**
+ * Save As: always prompt for a path
+ */
+async function saveCurrentFileAs() {
+  const defaultName = currentFilePath ? currentFilePath.split('/').pop() : 'untitled.md';
+  const savePath = await window.electronAPI.selectSaveLocation(defaultName);
+  
+  if (!savePath) {
+    log('Save cancelled', 'info');
+    return false;
+  }
+  
+  currentFilePath = savePath;
+  document.getElementById('inputPath').value = savePath;
+  return saveCurrentFile();
+}
+
+/**
+ * Apply tool output to editor and update all views
+ */
+function applyToolOutput(toolOutput, toolName) {
+  currentContent = toolOutput;
+  // DO NOT update savedContent here - editor is now unsaved after tool runs
+  // User must explicitly Save to write to disk
+  
+  updateMarkdownEditor(toolOutput);
+  updateRenderedTab(toolOutput);
+  updateSummaryTab(toolOutput);
+  updateHeaderNavigator();
+  
+  if (currentMode === 'stat') analyzeDocumentStatBlocks();
+  
+  addChangeLogEntry('Tool Applied', `Applied: ${toolName}`);
+  updateStatus(`${toolName} applied - remember to Save`, 'success');
+  log(`${toolName} applied (unsaved)`, 'success');
+  
+  // Mark editor as unsaved
+  setEditorUnsavedState();
+}
+
+/**
+ * Main safety wrapper: handles unsaved state, runs tool, shows diff, applies if approved
+ * @param {string} toolName - Display name of the tool
+ * @param {function} runToolFunction - Async function that takes content and returns transformed content
+ * @returns {Promise<boolean>} - true if applied, false if cancelled
+ */
+async function runSafeTool(toolName, runToolFunction) {
+  // Step 1: Check for unsaved changes
+  if (hasUnsavedChanges()) {
+    const action = await promptSaveBeforeTool();
+    
+    if (action === 'cancel') {
+      log(`${toolName} cancelled`, 'info');
+      return false;
+    }
+    
+    if (action === 'save') {
+      const saved = await saveCurrentFile();
+      if (!saved) return false; // Save failed, abort
+    }
+    
+    if (action === 'discard') {
+      // Revert to last saved state (in memory) - DO NOT reload from disk
+      currentContent = savedContent;
+      updateMarkdownEditor(savedContent);
+      updateRenderedTab(savedContent);
+      updateSummaryTab(savedContent);
+      updateHeaderNavigator();
+      if (currentMode === 'stat') analyzeDocumentStatBlocks();
+      log('Discarded unsaved changes (reverted to last save)', 'warning');
+    }
+  }
+
+  // Step 2: Run the tool on saved content
+  const originalContent = savedContent;
+  
+  showProgress(true);
+  updateStatus(`Running ${toolName}...`, 'info');
+  
+  let toolOutput;
+  try {
+    toolOutput = await runToolFunction(originalContent);
+  } catch (error) {
+    showProgress(false);
+    log(`${toolName} failed: ${error.message}`, 'error');
+    updateStatus(`${toolName} failed`, 'error');
+    return false;
+  }
+  
+  showProgress(false);
+
+  // Step 3: Show diff and get approval
+  const approved = await showDiffPreview(originalContent, toolOutput, toolName);
+  
+  if (!approved) {
+    log(`${toolName} changes rejected`, 'info');
+    return false;
+  }
+
+  // Step 4: Save undo state and apply
+  saveUndoState(`Before running ${toolName}`, originalContent);
+  applyToolOutput(toolOutput, toolName);
+  
+  return true;
+}
+
+// ============================================================================
+// UNDO SYSTEM
+// ============================================================================
+
+let undoStack = [];
+
+function saveUndoState(description, content) {
+  undoStack.push({
+    description,
+    content: content || currentContent,
+    filePath: currentFilePath,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Limit stack size to prevent memory issues
+  if (undoStack.length > 50) {
+    undoStack.shift();
+  }
+  
+  updateUndoButton();
+}
+
+function updateUndoButton() {
+  const undoBtn = document.getElementById('undoBtn');
+  const undoLabel = document.getElementById('undoLabel');
+  
+  if (undoStack.length > 0) {
+    const lastUndo = undoStack[undoStack.length - 1];
+    if (undoBtn) {
+      undoBtn.disabled = false;
+      undoBtn.title = `Undo: ${lastUndo.description}`;
+    }
+    if (undoLabel) {
+      undoLabel.textContent = lastUndo.description;
+    }
+  } else {
+    if (undoBtn) {
+      undoBtn.disabled = true;
+      undoBtn.title = 'No action to undo';
+    }
+    if (undoLabel) {
+      undoLabel.textContent = '';
+    }
+  }
+}
+
+function undo() {
+  if (undoStack.length === 0) {
+    log('Nothing to undo', 'warning');
+    return;
+  }
+  
+  const state = undoStack.pop();
+  
+  currentContent = state.content;
+  savedContent = state.content;
+  currentFilePath = state.filePath;
+  
+  updateMarkdownEditor(state.content);
+  updateRenderedTab(state.content);
+  updateSummaryTab(state.content);
+  updateHeaderNavigator();
+  
+  if (currentMode === 'stat') analyzeDocumentStatBlocks();
+  
+  log(`Undone: ${state.description}`, 'success');
+  updateStatus('Undo successful', 'success');
+  addChangeLogEntry('Undo', state.description);
+  updateUndoButton();
+}
+
+// Bind undo button
+document.getElementById('undoBtn')?.addEventListener('click', undo);
+
+// ============================================================================
 // TAB MANAGEMENT
 // ============================================================================
 
@@ -179,30 +636,67 @@ async function loadFile(filePath) {
   
   if (content) {
     currentContent = content;
-    updatePreviewTab(content);
+    savedContent = content; // Track saved state
+    updateMarkdownEditor(content);
     updateRenderedTab(content);
     updateSummaryTab(content);
     updateHeaderNavigator();
+    // Run stat block analysis only when in stat mode
+    if (currentMode === 'stat') analyzeDocumentStatBlocks();
     addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
   } else {
     log('Failed to read file', 'error');
   }
 }
 
-function updatePreviewTab(content) {
-  const preview = document.getElementById('previewContent');
-  if (preview) {
-    preview.textContent = content;
-    
-    // Track selection changes in Preview
-    preview.addEventListener('mouseup', captureSelection);
-    preview.addEventListener('keyup', captureSelection);
+function updateMarkdownEditor(content) {
+  const editor = document.getElementById('markdownEditor');
+  if (editor && content !== editor.value) {
+    isInternalEditorUpdate = true; // Signal that we're updating from code
+    editor.value = content;
+    editor.scrollTop = 0;
+    isInternalEditorUpdate = false; // Reset flag
+    clearEditorUnsavedState();
   }
 }
+
+// Backward-compat helper (legacy name kept for older call sites)
+function updatePreviewTab(content) {
+  updateMarkdownEditor(content);
+}
+
+function setEditorUnsavedState() {
+  const editor = document.getElementById('markdownEditor');
+  const status = document.getElementById('editorStatus');
+  if (editor) editor.classList.add('unsaved');
+  if (status) {
+    status.textContent = 'Unsaved changes';
+    status.classList.add('unsaved');
+    status.classList.remove('saved');
+  }
+}
+
+function clearEditorUnsavedState() {
+  const editor = document.getElementById('markdownEditor');
+  const status = document.getElementById('editorStatus');
+  if (editor) editor.classList.remove('unsaved');
+  if (status) {
+    status.textContent = 'Ready';
+    status.classList.remove('unsaved');
+    status.classList.add('saved');
+  }
+}
+
+let lastRenderedHash = null; // Track last rendered content to avoid duplicate renders
 
 function updateRenderedTab(content) {
   const rendered = document.getElementById('renderedContent');
   if (!rendered) return;
+  
+  // Simple hash to detect if content actually changed
+  const hash = content.length + ':' + content.substring(0, 100);
+  if (lastRenderedHash === hash) return; // Already rendered this content
+  lastRenderedHash = hash;
   
   // Use marked library for proper Markdown rendering
   if (typeof marked !== 'undefined') {
@@ -225,15 +719,135 @@ function updateRenderedTab(content) {
       .replace(/\n/g, '<br>');
   }
   
+  // Add data-line attributes to rendered elements for sync
+  addLineAttributesToRendered(rendered, content);
+  
   // Track selection changes in Rendered
   rendered.addEventListener('mouseup', captureSelection);
   rendered.addEventListener('keyup', captureSelection);
+  
+  // Wire up rendered pane sync (scroll and click)
+  wireRenderedPaneSync(rendered);
+}
+
+function addLineAttributesToRendered(rendered, content) {
+  // Split content into lines for mapping
+  const lines = content.split('\n');
+  
+  // Map rendered elements to source lines (approximate by content matching)
+  const topLevelElements = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, table');
+  
+  let currentLine = 1;
+  topLevelElements.forEach(el => {
+    const text = el.textContent.trim();
+    if (!text) return;
+    
+    // Find the line where this content appears
+    for (let i = currentLine - 1; i < lines.length; i++) {
+      if (lines[i].includes(text.substring(0, 30)) || lines[i].trim().startsWith(text.substring(0, 20))) {
+        el.setAttribute('data-line', i + 1);
+        currentLine = i + 2; // Start next search after this line
+        break;
+      }
+    }
+  });
+}
+
+function wireRenderedPaneSync(rendered) {
+  // Remove old listeners to avoid duplicates
+  const oldScroll = rendered._syncScrollHandler;
+  const oldClick = rendered._syncClickHandler;
+  if (oldScroll) rendered.removeEventListener('scroll', oldScroll);
+  if (oldClick) rendered.removeEventListener('click', oldClick);
+  
+  // Throttle scroll events
+  let scrollTimeout = null;
+  const scrollHandler = () => {
+    if (!isSyncEnabled()) return; // Respect sync toggle
+    if (isSyncingScroll) return; // Prevent re-entry during sync
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isSyncingScroll = true;
+      syncEditorToRenderedView(rendered);
+      isSyncingScroll = false;
+    }, 150);
+  };
+  
+  const clickHandler = (e) => {
+    if (!isSyncEnabled()) return; // Respect sync toggle
+    if (isSyncingScroll) return; // Don't interrupt scroll sync
+    
+    // Find closest element with data-line
+    let target = e.target;
+    while (target && target !== rendered) {
+      if (target.hasAttribute('data-line')) {
+        const line = parseInt(target.getAttribute('data-line'), 10);
+        jumpEditorToLine(line);
+        break;
+      }
+      target = target.parentElement;
+    }
+  };
+  
+  rendered.addEventListener('scroll', scrollHandler);
+  rendered.addEventListener('click', clickHandler);
+  
+  // Store handlers for cleanup
+  rendered._syncScrollHandler = scrollHandler;
+  rendered._syncClickHandler = clickHandler;
+}
+
+function syncEditorToRenderedView(rendered) {
+  // Find the first visible element with data-line
+  const elements = rendered.querySelectorAll('[data-line]');
+  const containerRect = rendered.getBoundingClientRect();
+  
+  for (const el of elements) {
+    const rect = el.getBoundingClientRect();
+    // Check if element is in viewport
+    if (rect.top >= containerRect.top && rect.top <= containerRect.bottom) {
+      const line = parseInt(el.getAttribute('data-line'), 10);
+      jumpEditorToLine(line, false); // false = don't steal focus
+      break;
+    }
+  }
+}
+
+function jumpEditorToLine(lineNumber, focusEditor = true) {
+  const editor = document.getElementById('markdownEditor');
+  if (!editor) return;
+  
+  const lines = (currentContent || '').split('\n');
+  
+  // Calculate character offset for the line start
+  let charOffset = 0;
+  for (let i = 0; i < lineNumber - 1 && i < lines.length; i++) {
+    charOffset += lines[i].length + 1; // +1 for newline
+  }
+  
+  // Set cursor position
+  if (focusEditor) {
+    editor.focus();
+  }
+  editor.setSelectionRange(charOffset, charOffset);
+  
+  // Scroll to make the line visible in the editor
+  const lineHeight = parseInt(window.getComputedStyle(editor).lineHeight, 10) || 22;
+  const visibleLines = Math.floor(editor.clientHeight / lineHeight);
+  const scrollLine = Math.max(0, lineNumber - Math.floor(visibleLines / 2));
+  editor.scrollTop = scrollLine * lineHeight;
 }
 
 function captureSelection() {
-  const selection = window.getSelection();
-  const text = (selection && selection.toString()) || '';
-  selectedText = text.trim();
+  const editor = document.getElementById('markdownEditor');
+  if (editor && editor.selectionStart !== editor.selectionEnd) {
+    const text = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+    selectedText = text.trim();
+  } else {
+    const selection = window.getSelection();
+    selectedText = (selection && selection.toString() || '').trim();
+  }
   
   // Update Quick Tools modal hint if open
   updateSelectionModeIndicator();
@@ -276,6 +890,12 @@ document.getElementById('exportMarkdownBtn')?.addEventListener('click', async ()
     showProgress(false);
     
     if (result.success) {
+      // If exporting to the current file, update savedContent
+      if (savePath === currentFilePath) {
+        savedContent = currentContent;
+        clearEditorUnsavedState();
+      }
+      
       updateStatus('Exported successfully', 'success');
       log(`Exported to: ${savePath}`, 'success');
       addChangeLogEntry('Export', `Saved to: ${savePath}`);
@@ -301,7 +921,7 @@ document.getElementById('openOutputBtn')?.addEventListener('click', async () => 
 // ============================================================================
 
 document.getElementById('runPipelineBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
+  if (!currentFilePath || !currentContent) {
     log('Please select an input file first', 'error');
     return;
   }
@@ -309,78 +929,89 @@ document.getElementById('runPipelineBtn')?.addEventListener('click', async () =>
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   const tablesInline = document.getElementById('tablesInlineCheck')?.checked ?? config.tablesInline;
   
-  log('Starting full pipeline...', 'info');
-  updateStatus('Running pipeline...', 'processing');
-  showProgress(true);
-  
-  const result = await window.electronAPI.runPipeline(currentFilePath, outputSuffix, tablesInline);
-  
-  showProgress(false);
-  
-  if (result.success) {
-    log('Pipeline completed successfully', 'success');
-    updateStatus('Pipeline complete', 'success');
-    addChangeLogEntry('Pipeline', `Completed with suffix: ${outputSuffix}`);
+  // Use safety wrapper - pipeline processes saved file
+  await runSafeTool('Full Pipeline', async (content) => {
+    // Save current content to temp file first
+    const tempPath = currentFilePath;
+    await window.electronAPI.saveFile(tempPath, content);
     
-    // Reload the output file
-    const outputPath = currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
-    await loadFile(outputPath);
-  } else {
-    log(`Pipeline failed: ${result.message}`, 'error');
-    updateStatus('Pipeline failed', 'error');
-  }
+    // Run pipeline on saved file
+    const result = await window.electronAPI.runPipeline(tempPath, outputSuffix, tablesInline);
+    
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+    
+    // Read the output file
+    const outputPath = tempPath.replace(/\.md$/, `${outputSuffix}.md`);
+    const outputContent = await window.electronAPI.readFile(outputPath);
+    
+    if (!outputContent) {
+      throw new Error('Failed to read pipeline output');
+    }
+    
+    return outputContent;
+  });
 });
 
 document.getElementById('formatTextBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
-    log('Please select an input file first', 'error');
+  // Support blank documents - allow formatting with just content
+  if (!currentContent && !currentFilePath) {
+    log('No content to format', 'error');
     return;
   }
   
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   
-  log('Formatting text...', 'info');
-  updateStatus('Formatting...', 'processing');
-  showProgress(true);
-  
-  const result = await window.electronAPI.formatText(currentFilePath, outputSuffix);
-  
-  showProgress(false);
-  
-  if (result.success) {
-    log('Text formatted successfully', 'success');
-    updateStatus('Format complete', 'success');
+  // Use safety wrapper like fixTOCBtn
+  await runSafeTool('Format Text', async (content) => {
+    log('Formatting text...', 'info');
+    
+    // Pass content directly to IPC handler (not file path)
+    const result = await window.electronAPI.formatText(content, outputSuffix);
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Format Text failed');
+    }
+    
+    if (result.content === undefined) {
+      throw new Error('Format Text did not return content');
+    }
+
+    // Record action in changelog
     addChangeLogEntry('Format Text', `Applied formatting with suffix: ${outputSuffix}`);
-  } else {
-    log(`Format failed: ${result.message}`, 'error');
-    updateStatus('Format failed', 'error');
-  }
+    
+    // Return transformed content (runSafeTool handles the rest)
+    return result.content;
+  });
 });
 
 document.getElementById('fixTOCBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
-    log('Please select an input file first', 'error');
+  if (!currentContent && !currentFilePath) {
+    log('No content to fix', 'error');
     return;
   }
   
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   
-  log('Fixing table of contents...', 'info');
-  updateStatus('Fixing TOC...', 'processing');
-  showProgress(true);
-  
-  const result = await window.electronAPI.fixTOC(currentFilePath, outputSuffix);
-  
-  showProgress(false);
-  
-  if (result.success) {
-    log('TOC fixed successfully', 'success');
-    updateStatus('TOC fix complete', 'success');
-    addChangeLogEntry('Fix TOC', `Fixed TOC with suffix: ${outputSuffix}`);
-  } else {
-    log(`TOC fix failed: ${result.message}`, 'error');
-    updateStatus('TOC fix failed', 'error');
-  }
+  // Use safety wrapper
+  await runSafeTool('Fix TOC', async (content) => {
+    log('Fixing table of contents...', 'info');
+    
+    // Run TOC fix on in-memory content
+    const result = await window.electronAPI.fixTOC(content, outputSuffix);
+    
+    if (!result.success) {
+      throw new Error(result.message || 'TOC fix failed');
+    }
+    
+    if (result.content === undefined) {
+      throw new Error('Fix TOC did not return content');
+    }
+
+    addChangeLogEntry('Fix TOC', `Applied TOC fix with suffix: ${outputSuffix}`);
+    return result.content;
+  });
 });
 
 // ============================================================================
@@ -388,97 +1019,59 @@ document.getElementById('fixTOCBtn')?.addEventListener('click', async () => {
 // ============================================================================
 
 document.getElementById('injectTagsBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
-    log('Please select an input file first', 'error');
+  if (!currentContent && !currentFilePath) {
+    log('No content to tag', 'error');
     return;
   }
   
   const outputSuffix = document.getElementById('outputSuffix')?.value || '_tagged';
   
-  log('Injecting Edmunds tags...', 'info');
-  updateStatus('Injecting tags...', 'processing');
-  showProgress(true);
-  
-  const result = await window.electronAPI.injectTags(currentFilePath, outputSuffix);
-  
-  showProgress(false);
-  
-  if (result.success) {
-    log('Tags injected successfully', 'success');
-    updateStatus('Tag injection complete', 'success');
-    addChangeLogEntry('Inject Tags', `Added Edmunds tags with suffix: ${outputSuffix}`);
+  // Use safety wrapper
+  await runSafeTool('Inject Edmunds Tags', async (content) => {
+    log('Injecting Edmunds tags...', 'info');
     
-    // Auto-load the output file to show tagged content
-    const outputPath = result.output || currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
-    const outputContent = await window.electronAPI.readFile(outputPath);
+    // Run tag injection on in-memory content
+    const result = await window.electronAPI.injectTags(content, outputSuffix);
     
-    if (outputContent) {
-      // Switch to the new output file
-      currentFilePath = outputPath;
-      currentContent = outputContent;
-      document.getElementById('inputPath').value = outputPath;
-      
-      // Update all tabs with the tagged content
-      updatePreviewTab(outputContent);
-      updateRenderedTab(outputContent);
-      updateSummaryTab(outputContent);
-      updateHeaderNavigator();
-      
-      const fileName = outputPath.split('/').pop();
-      log(`Switched to tagged file: ${fileName}`, 'info');
-      alert(`Tags injected successfully!\n\nSwitched to: ${fileName}\n\nThe tagged file is now loaded in the editor.`);
+    if (!result.success) {
+      throw new Error(result.message || 'Tag injection failed');
     }
-  } else {
-    log(`Tag injection failed: ${result.message}`, 'error');
-    updateStatus('Tag injection failed', 'error');
-  }
+    
+    if (result.content === undefined) {
+      throw new Error('Inject Edmunds Tags did not return content');
+    }
+
+    addChangeLogEntry('Inject Edmunds Tags', `Applied tagging with suffix: ${outputSuffix}`);
+    return result.content;
+  });
 });
 
 document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
-    log('Please select an input file first', 'error');
+  if (!currentContent && !currentFilePath) {
+    log('No content to strip', 'error');
     return;
   }
   
   const outputSuffix = document.getElementById('outputSuffix')?.value || '_stripped';
   
-  log('Stripping Edmunds tags...', 'info');
-  updateStatus('Stripping tags...', 'processing');
-  showProgress(true);
-  
-  const result = await window.electronAPI.stripTags(currentFilePath, outputSuffix);
-  
-  showProgress(false);
-  
-  if (result.success) {
-    log('Tags stripped successfully', 'success');
-    updateStatus('Tag stripping complete', 'success');
-    addChangeLogEntry('Strip Tags', `Removed Edmunds tags with suffix: ${outputSuffix}`);
+  // Use safety wrapper
+  await runSafeTool('Strip Edmunds Tags', async (content) => {
+    log('Stripping Edmunds tags...', 'info');
     
-    // Auto-load the output file to show stripped content
-    const outputPath = result.output || currentFilePath.replace(/\.md$/, `${outputSuffix}.md`);
-    const outputContent = await window.electronAPI.readFile(outputPath);
+    // Run tag stripping on in-memory content
+    const result = await window.electronAPI.stripTags(content, outputSuffix);
     
-    if (outputContent) {
-      // Switch to the new output file
-      currentFilePath = outputPath;
-      currentContent = outputContent;
-      document.getElementById('inputPath').value = outputPath;
-      
-      // Update all tabs with the stripped content
-      updatePreviewTab(outputContent);
-      updateRenderedTab(outputContent);
-      updateSummaryTab(outputContent);
-      updateHeaderNavigator();
-      
-      const fileName = outputPath.split('/').pop();
-      log(`Switched to stripped file: ${fileName}`, 'info');
-      alert(`Tags stripped successfully!\n\nSwitched to: ${fileName}\n\nThe stripped file is now loaded in the editor.`);
+    if (!result.success) {
+      throw new Error(result.message || 'Tag stripping failed');
     }
-  } else {
-    log(`Tag stripping failed: ${result.message}`, 'error');
-    updateStatus('Tag stripping failed', 'error');
-  }
+    
+    if (result.content === undefined) {
+      throw new Error('Strip Edmunds Tags did not return content');
+    }
+
+    addChangeLogEntry('Strip Edmunds Tags', `Removed tags with suffix: ${outputSuffix}`);
+    return result.content;
+  });
 });
 
 // ============================================================================
@@ -649,86 +1242,50 @@ document.getElementById('applySectionsBtn')?.addEventListener('click', () => {
 
 // Build Headers button
 document.getElementById('buildHeadersBtn')?.addEventListener('click', async () => {
-  if (!currentFilePath) {
-    alert('Please select an input file first');
-    log('No file selected', 'error');
+  // Always use _headers suffix for this operation (in-memory by default)
+  const outputSuffix = '_headers';
+  const loose = !!document.getElementById('buildHeadersLooseCheck')?.checked;
+
+  if (!currentContent) {
+    alert('No content to build headers from');
+    log('No content available for Build Headers', 'error');
     return;
   }
 
-  // Always use _headers suffix for this operation
-  const outputSuffix = '_headers';
-  const loose = !!document.getElementById('buildHeadersLooseCheck')?.checked;
-  
-  log('Building header structure...', 'info');
+  log('Building header structure (in-memory)...', 'info');
   showProgress(true);
   updateStatus('Building headers...', 'info');
 
   try {
-  const result = await window.electronAPI.buildHeaders(currentFilePath, outputSuffix, { loose });
-    
+    const result = await window.electronAPI.buildHeaders({ content: currentContent }, outputSuffix, { loose });
     showProgress(false);
-    
-    if (result.success) {
-      log(`Headers built successfully: ${result.outputPath}`, 'success');
-      updateStatus('Headers built', 'success');
-      
-      // Load and preview the output file
-      let outputContent = await window.electronAPI.readFile(result.outputPath);
-      if (outputContent) {
-        // Parse the output to count changes
-        const originalLines = currentContent.split('\n');
-        let convertedLines = outputContent.split('\n');
-        let changedLines = originalLines.reduce((count, line, i) => {
-          return count + (line !== convertedLines[i] ? 1 : 0);
-        }, 0);
 
-        // Auto-fallback: if strict made no changes and loose wasn't requested, retry with loose
-        if (changedLines === 0 && !loose) {
-          log("No changes with strict mode; retrying with 'Infer headings (no Markdown)'…", 'info');
-          const resultLoose = await window.electronAPI.buildHeaders(currentFilePath, outputSuffix, { loose: true });
-          if (resultLoose && resultLoose.success) {
-            outputContent = await window.electronAPI.readFile(resultLoose.outputPath);
-            convertedLines = (outputContent || '').split('\n');
-            changedLines = originalLines.reduce((count, line, i) => count + (line !== convertedLines[i] ? 1 : 0), 0);
-          }
-        }
-
-        const changeMsg = changedLines > 0 
-          ? `Built headers: ${changedLines} lines updated`
-          : `Built headers: no changes detected`;
-
-        addChangeLogEntry('Build Headers', changeMsg);
-        log(changeMsg, changedLines > 0 ? 'info' : 'warning');
-
-        // Switch to the new output file
-        currentFilePath = result.outputPath;
-        currentContent = outputContent;
-        document.getElementById('inputPath').value = result.outputPath;
-
-        // Update all tabs with the new content
-        updatePreviewTab(outputContent);
-        updateRenderedTab(outputContent);
-        updateSummaryTab(outputContent);
-        updateHeaderNavigator();
-
-        // Show success message
-        const fileName = result.outputPath.split('/').pop();
-        updateStatus(`Loaded: ${fileName}`, 'success');
-        log(`Switched to output file: ${fileName}`, 'info');
-
-        // Show alert with more helpful message
-        if (changedLines > 0) {
-          alert(`Header structure built successfully!\n\nSwitched to: ${fileName}\nLines changed: ${changedLines}\n\nThe new file is now loaded in the editor.`);
-        } else {
-          const hint = "\n• If your headings aren’t bold (**Heading**), enable 'Infer headings (no Markdown)' or share a sample heading and I’ll tune the matcher";
-          alert(`Build Headers completed with no changes.\n\nSwitched to: ${fileName}\n\nPossible reasons:\n• File already has proper ATX headers (# ## ###)\n• No bold headings found (**text**)\n• Bold text doesn't match detection patterns${hint}\n\nThe output file is now loaded for your review.`);
-        }
-      }
-    } else {
-      log(`Header building failed: ${result.message}`, 'error');
+    if (!result.success || !result.content) {
+      const msg = result.message || 'Header building failed';
+      log(msg, 'error');
       updateStatus('Header building failed', 'error');
-      alert(`Header building failed: ${result.message}`);
+      alert(msg);
+      return;
     }
+
+    const originalLines = currentContent.split('\n');
+    const convertedLines = result.content.split('\n');
+    const changedLines = originalLines.reduce((count, line, i) => count + (line !== convertedLines[i] ? 1 : 0), 0);
+
+    const changeMsg = changedLines > 0 
+      ? `Built headers: ${changedLines} lines updated`
+      : `Built headers: no changes detected`;
+
+    addChangeLogEntry('Build Headers', changeMsg);
+    log(changeMsg, changedLines > 0 ? 'info' : 'warning');
+
+    currentContent = result.content;
+    updateMarkdownEditor(currentContent);
+    updateRenderedTab(currentContent);
+    updateSummaryTab(currentContent);
+    updateHeaderNavigator();
+    setEditorUnsavedState();
+    updateStatus('Headers built (unsaved)', 'success');
   } catch (error) {
     showProgress(false);
     log(`Error: ${error.message}`, 'error');
@@ -1075,6 +1632,12 @@ document.getElementById('settingsBtn')?.addEventListener('click', async () => {
   document.getElementById('settingOutputSuffix').value = config.defaultOutputSuffix || '_cleaned';
   document.getElementById('settingTablesInline').checked = config.tablesInline ?? true;
   
+  // Update sync checkbox to reflect current state (user override or mode default)
+  const syncCheckbox = document.getElementById('settingSyncEnabled');
+  if (syncCheckbox) {
+    syncCheckbox.checked = syncScrollEnabled ?? isSyncEnabled();
+  }
+  
   // Show modal
   const modal = document.getElementById('settingsModal');
   if (modal) modal.style.display = 'flex';
@@ -1089,6 +1652,11 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   // Gather settings
   config.defaultOutputSuffix = document.getElementById('settingOutputSuffix')?.value || '_cleaned';
   config.tablesInline = document.getElementById('settingTablesInline')?.checked ?? true;
+  
+  // Save sync preference: checkbox checked = explicit ON, unchecked = use mode default (null)
+  const syncCheckbox = document.getElementById('settingSyncEnabled');
+  syncScrollEnabled = syncCheckbox?.checked ? true : null;
+  config.syncScrollEnabled = syncScrollEnabled;
   
   // Save config
   const result = await window.electronAPI.saveConfig(config);
@@ -1444,12 +2012,19 @@ function initializeDragAndDrop() {
 // HEADER NAVIGATOR (RIGHT PANE)
 // ============================================================================
 
+let lastSectionHash = null; // Cache to detect actual section changes
+
 function updateHeaderNavigator() {
   const container = document.getElementById('navigatorList');
   if (!container) return;
 
   const sections = extractSections(currentContent || '');
   allSections = sections; // reuse existing sections array
+
+  // Check if sections actually changed - avoid DOM thrashing
+  const hash = (sections || []).length + ':' + (sections || []).map(s => s.header).join('|');
+  if (lastSectionHash === hash) return; // No change, skip update
+  lastSectionHash = hash;
 
   if (!sections || sections.length === 0) {
     container.innerHTML = '<p class="placeholder" style="padding: 12px;">No headers found in document.</p>';
@@ -1488,6 +2063,9 @@ function navigateToSection(index) {
   if (!sections[index]) return;
   const target = sections[index];
 
+  // Jump editor to the section start (keeps caret aligned with navigation)
+  jumpEditorToLine(target.startLine, false);
+
   // Scroll Preview (text) proportionally by line
   const preview = document.getElementById('previewContent');
   if (preview) {
@@ -1509,9 +2087,430 @@ function navigateToSection(index) {
         break;
       }
     }
+    // Fallback: match by data-line if text match fails
+    if (!match) {
+      for (const h of headings) {
+        const dataLine = h.getAttribute('data-line');
+        if (dataLine && parseInt(dataLine, 10) === target.startLine) {
+          match = h;
+          break;
+        }
+      }
+    }
     if (match) {
       match.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+}
+
+// ============================================================================
+// STAT BLOCK NAVIGATION
+// ============================================================================
+
+// Stat block analysis debounce
+let analysisTimeout = null;
+const ANALYSIS_DEBOUNCE = 300; // ms - throttle rapid analysis calls
+
+async function analyzeDocumentStatBlocks() {
+  if (suppressStatAnalysis) return; // Skip if bulk update in progress
+  
+  // Clear any pending analysis
+  clearTimeout(analysisTimeout);
+  
+  analysisTimeout = setTimeout(async () => {
+    if (!currentContent) {
+      updateStatBlockNavigator([]);
+      return;
+    }
+
+    try {
+      const result = await window.electronAPI.analyzeStatBlock(currentContent);
+      if (result.success) {
+        updateStatBlockNavigator(result.result.blocks || []);
+      } else {
+        log(`Stat block analysis failed: ${result.message}`, 'error');
+        updateStatBlockNavigator([]);
+      }
+    } catch (error) {
+      log(`Error analyzing stat blocks: ${error.message}`, 'error');
+      updateStatBlockNavigator([]);
+    }
+  }, ANALYSIS_DEBOUNCE);
+}
+
+function updateStatBlockNavigator(blocks) {
+  const container = document.getElementById('statBlockNavigator');
+  const countEl = document.getElementById('statBlockCount');
+  
+  if (!container) return;
+  
+  // Store full list
+  statBlocks = Array.isArray(blocks) ? blocks : [];
+  
+  // Update count badge
+  if (countEl) countEl.textContent = statBlocks.length;
+
+  if (!statBlocks || statBlocks.length === 0) {
+    container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks detected in this document.</p>';
+    if (countEl) countEl.textContent = '0';
+    return;
+  }
+
+  // Classify and enhance blocks
+  statBlocks = statBlocks.map((block, idx) => {
+    block._originalIndex = idx;
+    block.type = block.type || classifyStatBlock(block);
+    block.context = block.context || findBlockContext(block);
+    return block;
+  });
+
+  renderStatBlockList();
+}
+
+// Classify stat block by type
+function classifyStatBlock(block) {
+  const name = (block.name || '').toLowerCase();
+  const text = (block.raw || '').toLowerCase();
+  
+  // NPC keywords
+  if (/(npc|guard|merchant|innkeeper|priest|wizard|knight|villager)/i.test(name) || 
+      /personality|attitude|demeanor/i.test(text)) {
+    return 'npc';
+  }
+  
+  // Monster keywords
+  if (/(dragon|goblin|orc|troll|skeleton|zombie|demon|devil|giant|beast)/i.test(name) ||
+      /monster|creature|spawn/i.test(text)) {
+    return 'monster';
+  }
+  
+  // Hazard keywords
+  if (/(poison|acid|fire|lava|spikes|pit|chasm|gas)/i.test(name) ||
+      /hazard|environmental|danger|save vs/i.test(text)) {
+    return 'hazard';
+  }
+  
+  // Trap keywords
+  if (/(trap|snare|tripwire|pressure plate|dart|blade)/i.test(name) ||
+      /trap|trigger|mechanism/i.test(text)) {
+    return 'trap';
+  }
+  
+  // Feature (default for environmental elements)
+  if (/(fountain|altar|statue|door|chest|room)/i.test(name)) {
+    return 'feature';
+  }
+  
+  return 'feature'; // Default
+}
+
+// Find which header/area this block belongs to
+function findBlockContext(block) {
+  if (!currentContent) return '';
+  
+  const lines = currentContent.split('\n');
+  const blockLine = block.lineNumber || block.lineStart || 0;
+  
+  // Search backwards for nearest header
+  for (let i = blockLine - 1; i >= 0; i--) {
+    const line = lines[i];
+    // Match H1-H4 headers
+    const match = line.match(/^(#{1,4})\s+(.+)$/);
+    if (match) {
+      const headerText = match[2].trim();
+      // Extract keyed area numbers (e.g., "8. Room Name" → "Room 8")
+      const keyMatch = headerText.match(/^(\d+[a-z]?)\.\s*(.+)/i);
+      if (keyMatch) {
+        return `${keyMatch[2]} (${keyMatch[1]})`;
+      }
+      return headerText;
+    }
+  }
+  
+  return '';
+}
+
+function renderStatBlockList() {
+  const container = document.getElementById('statBlockNavigator');
+  if (!container) return;
+
+  // Apply filters
+  const searchInput = document.getElementById('statBlockSearch');
+  const typeFilter = document.getElementById('statBlockTypeFilter');
+  const errorsOnly = document.getElementById('statBlockShowErrors');
+  
+  const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+  const selectedType = typeFilter ? typeFilter.value : 'all';
+  const showErrorsOnly = errorsOnly ? errorsOnly.checked : false;
+
+  let filtered = statBlocks.filter(block => {
+    // Search filter
+    if (searchTerm) {
+      const name = (block.name || '').toLowerCase();
+      const text = (block.raw || '').toLowerCase();
+      if (!name.includes(searchTerm) && !text.includes(searchTerm)) {
+        return false;
+      }
+    }
+    
+    // Type filter
+    if (selectedType !== 'all' && block.type !== selectedType) {
+      return false;
+    }
+    
+    // Errors filter
+    if (showErrorsOnly) {
+      const hasErrors = (block.validation && block.validation.errorCount > 0) || 
+                       (block.errors && block.errors.length > 0);
+      if (!hasErrors) return false;
+    }
+    
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks match the filter.</p>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach((block) => {
+    const idx = block._originalIndex;
+    const hasErrors = (block.validation && block.validation.errorCount > 0) || 
+                     (block.errors && block.errors.length > 0);
+    const activeClass = activeStatIndex === idx ? 'active' : '';
+    
+    html += `
+      <div class="stat-block-item ${activeClass}" data-index="${idx}">
+        <div class="stat-block-name">
+          ${block.name || `Block ${idx + 1}`}
+          <span class="stat-block-type ${block.type}">${block.type}</span>
+        </div>
+        ${block.context ? `<div class="stat-block-context">${block.context}</div>` : ''}
+        ${hasErrors ? `<div class="stat-block-error">⚠ ${(block.validation && block.validation.errorCount) || (block.errors && block.errors.length)} errors</div>` : ''}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  // Bind click events - navigate only, no auto-open details
+  container.querySelectorAll('.stat-block-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const index = parseInt(item.getAttribute('data-index'), 10);
+      navigateToStatBlock(statBlocks[index]);
+      // User must explicitly click to see details - prevents re-analysis spike
+    });
+  });
+}
+
+// Wire up search and filter controls
+document.getElementById('statBlockSearch')?.addEventListener('input', renderStatBlockList);
+document.getElementById('statBlockTypeFilter')?.addEventListener('change', renderStatBlockList);
+document.getElementById('statBlockShowErrors')?.addEventListener('change', renderStatBlockList);
+
+function navigateToStatBlock(block) {
+  if (!block) return;
+
+  // Determine active index
+  const idx = statBlocks.findIndex(b => b.index === block.index || b.lineNumber === block.lineNumber || b === block || (b.fullText && block.fullText && b.fullText === block.fullText));
+  if (idx !== -1) activeStatIndex = idx;
+
+  // Update navigator active state
+  try {
+    const container = document.getElementById('statBlockNavigator');
+    if (container) {
+      container.querySelectorAll('.stat-block-item').forEach(el => el.classList.remove('active'));
+      const selector = `.stat-block-item[data-index="${idx}"]`;
+      const activeEl = container.querySelector(selector);
+      if (activeEl) activeEl.classList.add('active');
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  // Jump cursor to the stat block in the editor
+  const line = block.lineNumber || block.lineStart || 1;
+  jumpEditorToLine(line, true);
+
+  // Scroll Rendered tab to the stat block and apply highlight
+  const rendered = document.getElementById('renderedContent');
+  if (rendered) {
+    // Remove previous highlights
+    rendered.querySelectorAll('.rendered-stat-highlight').forEach(el => {
+      el.classList.remove('rendered-stat-highlight');
+    });
+
+    // Find the best matching element by name or by searching for block.fullText
+    let targetElement = null;
+    const candidates = rendered.querySelectorAll('p, div, pre, li, strong, em');
+    for (const el of candidates) {
+      const text = (el.textContent || '').toLowerCase();
+      if (block.name && text.includes(block.name.toLowerCase())) {
+        targetElement = el;
+        break;
+      }
+    }
+
+    if (!targetElement && block.fullText) {
+      for (const el of candidates) {
+        const text = (el.textContent || '').toLowerCase();
+        if (text.includes((block.fullText || '').toLowerCase().slice(0, 40))) {
+          targetElement = el;
+          break;
+        }
+      }
+    }
+
+    if (targetElement) {
+      // Apply soft highlight
+      targetElement.classList.add('rendered-stat-highlight');
+      // Center in view
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // Switch to Markdown tab to show the editor with cursor positioned
+  const markdownTab = document.querySelector('[data-tab="markdownTab"]');
+  if (markdownTab) markdownTab.click();
+
+  log(`Navigated to stat block: ${block.name || 'Unknown'}`, 'info');
+}
+
+function nextStatBlock() {
+  if (!statBlocks || statBlocks.length === 0) return;
+  let nextIndex = 0;
+  if (activeStatIndex == null) nextIndex = 0;
+  else nextIndex = Math.min(statBlocks.length - 1, activeStatIndex + 1);
+  const block = statBlocks[nextIndex];
+  if (block) navigateToStatBlock(block);
+}
+
+function prevStatBlock() {
+  if (!statBlocks || statBlocks.length === 0) return;
+  let prevIndex = 0;
+  if (activeStatIndex == null) prevIndex = 0;
+  else prevIndex = Math.max(0, activeStatIndex - 1);
+  const block = statBlocks[prevIndex];
+  if (block) navigateToStatBlock(block);
+}
+
+// Show Validation Details Panel for a selected stat block
+async function showStatDetails(block) {
+  // Only show details when in stat mode
+  if (currentMode !== 'stat') return;
+
+  const panel = document.getElementById('statDetailsPanel');
+  const content = document.getElementById('statDetailsContent');
+  if (!panel || !content) return;
+
+  // Ensure panel is visible
+  panel.style.display = 'block';
+  content.innerHTML = '<p>Loading validation results...</p>';
+
+  try {
+    const raw = block.fullText || block.raw || block.description || '';
+    const res = await window.electronAPI.validateStatBlock(raw);
+
+    if (!res || !res.success) {
+      content.innerHTML = `<p class="placeholder">Validation failed: ${res && res.message ? res.message : 'Unknown error'}</p>`;
+      return;
+    }
+
+    const { validation, classification } = res;
+
+    // Build details HTML
+    let html = '';
+    html += `<div style="margin-bottom:8px;"><strong>${block.name || 'Stat Block'}</strong> <span style="color:#6c757d; font-size:12px; margin-left:8px;">Line ${block.lineNumber || block.lineStart || '?'}</span></div>`;
+    html += `<div style="margin-bottom:8px;"><strong>Category:</strong> ${classification && classification.category ? classification.category : (classification && classification.format ? classification.format : 'Unknown')}</div>`;
+    html += `<div style="margin-bottom:8px;"><strong>Validation:</strong> ${validation && validation.isValid ? '<span style="color:green;">No errors</span>' : '<span style="color:#c0392b;">Errors found</span>'}</div>`;
+
+    if (validation && validation.errors && validation.errors.length > 0) {
+      html += '<div style="margin-top:8px;"><strong>Errors:</strong><ul style="margin-top:6px;">';
+      validation.errors.forEach(err => {
+        html += `<li style="margin-bottom:6px;"><code style="background:#f6f8fa;padding:2px 6px;border-radius:4px;font-size:12px;">${(err.rule || err.code) || 'error'}</code> ${err.message || JSON.stringify(err)}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+    if (validation && validation.warnings && validation.warnings.length > 0) {
+      html += '<div style="margin-top:8px;"><strong>Warnings:</strong><ul style="margin-top:6px;">';
+      validation.warnings.forEach(w => {
+        html += `<li style="margin-bottom:6px;">${w.message || JSON.stringify(w)}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+    // Quick-fix control (demoted): small action link in the panel
+    const canFix = !!(validation && !validation.isValid);
+    html += `<div style="margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:flex-end;">`;
+    html += `<button id="closeStatDetailsBtn" class="btn secondary">Close</button>`;
+    if (canFix) {
+      html += `<button id="applyStatFixBtn" class="btn tertiary" style="padding:4px 8px; font-size:12px;">Fix</button>`;
+    } else {
+      html += `<button class="btn tertiary" disabled style="padding:4px 8px; font-size:12px;">No fixes</button>`;
+    }
+    html += `</div>`;
+
+    // Show raw block preview (collapsible)
+    html += `<div style="margin-top:12px;"><details><summary style="cursor:pointer;">Show Raw Stat Block</summary><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(raw || '').replace(/</g,'&lt;')}</pre></details></div>`;
+
+    content.innerHTML = html;
+
+    // Bind buttons
+    if (canFix) {
+      const fixBtn = document.getElementById('applyStatFixBtn');
+      if (fixBtn) {
+        fixBtn.addEventListener('click', async () => {
+          const ok = confirm('Apply quick fixes to this stat block? This will modify the document content.');
+          if (!ok) return;
+
+          showProgress(true);
+          const fixRes = await window.electronAPI.fixStatBlock(raw);
+          showProgress(false);
+
+          if (!fixRes || !fixRes.success) {
+            alert(`Auto-fix failed: ${fixRes && fixRes.message ? fixRes.message : 'Unknown error'}`);
+            return;
+          }
+
+          const fixedText = fixRes.fixedText || raw;
+          const applied = fixRes.appliedFixes || [];
+
+          if (fixedText === raw) {
+            alert('No changes were applied by quick-fix.');
+            return;
+          }
+
+          // Save undo state
+          saveUndoState('stat-block-fix');
+
+          // Replace first occurrence of the block in currentContent
+          currentContent = currentContent.replace(raw, fixedText);
+
+          // Update views
+          updatePreviewTab(currentContent);
+          updateRenderedTab(currentContent);
+          updateSummaryTab(currentContent);
+          analyzeDocumentStatBlocks();
+
+          addChangeLogEntry('Stat Block Fix', `Applied ${applied.length} fixes to ${block.name || 'stat block'}`);
+
+          // Update panel to show applied fixes
+          content.innerHTML = `<p class="success">Applied ${applied.length} fix(es).</p><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(fixedText || '').replace(/</g,'&lt;')}</pre>`;
+        });
+      }
+    }
+
+    const closeBtn = document.getElementById('closeStatDetailsBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        panel.style.display = 'none';
+      });
+    }
+
+  } catch (err) {
+    content.innerHTML = `<p class="placeholder">Error: ${err.message}</p>`;
   }
 }
 
@@ -1520,7 +2519,7 @@ function navigateToSection(index) {
 // ============================================================================
 
 async function initialize() {
-  log('Book MD Workbench ready', 'info');
+  log('TRPG MD Workbench ready', 'info');
   updateStatus('Ready', 'success');
   
   // Initialize drag and drop
@@ -1537,75 +2536,382 @@ async function initialize() {
     
     const tablesInlineCheck = document.getElementById('tablesInlineCheck');
     if (tablesInlineCheck) tablesInlineCheck.checked = config.tablesInline ?? true;
+    
+    // Restore sync preference (null = use mode default)
+    if ('syncScrollEnabled' in config) {
+      syncScrollEnabled = config.syncScrollEnabled;
+    }
   }
-}
 
-// ============================================================================
-// UNDO FUNCTIONALITY
-// ============================================================================
+  // Bind mode buttons
+  document.getElementById('modeStructuralBtn')?.addEventListener('click', () => setMode('structural'));
+  document.getElementById('modeStatBtn')?.addEventListener('click', () => setMode('stat'));
+  document.getElementById('saveBtn')?.addEventListener('click', () => saveCurrentFile());
+  document.getElementById('saveAsBtn')?.addEventListener('click', () => saveCurrentFileAs());
 
-let undoStack = [];
-const MAX_UNDO_HISTORY = 10;
+  // Bind next/previous stat block buttons
+  document.getElementById('nextStatBtn')?.addEventListener('click', () => nextStatBlock());
+  document.getElementById('prevStatBtn')?.addEventListener('click', () => prevStatBlock());
 
-function saveUndoState(action = 'edit') {
-  if (!currentFilePath || !currentContent) return;
-  
-  const state = {
-    filePath: currentFilePath,
-    content: currentContent,
-    action: action,
-    timestamp: Date.now()
+  // Keyboard shortcuts: Ctrl/Cmd + Alt + ArrowUp/ArrowDown for previous/next
+  document.addEventListener('keydown', (e) => {
+    // Save shortcut: Ctrl/Cmd + S
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      saveCurrentFile();
+      return;
+    }
+    
+    // Stat block navigation: Ctrl/Cmd + Alt + ArrowUp/ArrowDown
+    if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      nextStatBlock();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      prevStatBlock();
+    }
+  });
+
+  // ============================================================================
+  // MARKDOWN TOOLBAR
+  // ============================================================================
+
+  // Toolbar button actions
+  const toolbarActions = {
+    bold: () => wrapSelection('**', '**'),
+    italic: () => wrapSelection('*', '*'),
+    h1: () => insertAtLineStart('# '),
+    h2: () => insertAtLineStart('## '),
+    h3: () => insertAtLineStart('### '),
+    'area-h1': () => insertAreaHeader(1),
+    'area-h2': () => insertAreaHeader(2),
+    'area-h3': () => insertAreaHeader(3),
+    'area-h4': () => insertAreaHeader(4),
+    'area-bold': () => insertAreaBoldLabel(),
+    quote: () => insertAtLineStart('> '),
+    boxed: () => insertBoxedText(),
+    'gm-note': () => insertAtCursor('**GM:** '),
+    'stat-block': () => insertStatBlockTemplate(),
+    'bold-label': () => boldLabel()
   };
+
+  // Wire toolbar buttons
+  document.querySelectorAll('.toolbar-btn[data-action]').forEach(btn => {
+    const action = btn.dataset.action;
+    btn.addEventListener('click', () => {
+      const handler = toolbarActions[action];
+      if (handler) handler();
+    });
+  });
+
+  // Area dropdown menu
+  const areaDropdown = document.getElementById('btnAreaDropdown');
+  const areaMenu = document.getElementById('areaDropdownMenu');
   
-  undoStack.push(state);
-  if (undoStack.length > MAX_UNDO_HISTORY) {
-    undoStack.shift();
+  if (areaDropdown && areaMenu) {
+    areaDropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+      areaMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+      areaMenu.classList.remove('show');
+    });
+
+    areaMenu.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = item.dataset.action;
+        const handler = toolbarActions[action];
+        if (handler) handler();
+        areaMenu.classList.remove('show');
+      });
+    });
   }
-  
-  updateUndoButton();
-}
 
-function updateUndoButton() {
-  const undoBtn = document.getElementById('undoBtn');
-  const undoLabel = document.getElementById('undoLabel');
-  
-  if (!undoBtn || !undoLabel) return;
-  
-  if (undoStack.length === 0) {
-    undoBtn.disabled = true;
-    undoLabel.textContent = 'No actions to undo';
-  } else {
-    undoBtn.disabled = false;
-    const lastAction = undoStack[undoStack.length - 1];
-    undoLabel.textContent = `Undo ${lastAction.action} (${undoStack.length} available)`;
+  // Mode-aware toolbar visibility
+  function updateToolbarForMode() {
+    const trpgButtons = document.querySelectorAll('.trpg-specific');
+    if (currentMode === 'structural') {
+      trpgButtons.forEach(btn => btn.style.display = 'none');
+    } else {
+      trpgButtons.forEach(btn => btn.style.display = '');
+    }
   }
-}
 
-async function undo() {
-  if (undoStack.length === 0) return;
-  
-  const state = undoStack.pop();
-  currentFilePath = state.filePath;
-  currentContent = state.content;
-  
-  // Update all views
-  updatePreviewTab();
-  updateRenderedTab();
-  updateSummaryTab();
-  updateHeaderNavigator();
-  
-  log(`Undid ${state.action}`, 'success');
-  updateUndoButton();
-}
+  // Initial toolbar state
+  updateToolbarForMode();
 
-// Bind undo button
-const undoBtn = document.getElementById('undoBtn');
-if (undoBtn) {
-  undoBtn.addEventListener('click', undo);
+  // ============================================================================
+  // TOOLBAR HELPER FUNCTIONS
+  // ============================================================================
+
+  function wrapSelection(before, after) {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+    
+    if (selectedText) {
+      const wrapped = before + selectedText + after;
+      editor.setRangeText(wrapped, start, end, 'end');
+      currentContent = editor.value;
+      setEditorUnsavedState();
+      updateRenderedTab(currentContent);
+    } else {
+      // No selection - insert markers and place cursor between them
+      editor.setRangeText(before + after, start, end, 'end');
+      editor.selectionStart = editor.selectionEnd = start + before.length;
+      editor.focus();
+    }
+  }
+
+  function insertAtLineStart(prefix) {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    const value = editor.value;
+    
+    // Find start of current line
+    let lineStart = value.lastIndexOf('\n', start - 1) + 1;
+    
+    // Insert prefix at line start
+    editor.setRangeText(prefix, lineStart, lineStart, 'end');
+    editor.selectionStart = editor.selectionEnd = lineStart + prefix.length;
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function insertAtCursor(text) {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    editor.setRangeText(text, start, start, 'end');
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function insertAreaHeader(level) {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const prefix = '#'.repeat(level) + ' ';
+    const placeholder = level === 4 ? 'Area Name' :
+                       level === 1 ? 'Section Title' :
+                       level === 2 ? 'Section Title' : 'Subsection';
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedRaw = editor.value.substring(start, end);
+    const hasSelection = selectedRaw && selectedRaw.trim().length > 0;
+    const title = hasSelection
+      ? selectedRaw.trim().replace(/\s+/g, ' ')
+      : placeholder;
+
+    if (hasSelection) {
+      // Replace selection with header using the selected text
+      editor.setRangeText(`${prefix}${title}\n`, start, end, 'end');
+      editor.selectionStart = start + prefix.length;
+      editor.selectionEnd = start + prefix.length + title.length;
+    } else {
+      // Insert at current line start with placeholder
+      const value = editor.value;
+      let lineStart = value.lastIndexOf('\n', start - 1) + 1;
+      editor.setRangeText(prefix + title + '\n', lineStart, lineStart, 'end');
+      editor.selectionStart = lineStart + prefix.length;
+      editor.selectionEnd = lineStart + prefix.length + title.length;
+    }
+
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function insertAreaBoldLabel() {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedRaw = editor.value.substring(start, end);
+    const hasSelection = selectedRaw && selectedRaw.trim().length > 0;
+    const label = hasSelection
+      ? selectedRaw.trim().replace(/\s+/g, ' ')
+      : 'AREA NAME';
+    const text = `**${label}**:\n`;
+    
+    editor.setRangeText(text, start, end, 'end');
+    // Select label text
+    editor.selectionStart = start + 2;
+    editor.selectionEnd = start + 2 + label.length;
+    
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function insertBoxedText() {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    const text = '>>[begin boxed text]<<\n\n>>[end boxed text]<<\n';
+    
+    editor.setRangeText(text, start, start, 'end');
+    // Place cursor in middle
+    editor.selectionStart = editor.selectionEnd = start + 24; // After first line
+    
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function insertStatBlockTemplate() {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const template = `**Creature Name** (AC 15, HD 4, HP 22, MV 120', #AT 2, D 1d6/1d6)
+
+**Description:** Brief description of the creature.
+
+**Tactics:** Combat behavior and strategies.
+
+**Treasure:** Loot and items.
+
+`;
+    
+    const start = editor.selectionStart;
+    editor.setRangeText(template, start, start, 'end');
+    // Select creature name
+    editor.selectionStart = start + 2;
+    editor.selectionEnd = start + 2 + 13; // "Creature Name"
+    
+    currentContent = editor.value;
+    setEditorUnsavedState();
+    updateRenderedTab(currentContent);
+    editor.focus();
+  }
+
+  function boldLabel() {
+    const editor = document.getElementById('markdownEditor');
+    if (!editor) return;
+
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selectedText = editor.value.substring(start, end);
+
+    if (selectedText && selectedText.trim()) {
+      // User has selection - check for colon
+      const colonIndex = selectedText.indexOf(':');
+      if (colonIndex > 0) {
+        const label = selectedText.substring(0, colonIndex);
+        const rest = selectedText.substring(colonIndex);
+        const bolded = '**' + label + '**' + rest;
+        
+        editor.setRangeText(bolded, start, end, 'end');
+        currentContent = editor.value;
+        setEditorUnsavedState();
+        updateRenderedTab(currentContent);
+        return;
+      }
+
+      // No colon in selection: turn selection into "**Label:** "
+      const trimmed = selectedText.trim();
+      const trailingSpace = selectedText.endsWith(' ') ? ' ' : '';
+      const bolded = `**${trimmed}**:${trailingSpace}`;
+      editor.setRangeText(bolded, start, end, 'end');
+      currentContent = editor.value;
+      setEditorUnsavedState();
+      updateRenderedTab(currentContent);
+      return;
+    }
+
+    // No selection or no colon - bold labels on current line
+    const value = editor.value;
+    let lineStart = value.lastIndexOf('\n', start - 1) + 1;
+    let lineEnd = value.indexOf('\n', start);
+    if (lineEnd === -1) lineEnd = value.length;
+    
+    const line = value.substring(lineStart, lineEnd);
+    const boldedLine = boldLabelsInLine(line);
+    
+    if (boldedLine !== line) {
+      editor.setRangeText(boldedLine, lineStart, lineEnd, 'end');
+      currentContent = editor.value;
+      setEditorUnsavedState();
+      updateRenderedTab(currentContent);
+    }
+  }
+
+  function boldLabelsInLine(line) {
+    // Match "Capitalized Words:" pattern (avoiding times like 8:00)
+    return line.replace(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*:/g, (match, label, offset, str) => {
+      // Avoid bolding if it looks like a time or ratio
+      const charBefore = offset > 0 ? str[offset - 1] : '';
+      const charAfter = str[offset + match.length] || '';
+      
+      if (/\d/.test(charBefore) || /\d/.test(charAfter)) {
+        return match; // Skip times/ratios
+      }
+      
+      // Already bolded?
+      if (str.substring(offset - 2, offset) === '**') {
+        return match;
+      }
+      
+      return `**${label}**:`;
+    });
+  }
+
+  // Wire up markdown editor for real-time editing
+  const markdownEditor = document.getElementById('markdownEditor');
+  if (markdownEditor) {
+    // Update content on input
+    markdownEditor.addEventListener('input', () => {
+      // Skip if we just set this from code - prevents cascading updates
+      if (isInternalEditorUpdate) return;
+      
+      if (markdownEditor.value !== currentContent) {
+        currentContent = markdownEditor.value;
+        
+        // Mark as unsaved (even for blank documents)
+        setEditorUnsavedState();
+        
+        // Always update rendered tab and summary in real-time
+        updateRenderedTab(currentContent);
+        updateSummaryTab(currentContent);
+        updateHeaderNavigator();
+        
+        // Re-run stat-block analysis only in Stat Mode (debounced)
+        if (currentMode === 'stat') {
+          analyzeDocumentStatBlocks();
+        }
+      }
+    });
+
+    // Track selection for Quick Tools
+    markdownEditor.addEventListener('mouseup', captureSelection);
+    markdownEditor.addEventListener('keyup', captureSelection);
+  }
+
+  // Default UI mode
+  setMode(currentMode);
 }
 
 // ============================================================================
-// FORMAT TEXT SUBMENU
+// FORMAT TEXT SUBMENU (MODERN IN-MEMORY IMPLEMENTATION)
 // ============================================================================
 
 // Toggle submenu visibility
@@ -1620,78 +2926,10 @@ if (formatTextMenuBtn && formatTextSubmenu) {
   });
 }
 
-// Format action runner
-async function runFormatAction(action, actionLabel) {
-  if (!currentFilePath) {
-    log('No file loaded', 'error');
-    return;
-  }
+// Legacy runFormatAction function removed - all format buttons now use runSafeTool
+// which operates in-memory on currentContent (never writes to disk until user saves)
 
-  updateStatus(`Running ${actionLabel}...`, 'running');
-  saveUndoState(actionLabel);
-
-  try {
-    // Check if selection exists
-    if (selectedText && selectedText.trim().length > 0) {
-      // Run on selection and output to Log
-      log(`Running ${actionLabel} on selection (${selectedText.length} chars)...`, 'info');
-      
-        // Apply simple, in-memory formatting transforms to selection and log result
-        let transformed = selectedText;
-        if (action === 'smart-quotes') {
-          transformed = applySmartQuotes(transformed);
-        } else if (action === 'whitespace') {
-          transformed = fixWhitespace(transformed);
-        } else if (action === 'line-breaks') {
-          transformed = fixLineBreaks(transformed);
-        } else if (action === 'headers') {
-          transformed = normalizeHeaders(transformed);
-        } else if (action === 'all') {
-          transformed = applySmartQuotes(transformed);
-          transformed = fixWhitespace(transformed);
-          transformed = fixLineBreaks(transformed);
-          transformed = normalizeHeaders(transformed);
-        }
-
-        log('═══════════════════════════════════════════════════', 'info');
-        log(`TRANSFORMED SELECTION (${actionLabel})`, 'info');
-        log('───────────────────────────────────────────────────', 'info');
-        transformed.split('\n').forEach(line => log(line, 'info'));
-        log('═══════════════════════════════════════════════════', 'info');
-        updateStatus('Ready', 'success');
-        return;
-      updateStatus('Ready', 'success');
-      return;
-    }
-
-    // Run on full document
-    const result = await window.electronAPI.runFormatAction({
-      filePath: currentFilePath,
-      action: action
-    });
-
-    if (result.error) {
-      log(`${actionLabel} failed: ${result.error}`, 'error');
-      updateStatus('Error', 'error');
-    } else {
-      log(`${actionLabel} complete`, 'success');
-      
-      // Reload the file if it was modified in place
-      if (result.outputPath && result.outputPath !== currentFilePath) {
-        await loadFile(result.outputPath);
-      } else {
-        await loadFile(currentFilePath);
-      }
-      
-      updateStatus('Ready', 'success');
-    }
-  } catch (err) {
-    log(`${actionLabel} error: ${err.message}`, 'error');
-    updateStatus('Error', 'error');
-  }
-}
-
-// Bind format buttons
+// Format button definitions
 const formatButtons = {
   'fixSmartQuotesBtn': { action: 'smart-quotes', label: 'Fix Smart Quotes' },
   'fixWhitespaceBtn': { action: 'whitespace', label: 'Fix Whitespace' },
@@ -1703,7 +2941,35 @@ const formatButtons = {
 Object.entries(formatButtons).forEach(([btnId, { action, label }]) => {
   const btn = document.getElementById(btnId);
   if (btn) {
-    btn.addEventListener('click', () => runFormatAction(action, label));
+    btn.addEventListener('click', async () => {
+      if (!currentContent) {
+        log('No content loaded', 'error');
+        return;
+      }
+      
+      // Use safety wrapper for all format operations
+      await runSafeTool(label, async (content) => {
+        switch (action) {
+          case 'smart-quotes':
+            return applySmartQuotes(content);
+          case 'whitespace':
+            return fixWhitespace(content);
+          case 'line-breaks':
+            return fixLineBreaks(content);
+          case 'headers':
+            return normalizeHeaders(content);
+          case 'all':
+            let result = content;
+            result = applySmartQuotes(result);
+            result = fixWhitespace(result);
+            result = fixLineBreaks(result);
+            result = normalizeHeaders(result);
+            return result;
+          default:
+            return content;
+        }
+      });
+    });
   }
 });
 
