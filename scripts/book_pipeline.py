@@ -40,6 +40,8 @@ from tools.markdown_validator import MarkdownValidator # New
 
 # Import our enhanced formatter
 from scripts.fix_formatting import MarkdownFormattingFixer
+from scripts.book_pipeline_utils import normalize_dice_notation, clean_common_ocr_artifacts
+import scripts.cnc_stat_parser as cnc_parser
 
 # Existing imports
 from tools.markdown_header_depth_corrector import HeaderCorrector
@@ -283,6 +285,13 @@ def pipeline(input_md: Path, config: dict) -> dict:
     except Exception as e:
         summary['steps'].append({'step': '10_fix_ocr', 'error': str(e)})
 
+    try:
+        current_content = clean_common_ocr_artifacts(current_content)
+        current_content = normalize_dice_notation(current_content)
+        summary['steps'].append({'step': '10c_cnc_text_cleanup', 'applied': True})
+    except Exception as e:
+        summary['steps'].append({'step': '10c_cnc_text_cleanup', 'error': str(e)})
+
     # =================================================================================
     # STAGE 4: Final Output and QC Reports
     # =================================================================================
@@ -306,6 +315,26 @@ def pipeline(input_md: Path, config: dict) -> dict:
     # QC Step 1: Spell Check
     sc = SpellChecker()
     final_text = read_text(final_out)
+
+    try:
+        stat_blocks = cnc_parser.extract_stat_blocks(final_text)
+        if stat_blocks:
+            json_output = final_out.with_suffix('.json')
+            with open(json_output, 'w', encoding='utf-8') as f:
+                json.dump(stat_blocks, f, indent=2)
+            summary['steps'].append({
+                'step': 'STAT_cnc_stat_blocks',
+                'file': str(json_output),
+                'count': len(stat_blocks)
+            })
+        else:
+            summary['steps'].append({
+                'step': 'STAT_cnc_stat_blocks',
+                'count': 0
+            })
+    except Exception as e:
+        summary['steps'].append({'step': 'STAT_cnc_stat_blocks', 'error': str(e)})
+
     potential_errors = sc.check_document(final_text)
     spell_report = REPORTS_DIR / f"{input_md.stem}_spell_{ts}.txt"
     total_words = len(sc.extract_words(final_text))

@@ -995,8 +995,8 @@ document.getElementById('runPipelineBtn')?.addEventListener('click', async () =>
       throw new Error(result.message);
     }
     
-    // Read the output file
-    const outputPath = tempPath.replace(/\.md$/, `${outputSuffix}.md`);
+    // Read the output file using the actual path reported by the pipeline (handles versioned filenames)
+    const outputPath = result.outputPath || tempPath.replace(/\.md$/, `${outputSuffix}.md`);
     const outputContent = await window.electronAPI.readFile(outputPath);
     
     if (!outputContent) {

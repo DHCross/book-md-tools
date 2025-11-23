@@ -189,7 +189,20 @@ ipcMain.handle('run-pipeline', async (event, inputPath, outputSuffix, tablesInli
   }
   const args = [inputPath, '--out-suffix', outputSuffix];
   const result = await runPythonScript('scripts/book_pipeline.py', args, env);
-  return { success: result.success, message: result.message };
+
+  if (!result.success) {
+    return { success: false, message: result.message };
+  }
+
+  // Parse final output path from pipeline stdout (look for a line like: "Output: /path/to/file.md")
+  const match = result.output && result.output.match(/^Output:\s+(.+)$/m);
+  const outputPath = match ? match[1].trim() : null;
+
+  return {
+    success: true,
+    message: result.message,
+    outputPath,
+  };
 });
 
 // IPC: Format Text
