@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Goblin",
+    "format": "inline",
+    "stats": {
+      "HD": "1d6",
+      "HP": "4",
+      "AC": "12"
+    },
+    "raw": "# Test Document\nThis is a test document. It contains some OCR errors like `houses` instead of `houses` and `gnome` instead of `gnome`. It also has a stat block.\n**Goblin** (HD 1d6, HP 4, AC 12)"
+  }
+]

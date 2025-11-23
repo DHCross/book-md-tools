@@ -268,22 +268,26 @@ def pipeline(input_md: Path, config: dict) -> dict:
     except Exception as e:
         summary['steps'].append({'step': '9_fix_tables', 'error': str(e)})
 
-    # Step 10: OCR Fixer
-    try:
-        current_content, ocr_changes = fix_ocr_errors.fix_ocr_errors(current_content)
-        ocr_report = REPORTS_DIR / f"{input_md.stem}_ocr_{ts}.report.md"
-        ocr_body = 'OCR Corrections Applied\n' + '\n'.join(f"- {c}" for c in ocr_changes) if ocr_changes else 'No OCR corrections'
-        write_text(ocr_report, ocr_body)
-        summary['steps'].append({'step': '10a_fix_ocr_base', 'report': str(ocr_report), 'changes': len(ocr_changes)})
+    # Step 10: OCR Fixer (Profile Dependent)
+    profile = config.get('profile', 'ocr')
+    if profile == 'ocr':
+        try:
+            current_content, ocr_changes = fix_ocr_errors.fix_ocr_errors(current_content)
+            ocr_report = REPORTS_DIR / f"{input_md.stem}_ocr_{ts}.report.md"
+            ocr_body = 'OCR Corrections Applied\n' + '\n'.join(f"- {c}" for c in ocr_changes) if ocr_changes else 'No OCR corrections'
+            write_text(ocr_report, ocr_body)
+            summary['steps'].append({'step': '10a_fix_ocr_base', 'report': str(ocr_report), 'changes': len(ocr_changes)})
 
-        current_content, add_map, add_total, _ = fix_additional_ocr_errors.fix_additional_ocr_errors(current_content)
-        add_report = REPORTS_DIR / f"{input_md.stem}_ocr_additional_{ts}.report.md"
-        add_lines = [f"Total additional corrections: {add_total}", f"Patterns matched: {len(add_map)}", "", "Details:"]
-        add_lines += [f"- {k}: {v}" for k, v in add_map.items()]
-        write_text(add_report, '\n'.join(add_lines))
-        summary['steps'].append({'step': '10b_fix_ocr_additional', 'report': str(add_report), 'changes': int(add_total)})
-    except Exception as e:
-        summary['steps'].append({'step': '10_fix_ocr', 'error': str(e)})
+            current_content, add_map, add_total, _ = fix_additional_ocr_errors.fix_additional_ocr_errors(current_content)
+            add_report = REPORTS_DIR / f"{input_md.stem}_ocr_additional_{ts}.report.md"
+            add_lines = [f"Total additional corrections: {add_total}", f"Patterns matched: {len(add_map)}", "", "Details:"]
+            add_lines += [f"- {k}: {v}" for k, v in add_map.items()]
+            write_text(add_report, '\n'.join(add_lines))
+            summary['steps'].append({'step': '10b_fix_ocr_additional', 'report': str(add_report), 'changes': int(add_total)})
+        except Exception as e:
+            summary['steps'].append({'step': '10_fix_ocr', 'error': str(e)})
+    else:
+        summary['steps'].append({'step': '10_fix_ocr', 'status': f'SKIPPED (profile={profile})'})
 
     try:
         current_content = clean_common_ocr_artifacts(current_content)
@@ -384,6 +388,10 @@ def main():
     ap.add_argument('--out-suffix',
                     default=config.get('out_suffix', '_pipeline'),
                     help=f"Suffix for final output filename (default: {config.get('out_suffix', '_pipeline')}).")
+    ap.add_argument('--profile',
+                    choices=['ocr', 'authorial'],
+                    default='ocr',
+                    help="Processing profile: 'ocr' (default) runs full OCR cleanup; 'authorial' skips aggressive OCR fixes.")
     args = ap.parse_args()
 
     # Pass command-line args and config to pipeline
@@ -391,6 +399,7 @@ def main():
     # Let command-line override the config file
     if args.out_suffix != config.get('out_suffix', '_pipeline'):
         pipeline_config['out_suffix'] = args.out_suffix
+    pipeline_config['profile'] = args.profile
 
     input_md = Path(args.input_md).resolve()
     summary = pipeline(input_md, pipeline_config)

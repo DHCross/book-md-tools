@@ -182,6 +182,75 @@ function getCategoryName(format) {
 }
 
 /**
+ * Scans for generic "Name + HP/Hit Points" stat block candidates.
+ *
+ * @param {string} markdownDocument - Full markdown text
+ * @returns {array} - List of detected generic stat blocks
+ */
+function scanForGenericStatBlocks(markdownDocument) {
+  const lines = markdownDocument.split('\n');
+  const genericBlocks = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    // Heuristic 1: Line looks like a name
+    // - Starts with ** (bold) OR is Title Case
+    // - Not too long (e.g. < 60 chars)
+    const isBoldStart = line.startsWith('**');
+    const isTitleCase = /^[A-Z][a-zA-Z0-9' -]+$/.test(line.replace(/[*_]/g, '')); // Simplified check
+
+    if ((isBoldStart || isTitleCase) && line.length < 60) {
+      // Look ahead 1-5 lines for HP/Hit Points
+      let foundHP = false;
+      let buffer = [line];
+
+      // Scan next few lines
+      const lookAhead = Math.min(lines.length, i + 6);
+      for (let j = i + 1; j < lookAhead; j++) {
+        const nextLine = lines[j];
+        buffer.push(nextLine);
+
+        // Check for HP pattern
+        if (/\b(?:HP|Hit Points)\b/i.test(nextLine)) {
+            foundHP = true;
+            break; // Found it, stop scanning this block
+        }
+      }
+
+      if (foundHP) {
+        // Construct a generic result object
+        // Extract name without markup
+        const nameRaw = line.replace(/^\*\*|\*\*$/g, '').trim();
+
+        genericBlocks.push({
+          name: nameRaw,
+          fullText: buffer.join('\n'), // Approximate full text
+          lineNumber: i + 1,
+          index: 0, // Placeholder, calculating true index is expensive if not needed
+          classification: {
+            format: 'generic',
+            category: 'Generic / Other System',
+            subtype: 'Unknown',
+            confidence: 'Low',
+            step: 'heuristic-scan'
+          },
+          validation: {
+            isValid: true, // Optimistically valid for display
+            errors: [],
+            warnings: [],
+            errorCount: 0,
+            warningCount: 0
+          }
+        });
+      }
+    }
+  }
+  return genericBlocks;
+}
+
+/**
  * Batch analyze multiple stat blocks from a document
  * 
  * @param {string} markdownDocument - Full markdown document text
@@ -191,35 +260,65 @@ function getCategoryName(format) {
 function analyzeBatch(markdownDocument, options = {}) {
   const results = [];
   const statBlockPattern = /\*\*([^*]+)\*\*\s*\(([^)]+)\)/g;
-  let match;
   
+  // Track ranges covered by strict parser to avoid duplicates
+  const coveredRanges = []; // {start, end}
+
+  let match;
   while ((match = statBlockPattern.exec(markdownDocument)) !== null) {
     const fullText = match[0];
+    const startIndex = match.index;
+    const endIndex = startIndex + fullText.length;
     
+    // Add line number information
+    const beforeText = markdownDocument.substring(0, match.index);
+    const lineNumber = (beforeText.match(/\n/g) || []).length + 1;
+
     try {
       const result = analyzeStatBlock(fullText, options);
-      
-      // Add line number information
-      const beforeText = markdownDocument.substring(0, match.index);
-      const lineNumber = (beforeText.match(/\n/g) || []).length + 1;
       
       results.push({
         ...result,
         lineNumber,
-        index: match.index
+        index: startIndex
       });
+      coveredRanges.push({ start: startIndex, end: endIndex });
+
     } catch (error) {
       // Skip invalid stat blocks but track them
       results.push({
         name: match[1],
         error: error.message,
-        lineNumber: (markdownDocument.substring(0, match.index).match(/\n/g) || []).length + 1,
-        index: match.index
+        lineNumber,
+        index: startIndex
       });
+      // Even error blocks covered text
+      coveredRanges.push({ start: startIndex, end: endIndex });
     }
   }
+
+  // Second pass: Generic scanner
+  const genericBlocks = scanForGenericStatBlocks(markdownDocument);
+
+  // Filter out generic blocks that overlap with strict blocks
+  // Note: scanForGenericStatBlocks doesn't return exact indices for now,
+  // but we can filter by line number proximity if needed.
+  // Ideally, we'd compute exact indices for generic blocks too.
+  // For now, let's just append them. The UI usually handles list display.
+  // To prevent obvious duplicates, check if the "name" was already found on the same line.
+
+  for (const gb of genericBlocks) {
+      const isDuplicate = results.some(r =>
+          r.lineNumber === gb.lineNumber ||
+          (r.name === gb.name && Math.abs(r.lineNumber - gb.lineNumber) <= 1)
+      );
+
+      if (!isDuplicate) {
+          results.push(gb);
+      }
+  }
   
-  return results;
+  return results.sort((a, b) => a.lineNumber - b.lineNumber);
 }
 
 /**
