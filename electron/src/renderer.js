@@ -29,6 +29,7 @@ let currentMode = 'structural';
 let statBlocks = [];
 let activeStatIndex = null; // index within statBlocks
 let statFilters = { type: 'all', onlyErrors: false, search: '' };
+let statContextCollapsed = {};
 
 function setMode(mode) {
   if (mode !== 'structural' && mode !== 'stat') return;
@@ -2352,11 +2353,15 @@ function renderStatBlockList() {
       return false;
     }
     
+    const validation = block.validation || {};
+    const errorCount = (typeof validation.errorCount === 'number')
+      ? validation.errorCount
+      : (validation.errors ? validation.errors.length : 0);
+    const hasErrors = errorCount > 0;
+
     // Errors filter
-    if (showErrorsOnly) {
-      const hasErrors = (block.validation && block.validation.errorCount > 0) || 
-                       (block.errors && block.errors.length > 0);
-      if (!hasErrors) return false;
+    if (showErrorsOnly && !hasErrors) {
+      return false;
     }
     
     return true;
@@ -2367,33 +2372,94 @@ function renderStatBlockList() {
     return;
   }
 
+  // Group by context (area/room header)
+  const groups = new Map();
+  filtered.forEach(block => {
+    const ctx = (block.context && block.context.trim()) ? block.context.trim() : 'No Context';
+    if (!groups.has(ctx)) groups.set(ctx, []);
+    groups.get(ctx).push(block);
+  });
+
   let html = '';
-  filtered.forEach((block) => {
-    const idx = block._originalIndex;
-    const hasErrors = (block.validation && block.validation.errorCount > 0) || 
-                     (block.errors && block.errors.length > 0);
-    const activeClass = activeStatIndex === idx ? 'active' : '';
-    
+  groups.forEach((blocksInGroup, ctx) => {
+    const collapsed = !!statContextCollapsed[ctx];
+    const groupId = ctx.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'no-context';
+
     html += `
-      <div class="stat-block-item ${activeClass}" data-index="${idx}">
-        <div class="stat-block-name">
-          ${block.name || `Block ${idx + 1}`}
-          <span class="stat-block-type ${block.type}">${block.type}</span>
+      <div class="stat-context-group" data-context-id="${groupId}">
+        <div class="stat-context-header" data-context-key="${ctx}">
+          <button class="stat-context-toggle" aria-label="Toggle group" style="border:none;background:none;padding:0 4px;cursor:pointer;font-size:11px;">${collapsed ? '▶' : '▼'}</button>
+          <span class="stat-context-title" style="font-weight:600;">${escapeHtml(ctx)}</span>
+          <span class="stat-context-count" style="margin-left:auto;font-size:11px;opacity:0.7;">${blocksInGroup.length}</span>
         </div>
-        ${block.context ? `<div class="stat-block-context">${block.context}</div>` : ''}
-        ${hasErrors ? `<div class="stat-block-error">⚠ ${(block.validation && block.validation.errorCount) || (block.errors && block.errors.length)} errors</div>` : ''}
+        <div class="stat-context-body" style="${collapsed ? 'display:none;' : ''}">`;
+
+    blocksInGroup.forEach((block) => {
+      const idx = block._originalIndex;
+      const activeClass = activeStatIndex === idx ? 'active' : '';
+
+      const validation = block.validation || {};
+      const errorCount = (typeof validation.errorCount === 'number')
+        ? validation.errorCount
+        : (validation.errors ? validation.errors.length : 0);
+      const warningCount = (typeof validation.warningCount === 'number')
+        ? validation.warningCount
+        : (validation.warnings ? validation.warnings.length : 0);
+
+      let statusBadge = '';
+      if (errorCount > 0) {
+        const label = errorCount === 1 ? '1 error' : `${errorCount} errors`;
+        statusBadge = `<span style="margin-left:6px;font-size:11px;padding:1px 6px;border-radius:10px;background:#fdecea;color:#c0392b;white-space:nowrap;">⚠ ${label}</span>`;
+      } else if (warningCount > 0) {
+        const label = warningCount === 1 ? '1 warning' : `${warningCount} warnings`;
+        statusBadge = `<span style="margin-left:6px;font-size:11px;padding:1px 6px;border-radius:10px;background:#fff4e5;color:#b26a00;white-space:nowrap;">⚠ ${label}</span>`;
+      }
+
+      html += `
+          <div class="stat-block-item ${activeClass}" data-index="${idx}">
+            <div class="stat-block-name">
+              ${escapeHtml(block.name || `Block ${idx + 1}`)}
+              <span class="stat-block-type ${block.type}">${block.type}</span>
+              ${statusBadge}
+            </div>
+            ${block.context ? `<div class="stat-block-context">${escapeHtml(block.context)}</div>` : ''}
+          </div>
+        `;
+    });
+
+    html += `
+        </div>
       </div>
     `;
   });
 
   container.innerHTML = html;
 
-  // Bind click events - navigate only, no auto-open details
+  // Bind click events for stat block items - navigate only, details are optional
   container.querySelectorAll('.stat-block-item').forEach(item => {
     item.addEventListener('click', () => {
       const index = parseInt(item.getAttribute('data-index'), 10);
-      navigateToStatBlock(statBlocks[index]);
-      // User must explicitly click to see details - prevents re-analysis spike
+      if (!Number.isNaN(index) && statBlocks[index]) {
+        navigateToStatBlock(statBlocks[index]);
+      }
+    });
+  });
+
+  // Bind collapsible group headers
+  container.querySelectorAll('.stat-context-header').forEach(header => {
+    header.addEventListener('click', (event) => {
+      // Ignore clicks on inner stat-block items
+      if (event.target && event.target.closest('.stat-block-item')) return;
+
+      const ctxKey = header.getAttribute('data-context-key') || '';
+      const body = header.nextElementSibling;
+      const toggle = header.querySelector('.stat-context-toggle');
+      if (!body) return;
+
+      const isCollapsed = body.style.display === 'none';
+      body.style.display = isCollapsed ? '' : 'none';
+      if (toggle) toggle.textContent = isCollapsed ? '▼' : '▶';
+      statContextCollapsed[ctxKey] = !isCollapsed;
     });
   });
 }
