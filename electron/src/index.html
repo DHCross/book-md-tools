@@ -25,15 +25,20 @@
         <p>TRPG content authoring and editing</p>
       </div>
       <div class="header-actions">
-        <!-- Mode Toggle -->
-        <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
-          <button id="modeStructuralBtn" class="btn tertiary active">Structural Mode</button>
-          <button id="modeStatBtn" class="btn tertiary">Stat Block Mode</button>
-          <!-- Quick navigation for stat blocks -->
-          <button id="prevStatBtn" class="btn tertiary nav-action-btn" title="Previous Stat Block (Ctrl+Alt+↑)">◀ Prev</button>
-          <button id="nextStatBtn" class="btn tertiary nav-action-btn" title="Next Stat Block (Ctrl+Alt+↓)">Next ▶</button>
+        <div class="sidebar-toggle" style="display:flex;align-items:center;gap:4px;margin-right:8px;">
+          <button id="sidebarToggleBtn" class="btn tertiary" title="Toggle tools sidebar">◀ Tools</button>
         </div>
         <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+          <!-- Context-aware Next/Prev navigation -->
+          <button id="prevStatBtn" class="btn tertiary nav-action-btn" title="Previous (Ctrl+Alt+↑)">◀ Prev</button>
+          <button id="nextStatBtn" class="btn tertiary nav-action-btn" title="Next (Ctrl+Alt+↓)">Next ▶</button>
+          <label class="scroll-sync-toggle" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#555;">
+            <input type="checkbox" id="scrollSyncToggle" />
+            <span>Scroll Sync</span>
+          </label>
+        </div>
+        <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+          <button id="openFileBtn" class="btn secondary">📂 Open</button>
           <button id="saveBtn" class="btn secondary">💾 Save</button>
           <button id="saveAsBtn" class="btn secondary">📝 Save As</button>
         </div>
@@ -52,7 +57,7 @@
     <!-- Main Content -->
     <main class="main">
       <!-- Sidebar: File & Actions -->
-      <aside class="sidebar">
+      <aside class="sidebar collapsed">
         <!-- Input Section -->
         <div class="sidebar-section">
           <h3>Input File</h3>
@@ -401,82 +406,62 @@
         </div>
       </section>
 
-
-      <!-- Right Navigator: Headers & Stat Blocks -->
-      <aside class="navigator">
-        <!-- Headers Pane -->
-        <div class="navigator-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-          <div class="navigator-header">
-            <h3>Headers</h3>
-          </div>
-          <div id="navigatorList" class="navigator-list">
-            <p class="placeholder" style="padding: 12px;">No file loaded. Headers will appear here.</p>
-          </div>
-        </div>
-
-        <!-- Divider -->
-        <div class="navigator-divider" style="height: 1px; background: #d1d1d6; margin: 0;"></div>
-
-        <!-- Stat Blocks Pane -->
-        <div class="navigator-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-          <div class="navigator-header">
-            <h3>Stat Blocks</h3>
-          </div>
-          <div id="statBlockList" class="navigator-list">
-            <p class="placeholder" style="padding: 12px;">No stat blocks found.</p>
-
-      <!-- Right Navigator: Dual Column -->
-      <aside class="navigator">
-        <div class="navigator-columns">
-          <div class="nav-column stat-nav-column">
-            <div class="stat-nav-header">
-              <h3>Stat Block Navigator</h3>
+      <!-- Stat Navigator: Left of editor -->
+      <aside class="navigator navigator-left">
+        <div class="nav-column stat-nav-column">
+          <div class="stat-nav-header">
+            <h3>Stat Block Navigator</h3>
+            <div>
+              <button id="refreshStatBlocksBtn" class="btn tertiary" style="padding:2px 8px;font-size:11px;" title="Re-run stat block analysis on current document">Refresh</button>
               <span id="statBlockCount" class="stat-count">0</span>
             </div>
+          </div>
+          
+          <!-- Search and Filters -->
+          <div class="stat-nav-controls">
+            <input type="text" id="statBlockSearch" class="stat-search-input" placeholder="Search blocks..." />
             
-            <!-- Search and Filters -->
-            <div class="stat-nav-controls">
-              <input type="text" id="statBlockSearch" class="stat-search-input" placeholder="Search blocks..." />
+            <div class="stat-filters">
+              <select id="statBlockTypeFilter" class="stat-filter-select">
+                <option value="all">All Types</option>
+                <option value="npc">NPCs</option>
+                <option value="monster">Monsters</option>
+                <option value="hazard">Hazards</option>
+                <option value="trap">Traps</option>
+                <option value="feature">Features</option>
+              </select>
               
-              <div class="stat-filters">
-                <select id="statBlockTypeFilter" class="stat-filter-select">
-                  <option value="all">All Types</option>
-                  <option value="npc">NPCs</option>
-                  <option value="monster">Monsters</option>
-                  <option value="hazard">Hazards</option>
-                  <option value="trap">Traps</option>
-                  <option value="feature">Features</option>
-                </select>
-                
-                <label class="stat-filter-checkbox">
-                  <input type="checkbox" id="statBlockShowErrors" />
-                  <span>Errors only</span>
-                </label>
-              </div>
-            </div>
-            
-            <!-- Navigator List -->
-            <div id="statBlockNavigator" class="stat-block-navigator">
-              <p class="placeholder" style="padding: 12px;">No stat blocks detected. Load a document to see navigation.</p>
+              <label class="stat-filter-checkbox">
+                <input type="checkbox" id="statBlockShowErrors" />
+                <span>Errors only</span>
+              </label>
             </div>
           </div>
-
-          <div class="nav-column header-nav-column">
-            <div class="navigator-header">
-              <h3>Navigator</h3>
-            </div>
-            <div id="navigatorList" class="navigator-list">
-              <p class="placeholder" style="padding: 12px;">Add headings (H1–H4) to see document structure here.</p>
-            </div>
+          
+          <!-- Navigator List -->
+          <div id="statBlockNavigator" class="stat-block-navigator">
+            <p class="placeholder" style="padding: 12px;">No stat blocks detected. Load a document to see navigation.</p>
           </div>
         </div>
 
-        <!-- Stat Block Details Panel (appears in Stat Block Mode) -->
+        <!-- Stat Block Details Panel -->
         <div id="statDetailsPanel" class="stat-details-panel" style="display:none; padding:12px; border-top:1px solid #e9ecef;">
           <h4>Stat Block Details</h4>
           <div id="statDetailsContent">
             <p class="placeholder">Select a stat block to see validation and quick-fix options.</p>
 
+          </div>
+        </div>
+      </aside>
+
+      <!-- Header Navigator: Right of editor -->
+      <aside class="navigator navigator-right">
+        <div class="nav-column header-nav-column">
+          <div class="navigator-header">
+            <h3>Navigator</h3>
+          </div>
+          <div id="navigatorList" class="navigator-list">
+            <p class="placeholder" style="padding: 12px;">Add headings (H1–H4) to see document structure here.</p>
           </div>
         </div>
       </aside>
@@ -553,7 +538,7 @@
                 <input type="checkbox" id="settingSyncEnabled" />
                 Sync Rendered → Markdown Editor
               </label>
-              <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in Rendered pane jumps editor cursor to corresponding line. Default: ON in Stat Mode, OFF in Structural Mode.</p>
+              <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in Rendered pane jumps the editor cursor to the corresponding line. Default: OFF. Turn on only when you want mirrored scrolling.</p>
             </div>
           </div>
         </div>

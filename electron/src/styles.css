@@ -133,6 +133,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  order: 1;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  border-right: none;
+  overflow: hidden;
 }
 
 /* ============================================================================
@@ -153,6 +161,20 @@ body {
   flex-direction: column;
   position: relative;
   height: 100%; /* ensure it fills vertical space */
+}
+
+.navigator-left {
+  order: 2;
+  border-left: none;
+  border-right: 1px solid #d1d1d6;
+}
+
+.content {
+  order: 3;
+}
+
+.navigator-right {
+  order: 4;
 }
 
 /* Divider between navigator sections */

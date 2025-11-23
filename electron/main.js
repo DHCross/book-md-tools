@@ -7,7 +7,7 @@ const fs = require('fs');
 app.setName('TRPG MD Workbench');
 
 // Stat Block Parser
-const { analyzeStatBlock, analyzeBatch } = require('./lib/cnc-stat-block-parser');
+const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
 
 let mainWindow;
 
@@ -623,8 +623,14 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
 // IPC: Analyze Stat Block
 ipcMain.handle('analyze-stat-block', async (event, content) => {
   try {
-    const result = analyzeStatBlock(content);
-    return { success: true, result };
+    const blocks = analyzeBatch(content || '');
+    let summary = null;
+    try {
+      summary = getSummaryStats(blocks);
+    } catch (e) {
+      summary = null;
+    }
+    return { success: true, result: { blocks, summary } };
   } catch (error) {
     return { success: false, message: error.message };
   }

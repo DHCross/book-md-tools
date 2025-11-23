@@ -12,18 +12,14 @@ let config = {
   tablesInline: true,
 };
 
-// Sync control: determines if scrolling/clicking in Rendered pane jumps editor
-// Default: ON in Stat Mode (essential for stat-block editing workflow)
-//          OFF in Structural Mode (free scrolling for reading)
-let syncScrollEnabled = null; // null = use mode default, true/false = user override
+// Sync control: determines if scrolling/clicking in Rendered pane jumps editor.
+// This is now fully user-controlled via an explicit toggle (no mode-based behavior).
+let syncScrollEnabled = false;
 
 // Guard flags to prevent circular updates
 let isInternalEditorUpdate = false; // Set to true when we modify editor from code
 let isSyncingScroll = false; // Set to true during scroll sync to prevent re-entry
 let suppressStatAnalysis = false; // Set to true when doing bulk updates
-
-// Mode: 'structural' | 'stat'
-let currentMode = 'structural';
 
 // Stat block navigation state
 let statBlocks = [];
@@ -31,49 +27,19 @@ let activeStatIndex = null; // index within statBlocks
 let statFilters = { type: 'all', onlyErrors: false, search: '' };
 let statContextCollapsed = {};
 
-function setMode(mode) {
-  if (mode !== 'structural' && mode !== 'stat') return;
-  currentMode = mode;
-  // Update UI classes
-  document.getElementById('modeStructuralBtn')?.classList.toggle('active', mode === 'structural');
-  document.getElementById('modeStatBtn')?.classList.toggle('active', mode === 'stat');
-  updateUIForMode();
-  
-  // Update toolbar visibility if toolbar is initialized
-  if (document.querySelector('.markdown-toolbar')) {
-    const trpgButtons = document.querySelectorAll('.trpg-specific');
-    if (currentMode === 'structural') {
-      trpgButtons.forEach(btn => btn.style.display = 'none');
-    } else {
-      trpgButtons.forEach(btn => btn.style.display = '');
-    }
-  }
-}
+// Unified navigation context for Next/Prev
+let navContext = {
+  mode: 'header', // 'header' or 'stat-block'
+  index: 0
+};
 
-// Get effective sync state: user override or mode default
 function isSyncEnabled() {
-  if (syncScrollEnabled !== null) return syncScrollEnabled; // User override
-  // Mode defaults: ON for Stat Mode, OFF for Structural Mode
-  return currentMode === 'stat';
+  return !!syncScrollEnabled;
 }
 
 // Check if editor has unsaved changes
 function hasUnsavedChanges() {
   return currentContent !== savedContent;
-}
-
-function updateUIForMode() {
-  // Always show both navigators; just refresh mode-specific data
-  const navigator = document.querySelector('.navigator');
-  if (navigator) navigator.style.display = 'flex';
-
-  // Ensure header navigator stays fresh
-  updateHeaderNavigator();
-
-  // Run stat analysis only when in Stat mode to avoid extra work
-  if (currentMode === 'stat') {
-    analyzeDocumentStatBlocks();
-  }
 }
 
 // ============================================================================
@@ -485,8 +451,7 @@ function applyToolOutput(toolOutput, toolName) {
   updateRenderedTab(toolOutput);
   updateSummaryTab(toolOutput);
   updateHeaderNavigator();
-  
-  if (currentMode === 'stat') analyzeDocumentStatBlocks();
+  analyzeDocumentStatBlocks();
   
   addChangeLogEntry('Tool Applied', `Applied: ${toolName}`);
   updateStatus(`${toolName} applied - remember to Save`, 'success');
@@ -524,7 +489,7 @@ async function runSafeTool(toolName, runToolFunction) {
       updateRenderedTab(savedContent);
       updateSummaryTab(savedContent);
       updateHeaderNavigator();
-      if (currentMode === 'stat') analyzeDocumentStatBlocks();
+      analyzeDocumentStatBlocks();
       log('Discarded unsaved changes (reverted to last save)', 'warning');
     }
   }
@@ -624,8 +589,7 @@ function undo() {
   updateRenderedTab(state.content);
   updateSummaryTab(state.content);
   updateHeaderNavigator();
-  
-  if (currentMode === 'stat') analyzeDocumentStatBlocks();
+  analyzeDocumentStatBlocks();
   
   log(`Undone: ${state.description}`, 'success');
   updateStatus('Undo successful', 'success');
@@ -664,11 +628,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // FILE OPERATIONS
 // ============================================================================
 
-document.getElementById('browseBtn')?.addEventListener('click', async () => {
+async function handleOpenFileClick() {
   const filePath = await window.electronAPI.selectFile();
   if (filePath) {
     currentFilePath = filePath;
-    document.getElementById('inputPath').value = filePath;
+    const inputPath = document.getElementById('inputPath');
+    if (inputPath) inputPath.value = filePath;
     await loadFile(filePath);
     updateStatus(`Loaded: ${filePath.split('/').pop()}`, 'success');
     log(`Loaded file: ${filePath}`, 'info');
@@ -677,7 +642,10 @@ document.getElementById('browseBtn')?.addEventListener('click', async () => {
     const previewTab = document.querySelector('[data-tab="previewTab"]');
     if (previewTab) previewTab.click();
   }
-});
+}
+
+document.getElementById('browseBtn')?.addEventListener('click', handleOpenFileClick);
+document.getElementById('openFileBtn')?.addEventListener('click', handleOpenFileClick);
 
 async function loadFile(filePath) {
   showProgress(true);
@@ -691,11 +659,9 @@ async function loadFile(filePath) {
     updateRenderedTab(content);
     updateSummaryTab(content);
     updateHeaderNavigator();
-
-    updateStatBlockNavigator();
-
-    // Run stat block analysis only when in stat mode
-    if (currentMode === 'stat') analyzeDocumentStatBlocks();
+    // Reset stat navigator immediately, then run full analysis
+    updateStatBlockNavigator([]);
+    analyzeDocumentStatBlocks();
 
     addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
   } else {
@@ -1326,14 +1292,6 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
     const convertedLines = result.content.split('\n');
     const changedLines = originalLines.reduce((count, line, i) => count + (line !== convertedLines[i] ? 1 : 0), 0);
 
-
-        // Update all tabs with the new content
-        updatePreviewTab(outputContent);
-        updateRenderedTab(outputContent);
-        updateSummaryTab(outputContent);
-        updateHeaderNavigator();
-        updateStatBlockNavigator();
-
     const changeMsg = changedLines > 0 
       ? `Built headers: ${changedLines} lines updated`
       : `Built headers: no changes detected`;
@@ -1347,6 +1305,7 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
     updateRenderedTab(currentContent);
     updateSummaryTab(currentContent);
     updateHeaderNavigator();
+    analyzeDocumentStatBlocks();
     setEditorUnsavedState();
     updateStatus('Headers built (unsaved)', 'success');
   } catch (error) {
@@ -1695,10 +1654,10 @@ document.getElementById('settingsBtn')?.addEventListener('click', async () => {
   document.getElementById('settingOutputSuffix').value = config.defaultOutputSuffix || '_cleaned';
   document.getElementById('settingTablesInline').checked = config.tablesInline ?? true;
   
-  // Update sync checkbox to reflect current state (user override or mode default)
+  // Update sync checkbox to reflect current state (simple ON/OFF)
   const syncCheckbox = document.getElementById('settingSyncEnabled');
   if (syncCheckbox) {
-    syncCheckbox.checked = syncScrollEnabled ?? isSyncEnabled();
+    syncCheckbox.checked = !!syncScrollEnabled;
   }
   
   // Show modal
@@ -1716,9 +1675,9 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   config.defaultOutputSuffix = document.getElementById('settingOutputSuffix')?.value || '_cleaned';
   config.tablesInline = document.getElementById('settingTablesInline')?.checked ?? true;
   
-  // Save sync preference: checkbox checked = explicit ON, unchecked = use mode default (null)
+  // Save sync preference: checkbox checked = ON, unchecked = OFF
   const syncCheckbox = document.getElementById('settingSyncEnabled');
-  syncScrollEnabled = syncCheckbox?.checked ? true : null;
+  syncScrollEnabled = !!(syncCheckbox && syncCheckbox.checked);
   config.syncScrollEnabled = syncScrollEnabled;
   
   // Save config
@@ -2144,6 +2103,11 @@ function navigateToSection(index) {
   if (!sections[index]) return;
   const target = sections[index];
 
+  // Update unified navigation context
+  navContext.mode = 'header';
+  navContext.index = index;
+  updateNavButtonsForContext();
+
 
   // Scroll Preview (text) to the specific line
   jumpEditorToLine(target.startLine);
@@ -2469,12 +2433,22 @@ document.getElementById('statBlockSearch')?.addEventListener('input', renderStat
 document.getElementById('statBlockTypeFilter')?.addEventListener('change', renderStatBlockList);
 document.getElementById('statBlockShowErrors')?.addEventListener('change', renderStatBlockList);
 
+// Manual refresh: allow explicit re-analysis on demand (read-only)
+document.getElementById('refreshStatBlocksBtn')?.addEventListener('click', () => {
+  analyzeDocumentStatBlocks();
+});
+
 function navigateToStatBlock(block) {
   if (!block) return;
 
   // Determine active index
   const idx = statBlocks.findIndex(b => b.index === block.index || b.lineNumber === block.lineNumber || b === block || (b.fullText && block.fullText && b.fullText === block.fullText));
-  if (idx !== -1) activeStatIndex = idx;
+  if (idx !== -1) {
+    activeStatIndex = idx;
+    navContext.mode = 'stat-block';
+    navContext.index = idx;
+    updateNavButtonsForContext();
+  }
 
   // Update navigator active state
   try {
@@ -2555,11 +2529,55 @@ function prevStatBlock() {
   if (block) navigateToStatBlock(block);
 }
 
+function updateNavButtonsForContext() {
+  const prevBtn = document.getElementById('prevStatBtn');
+  const nextBtn = document.getElementById('nextStatBtn');
+  if (!prevBtn || !nextBtn) return;
+
+  if (navContext.mode === 'stat-block') {
+    prevBtn.textContent = '◀ Prev Stat';
+    nextBtn.textContent = 'Next Stat ▶';
+    prevBtn.title = 'Previous Stat Block (Ctrl+Alt+↑)';
+    nextBtn.title = 'Next Stat Block (Ctrl+Alt+↓)';
+  } else {
+    prevBtn.textContent = '◀ Prev Header';
+    nextBtn.textContent = 'Next Header ▶';
+    prevBtn.title = 'Previous Header (Ctrl+Alt+↑)';
+    nextBtn.title = 'Next Header (Ctrl+Alt+↓)';
+  }
+}
+
+function navigateNextByContext() {
+  if (navContext.mode === 'stat-block') {
+    nextStatBlock();
+    return;
+  }
+
+  const sections = allSections || [];
+  if (!sections.length) return;
+
+  let idx = typeof navContext.index === 'number' ? navContext.index : -1;
+  idx = Math.min(sections.length - 1, idx + 1);
+  if (idx < 0) idx = 0;
+  navigateToSection(idx);
+}
+
+function navigatePrevByContext() {
+  if (navContext.mode === 'stat-block') {
+    prevStatBlock();
+    return;
+  }
+
+  const sections = allSections || [];
+  if (!sections.length) return;
+
+  let idx = typeof navContext.index === 'number' ? navContext.index : sections.length;
+  idx = Math.max(0, idx - 1);
+  navigateToSection(idx);
+}
+
 // Show Validation Details Panel for a selected stat block
 async function showStatDetails(block) {
-  // Only show details when in stat mode
-  if (currentMode !== 'stat') return;
-
   const panel = document.getElementById('statDetailsPanel');
   const content = document.getElementById('statDetailsContent');
   if (!panel || !content) return;
@@ -2697,21 +2715,45 @@ async function initialize() {
     const tablesInlineCheck = document.getElementById('tablesInlineCheck');
     if (tablesInlineCheck) tablesInlineCheck.checked = config.tablesInline ?? true;
     
-    // Restore sync preference (null = use mode default)
+    // Restore sync preference (simple ON/OFF; default false)
     if ('syncScrollEnabled' in config) {
-      syncScrollEnabled = config.syncScrollEnabled;
+      syncScrollEnabled = !!config.syncScrollEnabled;
     }
   }
 
-  // Bind mode buttons
-  document.getElementById('modeStructuralBtn')?.addEventListener('click', () => setMode('structural'));
-  document.getElementById('modeStatBtn')?.addEventListener('click', () => setMode('stat'));
+  // Wire sidebar collapse toggle
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+  if (sidebar && sidebarToggleBtn) {
+    const updateSidebarToggleLabel = () => {
+      const collapsed = sidebar.classList.contains('collapsed');
+      sidebarToggleBtn.textContent = collapsed ? '▶ Tools' : '◀ Tools';
+    };
+
+    sidebarToggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      updateSidebarToggleLabel();
+    });
+
+    updateSidebarToggleLabel();
+  }
+
+  // Wire scroll sync header toggle
+  const scrollSyncToggle = document.getElementById('scrollSyncToggle');
+  if (scrollSyncToggle) {
+    scrollSyncToggle.checked = isSyncEnabled();
+    scrollSyncToggle.addEventListener('change', () => {
+      syncScrollEnabled = !!scrollSyncToggle.checked;
+    });
+  }
+
+  // Bind core header actions
   document.getElementById('saveBtn')?.addEventListener('click', () => saveCurrentFile());
   document.getElementById('saveAsBtn')?.addEventListener('click', () => saveCurrentFileAs());
 
-  // Bind next/previous stat block buttons
-  document.getElementById('nextStatBtn')?.addEventListener('click', () => nextStatBlock());
-  document.getElementById('prevStatBtn')?.addEventListener('click', () => prevStatBlock());
+  // Bind Next/Prev navigation buttons (context-aware)
+  document.getElementById('nextStatBtn')?.addEventListener('click', () => navigateNextByContext());
+  document.getElementById('prevStatBtn')?.addEventListener('click', () => navigatePrevByContext());
 
   // Keyboard shortcuts: Ctrl/Cmd + Alt + ArrowUp/ArrowDown for previous/next
   document.addEventListener('keydown', (e) => {
@@ -2722,14 +2764,14 @@ async function initialize() {
       return;
     }
     
-    // Stat block navigation: Ctrl/Cmd + Alt + ArrowUp/ArrowDown
+    // Navigation: Ctrl/Cmd + Alt + ArrowUp/ArrowDown
     if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      nextStatBlock();
+      navigateNextByContext();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      prevStatBlock();
+      navigatePrevByContext();
     }
   });
 
@@ -2790,38 +2832,6 @@ async function initialize() {
     });
   }
 
-  // Mode-aware toolbar visibility
-  function updateToolbarForMode() {
-    const trpgButtons = document.querySelectorAll('.trpg-specific');
-    if (currentMode === 'structural') {
-      trpgButtons.forEach(btn => btn.style.display = 'none');
-    } else {
-      trpgButtons.forEach(btn => btn.style.display = '');
-    }
-  }
-
-
-async function undo() {
-  if (undoStack.length === 0) return;
-  
-  const state = undoStack.pop();
-  currentFilePath = state.filePath;
-  currentContent = state.content;
-  
-  // Update all views
-  updatePreviewTab();
-  updateRenderedTab();
-  updateSummaryTab();
-  updateHeaderNavigator();
-  updateStatBlockNavigator();
-  
-  log(`Undid ${state.action}`, 'success');
-  updateUndoButton();
-}
-
-  // Initial toolbar state
-  updateToolbarForMode();
-
 
   // ============================================================================
   // TOOLBAR HELPER FUNCTIONS
@@ -2843,7 +2853,7 @@ async function undo() {
       updateRenderedTab(currentContent);
     } else {
       // No selection - insert markers and place cursor between them
-      editor.setRangeText(before + after, start, end, 'end');
+      editor.setRangeText(before + after, start, start, 'end');
       editor.selectionStart = editor.selectionEnd = start + before.length;
       editor.focus();
     }
@@ -3073,11 +3083,9 @@ async function undo() {
         updateRenderedTab(currentContent);
         updateSummaryTab(currentContent);
         updateHeaderNavigator();
-        
-        // Re-run stat-block analysis only in Stat Mode (debounced)
-        if (currentMode === 'stat') {
-          analyzeDocumentStatBlocks();
-        }
+
+        // Re-run stat-block analysis automatically (read-only, debounced)
+        analyzeDocumentStatBlocks();
       }
     });
 
@@ -3086,8 +3094,8 @@ async function undo() {
     markdownEditor.addEventListener('keyup', captureSelection);
   }
 
-  // Default UI mode
-  setMode(currentMode);
+  // Initialize navigation button labels based on default context
+  updateNavButtonsForContext();
 }
 
 // ============================================================================
@@ -3358,192 +3366,6 @@ function showChangeReviewPanel() {
       e.target.closest('.change-item').style.opacity = '0.5';
     });
   });
-}
-
-// ============================================================================
-// STAT BLOCK NAVIGATOR
-// ============================================================================
-
-let allStatBlocks = [];
-
-function extractStatBlocks(content) {
-  const lines = content.split('\n');
-  const blocks = [];
-
-  // State variables for context-aware parsing
-  let lastHeader = null;
-  let lastHeaderLine = -1;
-
-  // Keywords that signal a section start but are NOT the name of the block
-  const IGNORE_HEADERS = new Set(['SIEGE', 'ECOLOGY', 'Description']);
-
-  lines.forEach((line, index) => {
-    const lineNum = index + 1;
-    const stripped = line.trim();
-
-    // ---------------------------------------------------------
-    // 1. Analyze Line Type (Track Headers)
-    // ---------------------------------------------------------
-    const headerMatch = stripped.match(/^(#{1,6})\s+(.+)$/);
-    const boldMatch = stripped.match(/^\*\*(.+)\*\*$/);
-
-    let currentLineHeader = null;
-
-    if (headerMatch) {
-      currentLineHeader = headerMatch[2].trim();
-    } else if (boldMatch) {
-      currentLineHeader = boldMatch[1].trim();
-    }
-
-    // ---------------------------------------------------------
-    // 2. Detection Logic
-    // ---------------------------------------------------------
-
-    // Form 3: Markdown List (e.g. * **Type:** Humanoid)
-    if (stripped.startsWith('* **Type:**') || stripped.startsWith('* **Level')) {
-      // If this list immediately follows a header (within 1-2 lines), it's a stat block
-      if (lastHeader && (lineNum - lastHeaderLine <= 2)) {
-        // Check duplicates (prevent re-adding same block if multiple list items match)
-        if (blocks.length === 0 || blocks[blocks.length - 1].line !== lastHeaderLine) {
-          blocks.push({
-            name: lastHeader,
-            line: lastHeaderLine,
-            type: 'Stat Block (List)'
-          });
-        }
-        // Don't consume header here; allow subsequent list items to confirm it (deduplication handles it)
-      }
-    }
-
-    // Form 2: SIEGE Style
-    else if (stripped === '**SIEGE**') {
-      if (lastHeader) {
-        blocks.push({
-          name: lastHeader,
-          line: lastHeaderLine,
-          type: 'Stat Block (SIEGE)'
-        });
-      }
-    }
-
-    // Form 1: Inline/Paragraph Style (parenthetical stats)
-    else if (line.includes('vital stats are')) {
-      // Heuristic: Name is the start of the line up to the first comma, or first ~30 chars
-      const nameMatch = stripped.match(/^([^,(]+)/);
-      const name = nameMatch ? nameMatch[1].trim() : (stripped.substring(0, 30) + "...");
-
-      blocks.push({
-        name: name,
-        line: lineNum,
-        type: 'Stat Block (Inline)'
-      });
-    }
-
-    // Legacy Support: Blockquote headers (> ## Name)
-    else if (stripped.match(/^>\s*#{1,6}\s+(.+)$/)) {
-        const match = stripped.match(/^>\s*#{1,6}\s+(.+)$/);
-        blocks.push({
-            name: match[1].trim(),
-            line: lineNum,
-            type: 'Monster/NPC'
-        });
-    }
-
-    // ---------------------------------------------------------
-    // 3. State Update (Post-Detection)
-    // ---------------------------------------------------------
-    if (currentLineHeader) {
-      // Strip basic HTML tags if present
-      const cleanHeader = currentLineHeader.replace(/<[^>]+>/g, '').trim();
-
-      if (!IGNORE_HEADERS.has(cleanHeader)) {
-        lastHeader = cleanHeader;
-        lastHeaderLine = lineNum;
-      }
-    }
-  });
-
-  return blocks;
-}
-
-function updateStatBlockNavigator() {
-  const container = document.getElementById('statBlockList');
-  if (!container) return;
-
-  const blocks = extractStatBlocks(currentContent || '');
-  allStatBlocks = blocks;
-
-  // Clear existing content safely
-  container.textContent = '';
-
-  if (!blocks || blocks.length === 0) {
-    const p = document.createElement('p');
-    p.className = 'placeholder';
-    p.style.padding = '12px';
-    p.textContent = 'No stat blocks found.';
-    container.appendChild(p);
-    return;
-  }
-
-  blocks.forEach((b, idx) => {
-    const item = document.createElement('div');
-    item.className = 'nav-item stat-block-item';
-    item.dataset.index = idx;
-
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'nav-icon';
-    iconDiv.textContent = '👾';
-
-    const textDiv = document.createElement('div');
-    textDiv.className = 'nav-text';
-
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'nav-title';
-    titleDiv.title = b.name;
-    titleDiv.textContent = b.name; // Safe: textContent escapes HTML
-
-    const metaDiv = document.createElement('div');
-    metaDiv.className = 'nav-meta';
-    metaDiv.textContent = `${b.type} · line ${b.line}`;
-
-    textDiv.appendChild(titleDiv);
-    textDiv.appendChild(metaDiv);
-
-    item.appendChild(iconDiv);
-    item.appendChild(textDiv);
-
-    item.addEventListener('click', () => {
-      navigateToStatBlock(idx);
-      container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-    });
-
-    container.appendChild(item);
-  });
-}
-
-function navigateToStatBlock(index) {
-  const blocks = allStatBlocks || [];
-  if (!blocks[index]) return;
-  const target = blocks[index];
-
-  // Sync editor
-  jumpEditorToLine(target.line);
-
-  // Sync rendered view
-  const rendered = document.getElementById('renderedContent');
-  if (rendered) {
-    // Search for blockquote containing the name
-    // or standard header
-    const headers = Array.from(rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, strong, p'));
-    let match = headers.find(el => el.textContent.includes(target.name));
-
-    if (match) {
-      match.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      match.classList.add('highlight-flash');
-      setTimeout(() => match.classList.remove('highlight-flash'), 2000);
-    }
-  }
 }
 
 function approveChange(changeId) {
