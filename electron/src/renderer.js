@@ -1086,27 +1086,8 @@ document.getElementById('injectTagsBtn')?.addEventListener('click', async () => 
     // Run tag injection on in-memory content
     const result = await window.electronAPI.injectTags(content, outputSuffix);
     
-
-    if (outputContent) {
-      // Switch to the new output file
-      currentFilePath = outputPath;
-      currentContent = outputContent;
-      document.getElementById('inputPath').value = outputPath;
-      
-      // Update all tabs with the tagged content
-      updatePreviewTab(outputContent);
-      updateRenderedTab(outputContent);
-      updateSummaryTab(outputContent);
-      updateHeaderNavigator();
-      updateStatBlockNavigator();
-      
-      const fileName = outputPath.split('/').pop();
-      log(`Switched to tagged file: ${fileName}`, 'info');
-      alert(`Tags injected successfully!\n\nSwitched to: ${fileName}\n\nThe tagged file is now loaded in the editor.`);
-
     if (!result.success) {
       throw new Error(result.message || 'Tag injection failed');
-
     }
     
     if (result.content === undefined) {
@@ -1133,27 +1114,8 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
     // Run tag stripping on in-memory content
     const result = await window.electronAPI.stripTags(content, outputSuffix);
     
-
-    if (outputContent) {
-      // Switch to the new output file
-      currentFilePath = outputPath;
-      currentContent = outputContent;
-      document.getElementById('inputPath').value = outputPath;
-      
-      // Update all tabs with the stripped content
-      updatePreviewTab(outputContent);
-      updateRenderedTab(outputContent);
-      updateSummaryTab(outputContent);
-      updateHeaderNavigator();
-      updateStatBlockNavigator();
-      
-      const fileName = outputPath.split('/').pop();
-      log(`Switched to stripped file: ${fileName}`, 'info');
-      alert(`Tags stripped successfully!\n\nSwitched to: ${fileName}\n\nThe stripped file is now loaded in the editor.`);
-
     if (!result.success) {
       throw new Error(result.message || 'Tag stripping failed');
-
     }
     
     if (result.content === undefined) {
