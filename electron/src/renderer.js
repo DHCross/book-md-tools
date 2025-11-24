@@ -122,8 +122,6 @@ let statFilters = { type: 'all', status: 'all', onlyErrors: false, search: '' };
 let statContextCollapsed = {};
 let activeStatStartLine = null; // first line of selected stat block (for UI)
 let activeStatEndLine = null;
-let activeBlockTop = 0;
-let activeBlockHeight = 0;
 let reviewState = {}; // reviewed flags keyed by block id
 
 // Unified navigation context for Next/Prev
@@ -1512,6 +1510,7 @@ function jumpEditorToLine(lineNumber, focusEditor = true, selectRange = null) {
   requestAnimationFrame(() => {
     applyCaret();
     updateLineInfoDisplay();
+    updateStatBlockHighlight();
   });
 
   return { charOffset, targetLine };
@@ -4008,15 +4007,19 @@ function navigateToStatBlock(block) {
     navContext.mode = 'stat-block';
     navContext.index = idx;
     updateNavButtonsForContext();
-    activeStatStartLine = block.lineNumber || block.lineStart || null;
-    
-    // Calculate end line
-    if (block.fullText) {
-      const lineCount = block.fullText.split('\n').length;
-      activeStatEndLine = (activeStatStartLine || 1) + lineCount - 1;
-    } else {
-      activeStatEndLine = activeStatStartLine;
+
+    const startLineCandidate = block.lineStart || block.lineNumber || block.lineBegin;
+    const startLine = typeof startLineCandidate === 'number' && startLineCandidate > 0 ? startLineCandidate : 1;
+
+    let endLine = block.lineEnd || block.lineFinish || null;
+    if (!endLine && block.fullText) {
+      const lineCount = block.fullText.split('\n').length || 1;
+      endLine = startLine + lineCount - 1;
     }
+    if (!endLine) endLine = startLine;
+
+    activeStatStartLine = startLine;
+    activeStatEndLine = endLine;
 
     updateLineInfoDisplay();
     updateStatBlockHighlight();
@@ -4964,14 +4967,16 @@ function updateStatBlockHighlight() {
   const textBeforeStart = lines.slice(0, startLineIdx).join('\n');
   
   if (textBeforeStart.length > 0) {
-     mirror.textContent = textBeforeStart + '\u200B';
+    mirror.textContent = textBeforeStart + '\u200B';
   } else {
-     mirror.textContent = '';
+    mirror.textContent = '\u200B';
   }
   
+  const paddingTop = parseFloat(style.paddingTop) || 0;
   const paddingBottom = parseFloat(style.paddingBottom) || 0;
+  const borderTop = parseFloat(style.borderTopWidth) || 0;
   const borderBottom = parseFloat(style.borderBottomWidth) || 0;
-  
+
   const startTop = mirror.offsetHeight - paddingBottom - borderBottom;
 
   const endLineIdx = Math.min(lines.length, activeStatEndLine);
@@ -4980,9 +4985,23 @@ function updateStatBlockHighlight() {
   
   const endTop = mirror.offsetHeight - paddingBottom - borderBottom;
 
-  const blockHeight = endTop - startTop;
-  const top = startTop - editor.scrollTop;
-  
+  const columnStyle = window.getComputedStyle(column);
+  const columnPaddingTop = parseFloat(columnStyle.paddingTop) || 0;
+  const columnPaddingBottom = parseFloat(columnStyle.paddingBottom) || 0;
+  const usableHeight = Math.max(0, column.clientHeight - columnPaddingTop - columnPaddingBottom);
+
+  let blockHeight = Math.max(0, endTop - startTop);
+  let top = startTop - editor.scrollTop - paddingTop - borderTop + columnPaddingTop;
+
+  if (usableHeight > 0) {
+    blockHeight = Math.max(Math.min(blockHeight, usableHeight), 6);
+    const maxTop = columnPaddingTop + usableHeight - blockHeight;
+    top = Math.max(columnPaddingTop, Math.min(maxTop, top));
+  } else {
+    blockHeight = Math.max(blockHeight, 6);
+    top = columnPaddingTop;
+  }
+
   indicator.style.top = `${top}px`;
   indicator.style.height = `${blockHeight}px`;
 }

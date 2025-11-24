@@ -2282,6 +2282,7 @@ body {
   min-height: 60vh;
 }
 
+
 .line-info-column {
   width: 96px;
   min-width: 96px;
@@ -2298,6 +2299,8 @@ body {
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
   position: relative; /* For absolute positioning of indicator */
   overflow: hidden; /* Clip the indicator */
+  height: 100%;
+  min-height: 60vh;
 }
 
 .line-info-column.active-stat {
@@ -2310,11 +2313,11 @@ body {
   position: absolute;
   left: 0;
   width: 100%;
-  background: rgba(40, 167, 69, 0.15);
-  border-left: 4px solid #28a745;
+  background: rgba(40, 167, 69, 0.18);
+  border-left: 6px solid #2ebf6d;
   pointer-events: none;
-  z-index: 0; /* Behind text if possible, but text is in other div */
-  transition: top 0.05s linear; /* Smooth scroll */
+  z-index: 0; /* Behind text */
+  transition: top 0.05s linear, height 0.05s linear;
 }
 
 /* Ensure text is above indicator */
