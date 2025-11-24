@@ -65,9 +65,9 @@ const MONSTER_TYPE_DICTIONARY = {
 
 // Rank/title keywords that suggest classed NPC
 const RANK_TITLES = new Set([
-  'chieftain', 'captain', 'lieutenant', 'sergeant', 'corporal',
+  'chieftain', 'captain', 'lieutenant', 'sergeant', 'serjeant', 'corporal',
   'commander', 'general', 'major', 'colonel', 'leader', 'boss',
-  'shaman', 'witch doctor', 'priest', 'elder', 'champion',
+  'shaman', 'witch doctor', 'priest', 'cleric', 'adept', 'elder', 'champion',
   'king', 'queen', 'prince', 'princess', 'lord', 'lady',
   'baron', 'duke', 'count', 'earl', 'knight', 'sir'
 ]);
@@ -127,9 +127,10 @@ function extractSignals(creatureName, canonicalData, context = {}) {
   // Signal 4: IsNamed (Proper noun detection)
   const IsNamed = detectProperNoun(creatureName);
   
-  // Signal 5: IsUnit (Numeration in header)
-  const IsUnit = /\b(?:x\s*\d+|\d+\s*x|\(\d+\)|\d+-\d+)\b/i.test(creatureName) ||
-                 /\b(?:bandits|goblins|orcs|guards|soldiers|kobolds|zombies|skeletons)\s+x\s*\d+\b/i.test(nameLower);
+  // Signal 5: IsUnit (Numeration in header + plural nouns + group indicators)
+  const IsUnit = /\b(?:x\s*\d+|\d+\s*x|,\s*\d+|\(\d+\)|\d+-\d+)\b/i.test(creatureName) ||
+                 /\b(?:warriors?|guards?|sentries|soldiers?|males?|females?|young|raiders?|scouts?|patrol)\b/i.test(nameLower) ||
+                 /\b(?:bandits|goblins|orcs|kobolds|zombies|skeletons|bugbears|gnolls|hobgoblins|ogres|trolls)\b/i.test(nameLower);
   
   // Signal 6: IsHumanoid
   let IsHumanoid = false;

@@ -6,8 +6,9 @@ const fs = require('fs');
 // Set application name
 app.setName('TRPG MD Workbench');
 
-// Stat Block Parser
+// Stat Block Parser and Canonicalizer
 const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
+const { canonicalizeBatch } = require('./lib/cnc-canonicalizer-v2');
 
 let mainWindow;
 
@@ -651,6 +652,87 @@ ipcMain.handle('fix-stat-block', async (event, content) => {
   try {
     const result = analyzeStatBlock(content, { validateFormat: true, autoFix: true });
     return { success: true, fixedText: result.fixedText || result.fullText, appliedFixes: result.appliedFixes || [] };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// IPC: Canonicalize Stat Blocks (batch transformation with preview)
+ipcMain.handle('canonicalize-stat-blocks', async (event, statBlocks) => {
+  try {
+    const results = canonicalizeBatch(statBlocks);
+    return { success: true, results };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// ============================================================================
+// CHECKPOINT EXPORT/IMPORT
+// ============================================================================
+ipcMain.handle('export-checkpoint', async (event, checkpointData) => {
+  try {
+    // Generate filename from document path and date
+    const docPath = checkpointData.document?.path || 'unknown';
+    const docName = path.basename(docPath, path.extname(docPath))
+      .replace(/[^a-z0-9]+/gi, '-')
+      .toLowerCase()
+      .substring(0, 50); // Limit length
+    const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const defaultFilename = `checkpoint-${docName}-${dateStr}.json`;
+    
+    const { filePath } = await dialog.showSaveDialog({
+      title: 'Export Analysis Checkpoint',
+      defaultPath: defaultFilename,
+      filters: [{ name: 'JSON', extensions: ['json'] }]
+    });
+    
+    if (!filePath) return { success: false, cancelled: true };
+    
+    fs.writeFileSync(filePath, JSON.stringify(checkpointData, null, 2), 'utf-8');
+    return { success: true, path: filePath };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+ipcMain.handle('import-checkpoint', async () => {
+  try {
+    const { filePaths } = await dialog.showOpenDialog({
+      title: 'Import Analysis Checkpoint',
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+      properties: ['openFile']
+    });
+    
+    if (!filePaths || filePaths.length === 0) return { success: false, cancelled: true };
+    
+    const data = fs.readFileSync(filePaths[0], 'utf-8');
+    const checkpoint = JSON.parse(data);
+    return { success: true, checkpoint, path: filePaths[0] };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+});
+
+// ============================================================================
+// REFORGED NAME CONVERSION
+// ============================================================================
+// CSV files are in the CnC-npc-stat-block-pa repo
+const CSV_DIR = path.join(path.dirname(REPO_ROOT), 'CnC-npc-stat-block-pa', 'CnC Name Changes');
+
+ipcMain.handle('load-conversion-csvs', async () => {
+  try {
+    const spellCsvPath = path.join(CSV_DIR, 'spell_conversion_guide_full_dataframe.csv');
+    const itemCsvPath = path.join(CSV_DIR, 'master_magic item.conversion.csv');
+    
+    const spellCsv = fs.existsSync(spellCsvPath) ? fs.readFileSync(spellCsvPath, 'utf-8') : null;
+    const itemCsv = fs.existsSync(itemCsvPath) ? fs.readFileSync(itemCsvPath, 'utf-8') : null;
+    
+    return { 
+      success: true, 
+      spells: spellCsv, 
+      items: itemCsv 
+    };
   } catch (error) {
     return { success: false, message: error.message };
   }

@@ -1,0 +1,3632 @@
+{
+  "document": {
+    "path": "/Users/dancross/Documents/GitHub/book-md-tools/CnC Docs/02 CZ Ruins Mouths of Madness Reforged.md",
+    "timestamp": "2025-11-24T01:55:53.472Z",
+    "hash": "3b6c3a73",
+    "appVersion": "1.0.0"
+  },
+  "analysis": {
+    "filters": {
+      "type": "monster",
+      "status": "all",
+      "onlyErrors": false,
+      "search": ""
+    },
+    "sortMode": "alphabetical",
+    "statBlocks": [
+      {
+        "id": "Animal herd@undefined",
+        "name": "Animal herd",
+        "type": "feature",
+        "context": "D100 Little Hillwood Encounter:",
+        "raw": "**Animal herd** (5-20 bison, cattle, deer, or elk)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "23-25 Ghoul, x 1-2.@undefined",
+        "name": "23-25 Ghoul, x 1-2.",
+        "type": "monster",
+        "context": "D100 Little Hillwood Encounter:",
+        "raw": "**23-25 Ghoul, x 1-2.** (re-roll if daytime)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "wood elves@undefined",
+        "name": "wood elves",
+        "type": "monster",
+        "context": "D100 False Urt River Encounter:",
+        "raw": "**wood elves** (x 2 per canoe)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "_The Little Hillwood Werewolf_@undefined",
+        "name": "_The Little Hillwood Werewolf_",
+        "type": "monster",
+        "context": "D100 Outside the Mouths of Madness (Ravine and Bluff) Encounter:",
+        "raw": "**_The Little Hillwood Werewolf_** (nighttime only, see _Mouths of Madness_ #A)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "*Ape, carnivorous@undefined",
+        "name": "*Ape, carnivorous",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Ape, carnivorous**\nThis creature’s vital stats are Level 4(d10), HP 23, AC 15, disposition neutrality. Its primary attributes are physical. It moves 30 ft. with an equal climb rate. Combat: two fist smashes (1d4 each), an overbearing attack, and if both fists hit it gains a grappling attack for +2d4 damage; hugging continues until a Strength save succeeds. It has +5 to hide checks, +3 to surprise checks. XP 80+4.",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bandit:@undefined",
+        "name": "Bandit:",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Bandit:** (This 0ˢᵗ level human fighter’s vital stats are HP 4, AC 13, disposition neutral/evil. His primary attributes are strength, dexterity, and constitution. He wears studded leather armor and carries a battle axe, a short bow with six arrows, and 1d6 sp. XP: 5+1.)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Bandit, Lieutenant@undefined",
+        "name": "Bandit, Lieutenant",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Bandit, Lieutenant:** _(They are 2nd level, neutral evil, human fighters whose vital statistics are HP 14, AC 14. Their primary attributes are physical. They have scale mail, longsword [specialized; +3 \"to hit\"; 1d8+1 damage], short bow [+2 \"to hit\"; 1d6 damage], arrows x12, and 1d6 gp. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bat, giant cave@undefined",
+        "name": "Bat, giant cave",
+        "type": "feature",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Bat, giant cave:** _(These neutral creatures' vital stats are HD 1d2, HP 1, AC 12, MV 5 ft., 50 ft. fly. Their saves are physical. They attack by swarming exposed portions of the body. Their attacks are in groups of four, and receive 1 attack for each 4 bats. If a hit is scored, 1 point of damage is inflicted from scratches and bites. They receive +3 to all \"to hit\" rolls. They attack for only 1d4 rounds before leaving. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bear, black@undefined",
+        "name": "Bear, black",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Bear, black:** _(This neutral animal's vital stats are HD 3d8, HP 15, AC 13, MV 40 ft. Its saves are physical. It attacks with two paws for 1d4+1 damage and a bite for 1d6+1 damage. If both claw attacks are successful in a single round, the bear's foe must make a strength save or be caught in its crushing hug for 2d4+1 points of damage. XP: 40+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Boar, wild@undefined",
+        "name": "Boar, wild",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Boar, wild:** _(This neutral animal's vital stats are HD 2d8, HP 8, AC 16, MV 40 ft. Its saves are physical. It attacks with a gore for 2d6 damage. Boars have twilight vision and attack as though they are 5 HD creatures. XP: 15+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Brigand, crossbowmen@undefined",
+        "name": "Brigand, crossbowmen",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Brigand, crossbowmen:** _(They are 1st level, neutral evil, human fighters whose vital stats are HP 5, AC 13. Their primary attributes are physical. They have studded leather armor, longsword [+1 \"to hit\"; 1d8 damage], heavy crossbow [specialized; +2 \"to hit\"; 1d10+1 damage; 1 attack per 2 rounds], 8 bolts, dagger, and 1d6 gp. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Brigand, flailmen@undefined",
+        "name": "Brigand, flailmen",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Brigand, flailmen:** _(They are 1st level, neutral evil, human fighters whose vital stats are HP 5, AC 14. Their primary attributes are physical. They have scale mail, heavy flail [specialized; +2 \"to hit\"; 1d10+1 damage], belt axe, dagger, and 3d6 sp. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Brigand, Serjeant@undefined",
+        "name": "Brigand, Serjeant",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Brigand, Serjeant:** _(They are 2nd level, neutral evil, human fighters whose vital statistics are HP 14, AC 15. Their primary attributes are physical. They have chain hauberk, shield, longsword [specialized; +3 \"to hit\"; 1d8+1 damage], light crossbow [+1 \"to hit\"; 1d6 damage], bolts x12, and 2d8 gp. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bugbear@undefined",
+        "name": "Bugbear",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Bugbear:** _(These chaotic evil humanoids' vital stats are HD 3d10, HP 16, AC 16, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They have patchwork ring mail armor, buckler, bastard sword, light throwing hammers x2—all weapons at +3 damage due to strength. They also carry 2d4 gp. XP: 30+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Elf, Wood, bowman@undefined",
+        "name": "Elf, Wood, bowman",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Elf, Wood, bowman:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longbow training. They have padded armor, longbow [specialized, +4 \"to hit\"; 1d6+1 damage], arrows x12, short sword [+1 \"to hit\", and 3-18 sp. XP: 13+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Elf, Wood, spearman@undefined",
+        "name": "Elf, Wood, spearman",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Elf, Wood, spearman:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 13, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longsword training. They have leather armor, spear [specialized; +3 \"to hit\"; 1d6+1 damage], longsword [+2 \"to hit\"; 1d8 damage], and 2-12 sp. XP: 13+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Elf, Wood, swordsman@undefined",
+        "name": "Elf, Wood, swordsman",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Elf, Wood, swordsman:** _(They are 1st - 3rd level, chaotic neutral fighters whose vital stats are HD 1d10, HP 5 per level, AC 14, MV 30 ft. Their primary attributes are physical. Their significant attribute is strength 15. Their special abilities include hide, move silent, pass without trace, longsword training. They have leather armor, shield, longsword [specialized; +4 to +6 \"to hit\"; 1d8+2 damage], dagger, and 2-12 gp. XP: 13+1; 16+2; 26+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Ghoul@undefined",
+        "name": "Ghoul",
+        "type": "feature",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Ghoul:** _(These chaotic evil undeads' vital stats are HD 2d8, HP 10, AC 14, MV 30 ft. Their saves are physical._ _They attacks with 2 claws for 1d4+2 damage and 1 bite for 1d4+1 damage. Any living creature, other than an elf [they are immune], that is clawed or bitten by these monsters must make a save versus paralysis or become rigid [paralyzed]. This paralysis lasts 20-50 minutes [1d4+1 x 10], unless a remove curse or remove paralysis is cast. These creatures are immune to sleep and charm spells. Their killed victims will become ghouls unless a bless spell is cast. These monsters will not enter the magic circle of a protection from evil spell._ _XP: 30+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Gnoll@undefined",
+        "name": "Gnoll",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Gnoll:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 13, AC 15, MV 30 ft. Their saves are physical. They attack by weapon at +2 damage due to strength. Their special ability is darkvision 60 ft. They have patchwork leather armor, shield, throwing club, morning star, and 2d4 gp. XP: 12+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin, raider@undefined",
+        "name": "Goblin, raider",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Goblin, raider:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, belt axe, shortsword, and 3d6 sp. XP 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin, leader (corporal)@undefined",
+        "name": "Goblin, leader (corporal)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Goblin, leader (corporal):** _(These lawful evil humanoids' vital stats are HD 3d6+2, HP 15, AC 16, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft., and light sensitivity [-1 to attacks in bright light], and high strength for an additional +1 \"to hit\" and +1 damage. They have breastplate, shield, belt axe, morning star, and 2d4 gp. XP: 20+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Griffon@undefined",
+        "name": "Griffon",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Griffon:** _(This neutral creature's vital stats are HD 7d10, HP 45, AC 17, MV 30 ft., or fly 80 ft. Its saves are physical. It attacks with two claws for 1d4 damage each and one bite for 2d8 damage. It has dark vision and twilight vision that allows it to see in the dark. XP: 270+7)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Hobgoblin@undefined",
+        "name": "Hobgoblin",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Hobgoblin:** _(These lawful evil humanoids' vital stats are HD 1d10, HP 8, AC 15, MV 30 ft. Their saves are physical. They attack by weapon at +1 damage due to strength. Their special ability is darkvision 60 ft. They have crude chain mail armor, composite short bow, x12 arrows, halberd, and 2d4 sp. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Kobold@undefined",
+        "name": "Kobold",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Kobold:** _(These lawful evil humanoids' vital stats are HD 1d4, HP 3, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have chain hauberk armor, javelins x3, shortsword, and 1d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Lion (mountain, forest)@undefined",
+        "name": "Lion (mountain, forest)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Lion (mountain, forest):** _(These neutral animals' vital stats are HD 4d8, HP 20, AC 16, MV 40 ft. Their saves are physical. They attack with two claws for 1d3 points of damage and one bite for 1d6 points of damage. If both claws hit, they make two additional rear claw rake attacks for 1d4 points of damage each. XP: 60+4)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Lizardfolk@undefined",
+        "name": "Lizardfolk",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Lizardfolk:** _(These neutral creatures' vital stats are HD 2d8, HP 10, AC 15, MV 30 ft., 20 ft. swim. Their saves are physical. They attack with a spear, or two claws for 1d2 damage and a bite for 1d8 damage. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "@undefined",
+        "name": "",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "** **(fisherman/hunter/trapper/woodcutter)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Naga, Water@undefined",
+        "name": "Naga, Water",
+        "type": "feature",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Naga, Water:** _(This neutral creature's vital stats are HD 7d8, HP 35, AC 15, MV 30 ft., 50 ft. swim. Its saves are physical. It attacks with a bite for 1d4 damage, though is non-aggressive and will avoid combat. Its bite delivers a mild toxin that causes 1d4 additional damage, save negates. It also wields spells as a 7th level wizard, focusing on spells that promote protection and escape, such as dimension door, invisibility, shield, teleport, etc. If forced to fight it will use its constrict ability and drag the victim underwater. To constrict, the naga must make a successful bite attack. The next round it can make a grappling attack against the opponent. If successful, the defender is entwined and being constricted for 1d10+2 damage per round. Individuals with a 15 strength or greater can attempt a strength check to escape the naga's coils. XP: 540+7)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Nixies (sprite)@undefined",
+        "name": "Nixies (sprite)",
+        "type": "npc-named",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Nixies (sprite):** _(These neutral creatures' vital stats are HD 1d4, HP 3, AC 14, MV 10 ft, 30 ft. swim. Their saves are mental. They attack by weapon type, though avoid direct confrontation if possible. They have daggers and javelins. They can cast water breathing at will and cast a powerful charm person spell that lasts for one year. XP: 15+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orc@undefined",
+        "name": "Orc",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Orc:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 13, MV 30 ft. Their saves are physical. Their special abilities_ _are_ _darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, halberd, warhammer, short bow, 6 arrows, and 1d6 gp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Otter, giant@undefined",
+        "name": "Otter, giant",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Otter, giant:** _(This neutral creature's vital stats are HD 4d8, HP 21, AC 15, MV 30 ft., 40 ft. swim. Its saves are physical. It attacks with a bite for 2d6+5 points of damage. XP: 40+4.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Owlbear (small)@undefined",
+        "name": "Owlbear (small)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Owlbear (small):** _(These neutral monsters' vital stats are HD 3d10, HP 19, AC 15, MV 30 ft. Their saves are physical. They attack with two claws for 1d4 points of damage and one bite for 2d4 points of damage. If the owlbear strikes with 2 claws, it pulls the victim to itself, hugging and dealing an extra 2d4 points of damage, save versus strength to avoid. Additional strength saves are allowed each round, if trapped thus. The owlbear can automatically squeeze for 2d4 damage and bite for 2d4 damage a hugged victim each round. XP: 40+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Rats, River (giant)@undefined",
+        "name": "Rats, River (giant)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Rats, River (giant):** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 1+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Rivermen@undefined",
+        "name": "Rivermen",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Rivermen:** _(They are 0th level, chaotic neutral, human fighters whose vital stats are HD 1d8, HP 5, AC 11. Their primary attributes are physical. Their secondary skill is Nautical Ability, which is described in the CZY Appendix. They have waterproofed leather coats, spears [+0 \"to hit\"; 1d6 damage], and 12-inch knives._ _XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Snake, poisonous@undefined",
+        "name": "Snake, poisonous",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Snake, poisonous:** _(This neutral animal's vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Its saves are physical. It attacks with a bite for 1 point of damage. Its bite delivers poison for 2d4 points of additional damage, save versus poison negates. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Snake, poisonous (deadly)@undefined",
+        "name": "Snake, poisonous (deadly)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Snake, poisonous (deadly):** _(This neutral animal's vital stats are HD 2d6, HP 7, AC 14, MV 20 ft. Its saves are physical. It attacks with a bite for 1 point of damage. Its bite delivers poison for 1d4 points of additional damage for 10 rounds, save versus poison reduces damage to 1 point per round. XP: 20+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Spider, Giant (medium-sized)@undefined",
+        "name": "Spider, Giant (medium-sized)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Spider, Giant (medium-sized):** _(These neutral creatures' vital stats are HD 3d8, HP 15, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 3d4 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim also suffers paralyzation for 1d6 hours. XP: 52+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Stirges@undefined",
+        "name": "Stirges",
+        "type": "npc-named",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Stirges:** _(These neutral creatures' vital stats are HD 1d6, HP 3, AC 16 Move 10 ft., 40 ft. fly. Their saves are physical. They attack with a sting for 1d3 points of damage. Their special abilities include attach and blood drain for 1d4 points of damage per round. XP: 15+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Turtle, Huge Snapping@undefined",
+        "name": "Turtle, Huge Snapping",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Turtle, Huge Snapping:** _(These neutral creatures' vital stats are HD 5d8, HP 20 AC 19 shell, 12 head, limbs, and tail, MV 3 ft. land, 6 ft. swimming. Their primary attributes are physical. They attack with a bite for 2d4+10 points of damage. Once the huge snapping turtle has successfully bitten a victim it does not have to strike again. Each round thereafter the turtle inflicts 2d4 points of damage per round. Also, the turtle may attempt to drag creatures into the water where they can drown. To escape, the turtle must be killed or suffer the loss of 50% of its hit points, or the victim must make a successful strength save to break free. XP: 100+5)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Wolf, Grey@undefined",
+        "name": "Wolf, Grey",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Wolf, Grey:** _(These neutral animals' vital stats are HD 2d8, HP 9, AC 13, MV 50 ft. Their saves are physical. They attack with a bite for 1d4+3 damage. Their special abilities include a trip attack, superior sense of smell, and twilight vision. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Wolverine (small, normal)@undefined",
+        "name": "Wolverine (small, normal)",
+        "type": "monster",
+        "context": ">>>END TABLE<<<",
+        "raw": "**Wolverine (small, normal):** _(This neutral creature's vital stats are HD 3d8, HP 16, AC 15, MV 20 ft. Its saves are physical, and all attacks are made as though it were 3HD higher than it is. It attacks with two claws for 1d4 points of damage and one bite for 1d4+1 damage._ _It can release a musk spray 10' wide by 30' long, saving throw versus breath weapon or victim is blinded for 1-2 hours; regardless of save, any creature in the spray's area of effect is sickened and suffers -2 strength, dexterity, and constitution for 2-8 turns. XP: 50+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Table 1.@undefined",
+        "name": "Table 1.",
+        "type": "feature",
+        "context": "PART III: THE WILDERNESS",
+        "raw": "**Table 1.** (LAYOUT NOTE: INSERT PAGE #)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Table 2.@undefined",
+        "name": "Table 2.",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Table 2.** (LAYOUT NOTE INSERT PAGE #)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Table 3.@undefined",
+        "name": "Table 3.",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Table 3.** (LAYOUT NOTE INSERT PAGE #)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "shaman@undefined",
+        "name": "shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**shaman** (and advisor)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Grimlock Manface (Losel Chieftain)@undefined",
+        "name": "Grimlock Manface (Losel Chieftain)",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Grimlock Manface (Losel Chieftain):** _(This neutral evil humanoid's vital stats are HD 4d8+4, HP 32, AC 16, MV 30 ft., 40 ft. climb or brachiate. His saves are physical. His special ability is darkvision 300 ft. He attacks by weapon at +4 damage due to strength. His long arms allow first strike against any creature of equal or smaller size, and he has the conceal ability as per the PHB ranger class. He wears splint mail armor and wields a +1 heavy flail [specialized; +6 \"to hit\"; 1d10+6 damage], lasso*, belt axe, and dagger. He also wears a sinew necklace laced with 100 fingers, and a gold armlet worth 125 gp. XP: 268)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Ji'gun-tima (Losel Shaman)@undefined",
+        "name": "Ji'gun-tima (Losel Shaman)",
+        "type": "hazard",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Ji'gun-tima (Losel Shaman):** _(This neutral evil humanoid's vital stats are HD 4d8+4, HP 25, AC 12, MV 30 ft., 40 ft. climb or brachiate. Her saves are mental and physical. Her special ability is darkvision 300 ft. Her attacks are at +2 damage due to strength. She has a +1 dagger [+5 \"to hit\"; 1d4+3 damage], +1 staff of protection mounted with bronzed skull head, and a shaman's rattle**. She can cast a mixture of cleric and wizard spells at a 5th level ability. She typically has the following spells memorized: 1st level--cause fear, cure light wounds, magic missile, sleep; 2nd--hold person, mirror image; 3rd--curse. XP: 260)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Losel sub-chiefs x 10@undefined",
+        "name": "Losel sub-chiefs x 10",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Losel sub-chiefs x 10:** _(These neutral evil humanoids' vital stats are HD 2d8+4, HP 16, AC 14, MV 30 ft., 40 ft. climb or brachiate. Their saves are physical. Their special ability is darkvision 300 ft. They attack by weapon at +3 damage due to strength. Their long arms allow first strike against any creature of equal or smaller size, and they have the conceal ability as per the PHB ranger class. They have chain mail armor, heavy flail [+2 \"to hit\"; 1d10+3 damage], lasso*, and sinew necklaces laced with the fingers of those they have killed. XP: 40+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Losel warriors x 30@undefined",
+        "name": "Losel warriors x 30",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Losel warriors x 30:** _(These neutral evil humanoids' vital stats are HD 1d8+4, HP 10, AC 14, MV 30 ft., 40 ft. climb or brachiate. Their saves are physical. Their special ability is darkvision 300 ft. They attack at +2 damage due to strength. Their long arms allow first strike against any creature of equal or smaller size, and they have the conceal ability as per the PHB ranger class. They have crude leather armor, stone clubs [+1 \"to hit\"; 1d6+2 damage] and/or long bow [+1 \"to hit\"; 1d6 damage] with 12 arrows, and sinew necklaces laced with the fingers of those they have killed. XP: 18+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Losel females x 35@undefined",
+        "name": "Losel females x 35",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Losel females x 35:** _(These neutral evil humanoids' vital stats are HD 1d8, HP 6, AC 12, MV 30 ft., 40 ft. climb or brachiate. Their saves are physical. Their special ability is darkvision 300 ft. They attack at +1 damage due to strength. They have the conceal ability as per the PHB ranger class. They wield clubs [+1 \"to hit\"; 1d6+1 damage]. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "The Ogre@undefined",
+        "name": "The Ogre",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**The Ogre:** _(This chaotic evil humanoid's vital stats are HD 4d12, HP 27, AC 16, MV 30 ft. Its saves are physical. It attacks with a giant spiked club for 1d8+4 damage or by slamming with its fists for 1d10+4 damage [attacks at +4 damage due to size and strength]. It has a giant spiked club, a hand axe the size of a normal battle axe, a 25' whip, and a key to the barn padlock. XP: 178)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Children x 3-6@undefined",
+        "name": "Children x 3-6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Children x 3-6:** _(They are neutral and/or good human boys and girls, HD 1d2, HP 2, AC 10.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Old Castle Track@undefined",
+        "name": "Old Castle Track",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Old Castle Track** (q.v.)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "2 more boggiwog warriors@undefined",
+        "name": "2 more boggiwog warriors",
+        "type": "monster",
+        "context": "WD-5. Fen Mound, 45' diameter x 20' high:",
+        "raw": "**2 more boggiwog warriors** (as above)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "3 females@undefined",
+        "name": "3 females",
+        "type": "monster",
+        "context": "WD-5. Fen Mound, 45' diameter x 20' high:",
+        "raw": "**3 females** (equal to the males, except of 4 HP each)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "8 young@undefined",
+        "name": "8 young",
+        "type": "monster",
+        "context": "WD-5. Fen Mound, 45' diameter x 20' high:",
+        "raw": "**8 young** (non-combatant, 1 HP each)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Blook-glook (Batrachianoid Chieftain)@undefined",
+        "name": "Blook-glook (Batrachianoid Chieftain)",
+        "type": "monster",
+        "context": "WD-5. Fen Mound, 45' diameter x 20' high:",
+        "raw": "**Blook-glook (Batrachianoid Chieftain):** _(This chaotic evil humanoid's vital stats are HD 3d10+4, HP 20, AC 14, MV 20 ft., 30 ft. hop, 40 ft. swim. Its saves are physical. It attacks by weapon type at +2 damage due to strength. Its special abilities include a hopping attack for double damage, though -4 to his AC, and a chameleon ability that gives him +5 to hide checks and +10 to surprise checks. It has a +1 spear [+4 \"to hit\"; 1d6+3 damage]. It also wears a diamond-studded gold necklace worth 1,000 gp. XP: 95)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Spider, Giant (medium-sized) x 2@undefined",
+        "name": "Spider, Giant (medium-sized) x 2",
+        "type": "monster",
+        "context": "WD-6. Cobwebbed Area:",
+        "raw": "**Spider, Giant (medium-sized) x 2:** _(These neutral creatures' vital stats are HD 3d8, HP 13, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 1d6 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim suffers an additional 1d4 damage and paralyzation for 1d6 hours. These spiders also can throw a web 8 times per day as per the web spell*. XP: 52+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Tick, Giant x 3:@undefined",
+        "name": "Tick, Giant x 3:",
+        "type": "monster",
+        "context": "WD-8. Sparkling Stream:",
+        "raw": "**Tick, Giant x 3:** (_These neutral creatures' vital stats are HD 2d8, HP 11, AC 15, MV 10 ft. They attack with a bite for 1d4 points of damage. Their saves are physical. Their special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half speed with a -3 AC penalty. XP: 20+2)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "potion of healing@undefined",
+        "name": "potion of healing",
+        "type": "feature",
+        "context": "WD-8. Sparkling Stream:",
+        "raw": "**potion of healing** (2d4+2)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Red Bill Farmer@undefined",
+        "name": "Red Bill Farmer",
+        "type": "npc-named",
+        "context": "WD-9. Red Bill Farmer's Camp:",
+        "raw": "**Red Bill Farmer** (see _CZY environs #26_)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Wood Elf Scouts x 11@undefined",
+        "name": "Wood Elf Scouts x 11",
+        "type": "monster",
+        "context": "WD-10. Tamarack Stand:",
+        "raw": "**Wood Elf Scouts x 11:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longbow training. They are equipped with padded armor, longbow [specialized; +4 \"to hit\"; 1d6+1 damage], arrows x12, short sword, and 3-18 sp. XP: 13+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Ember Raventree (wood elf leader)@undefined",
+        "name": "Ember Raventree (wood elf leader)",
+        "type": "monster",
+        "context": "WD-10. Tamarack Stand:",
+        "raw": "**Ember Raventree (wood elf leader):** _(He is a 4th level, chaotic neutral fighter whose vital stats are HD 4d10, HP 22, AC 16, MV 30 ft. His primary attributes are physical. His significant attributes are strength 17 and dexterity 17. His special abilities include hide, move silent, pass without trace, longsword training. He is equipped with an elven cloak, +1 leather armor, shield, longsword [specialized, +8 \"to hit\"; 1d8+3 damage], dagger, composite longbow [built for strength; +6 \"to hit\"; 1d8+2 damage], 12 arrows, 35 sp, and a golden armlet with agate worth 100 gp. XP: 166)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "@undefined",
+        "name": "",
+        "type": "feature",
+        "context": "WD-10. Tamarack Stand:",
+        "raw": "** **(15' x 30' x 15' high)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Raven \"One-Eye\"@undefined",
+        "name": "Raven \"One-Eye\"",
+        "type": "npc-named",
+        "context": "WD-10. Tamarack Stand:",
+        "raw": "**Raven \"One-Eye\":** _(This neutral animal's vital statistics are HD 1d2, HP 2, AC 14. Its saves are physical. It has twilight vision and is incapable of combat, fleeing from danger. It possesses rudimentary language skill, an odd pidgin of various elvish dialects. XP: 7)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bandit sentries x 8@undefined",
+        "name": "Bandit sentries x 8",
+        "type": "monster",
+        "context": "The Last Mile of the Old Castle Track:",
+        "raw": "**Bandit sentries x 8:** _(They are 1st level, neutral evil, human fighters. Their vital statistics are HP 4, AC 12. Their primary attributes are physical. They have leather armor, longbow [+1 \"to hit\"; 1d6 damage], arrows x20, silver-tipped arrows x5, shortsword [+1 \"to hit\"; 1d6 damage], dagger, and 2d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Table 4.@undefined",
+        "name": "Table 4.",
+        "type": "feature",
+        "context": "_THE RAVINE:_",
+        "raw": "**Table 4.** (**LAYOUT INSERT PAGE NUMBER**)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "False Urt River@undefined",
+        "name": "False Urt River",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**False Urt River** (q.v.)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "@undefined",
+        "name": "",
+        "type": "feature",
+        "context": "_CASTLE BLUFF:_",
+        "raw": "** **(LAYOUT INSERT PAGE #)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "@undefined",
+        "name": "",
+        "type": "feature",
+        "context": "Random Encounters within the Mouths of Madness:",
+        "raw": "** **(LAYOUT INSERT PAGE #)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Bat, Cave@undefined",
+        "name": "Bat, Cave",
+        "type": "feature",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Bat, Cave:** _(These neutral creatures' vital stats are HD 1d2, HP 1, AC 12, MV 5 ft., 50 ft. fly. Their saves are physical. They attack by swarming exposed portions of the body. Their attacks are in groups of four, and they make 1 attack for each 4 bats. If a hit is scored, 1 point of damage is inflicted from scratches and bites. They receive +3 to all \"to hit\" rolls. They attack for only 1d4 rounds before leaving. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Centipedes, Black, Giant@undefined",
+        "name": "Centipedes, Black, Giant",
+        "type": "monster",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Centipedes, Black, Giant:** _(These neutral creatures' vital stats are HD 2d3, HP 3, AC 18, MV 25 ft. Their saves are physical. They attack with a bite for 1d2 points of damage. If the bite attack is successful, the victim must save vs. poison or take another 2d6 points of damage. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Rats, Giant@undefined",
+        "name": "Rats, Giant",
+        "type": "monster",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Rats, Giant:** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 1+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Snake, Poisonous@undefined",
+        "name": "Snake, Poisonous",
+        "type": "monster",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Snake, Poisonous:** _(These neutral animals' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. They attack with a bite for 1 point of damage. Their bite delivers poison for 2d3 points of additional damage, save vs. poison reduces damage to one-half [1d3]. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Spider, Giant (medium-sized)@undefined",
+        "name": "Spider, Giant (medium-sized)",
+        "type": "monster",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Spider, Giant (medium-sized):** _(These neutral creatures' vital stats are HD 3d8, HP 13, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 1d6 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim suffers an additional 1d4 damage and paralyzation for 1d6 hours. These spiders also can throw a web 8 times per day as per the web spell [as found in the PHB]. XP: 52+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Tick, Giant@undefined",
+        "name": "Tick, Giant",
+        "type": "monster",
+        "context": "Monsters Randomly Encountered within the Mouths of Madness:",
+        "raw": "**Tick, Giant:** _(These neutral creatures' vital stats are HD 2d8, HP 11, AC 15, MV 10 ft. They attack with a bite for 1d4 points of damage. Their saves are physical. Their special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half-speed with a -3 AC penalty. XP: 20+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Wolves x 5@undefined",
+        "name": "Wolves x 5",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Wolves x 5:** _(These neutral animals' vital stats are HD 2d8, HP 9, AC 13, MV 50 ft. Their saves are physical. They attack with a bite for 1d4+2 damage. Their special abilities include a trip attack, superior sense of smell, and twilight vision. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "ogre@undefined",
+        "name": "ogre",
+        "type": "monster",
+        "context": "B. KOBOLD LAIR",
+        "raw": "**ogre** (#C)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Kobold Guards x 2@undefined",
+        "name": "Kobold Guards x 2",
+        "type": "monster",
+        "context": "<<[end boxed text]<<",
+        "raw": "**Kobold Guards x 2:** _(These lawful evil humanoids' vital stats are HD 1d4, HP 3, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity[-1 to attacks in bright light]. They have leather armor, javelins x3, dagger, blowguns, 2 needles, and 1d6 sp. The blowgun needles hold a sleep toxin, save versus poison [CL 3] or fall into a slumber for 4d4 rounds. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Mastiff@undefined",
+        "name": "Mastiff",
+        "type": "monster",
+        "context": "<<[end boxed text]<<",
+        "raw": "**Mastiff:** _(This neutral creature's vital stats are HD 3d8, HP 15, AC 14, MV 35 ft. Its saves are physical. It attacks with a bite for 2-8 points of damage. XP: 75)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "2 kobold serjeants@undefined",
+        "name": "2 kobold serjeants",
+        "type": "monster",
+        "context": "<<[end boxed text]<<",
+        "raw": "**2 kobold serjeants** (#7, #8)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "chieftain@undefined",
+        "name": "chieftain",
+        "type": "monster",
+        "context": "<<[end boxed text]<<",
+        "raw": "**chieftain** (#9)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Fekk@undefined",
+        "name": "Fekk",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Fekk:** _(This lawful evil kobold is non-combatant, HP 2, AC 10, saves physical. It wears a silver armlet worth 5 gp, has a key to the door of this room, and 3 cp. XP: 3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "7 females@undefined",
+        "name": "7 females",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**7 females** (non-combatant)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Kobold warrior x 6@undefined",
+        "name": "Kobold warrior x 6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Kobold warrior x 6:** _(These lawful evil humanoids' vital stats are HD 1d4, HP 3, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelins x 3, dagger, and 1d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Kobold serjeant x 1@undefined",
+        "name": "Kobold serjeant x 1",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Kobold serjeant x 1:** _(This lawful evil humanoid's vital stats are HD 2d4, HP 6, AC 15, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It has chain hauberk armor, javelins x 3, shortsword, keys to room #5 and #6, and 1d6 sp. XP: 22)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "4 females@undefined",
+        "name": "4 females",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**4 females** (non-combatant)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "5@undefined",
+        "name": "5",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**5:** _(These lawful evil humanoids' vital stats are HD 1d4, HP 3, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelins x 3, dagger, and 1d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Kobold serjeant x 1@undefined",
+        "name": "Kobold serjeant x 1",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Kobold serjeant x 1:** _(This lawful evil humanoid's vital stats are HD 2d4, HP 6, AC 15, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It has chain hauberk armor, javelins x 3, shortsword, a key to room #5, and 1d6 sp. XP: 22)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "King Griggle-gruk (Kobold Chieftain)@undefined",
+        "name": "King Griggle-gruk (Kobold Chieftain)",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**King Griggle-gruk (Kobold Chieftain):** _(This lawful evil humanoid's vital stats are HD 4d4, HP 14, AC 17, MV 30 ft. Its saves are physical. Its attacks are at +2 damage due to its strength and ferocity. Its special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It wears plate mail armor and has javelins x 3, +1 shortsword, keys to rooms #5, #6, #9, and to the jail cell in this chamber. In a pouch it carries 18 gp. XP: 72)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Kobold Bodyguards x 2@undefined",
+        "name": "Kobold Bodyguards x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Kobold Bodyguards x 2:** _(These lawful evil humanoids' vital stats are HD 2d4, HP 7, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have chain hauberk, javelins x 3, dagger, and 1d6 sp. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin prisoner@undefined",
+        "name": "Goblin prisoner",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin prisoner:** _(This lawful evil humanoid's vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Its saves are physical. Its special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It wears a loin cloth. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "goblins@undefined",
+        "name": "goblins",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**goblins** (#D)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "owlbear@undefined",
+        "name": "owlbear",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**owlbear** (#J)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "\"Charlie\" the Ogre@undefined",
+        "name": "\"Charlie\" the Ogre",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**\"Charlie\" the Ogre:** _(This chaotic neutral humanoid's vital statistics are HD 4d12, HP 20, AC 16, MV 30 ft. Its saves are physical. It attack by weapon at +3 damage due to its size and strength. It attacks with a giant, spiked club [+4 \"to hit\"; 1d10 +3 damage]. XP: 112)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "4 goblin guards@undefined",
+        "name": "4 goblin guards",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**4 goblin guards** (see #12)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Goblin patrol warriors x 5@undefined",
+        "name": "Goblin patrol warriors x 5",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin patrol warriors x 5:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelin, dagger, and 3d6 cp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin guards x 4@undefined",
+        "name": "Goblin guards x 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin guards x 4:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, throwing axe, short sword, and 3d6 cp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin patrol warriors x 6@undefined",
+        "name": "Goblin patrol warriors x 6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin patrol warriors x 6:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelin, dagger and 3d6 cp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "9 young@undefined",
+        "name": "9 young",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**9 young** (non-combatant)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Goblin males x 8@undefined",
+        "name": "Goblin males x 8",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin males x 8:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 3, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, clubs, daggers and 2d6 cp. One male wears a gold chain worth 50 gp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin females x 13@undefined",
+        "name": "Goblin females x 13",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin females x 13:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 2, AC 12. Their saves are physical. They have 6-inch knives. XP: 3+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "shaman@undefined",
+        "name": "shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**shaman** (#21)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "chieftain@undefined",
+        "name": "chieftain",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**chieftain** (#23)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "area #g@undefined",
+        "name": "area #g",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**area #g** (between area #19 and #20)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "shaman@undefined",
+        "name": "shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**shaman** (#21)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin warriors x 3@undefined",
+        "name": "Goblin warriors x 3",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin warriors x 3:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They are equipped with leather armor, belt axe, shortsword, light crossbow, 6 bolts, and 1d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin serjeant@undefined",
+        "name": "Goblin serjeant",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin serjeant:** _(This lawful evil humanoid's vital stats are HD 2d6, HP 11, AC 16, MV 20 ft. His saves are physical. His special ability is darkvision 60 ft., light sensitivity [-1 to attacks in bright light], and +1 damage on attacks due to high strength. He wears a breastplate and is equipped with a shield, morning star, shortsword, whip, a brass belt ring with keys to #18 and #20. He also wears a silver armlet [worth 5 gp] and has 3d6 sp. XP: 32)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "area #g@undefined",
+        "name": "area #g",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**area #g** (above)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Skull Krushers@undefined",
+        "name": "Skull Krushers",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Skull Krushers** (#H)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Robert Cooper@undefined",
+        "name": "Robert Cooper",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Robert Cooper:** _(This lawful good, 0th level, human knight's vital stats are HP 2, AC 11. His prime attributes are as yet undeveloped.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Oni Blackbeard (Dwarf Crossbowman)@undefined",
+        "name": "Oni Blackbeard (Dwarf Crossbowman)",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Oni Blackbeard (Dwarf Crossbowman):** _(This chaotic good, 2nd_ _level, dwarf fighter's vital stats are HP 18, AC 10, MV 20 ft. His prime attributes are strength and dexterity. His significant attribute is dexterity 16. He is specialized in the crossbow [+5 \"to hit]. He wears a loin cloth.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Wilbur Hornblower@undefined",
+        "name": "Wilbur Hornblower",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Wilbur Hornblower:** _(This neutral, 0th level, human commoner's vital stats are HP 2, AC 8. His prime attributes are mental. He has Business Ability at Level 3.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "chieftain@undefined",
+        "name": "chieftain",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**chieftain** (#23)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin shaman@undefined",
+        "name": "Goblin shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin shaman:** _(This lawful evil humanoid's vital stats are HD 4d6, HP 15, AC 10, MV 20 ft. Its saves are mental and physical. Its significant attribute is wisdom 18. It has darkvision 60' and light sensitivity [-1 to attacks in bright light]. It carries a bronze-hilted +1 poniard, potion of extra healing [3d8+3], a dragonhide spell book with each of the below spells contained therein, a scroll of cause paralysis, a pouch with 30 gp, a gold ring with ruby worth 250 gp, and a key to door #21. The shaman typically has the following spells prepared: detect good x 2, detect magic x 2, protection from good x 2, cause fear, cause paralysis, hold person. XP: 200)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin Skeletons x 4@undefined",
+        "name": "Goblin Skeletons x 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin Skeletons x 4:** _(These neutral undeads' vital stats are HD 1d12, HP 8, AC 13, MV 30 ft. Their saves are physical. They attack with spears for 1d6 damage. Their special ability is they take half damage when attacked with slashing or piercing weapons, while blunt weapons do normal damage. XP: 10+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "secret door@undefined",
+        "name": "secret door",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**secret door** (unless it was closed)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "shaman@undefined",
+        "name": "shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**shaman** (see #21 for stats)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin warriors x 2@undefined",
+        "name": "Goblin warriors x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin warriors x 2:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 6, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They are equipped with leather armor, belt axe, shortsword, javelin x 2, and 1d6 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Gruzz Kree (Goblin Chieftain)@undefined",
+        "name": "Gruzz Kree (Goblin Chieftain)",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gruzz Kree (Goblin Chieftain):** _(This lawful evil humanoid's vital stats are HD 4d6, HP 18, AC 18, MV 20 ft. Its saves are physical. Its special abilities are darkvision 60 ft., light sensitivity [-1 to attacks in bright light], and +1 attack damage due to high strength. It is equipped with a breast plate, shield, +1 spear [+5 \"to hit\"; 1d6+2 damage], morning star and dagger, 12 gp, 10 ep, and a gold ring with pearl worth 50 gp. XP 132)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Goblin females x 6@undefined",
+        "name": "Goblin females x 6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Goblin females x 6:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 2, AC 12. Their saves are physical. They have 5-inch knives, XP: 3+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Cave bats x 80@undefined",
+        "name": "Cave bats x 80",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Cave bats x 80:** _(These neutral creatures' vital stats are HD 1d2, HP 1, AC 12, MV 5 ft., 50 ft. fly. Their saves are physical. They attack by swarming exposed portions of the body. Their attacks are in groups of four, and receive 1 attack for each 4 bats. If a hit is scored, 1 point of damage is inflicted from scratches and bites. They receive +3 to all \"to hit\" rolls. They attack for only 1d4 rounds before leaving. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "small gold sickle@undefined",
+        "name": "small gold sickle",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**small gold sickle** (worth 300 gp)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Snakes, poisonous@undefined",
+        "name": "Snakes, poisonous",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Snakes, poisonous:** _(These neutral animals' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. They attack with a bite for 1 point of damage. Their bite delivers poison for 2d3 points of additional damage, save versus poison reduces damage to one-half [1d3]. XP: 9+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Green slime@undefined",
+        "name": "Green slime",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Green slime:** _(This neutral creature's vital stats are HD 4d8, HP 16, AC 10. Its saves are none. It has no attack; rather it reacts when its colony is touched, converting organic or metallic matter to slime, or it drops down from above, sensing the vibrations of its victim. When a slime adheres to its victim, it causes 2d6 constitution damage per turn until at 0 con it turns its victim into green slime. If done quickly, it can scraped off [the item used must be discarded], extracted, burned off or frozen. Otherwise, it can only be destroyed by the use of a remove disease spell. No other attacks--including weapons, spells, and magic effects not described above--will harm the creature. XP: 184)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Giant rats@undefined",
+        "name": "Giant rats",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Giant rats** (variable in number, as they scavenge outside as well)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Rats, giant x 3-12@undefined",
+        "name": "Rats, giant x 3-12",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Rats, giant x 3-12:** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 1+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Gray Ooze (small)@undefined",
+        "name": "Gray Ooze (small)",
+        "type": "hazard",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gray Ooze (small):** _(This neutral creature's vital stats are HD 2d10, HP 15, AC 12, MV 10 ft. Its saves are physical. It attacks with an acid slam for 1d8 points of damage. This acid corrodes metal at a rate of 1 round for chain mail, 2 rounds for plate mail. If the armor is magical, each +1 adds another round before the armor is corroded. Its acid does not harm stone or wood. It is not harmed by spells, cold effects, or fire/heat effects. Electrical attacks do full damage. Weapons do normal damage but may corrode or break if metal. Corrosion is per the CK's discretion -- a sword might corrode in 1 round, a battle axe in 2, a warhammer in 3; every magical +1 adds an extra round to the weapon's survival. XP: 95)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "goblin shaman@undefined",
+        "name": "goblin shaman",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**goblin shaman** (#21)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Black Centipedes, giant x 5@undefined",
+        "name": "Black Centipedes, giant x 5",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Black Centipedes, giant x 5:** _(These neutral creatures' vital stats are HD 1d4, HP 2, AC 18, Move 25 feet. Their saves are physical. They attack with a bite for 1d2 points of damage. If the bite attack is successful the victim must save versus poison or take another 2d6 points of damage. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orcs x 3@undefined",
+        "name": "Orcs x 3",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orcs x 3:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, spear, war hammer, and 1d6 ep. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orcs x 4@undefined",
+        "name": "Orcs x 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orcs x 4:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, spear, war hammer, and 1d8 ep. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "King Krusher@undefined",
+        "name": "King Krusher",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**King Krusher** (#35)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orcs x 6@undefined",
+        "name": "Orcs x 6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orcs x 6:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, spear, mace, and 1d8 ep. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orc Guards x 2@undefined",
+        "name": "Orc Guards x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orc Guards x 2:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 7, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, short bow, arrows x 6, war hammer, and 1d8 ep. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "King Krusher@undefined",
+        "name": "King Krusher",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**King Krusher** (#35)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "King Krusher (Orc Leader)@undefined",
+        "name": "King Krusher (Orc Leader)",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**King Krusher (Orc Leader):** _(This lawful evil humanoid's vital stats are HD 3d8, HP 20, AC 18, MV 30 ft. His saves are physical. He does +2 damage on all attacks due to high strength and ferocity. His special abilities are_ _darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. He is equipped with plate mail armor, shield, +1 war hammer [+4 \"to hit\"; 1d8+3 damage], dagger, key to #35, key to #36, and 30 gp. XP: 100)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orc chieftain's mate@undefined",
+        "name": "Orc chieftain's mate",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orc chieftain's mate:** _(This lawful evil humanoid's vital stats are HD 1d8, HP 4, AC 12, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. It carries a 4-inch knife, and 100 gp worth of gold jewelry. XP: 9)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "orc leader@undefined",
+        "name": "orc leader",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**orc leader** (#35)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "lieutenant@undefined",
+        "name": "lieutenant",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**lieutenant** (below)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orcs x 4@undefined",
+        "name": "Orcs x 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orcs x 4:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, short bow, arrows x 6, war hammer, and 1d8 ep. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Orc lieutenant@undefined",
+        "name": "Orc lieutenant",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Orc lieutenant:** _(This lawful evil humanoid's vital stats are HD 2d8, HP 12, AC 14, MV 30 ft. Its saves are physical. It does +1 damage due to strength. Its special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It has piecemeal armor, shield, war hammer, whip. dagger, key to #36, and 30 gp. XP: 34)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Zombies x 6@undefined",
+        "name": "Zombies x 6",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Zombies x 6:** _(These neutral evil undeads' vital stats are HD 2d12, HP 12, AC 12, MV 20 ft. Their saves are physical. They attack with a slam for 1d8 damage. These undead never gain initiative and always act last in any given round. XP: 15+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Skeletons x 8@undefined",
+        "name": "Skeletons x 8",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Skeletons x 8:** _(These neutral undeads' vital stats are HD 1d12, HP 8, AC 13, MV 30 ft. Their saves are physical. They attack with shortswords. Their special ability is they take half damage when attacked with slashing or piercing weapons, while blunt weapons do normal damage. XP: 10+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Wily Wil, Giant of the Hill@undefined",
+        "name": "Wily Wil, Giant of the Hill",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Wily Wil, Giant of the Hill:** _(This chaotic neutral humanoid's vital stats are HD 9d12, HP 63, AC 17, MV 40 ft. His saves are physical. He attacks with 2 fists for 1d8+8 points of damage each, a giant club for 2d8+8 points of damage, or he can hurl a boulder up to 330 feet for 2d8+8 damage. Note that all his attacks are at +8 damage due to vast strength. He wears hide armor and carries a large leather sack that contains two boulders, a soiled pair of underdrawers, a huge old ham, a comic scroll, 3 lumps of rock candy, and other assorted trash. XP: 1,113)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "\"Pinky\" the Owlbear@undefined",
+        "name": "\"Pinky\" the Owlbear",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**\"Pinky\" the Owlbear:** _(This neutral monster's vital stats are HD 4d10, HP 27, AC 13, MV 40 ft. Its saves are physical. It attacks with one claw for 1d6 points of damage and one bite for 2d6 points of damage. Pinky cannot perform any hug attacks as normal owlbears do, but as she is quite frothing mad, she attacks at +2 \"to hit\" on all attacks, though this comes at her obvious AC penalty. XP: 168)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Black Bear@undefined",
+        "name": "Black Bear",
+        "type": "monster",
+        "context": ">>>end boxed text<<<",
+        "raw": "**Black Bear:** _(This neutral animal's vital stats are HD 3d8, HP 15, AC 13, MV 40 ft. Its saves are physical. It attacks with two paws for 1d4+1 damage and a bite for 1d6+1 damage. If both claw attacks are successful in a single round, the victim is caught in a crushing hug for 2d4+1 points of damage. As she is protecting her young, she is very aggressive and attacks at a +2 “to hit.” XP: 95)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Black Bear cubs x 2@undefined",
+        "name": "Black Bear cubs x 2",
+        "type": "monster",
+        "context": ">>>end boxed text<<<",
+        "raw": "**Black Bear cubs x 2:** _(These neutral animals' vital stats are HD 1d8, HP 6, AC 12, MV 30 ft. Their saves are physical. They attack with a bite for 1d4 damage. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "River Rats, giant x 40@undefined",
+        "name": "River Rats, giant x 40",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**River Rats, giant x 40:** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 5+1 inside cave, 1+1 outside.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Stirges x 8@undefined",
+        "name": "Stirges x 8",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Stirges x 8:** _(These neutral creatures' vital stats are HD 1d6, HP 3, AC 16 Move 10 ft., 40 ft. fly. Their saves are physical. They attack with a sting for 1d3 points of damage. Their special abilities include attach and blood drain for 1d4 points of damage per round. XP: 15+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Bugbears x 3@undefined",
+        "name": "Bugbears x 3",
+        "type": "monster",
+        "context": "Q. BUGBEAR CAVE",
+        "raw": "**Bugbears x 3:** _(These chaotic evil humanoids' vital stats are HD 3d10, HP 17, AC 16, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They attack by weapon at +2 damage due to strength. They have patchwork ring mail, buckler, bastard sword, light throwing hammers x 2. They also carry 3d6 gp each. XP: 20+3)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Ug-Muk'tik@undefined",
+        "name": "Ug-Muk'tik",
+        "type": "npc-named",
+        "context": "R. HOBGOBLIN LAIR",
+        "raw": "**Ug-Muk'tik** (see _Ruins of the Castle Precincts_ #9)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Hobgoblin sentries x 2@undefined",
+        "name": "Hobgoblin sentries x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hobgoblin sentries x 2:** _(These lawful evil humanoids' vital stats are HD 1d10, HP 8, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They wear chain mail armor and wield composite short bows, x12 arrows, battle-axes, and 2d4 gp each.)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "2 or 4 male warriors@undefined",
+        "name": "2 or 4 male warriors",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**2 or 4 male warriors** (see above note on hunters)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "6 young@undefined",
+        "name": "6 young",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**6 young** (non-combatant)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Hub-Gub the Bloody@undefined",
+        "name": "Hub-Gub the Bloody",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hub-Gub the Bloody** (#56)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Hobgoblin males x 2 or 4@undefined",
+        "name": "Hobgoblin males x 2 or 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hobgoblin males x 2 or 4:** _(These lawful evil humanoids' vital stats are HD 1d10, HP 6, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They wear crude chain mail armor, wield halberds, and carry 2d4 gp each. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Hobgoblin females x 9@undefined",
+        "name": "Hobgoblin females x 9",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hobgoblin females x 9:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 3, AC 12, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They have heavy knives. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "There are@undefined",
+        "name": "There are",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "There are\n**2 hobgoblin guards**, **1 hobgoblin leader**, and **3 hobgoblin females** here. The door to this chamber is **locked** _(CL 5 to break down, CL 1 to pick)_ via a simple oak bar on the inside. The 2 guards stand by the door, answering all calls. Each, however, is quite consumed by the leader's concubines, and thus spends more time ogling than being vigilant.\n\n**Hobgoblin warriors x 2:** _(These lawful evil humanoids' vital stats are HD 1d10, HP 8, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They have crude chain mail armor, halberd, broadsword, and 2d4 gp. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Hobgoblin warriors x 2@undefined",
+        "name": "Hobgoblin warriors x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hobgoblin warriors x 2:** _(These lawful evil humanoids' vital stats are HD 1d10, HP 8, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They have crude chain mail armor, halberd, broadsword, and 2d4 gp. XP: 7+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Hub-Gub the Bloody (Hobgoblin Chieftain)@undefined",
+        "name": "Hub-Gub the Bloody (Hobgoblin Chieftain)",
+        "type": "npc-named",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hub-Gub the Bloody (Hobgoblin Chieftain):** _(This lawful evil humanoid's vital stats are HD 3d10, HP 18, AC 16, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. Due to its strength and brutality, all melee damage is at +2. It wears full chain mail armor and wields a +1 halberd [+4 \"to hit\"; 1d10+3 damage], broadsword [+3 \"to hit\"; 2d4+2 damage], composite short bow, and 12 arrows. In a pouch it carries 12 gp and an iron key to #55. XP: 84)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Hobgoblin females x 3@undefined",
+        "name": "Hobgoblin females x 3",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Hobgoblin females x 3:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 3, AC 12, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They carry daggers. Each wears an engraved silver armband worth 2 gp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Gnoll sentries x 2@undefined",
+        "name": "Gnoll sentries x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gnoll sentries x 2:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 12, AC 15, MV 30 ft. Their saves are physical._ _They attack_ _by weapon at +2 damage due to strength. Their special ability is darkvision 60 ft. They each have patchwork leather armor, shield, throwing club x 2, morning star, and 2d4 gp. XP: 12+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "chieftain@undefined",
+        "name": "chieftain",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**chieftain** (with his guards)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "chieftain@undefined",
+        "name": "chieftain",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**chieftain** (#58)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "6 gnoll males@undefined",
+        "name": "6 gnoll males",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**6 gnoll males** (though 2 of these being the sentries at **area g**)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Gnoll males x 4@undefined",
+        "name": "Gnoll males x 4",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gnoll males x 4:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 12, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They each have patchwork leather armor, shield, throwing club x 2, morning star, and 2d4 gp. XP: 12+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Gnoll females x 5@undefined",
+        "name": "Gnoll females x 5",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gnoll females x 5:** _(These chaotic evil humanoids' vital stats are HD 1d10, HP 5, AC 12, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They have clubs, heavy knives, and 2d4 sp. XP: 5+1)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "kobolds@undefined",
+        "name": "kobolds",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**kobolds** (#B)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "Gnoll guards x 2@undefined",
+        "name": "Gnoll guards x 2",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Gnoll guards x 2:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 14, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They have chain hauberk armor, halberd, morning star, and 2d4 gp. XP: 10+2)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "Yeexuul (Gnoll Chieftain)@undefined",
+        "name": "Yeexuul (Gnoll Chieftain)",
+        "type": "monster",
+        "context": ">>[end boxed text]<<",
+        "raw": "**Yeexuul (Gnoll Chieftain):** _(This chaotic evil humanoid's vital stats are HD 3d10, HP 20, AC 17, MV 30 ft. His saves are physical. They attack by weapon at +1 damage due to strength. His special ability is darkvision 60 ft. He wears plate mail armor, and wields a throwing club, morning star, and 10-inch knife. In a pouch he holds 2 keys [to rooms #57 + #59] and 24 gp. XP: 100)_",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [],
+          "errorCount": 0,
+          "warningCount": 0
+        }
+      },
+      {
+        "id": "small red planet@undefined",
+        "name": "small red planet",
+        "type": "feature",
+        "context": ">>[end boxed text]<<",
+        "raw": "**small red planet** (not unlike Mars)",
+        "validation": {
+          "isValid": true,
+          "errors": [],
+          "warnings": [
+            {
+              "type": "SAVES_NOTATION_MISSING",
+              "severity": "warning",
+              "message": "Monster should include Saves notation",
+              "location": "parenthetical",
+              "expected": "Add \"Saves: P\" (or M, M,P, N as appropriate)",
+              "autoFixable": false
+            }
+          ],
+          "errorCount": 0,
+          "warningCount": 1
+        }
+      },
+      {
+        "id": "open pit trap@1137",
+        "name": "open pit trap",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1137,
+        "lineEnd": 1137,
+        "raw": "- **_X_** is an **open pit trap** _(CL 1, no check necessary if light and careful advancement is made)_. The pit is the width of the passage, 10 feet deep. Falling in results in 1d6 damage.",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "covered pit trap@1138",
+        "name": "covered pit trap",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1138,
+        "lineEnd": 1138,
+        "raw": "- **_[X] in a box_** indicates a **covered pit trap** _(CL 2)_ the width of the passage. Unless otherwise indicated, it triggers 3 of 6 times when stepped on, resulting in a 10 foot drop for 1d6 damage.      ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "secret trap door@1224",
+        "name": "secret trap door",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1224,
+        "lineEnd": 1224,
+        "raw": "**Werewolf's Tactics:** The werewolf only engages enemies on its own terms and will not defend its lair unless completely taken by surprise (a silent, invisible foe of no scent, for example). If heroes intrude, the werewolf assumes a hybrid form and retreats through a narrow crawlspace (4' dia.) tunnel northeast to a **secret trap door** _(CL 5 to discover, from the outside)_ in the forest. The werewolf will eventually return to drink in the scent of those who defiled its lair, a vile hatred consuming the beast as it pines to exact vengeance! ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Pit Trap: [X]@1266",
+        "name": "Pit Trap: [X]",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1266,
+        "lineEnd": 1266,
+        "raw": "**Pit Trap: [X]** In the passage between rooms #5 and #6 there is a **pit trap** _(CL 2)_ that triggers 5 of 6 times if crossed. The kobolds keep a board on top of this, but pull it away at first sign of intrusion (see #4). The pit has a lid that collapses open, dropping victims 10' deep for 1d6 points of damage. The lid then springs shut. Unless the front line of the party is using something to probe the floor (such as a 10-foot pole), they might not discover the trap. ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Pit trap [X]@1462",
+        "name": "Pit trap [X]",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1462,
+        "lineEnd": 1462,
+        "raw": "**Pit trap [X]:** In the hallway between areas #12 and #14 there is a **pit trap** _(CL 1)_, the lid of which collapses open 3 of 6 times when stepped on, dropping victims 10' deep for 1d6 points of damage. A small hole inset in the wall is located about 2.5 feet off the ground on each side of the pit. A trigger within, once depressed, locks the lid for ten seconds, allowing the goblins to press the butt end of a javelin in it, then crossing the covered pit before time expires. Unless the front line of the party is using something to probe the floor, they might not discover the trap. ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "cursed@1627",
+        "name": "cursed",
+        "type": "hazard",
+        "context": "Trap/Hazard",
+        "lineStart": 1627,
+        "lineEnd": 1627,
+        "raw": "- _Obsidian Idol:_ This statuette is of **Gubeezablu**, the Goblin Devil of Power and Cunning. This **cursed** **object** is enchanted so that if touched by anyone save a goblin or hobgoblin, it will _paralyze_ that one _(save versus paralysis, CL 4, save negates)_. Otherwise, the victim will forever remain immobile in a paralyzed state until a _remove paralysis_ or _remove curse_ spell is cast upon him.",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "iron chest@1635",
+        "name": "iron chest",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1635,
+        "lineEnd": 1635,
+        "raw": "Inside there is a pile of 329 gp, 3 gold ingots worth 25 gp each, a _javelin of lightning_, and a reinforced, **iron chest** of 2 cubic-foot size. The chest is **locked** _(CL 3 to pick)_ the key forever lost. It is also **trapped** _(traps, CL 3)_ and if opened a _laughing gas_ billows forth, engulfing this chamber and ten feet beyond the **secret door** (unless it was closed). ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Laughing gas@1637",
+        "name": "Laughing gas",
+        "type": "hazard",
+        "context": "Trap/Hazard",
+        "lineStart": 1637,
+        "lineEnd": 1637,
+        "raw": "**_Laughing gas:_** _CL 3, poison save negates. Victims that fail the save proceed to laugh, cough, and speak loudly for 2-8 rounds, and cannot move more than 5 feet per round whilst doing so._",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "100 flesh beetles@1711",
+        "name": "100 flesh beetles",
+        "type": "hazard",
+        "context": "Trap/Hazard",
+        "lineStart": 1711,
+        "lineEnd": 1711,
+        "raw": "The inches-thick layer of guano on the cave floor is crawling with large about **100 flesh beetles** that devour these droppings, as well as other insects that come here and young and sick bats that drop onto it from above. Moreover, the decaying bat droppings give off ammonia, so after 5 rounds in this place, each PC must **save versus poison** _(CL 0)_ or grow dizzy and fall down. After another 5 rounds a failed save means the PC is passed out, unconscious until removed from the cave and in fresh air for 10 or more minutes. ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Pit Trap [X], (CL 1)@1831",
+        "name": "Pit Trap [X], (CL 1)",
+        "type": "trap",
+        "context": "Trap/Hazard",
+        "lineStart": 1831,
+        "lineEnd": 1831,
+        "raw": "**Pit Trap [X], (CL 1):** 60 feet down the hall, there is a pit trap with a collapsing lid. If stepped on, the lid collapses open 4 of 6 times, dropping victims 10' deep for 1d6 points of damage. It also triggers the toll of a bell down the hall and alerting the guards at **area** #**g**. Unless the front line of the party is using something to probe the floor (such as a 10-ft. pole), they might not discover the trap. The lid is spanned by a heavy board when the orcs traverse this hall. The pit can be locked in place by turning the wall sconce at the end of the hall.",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Pup cave, c. 144 sq. ft.@1200",
+        "name": "Pup cave, c. 144 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1200,
+        "lineEnd": 1200,
+        "raw": "1. Pup cave, c. 144 sq. ft.: ",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Den, c. 600 sq. ft.@1204",
+        "name": "Den, c. 600 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1204,
+        "lineEnd": 1204,
+        "raw": "2. Den, c. 600 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Werewolf's cave, c. 400 sq. ft.@1208",
+        "name": "Werewolf's cave, c. 400 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1208,
+        "lineEnd": 1208,
+        "raw": "3. Werewolf's cave, c. 400 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Guard Post, 10' x 10'@1244",
+        "name": "Guard Post, 10' x 10'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1244,
+        "lineEnd": 1244,
+        "raw": "4. Guard Post, 10' x 10':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Storage room, 20' x 30'@1254",
+        "name": "Storage room, 20' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1254,
+        "lineEnd": 1254,
+        "raw": "5. Storage room, 20' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Armory, 30' x 30'@1268",
+        "name": "Armory, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1268,
+        "lineEnd": 1268,
+        "raw": "6. Armory, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Kobold Living Area, 15' x 30'@1303",
+        "name": "Kobold Living Area, 15' x 30'",
+        "type": "monster",
+        "context": "Alphabetical Listing",
+        "lineStart": 1303,
+        "lineEnd": 1303,
+        "raw": "7. Kobold Living Area, 15' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Kobold Living Area, 20' x 30'@1319",
+        "name": "Kobold Living Area, 20' x 30'",
+        "type": "monster",
+        "context": "Alphabetical Listing",
+        "lineStart": 1319,
+        "lineEnd": 1319,
+        "raw": "8. Kobold Living Area, 20' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Fore-cave, c. 144 sq. ft.@1385",
+        "name": "Fore-cave, c. 144 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1385,
+        "lineEnd": 1385,
+        "raw": "10. Fore-cave, c. 144 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Ogre's Cavern Lair, c. 900 sq. ft.@1389",
+        "name": "Ogre's Cavern Lair, c. 900 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1389,
+        "lineEnd": 1389,
+        "raw": "11. Ogre's Cavern Lair, c. 900 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Intersection, 20' x 20'@1427",
+        "name": "Intersection, 20' x 20'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1427,
+        "lineEnd": 1427,
+        "raw": "12. Intersection, 20' x 20':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Guard Room, 35' x 20'@1445",
+        "name": "Guard Room, 35' x 20'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1445,
+        "lineEnd": 1445,
+        "raw": "13. Guard Room, 35' x 20':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Oaken Double Doors, 7'w x 9'h@1464",
+        "name": "Oaken Double Doors, 7'w x 9'h",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1464,
+        "lineEnd": 1464,
+        "raw": "14. Oaken Double Doors, 7'w x 9'h:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Common Room, 60' x 30'@1478",
+        "name": "Common Room, 60' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1478,
+        "lineEnd": 1478,
+        "raw": "15. Common Room, 60' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Goblin Devil Statue@1501",
+        "name": "Goblin Devil Statue",
+        "type": "monster",
+        "context": "Alphabetical Listing",
+        "lineStart": 1501,
+        "lineEnd": 1501,
+        "raw": "16. Goblin Devil Statue:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Devil Goblin Chapel, 1,600' sq. ft.@1513",
+        "name": "Devil Goblin Chapel, 1,600' sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1513,
+        "lineEnd": 1513,
+        "raw": "17. Devil Goblin Chapel, 1,600' sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Storage Room, 30' x 30'@1529",
+        "name": "Storage Room, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1529,
+        "lineEnd": 1529,
+        "raw": "18. Storage Room, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Secret Cave, c. 700 sq. ft.@1535",
+        "name": "Secret Cave, c. 700 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1535,
+        "lineEnd": 1535,
+        "raw": "19. Secret Cave, c. 700 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Prison and Torture Chamber, 25' diameter@1559",
+        "name": "Prison and Torture Chamber, 25' diameter",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1559,
+        "lineEnd": 1559,
+        "raw": "20. Prison and Torture Chamber, 25' diameter:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Shaman's Chamber, 30' x 30'@1590",
+        "name": "Shaman's Chamber, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1590,
+        "lineEnd": 1590,
+        "raw": "21. Shaman's Chamber, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Forgotten Treasure Room, c. 15' diameter@1629",
+        "name": "Forgotten Treasure Room, c. 15' diameter",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1629,
+        "lineEnd": 1629,
+        "raw": "22. Forgotten Treasure Room, c. 15' diameter:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Chieftain's Chamber, 30' x 50'@1643",
+        "name": "Chieftain's Chamber, 30' x 50'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1643,
+        "lineEnd": 1643,
+        "raw": "23. Chieftain's Chamber, 30' x 50':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Central Cave, c. 1,000 sq. ft.@1749",
+        "name": "Central Cave, c. 1,000 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1749,
+        "lineEnd": 1749,
+        "raw": "26. Central Cave, c. 1,000 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "West Cave, c. 900 sq. ft.@1761",
+        "name": "West Cave, c. 900 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1761,
+        "lineEnd": 1761,
+        "raw": "27. West Cave, c. 900 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "North Cave, c. 2,000 sq. ft.@1779",
+        "name": "North Cave, c. 2,000 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1779,
+        "lineEnd": 1779,
+        "raw": "28. North Cave, c. 2,000 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "East Cave, c. 1,050 sq. ft.@1805",
+        "name": "East Cave, c. 1,050 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1805,
+        "lineEnd": 1805,
+        "raw": "29. East Cave, c. 1,050 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Guard Room, 50' x 30'@1837",
+        "name": "Guard Room, 50' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1837,
+        "lineEnd": 1837,
+        "raw": "30. Guard Room, 50' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Storage Chamber, 30' x 30'@1851",
+        "name": "Storage Chamber, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1851,
+        "lineEnd": 1851,
+        "raw": "31. Storage Chamber, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Common Room, 40' x 60'@1859",
+        "name": "Common Room, 40' x 60'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1859,
+        "lineEnd": 1859,
+        "raw": "32. Common Room, 40' x 60':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Common Hall, c. 1,350 sq. ft.@1873",
+        "name": "Common Hall, c. 1,350 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1873,
+        "lineEnd": 1873,
+        "raw": "33. Common Hall, c. 1,350 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Chapel of Orcish Lords, 50' x 20'@1887",
+        "name": "Chapel of Orcish Lords, 50' x 20'",
+        "type": "monster",
+        "context": "Alphabetical Listing",
+        "lineStart": 1887,
+        "lineEnd": 1887,
+        "raw": "34. Chapel of Orcish Lords, 50' x 20':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Chieftain's Room, 30' x 30'@1901",
+        "name": "Chieftain's Room, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1901,
+        "lineEnd": 1901,
+        "raw": "35. Chieftain's Room, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Silver Mine, c. 3,900 sq. ft.@1923",
+        "name": "Silver Mine, c. 3,900 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1923,
+        "lineEnd": 1923,
+        "raw": "36. Silver Mine, c. 3,900 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Boulder Clogged Passage South, c. 600 sq. ft.@1947",
+        "name": "Boulder Clogged Passage South, c. 600 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1947,
+        "lineEnd": 1947,
+        "raw": "37. Boulder Clogged Passage South, c. 600 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Zombie Cave, c. 1,050 sq. ft.@1959",
+        "name": "Zombie Cave, c. 1,050 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1959,
+        "lineEnd": 1959,
+        "raw": "38. Zombie Cave, c. 1,050 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Empty Cave, c. 1,400 sq. ft.@1981",
+        "name": "Empty Cave, c. 1,400 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1981,
+        "lineEnd": 1981,
+        "raw": "39. Empty Cave, c. 1,400 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Large Cavern, c. 2,400 sq. ft.@1995",
+        "name": "Large Cavern, c. 2,400 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 1995,
+        "lineEnd": 1995,
+        "raw": "40. Large Cavern, c. 2,400 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Boulder Clogged Passage North, c. 400 sq. ft.@2007",
+        "name": "Boulder Clogged Passage North, c. 400 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2007,
+        "lineEnd": 2007,
+        "raw": "41. Boulder Clogged Passage North, c. 400 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Passage Beyond@2021",
+        "name": "Passage Beyond",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2021,
+        "lineEnd": 2021,
+        "raw": "42. Passage Beyond:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Pinky's Cave, c. 480 sq. ft.@2063",
+        "name": "Pinky's Cave, c. 480 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2063,
+        "lineEnd": 2063,
+        "raw": "44. Pinky's Cave, c. 480 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Long Tunnel of Worked Stone, 200' long x 10' wide@2091",
+        "name": "Long Tunnel of Worked Stone, 200' long x 10' wide",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2091,
+        "lineEnd": 2091,
+        "raw": "45. Long Tunnel of Worked Stone, 200' long x 10' wide:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Black Bear Den, c. 25' diameter@2117",
+        "name": "Black Bear Den, c. 25' diameter",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2117,
+        "lineEnd": 2117,
+        "raw": "46. Black Bear Den, c. 25' diameter:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Riverside Cavern, c. 600' area@2143",
+        "name": "Riverside Cavern, c. 600' area",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2143,
+        "lineEnd": 2143,
+        "raw": "47. Riverside Cavern, c. 600' area:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Blue Mice Cave, c. 150 sq. ft.@2179",
+        "name": "Blue Mice Cave, c. 150 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2179,
+        "lineEnd": 2179,
+        "raw": "48. Blue Mice Cave, c. 150 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Air Fungus Cavern, c. 625 sq. ft.@2183",
+        "name": "Air Fungus Cavern, c. 625 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2183,
+        "lineEnd": 2183,
+        "raw": "49. Air Fungus Cavern, c. 625 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Large Cavern, c. 1,100 sq. ft.@2291",
+        "name": "Large Cavern, c. 1,100 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2291,
+        "lineEnd": 2291,
+        "raw": "52. Large Cavern, c. 1,100 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Common Chamber, 30' x 55'@2348",
+        "name": "Common Chamber, 30' x 55'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2348,
+        "lineEnd": 2348,
+        "raw": "53. Common Chamber, 30' x 55':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Excavation Area, c. 1,200 sq. ft.@2368",
+        "name": "Excavation Area, c. 1,200 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2368,
+        "lineEnd": 2368,
+        "raw": "54. Excavation Area, c. 1,200 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Storage Chamber and Armory, 20' x 30'@2378",
+        "name": "Storage Chamber and Armory, 20' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2378,
+        "lineEnd": 2378,
+        "raw": "55. Storage Chamber and Armory, 20' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Hobgoblin Chieftain's Chamber, 30' x 30'@2398",
+        "name": "Hobgoblin Chieftain's Chamber, 30' x 30'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2398,
+        "lineEnd": 2398,
+        "raw": "56. Hobgoblin Chieftain's Chamber, 30' x 30':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Storage Room, 30' diameter@2449",
+        "name": "Storage Room, 30' diameter",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2449,
+        "lineEnd": 2449,
+        "raw": "57. Storage Room, 30' diameter:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Gnoll Common Room, 30' x 50'@2458",
+        "name": "Gnoll Common Room, 30' x 50'",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2458,
+        "lineEnd": 2458,
+        "raw": "58. Gnoll Common Room, 30' x 50':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Gnoll Chieftain's Quarters, 30' x 50'@2476",
+        "name": "Gnoll Chieftain's Quarters, 30' x 50'",
+        "type": "monster",
+        "context": "Alphabetical Listing",
+        "lineStart": 2476,
+        "lineEnd": 2476,
+        "raw": "59. Gnoll Chieftain's Quarters, 30' x 50':",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "The Lost Cave, c. 700 sq. ft.@2499",
+        "name": "The Lost Cave, c. 700 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2499,
+        "lineEnd": 2499,
+        "raw": "60. The Lost Cave, c. 700 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      {
+        "id": "Gateway to the Red Planet, c. 400 sq. ft.@2513",
+        "name": "Gateway to the Red Planet, c. 400 sq. ft.",
+        "type": "feature",
+        "context": "Alphabetical Listing",
+        "lineStart": 2513,
+        "lineEnd": 2513,
+        "raw": "61. Gateway to the Red Planet, c. 400 sq. ft.:",
+        "validation": {
+          "errors": [],
+          "warnings": []
+        }
+      }
+    ]
+  }
+}

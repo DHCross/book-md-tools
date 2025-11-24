@@ -10,98 +10,22 @@ let selectedText = ''; // Current text selection (from Preview or Rendered)
 let config = {
   defaultOutputSuffix: '_cleaned',
   tablesInline: true,
-  gameSystem: 'cnc',
-  gameEdition: 'reforged',
 };
 
-// SMART FIND/REPLACE PATTERNS (subset from Jules prototype)
-const SMART_PATTERNS = {
-  'double-spaces': { pattern: '  +', flags: 'g', label: 'Double Spaces' },
-  'smart-quotes': { pattern: '[“”]', flags: 'g', label: 'Smart Quotes' },
-  'emdash-spacing': { pattern: '\\s+—\\s+', flags: 'g', label: 'Em Dash Spacing' },
-  'broken-dice': { pattern: '\\b[Il1oO]d\\d+', flags: 'g', label: 'Broken Dice' },
-  'attr-check': { pattern: '\\b(Str|Dex|Con|Int|Wis|Cha)\\s*(\\+|-)?\\d+', flags: 'gi', label: 'Attribute Check' }
-};
-
-function augmentStatBlocksFromAlphabeticalList(blocks, content) {
-  if (!content) return blocks;
-  const lines = content.split('\n');
-  if (!lines.length) return blocks;
-
-  const skipPrefixes = [
-    'table', 'block', 'section', 'appendix', 'part', 'chapter',
-    'track', 'trail', 'road', 'path', 'river', 'stream', 'lake', 'forest',
-    'wood', 'hill', 'mountain', 'ravine', 'bluff', 'pier', 'bridge', 'cave',
-    'lair', 'den'
-  ];
-  const extra = [];
-  const entryPattern = /^\s*(\d+)\.\s*(.+)$/; // Allow optional space after period
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const match = line.match(entryPattern);
-    if (!match) continue;
-
-    let name = match[2].trim();
-    if (!name) continue;
-
-    // Trim trailing detail sections at first delimiter
-    const stopIdx = [name.indexOf('('), name.indexOf(':'), name.indexOf('—'), name.indexOf('–')]
-      .filter(idx => idx >= 0)
-      .sort((a, b) => a - b)[0];
-    if (typeof stopIdx === 'number') {
-      name = name.slice(0, stopIdx).trim();
-    }
-
-    // Clean formatting and trailing commas
-    name = name.replace(/[_*]+/g, '').replace(/,\s*$/, '').trim();
-    if (!name || name.length < 2) continue;
-
-    const firstWord = name.split(/\s+/)[0].toLowerCase();
-    if (skipPrefixes.includes(firstWord)) continue;
-
-    // Use the same classification logic as main stat blocks
-    const tempBlock = { name, raw: line, fullText: line };
-    const type = classifyStatBlock(tempBlock);
-
-    extra.push({
-      name,
-      raw: line,
-      fullText: line,
-      lineNumber: i + 1,
-      lineStart: i + 1,
-      lineEnd: i + 1,
-      context: 'Alphabetical Listing',
-      type
-    });
-  }
-
-  return extra.length ? blocks.concat(extra) : blocks;
-}
-
-let findState = {
-  matches: [],
-  currentIndex: -1,
-  scope: 'all',
-  useRegex: false
-};
-
-// Removed Preview mode - keeping only Edit mode
+// Sync control: determines if scrolling/clicking in Rendered pane jumps editor.
+// This is now fully user-controlled via an explicit toggle (no mode-based behavior).
+let syncScrollEnabled = false;
 
 // Guard flags to prevent circular updates
 let isInternalEditorUpdate = false; // Set to true when we modify editor from code
 let isSyncingScroll = false; // Set to true during scroll sync to prevent re-entry
 let suppressStatAnalysis = false; // Set to true when doing bulk updates
-let userHasClickedEditor = false; // Track if user has manually clicked into editor
 
 // Stat block navigation state
 let statBlocks = [];
 let activeStatIndex = null; // index within statBlocks
-let statBlockSortMode = 'alphabetical'; // 'section' or 'alphabetical' - default to alphabetical
-let statFilters = { type: 'all', status: 'all', onlyErrors: false, search: '' }; // default to all
+let statFilters = { type: 'all', onlyErrors: false, search: '' };
 let statContextCollapsed = {};
-let activeStatStartLine = null; // first line of selected stat block (for UI)
-let reviewState = {}; // reviewed flags keyed by block id
 
 // Unified navigation context for Next/Prev
 let navContext = {
@@ -109,48 +33,13 @@ let navContext = {
   index: 0
 };
 
-// Removed old sync code - no longer needed with Edit/Preview toggle
+function isSyncEnabled() {
+  return !!syncScrollEnabled;
+}
 
 // Check if editor has unsaved changes
 function hasUnsavedChanges() {
   return currentContent !== savedContent;
-}
-
-function computeReviewStats(blocks) {
-  const eligible = blocks.filter(
-    b => !b.isSynthetic && b.type !== 'feature' && b.type !== 'missing'
-  );
-  const reviewed = eligible.filter(b => b.reviewed);
-  const monsters = eligible.filter(b => b.type === 'monster');
-  const monstersReviewed = monsters.filter(b => b.reviewed);
-  const npcs = eligible.filter(b => b.type === 'npc' || b.type === 'npc-named');
-  const npcsReviewed = npcs.filter(b => b.reviewed);
-  return {
-    total: { reviewed: reviewed.length, total: eligible.length },
-    monsters: { reviewed: monstersReviewed.length, total: monsters.length },
-    npcs: { reviewed: npcsReviewed.length, total: npcs.length }
-  };
-}
-
-function updateReviewSummary() {
-  const totalEl = document.getElementById('reviewSummaryTotal');
-  const monsterEl = document.getElementById('reviewSummaryMonsters');
-  const npcEl = document.getElementById('reviewSummaryNPCs');
-  const statusEl = document.getElementById('reviewedSummaryStatus');
-  if (!totalEl || !monsterEl || !npcEl || !statusEl) return;
-
-  const stats = computeReviewStats(statBlocks || []);
-  totalEl.textContent = `Total: ${stats.total.reviewed} / ${stats.total.total}`;
-  monsterEl.textContent = `Monsters: ${stats.monsters.reviewed} / ${stats.monsters.total}`;
-  npcEl.textContent = `NPCs: ${stats.npcs.reviewed} / ${stats.npcs.total}`;
-
-  if (stats.total.total === 0) {
-    statusEl.textContent = 'No blocks detected yet';
-  } else if (stats.total.reviewed === 0) {
-    statusEl.textContent = 'No blocks reviewed yet';
-  } else {
-    statusEl.textContent = `Reviewed ${stats.total.reviewed} of ${stats.total.total}`;
-  }
 }
 
 // ============================================================================
@@ -180,11 +69,6 @@ function initializeDragAndDrop() {
       dropOverlay.classList.add('active');
     }
   });
-
-  // Initialize visible game system indicator
-  updateSystemIndicator();
-  // Initialize Find/Replace strip (Ctrl/Cmd+F or Find button)
-  initFindReplace();
 
   // Hide overlay when dragging out of window
   document.addEventListener('dragleave', (e) => {
@@ -228,219 +112,57 @@ function initializeDragAndDrop() {
 }
 
 // ============================================================================
-// REFORGED NAME CONVERSION
-// ============================================================================
-
-let conversionMappings = { spells: new Map(), items: new Map() };
-
-function parseCSVLine(line) {
-  const result = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  result.push(current.trim());
-  return result;
-}
-
-async function loadConversionMappings() {
-  try {
-    console.log('[DEBUG] Calling loadConversionCsvs...');
-    
-    if (!window.electronAPI || !window.electronAPI.loadConversionCsvs) {
-      console.error('[DEBUG] loadConversionCsvs API not available - app needs restart');
-      log('Please restart the app to enable conversion feature', 'error');
-      return false;
-    }
-    
-    const result = await window.electronAPI.loadConversionCsvs();
-    console.log('[DEBUG] CSV load result:', result);
-    
-    if (!result.success) {
-      log('Failed to load conversion CSVs: ' + result.message, 'error');
-      console.error('[DEBUG] CSV load error:', result.message);
-      return false;
-    }
-    
-    // Parse spell CSV (Original, Old New Name, New Name)
-    if (result.spells) {
-      const spellLines = result.spells.split('\n').slice(1); // Skip header
-      for (const line of spellLines) {
-        if (!line.trim()) continue;
-        const parts = parseCSVLine(line);
-        if (parts.length >= 3) {
-          const oldName = parts[0]?.trim();
-          const newName = parts[2]?.trim(); // "New Name" column
-          if (oldName && newName && newName !== oldName) {
-            conversionMappings.spells.set(oldName.toLowerCase(), newName);
-          }
-        }
-      }
-    }
-    
-    // Parse item CSV (Old_Name, New_Name)
-    if (result.items) {
-      const itemLines = result.items.split('\n').slice(1); // Skip header
-      for (const line of itemLines) {
-        if (!line.trim()) continue;
-        const parts = parseCSVLine(line);
-        if (parts.length >= 2) {
-          const oldName = parts[0]?.trim();
-          const newName = parts[1]?.trim();
-          if (oldName && newName && newName !== oldName) {
-            conversionMappings.items.set(oldName.toLowerCase(), newName);
-          }
-        }
-      }
-    }
-    
-    log(`Loaded ${conversionMappings.spells.size} spell conversions and ${conversionMappings.items.size} item conversions`, 'success');
-    return true;
-  } catch (error) {
-    log('Error loading conversion mappings: ' + error.message, 'error');
-    return false;
-  }
-}
-
-function findReplacements(content) {
-  const replacements = [];
-  const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items]);
-  
-  for (const [oldName, newName] of allMappings) {
-    // Create regex that matches the old name (case-insensitive, whole word)
-    const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-    let match;
-    
-    while ((match = regex.exec(content)) !== null) {
-      replacements.push({
-        oldText: match[0], // Preserve original case
-        newText: newName,
-        index: match.index,
-        length: match[0].length
-      });
-    }
-  }
-  
-  // Sort by index (descending) so we can replace from end to start
-  return replacements.sort((a, b) => b.index - a.index);
-}
-
-async function convertToReforged() {
-  if (!currentContent) {
-    log('No document loaded', 'error');
-    return;
-  }
-  
-  // Load mappings if not already loaded
-  if (conversionMappings.spells.size === 0 && conversionMappings.items.size === 0) {
-    const loaded = await loadConversionMappings();
-    if (!loaded) return;
-  }
-  
-  // Add manual overrides for specific cases from Gemini analysis
-  const manualOverrides = new Map([
-    // Potions (specific item conversions)
-    ['potion of alter size', 'Potion of Diminution'],
-    ['potion of cure poison', 'Potion of Delay Toxin'],
-    ['potion of cure critical wounds', 'Potion of Heal Critical Wounds'],
-    ['potion of cure light wounds', 'Potion of Heal Light Wounds'],
-    
-    // Protection spells - keep alignment distinctions (C&C standard)
-    ['protection from good', 'Protection from Disposition'],
-    ['protection from evil', 'Protection from Disposition'],
-    ['protection from chaos', 'Protection from Disposition'],
-    ['protection from law', 'Protection from Disposition'],
-    
-    // C&C standard terms - keep as-is
-    ['turn undead', 'Turn Undead'],
-    ['nerve check', 'Nerve Check'], // Custom module mechanic
-    ['batrachianoid', 'Batrachianoid'], // Correct C&C term (NOT Bullywug)
-    ['bullywug', 'Batrachianoid'], // Convert IP-protected term
-    ['darkvision', 'Darkvision'],
-    ['twilight vision', 'Twilight Vision']
-  ]);
-  
-  // Merge manual overrides with CSV mappings
-  const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items, ...manualOverrides]);
-  
-  const replacements = findReplacementsWithMappings(currentContent, allMappings);
-  
-  if (replacements.length === 0) {
-    log('No old names found to convert', 'info');
-    return;
-  }
-  
-  // Show preview dialog with warnings for special cases
-  let warnings = [];
-  if (replacements.some(r => r.oldText.toLowerCase().includes('nerve check'))) {
-    warnings.push('⚠️ "Nerve Check" is a custom module mechanic (Wisdom Save vs. Fear, CL 0) - keeping as-is');
-  }
-  if (replacements.some(r => r.oldText.toLowerCase().includes('batrachianoid'))) {
-    warnings.push('ℹ️ "Batrachianoid" is the correct C&C term (not "Bullywug") - keeping as-is');
-  }
-  
-  const message = `Found ${replacements.length} name(s) to convert:\n\n` +
-    replacements.slice(0, 10).map(r => `• "${r.oldText}" → "${r.newText}"`).join('\n') +
-    (replacements.length > 10 ? `\n... and ${replacements.length - 10} more` : '') +
-    (warnings.length > 0 ? '\n\n' + warnings.join('\n') : '') +
-    `\n\nApply these changes?`;
-  
-  if (!confirm(message)) {
-    log('Conversion cancelled', 'info');
-    return;
-  }
-  
-  // Apply replacements (from end to start to preserve indices)
-  let newContent = currentContent;
-  for (const replacement of replacements) {
-    newContent = newContent.substring(0, replacement.index) +
-                 replacement.newText +
-                 newContent.substring(replacement.index + replacement.length);
-  }
-  
-  // Update editor
-  pushUndoState('Convert to Reforged Names');
-  currentContent = newContent;
-  updateEditorContent(newContent);
-  log(`Converted ${replacements.length} name(s) to Reforged format`, 'success');
-}
-
-function findReplacementsWithMappings(content, mappings) {
-  const replacements = [];
-  
-  for (const [oldName, newName] of mappings) {
-    // Create regex that matches the old name (case-insensitive, whole word)
-    const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-    let match;
-    
-    while ((match = regex.exec(content)) !== null) {
-      replacements.push({
-        oldText: match[0], // Preserve original case
-        newText: newName,
-        index: match.index,
-        length: match[0].length
-      });
-    }
-  }
-  
-  // Sort by index (descending) so we can replace from end to start
-  return replacements.sort((a, b) => b.index - a.index);
-}
-
-// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
+
+function jumpEditorToLine(line) {
+  const preview = document.getElementById('previewContent');
+  if (!preview) return;
+
+  const content = preview.textContent || '';
+  const lines = content.split('\n');
+  const totalLines = lines.length;
+
+  if (line < 1 || line > totalLines) return;
+
+  // 1. Scroll to approximate position
+  const ratio = (line - 1) / (totalLines || 1);
+  const maxScroll = preview.scrollHeight - preview.clientHeight;
+  const targetScroll = Math.floor(ratio * maxScroll);
+
+  preview.scrollTop = targetScroll;
+
+  // 2. Set cursor position (Selection Range)
+  // Calculate character offset for the start of the target line
+  let charOffset = 0;
+  for (let i = 0; i < line - 1; i++) {
+    charOffset += lines[i].length + 1; // +1 for newline character
+  }
+
+  // Ensure offset is within bounds
+  if (charOffset > content.length) charOffset = content.length;
+
+  // Create a text node range if possible (for contenteditable or simple text node)
+  // Since previewContent contains a Text Node inside <pre>, we need to target that.
+  if (preview.firstChild && preview.firstChild.nodeType === Node.TEXT_NODE) {
+    try {
+      const range = document.createRange();
+      const sel = window.getSelection();
+
+      range.setStart(preview.firstChild, charOffset);
+      range.setEnd(preview.firstChild, charOffset);
+
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      // Focus the element to make the caret visible (if it were editable)
+      // Even if not editable, this updates the internal selection state
+      preview.focus();
+    } catch (e) {
+      console.warn('Failed to set cursor position:', e);
+    }
+  }
+}
 
 function log(message, type = 'info') {
   const logContainer = document.getElementById('logContent');
@@ -485,286 +207,6 @@ function updateChangeLogTab() {
       <span class="change-details">${entry.details}</span>
     </div>
   `).join('');
-}
-
-function updateSystemIndicator() {
-  const el = document.getElementById('systemIndicatorLabel');
-  if (!el) return;
-  const system = config.gameSystem || 'cnc';
-  const edition = config.gameEdition || 'reforged';
-
-  let systemName = 'Castles & Crusades';
-  if (system !== 'cnc') {
-    systemName = system;
-  }
-
-  let editionLabel = '';
-  if (system === 'cnc' && edition === 'reforged') {
-    editionLabel = 'Reforged';
-  } else if (edition) {
-    editionLabel = edition;
-  }
-
-  el.textContent = editionLabel ? `${systemName} — ${editionLabel}` : systemName;
-}
-
-// =========================================================================
-// FIND / REPLACE (Heads-Up Strip)
-// =========================================================================
-
-function initFindReplace() {
-  const strip = document.getElementById('findReplaceStrip');
-  if (!strip) return;
-
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-      e.preventDefault();
-      toggleFindStrip();
-    }
-  });
-
-  document.getElementById('closeFindStripBtn')?.addEventListener('click', () => {
-    strip.style.display = 'none';
-  });
-
-  const findInput = document.getElementById('findInput');
-  const replaceInput = document.getElementById('replaceInput');
-  const wholeWordToggle = document.getElementById('wholeWordCheck');
-
-  // Default to whole-word matching for simpler exact hits
-  if (wholeWordToggle) wholeWordToggle.checked = true;
-
-  findInput?.addEventListener('input', () => {
-    findState.matches = [];
-    findState.currentIndex = -1;
-    updateFindStatus('');
-  });
-
-  // Enter triggers next match
-  findInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      findState.currentIndex = -1;
-      findNext(true);
-    }
-  });
-  replaceInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      findState.currentIndex = -1;
-      findNext(true);
-    }
-  });
-
-  document.getElementById('findNextBtn')?.addEventListener('click', () => findNext(true));
-  document.getElementById('findPrevBtn')?.addEventListener('click', () => findNext(false));
-  document.getElementById('replaceBtn')?.addEventListener('click', replaceCurrent);
-  document.getElementById('replaceAllBtn')?.addEventListener('click', executeReplaceAll);
-}
-
-function toggleFindStrip() {
-  const strip = document.getElementById('findReplaceStrip');
-  const input = document.getElementById('findInput');
-  if (!strip) return;
-  if (strip.style.display === 'flex') {
-    strip.style.display = 'none';
-  } else {
-    strip.style.display = 'flex';
-    if (input) {
-      input.focus();
-      input.select();
-    }
-  }
-}
-
-function updateFindStatus(msg) {
-  const input = document.getElementById('findInput');
-  if (input && msg) {
-    input.setAttribute('title', msg);
-  }
-}
-
-function getSearchRanges(scope) {
-  const content = currentContent || '';
-  const lines = content.split('\n');
-  const totalLength = content.length;
-
-  if (scope === 'all') {
-    return [{ start: 0, end: totalLength }];
-  }
-
-  if (scope === 'selection') {
-    const editor = document.getElementById('markdownEditor');
-    if (editor && editor.selectionStart !== editor.selectionEnd) {
-      return [{ start: editor.selectionStart, end: editor.selectionEnd }];
-    }
-    return [{ start: 0, end: totalLength }];
-  }
-
-  const ranges = [];
-  const lineOffsets = [];
-  let charCount = 0;
-  for (let i = 0; i < lines.length; i++) {
-    lineOffsets.push(charCount);
-    charCount += lines[i].length + 1;
-  }
-  lineOffsets.push(charCount);
-
-  if (scope === 'headers') {
-    lines.forEach((line, idx) => {
-      if (line.trim().startsWith('#')) {
-        ranges.push({ start: lineOffsets[idx], end: lineOffsets[idx + 1] - 1 });
-      }
-    });
-  } else if (scope === 'stat-blocks') {
-    const boundaries = [
-      ...statBlocks.map(b => ({ line: b.lineNumber, type: 'start' })),
-      ...allSections.map(s => ({ line: s.startLine, type: 'stop' }))
-    ].sort((a, b) => a.line - b.line);
-
-    statBlocks.forEach(block => {
-      const startLine = block.lineNumber;
-      const startIdx = lineOffsets[startLine - 1];
-      const nextBoundary = boundaries.find(b => b.line > startLine);
-      const endLine = nextBoundary ? nextBoundary.line - 1 : lines.length;
-      if (endLine >= startLine) {
-        const endIdx = lineOffsets[endLine] - 1;
-        ranges.push({ start: startIdx, end: endIdx });
-      }
-    });
-  }
-
-  return ranges;
-}
-
-function runSearch() {
-  const findInput = document.getElementById('findInput');
-  if (!findInput) return [];
-  const query = findInput.value;
-  if (!query) return [];
-
-  const useRegexEl = document.getElementById('useRegexCheck');
-  const useRegex = !!(useRegexEl && useRegexEl.checked);
-  const caseEl = document.getElementById('caseSensitiveCheck');
-  const caseSensitive = !!(caseEl && caseEl.checked);
-  const wholeWordEl = document.getElementById('wholeWordCheck');
-  const wholeWord = !!(wholeWordEl && wholeWordEl.checked);
-  const scopeEl = document.getElementById('searchScopeSelect');
-  const scope = scopeEl ? scopeEl.value : 'all';
-
-  const text = currentContent || '';
-  const ranges = getSearchRanges(scope);
-  let regex;
-
-  try {
-    const flags = caseSensitive ? 'gm' : 'gmi';
-    if (useRegex) {
-      const pattern = wholeWord ? `\\b(?:${query})\\b` : query;
-      regex = new RegExp(pattern, flags);
-    } else {
-      const escaped = query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
-      const pattern = wholeWord ? `\\b${escaped}\\b` : escaped;
-      regex = new RegExp(pattern, flags);
-    }
-  } catch (e) {
-    log('Invalid Regex', 'error');
-    return [];
-  }
-
-  const matches = [];
-  let match;
-  regex.lastIndex = 0;
-
-  while ((match = regex.exec(text)) !== null) {
-    const start = match.index;
-    const end = start + match[0].length;
-    const inScope = ranges.some(r => start >= r.start && end <= r.end);
-    if (inScope) {
-      matches.push({ start, end, text: match[0], index: matches.length });
-    }
-    if (match.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-  }
-
-  return matches;
-}
-
-function findNext(forward = true) {
-  const matches = runSearch();
-  if (!matches.length) {
-    updateFindStatus('No matches');
-    return;
-  }
-  findState.matches = matches;
-
-  if (findState.currentIndex === -1) {
-    findState.currentIndex = forward ? 0 : matches.length - 1;
-  } else {
-    findState.currentIndex = (findState.currentIndex + (forward ? 1 : -1) + matches.length) % matches.length;
-  }
-
-  const editor = document.getElementById('markdownEditor');
-  if (!editor) return;
-
-  const m = matches[findState.currentIndex];
-  editor.focus();
-  editor.setSelectionRange(m.start, m.end);
-
-  const before = (editor.value || '').slice(0, m.start);
-  const lineNumber = before ? before.split('\n').length : 1;
-  jumpEditorToLine(lineNumber, true);
-  updateFindStatus(`Match ${findState.currentIndex + 1} of ${matches.length}`);
-}
-
-function replaceCurrent() {
-  const editor = document.getElementById('markdownEditor');
-  const replaceInput = document.getElementById('replaceInput');
-  if (!editor || !replaceInput) return;
-
-  if (editor.selectionStart === editor.selectionEnd) {
-    findNext(true);
-    return;
-  }
-
-  const value = editor.value;
-  const start = editor.selectionStart;
-  const end = editor.selectionEnd;
-  const replacement = replaceInput.value || '';
-
-  editor.value = value.slice(0, start) + replacement + value.slice(end);
-  currentContent = editor.value;
-  jumpEditorToLine((editor.value.slice(0, start + replacement.length).match(/\n/g) || []).length + 1, true);
-  updateRenderedTab(currentContent);
-  updateSummaryTab(currentContent);
-  updateStatus('Replaced current match', 'success');
-  findNext(true);
-}
-
-function executeReplaceAll() {
-  const matches = runSearch();
-  if (!matches.length) {
-    updateFindStatus('No matches to replace');
-    return;
-  }
-  const replaceInput = document.getElementById('replaceInput');
-  const editor = document.getElementById('markdownEditor');
-  if (!replaceInput || !editor) return;
-
-  const replacement = replaceInput.value || '';
-  let text = currentContent || '';
-
-  for (let i = matches.length - 1; i >= 0; i--) {
-    const m = matches[i];
-    text = text.slice(0, m.start) + replacement + text.slice(m.end);
-  }
-
-  currentContent = text;
-  editor.value = text;
-  updateRenderedTab(currentContent);
-  updateSummaryTab(currentContent);
-  analyzeDocumentStatBlocks();
-  updateStatus(`Replaced ${matches.length} occurrence(s)`, 'success');
 }
 
 // ============================================================================
@@ -1162,7 +604,6 @@ document.getElementById('undoBtn')?.addEventListener('click', undo);
 // TAB MANAGEMENT
 // ============================================================================
 
-// Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tabId = btn.dataset.tab;
@@ -1175,10 +616,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const targetTab = document.getElementById(tabId);
     if (targetTab) targetTab.classList.add('active');
+    
+    // Refresh rendered tab if switching to it
+    if (tabId === 'renderedTab' && currentContent) {
+      updateRenderedTab(currentContent);
+    }
   });
 });
-
-// Removed Preview mode toggle - keeping only Edit mode
 
 // ============================================================================
 // FILE OPERATIONS
@@ -1194,9 +638,9 @@ async function handleOpenFileClick() {
     updateStatus(`Loaded: ${filePath.split('/').pop()}`, 'success');
     log(`Loaded file: ${filePath}`, 'info');
     
-    // Switch to Editor tab
-    const editorTab = document.querySelector('[data-tab="editorTab"]');
-    if (editorTab) editorTab.click();
+    // Switch to Preview tab to show the loaded content
+    const previewTab = document.querySelector('[data-tab="previewTab"]');
+    if (previewTab) previewTab.click();
   }
 }
 
@@ -1211,7 +655,6 @@ async function loadFile(filePath) {
   if (content) {
     currentContent = content;
     savedContent = content; // Track saved state
-    userHasClickedEditor = false; // Reset on new file load
     updateMarkdownEditor(content);
     updateRenderedTab(content);
     updateSummaryTab(content);
@@ -1234,7 +677,6 @@ function updateMarkdownEditor(content) {
     editor.scrollTop = 0;
     isInternalEditorUpdate = false; // Reset flag
     clearEditorUnsavedState();
-    updateLineInfoDisplay();
   }
 }
 
@@ -1297,84 +739,97 @@ function updateRenderedTab(content) {
       .replace(/\n/g, '<br>');
   }
   
-  // Add data-line attributes to rendered elements
+  // Add data-line attributes to rendered elements for sync
   addLineAttributesToRendered(rendered, content);
   
   // Track selection changes in Rendered
   rendered.addEventListener('mouseup', captureSelection);
   rendered.addEventListener('keyup', captureSelection);
+  
+  // Wire up rendered pane sync (scroll and click)
+  wireRenderedPaneSync(rendered);
 }
 
 function addLineAttributesToRendered(rendered, content) {
-  const htmlLength = rendered?.innerHTML?.length || 0;
-  const childCount = rendered?.children ? rendered.children.length : 0;
-  console.log('addLineAttributesToRendered: rendered.innerHTML length =', htmlLength, 'children =', childCount);
+  // Split content into lines for mapping
+  const lines = content.split('\n');
   
-  let topLevelElements = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, table');
-  console.log('addLineAttributesToRendered: found', topLevelElements.length, 'elements');
-  if (!topLevelElements.length) {
-    // Fallback: try all elements to see if markup is wrapped differently
-    topLevelElements = rendered.querySelectorAll('*');
-    console.warn('addLineAttributesToRendered: primary selector matched 0, fallback matched', topLevelElements.length, '; html head:', (rendered.innerHTML || '').slice(0, 200));
-    if (!topLevelElements.length) {
-      return;
-    }
-  }
-
-  // Use full-text search to find each element's position and line number
-  let searchIndex = 0;
-  let mappedCount = 0;
-  let maxLineSeen = 0;
+  // Map rendered elements to source lines (approximate by content matching)
+  const topLevelElements = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, table');
+  
+  let currentLine = 1;
   topLevelElements.forEach(el => {
-    const text = (el.textContent || '').trim();
+    const text = el.textContent.trim();
     if (!text) return;
-
-    // Find the element's text in the source starting from the last match
-    let idx = content.indexOf(text, searchIndex);
-    if (idx === -1) {
-      // Fallback: approximate using current search index
-      idx = searchIndex;
+    
+    // Find the line where this content appears
+    for (let i = currentLine - 1; i < lines.length; i++) {
+      if (lines[i].includes(text.substring(0, 30)) || lines[i].trim().startsWith(text.substring(0, 20))) {
+        el.setAttribute('data-line', i + 1);
+        currentLine = i + 2; // Start next search after this line
+        break;
+      }
     }
-
-    const lineNumber = (content.substring(0, idx).match(/\n/g) || []).length + 1;
-    el.setAttribute('data-line', lineNumber);
-    mappedCount++;
-    if (lineNumber > maxLineSeen) maxLineSeen = lineNumber;
-
-    // Advance search index conservatively
-    searchIndex = Math.max(idx + text.length, searchIndex + text.length);
   });
-  console.log('addLineAttributesToRendered: mapped', mappedCount, 'elements to line numbers; maxLine =', maxLineSeen);
 }
 
-// Removed old sync code - no longer needed with Edit/Preview toggle
-
-function updateLineInfoDisplay() {
-  const editor = document.getElementById('markdownEditor');
-  const currentLineEl = document.getElementById('lineInfoCurrent');
-  const blockLineEl = document.getElementById('lineInfoBlock');
-  const gutterColumn = document.querySelector('.line-info-column');
-
-  if (!editor) return;
-
-  // Only show current line if user has manually clicked into the editor
-  if (userHasClickedEditor) {
-    const pos = editor.selectionStart || 0;
-    const before = (editor.value || '').slice(0, pos);
-    const lineNumber = before ? before.split('\n').length : 1;
-    if (currentLineEl) currentLineEl.textContent = lineNumber;
-  } else {
-    if (currentLineEl) currentLineEl.textContent = '—';
-  }
+function wireRenderedPaneSync(rendered) {
+  // Remove old listeners to avoid duplicates
+  const oldScroll = rendered._syncScrollHandler;
+  const oldClick = rendered._syncClickHandler;
+  if (oldScroll) rendered.removeEventListener('scroll', oldScroll);
+  if (oldClick) rendered.removeEventListener('click', oldClick);
   
-  if (blockLineEl) blockLineEl.textContent = activeStatStartLine ? activeStatStartLine : '—';
+  // Throttle scroll events
+  let scrollTimeout = null;
+  const scrollHandler = () => {
+    if (!isSyncEnabled()) return; // Respect sync toggle
+    if (isSyncingScroll) return; // Prevent re-entry during sync
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isSyncingScroll = true;
+      syncEditorToRenderedView(rendered);
+      isSyncingScroll = false;
+    }, 150);
+  };
   
-  // Toggle visual indicator for active stat block
-  if (gutterColumn) {
-    if (activeStatStartLine) {
-      gutterColumn.classList.add('active-stat');
-    } else {
-      gutterColumn.classList.remove('active-stat');
+  const clickHandler = (e) => {
+    if (!isSyncEnabled()) return; // Respect sync toggle
+    if (isSyncingScroll) return; // Don't interrupt scroll sync
+    
+    // Find closest element with data-line
+    let target = e.target;
+    while (target && target !== rendered) {
+      if (target.hasAttribute('data-line')) {
+        const line = parseInt(target.getAttribute('data-line'), 10);
+        jumpEditorToLine(line);
+        break;
+      }
+      target = target.parentElement;
+    }
+  };
+  
+  rendered.addEventListener('scroll', scrollHandler);
+  rendered.addEventListener('click', clickHandler);
+  
+  // Store handlers for cleanup
+  rendered._syncScrollHandler = scrollHandler;
+  rendered._syncClickHandler = clickHandler;
+}
+
+function syncEditorToRenderedView(rendered) {
+  // Find the first visible element with data-line
+  const elements = rendered.querySelectorAll('[data-line]');
+  const containerRect = rendered.getBoundingClientRect();
+  
+  for (const el of elements) {
+    const rect = el.getBoundingClientRect();
+    // Check if element is in viewport
+    if (rect.top >= containerRect.top && rect.top <= containerRect.bottom) {
+      const line = parseInt(el.getAttribute('data-line'), 10);
+      jumpEditorToLine(line, false); // false = don't steal focus
+      break;
     }
   }
 }
@@ -1383,88 +838,25 @@ function jumpEditorToLine(lineNumber, focusEditor = true) {
   const editor = document.getElementById('markdownEditor');
   if (!editor) return;
   
-  const content = editor.value || currentContent || '';
-  const contentLines = content.split('\n');
-  const targetLine = Math.max(1, Math.min(lineNumber, contentLines.length || 1));
-  // Calculate character offset for the line start once (used for caret)
+  const lines = (currentContent || '').split('\n');
+  
+  // Calculate character offset for the line start
   let charOffset = 0;
-  for (let i = 0; i < targetLine - 1 && i < contentLines.length; i++) {
-    charOffset += contentLines[i].length + 1; // +1 for newline
+  for (let i = 0; i < lineNumber - 1 && i < lines.length; i++) {
+    charOffset += lines[i].length + 1; // +1 for newline
   }
-
-  const applyCaret = () => {
-    editor.setSelectionRange(charOffset, charOffset);
-  };
-
+  
   // Set cursor position
   if (focusEditor) {
     editor.focus();
   }
-  applyCaret();
-
-  // --- ROBUST SCROLL SYNC via Mirror Div ---
-  // Create or get hidden mirror to measure true pixel height of text up to target line
-  let mirror = document.getElementById('editor-mirror-div');
-  if (!mirror) {
-    mirror = document.createElement('div');
-    mirror.id = 'editor-mirror-div';
-    mirror.style.visibility = 'hidden';
-    mirror.style.position = 'absolute';
-    mirror.style.top = '0';
-    mirror.style.left = '-9999px';
-    mirror.style.whiteSpace = 'pre-wrap';
-    mirror.style.wordWrap = 'break-word';
-    mirror.style.overflow = 'hidden';
-    document.body.appendChild(mirror);
-  }
-
-  // Sync styles from real editor to mirror
-  const style = window.getComputedStyle(editor);
-  mirror.style.width = style.width;
-  mirror.style.fontFamily = style.fontFamily;
-  mirror.style.fontSize = style.fontSize;
-  mirror.style.lineHeight = style.lineHeight;
-  mirror.style.padding = style.padding;
-  mirror.style.boxSizing = style.boxSizing;
-  mirror.style.border = style.border;
-
-  // Content up to target line (excluding the line itself to jump TO it)
-  // We add a zero-width space to ensure the last newline counts if it exists
-  const textBefore = contentLines.slice(0, targetLine - 1).join('\n');
-  mirror.textContent = textBefore + '\u200B';
-
-  // Measure height
-  const targetHeight = mirror.scrollHeight;
+  editor.setSelectionRange(charOffset, charOffset);
   
-  // Apply scroll with some headroom (e.g. 15% down from top)
-  // But clamp it so we don't scroll past end
-  const editorHeight = editor.clientHeight;
-  const headroom = Math.floor(editorHeight * 0.15);
-  const maxScroll = editor.scrollHeight - editorHeight;
-  
-  const desiredScroll = Math.max(0, Math.min(maxScroll, targetHeight - headroom));
-  
-  editor.scrollTop = desiredScroll;
-
-  // Re-apply caret on the next frame to guard against focus timing quirks
-  requestAnimationFrame(() => {
-    applyCaret();
-    updateLineInfoDisplay();
-  });
-
-  return { charOffset, targetLine };
-}
-
-function getCharOffsetForLine(lineNumber) {
-  const editor = document.getElementById('markdownEditor');
-  const content = editor ? editor.value : currentContent || '';
-  const lines = (content || '').split('\n');
-  const safeLine = Math.max(1, Math.min(lineNumber, lines.length || 1));
-  let offset = 0;
-  for (let i = 0; i < safeLine - 1 && i < lines.length; i++) {
-    offset += lines[i].length + 1;
-  }
-  return offset;
+  // Scroll to make the line visible in the editor
+  const lineHeight = parseInt(window.getComputedStyle(editor).lineHeight, 10) || 22;
+  const visibleLines = Math.floor(editor.clientHeight / lineHeight);
+  const scrollLine = Math.max(0, lineNumber - Math.floor(visibleLines / 2));
+  editor.scrollTop = scrollLine * lineHeight;
 }
 
 function captureSelection() {
@@ -1479,37 +871,6 @@ function captureSelection() {
   
   // Update Quick Tools modal hint if open
   updateSelectionModeIndicator();
-  updateLineInfoDisplay();
-}
-
-function flashNameInEditor(name, anchorOffset = 0) {
-  if (!name) return;
-  const editor = document.getElementById('markdownEditor');
-  if (!editor) return;
-
-  const text = editor.value || '';
-  const lower = text.toLowerCase();
-  const target = name.toLowerCase();
-
-  const searchRadius = 1500;
-  const start = Math.max(0, anchorOffset - 500);
-  const end = Math.min(text.length, anchorOffset + searchRadius);
-
-  let idx = lower.indexOf(target, start);
-  if (idx === -1 || idx > end) {
-    idx = lower.indexOf(target);
-  }
-  if (idx === -1) return;
-
-  const originalStart = editor.selectionStart;
-  const originalEnd = editor.selectionEnd;
-
-  editor.setSelectionRange(idx, idx + name.length);
-
-  setTimeout(() => {
-    editor.setSelectionRange(originalStart, originalEnd);
-    updateLineInfoDisplay();
-  }, 250);
 }
 
 function updateSummaryTab(content) {
@@ -1739,7 +1100,6 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
 
 let selectedSections = []; // Array of {header, startLine, endLine}
 let allSections = [];
-let headersCollapsed = false;
 
 function extractSections(content) {
   const lines = content.split('\n');
@@ -2114,204 +1474,6 @@ document.getElementById('qtCompareDocsBtn')?.addEventListener('click', () => {
 let compareDoc1Path = null;
 let compareDoc2Path = null;
 
-// Reforged Conversion (sidebar button - keep for backward compatibility)
-document.getElementById('convertReforgedBtn')?.addEventListener('click', convertToReforged);
-
-// Reforged Conversion Panel
-let pendingConversions = [];
-
-document.getElementById('scanConversionsBtn')?.addEventListener('click', async () => {
-  console.log('[DEBUG] Scan button clicked');
-  
-  if (!currentContent) {
-    log('No document loaded', 'error');
-    return;
-  }
-  
-  console.log('[DEBUG] Document loaded, content length:', currentContent.length);
-  
-  // Load mappings if not already loaded
-  if (conversionMappings.spells.size === 0 && conversionMappings.items.size === 0) {
-    console.log('[DEBUG] Loading conversion mappings...');
-    const loaded = await loadConversionMappings();
-    console.log('[DEBUG] Mappings loaded:', loaded);
-    if (!loaded) return;
-  }
-  
-  console.log('[DEBUG] Spell mappings:', conversionMappings.spells.size);
-  console.log('[DEBUG] Item mappings:', conversionMappings.items.size);
-  
-  // Manual overrides
-  const manualOverrides = new Map([
-    ['potion of alter size', 'Potion of Diminution'],
-    ['potion of cure poison', 'Potion of Delay Toxin'],
-    ['potion of cure critical wounds', 'Potion of Heal Critical Wounds'],
-    ['potion of cure light wounds', 'Potion of Heal Light Wounds'],
-    ['protection from good', 'Protection from Disposition'],
-    ['protection from evil', 'Protection from Disposition'],
-    ['protection from chaos', 'Protection from Disposition'],
-    ['protection from law', 'Protection from Disposition'],
-    ['bullywug', 'Batrachianoid']
-  ]);
-  
-  const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items, ...manualOverrides]);
-  
-  // Find all conversions with line numbers
-  const lines = currentContent.split('\n');
-  pendingConversions = [];
-  
-  for (let lineNum = 0; lineNum < lines.length; lineNum++) {
-    const line = lines[lineNum];
-    
-    for (const [oldName, newName] of allMappings) {
-      const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-      let match;
-      
-      while ((match = regex.exec(line)) !== null) {
-        pendingConversions.push({
-          oldText: match[0],
-          newText: newName,
-          lineNumber: lineNum + 1,
-          lineContent: line,
-          index: match.index,
-          length: match[0].length,
-          applied: false
-        });
-      }
-    }
-  }
-  
-  renderConversionList();
-  log(`Found ${pendingConversions.length} potential conversions`, 'success');
-});
-
-function renderConversionList() {
-  const container = document.getElementById('conversionList');
-  const countEl = document.getElementById('conversionCount');
-  const applyAllBtn = document.getElementById('applyAllConversionsBtn');
-  
-  if (!container) return;
-  
-  const unapplied = pendingConversions.filter(c => !c.applied);
-  
-  if (countEl) {
-    countEl.textContent = `${unapplied.length} conversion${unapplied.length !== 1 ? 's' : ''} pending`;
-  }
-  
-  if (applyAllBtn) {
-    applyAllBtn.disabled = unapplied.length === 0;
-  }
-  
-  if (pendingConversions.length === 0) {
-    container.innerHTML = '<p class="placeholder">No conversions found. The document may already use Reforged names.</p>';
-    return;
-  }
-  
-  container.innerHTML = pendingConversions.map((conv, idx) => `
-    <div class="conversion-item ${conv.applied ? 'applied' : ''}" data-index="${idx}">
-      <div class="conversion-item-content">
-        <div class="conversion-item-line">Line ${conv.lineNumber}</div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="conversion-item-old">${escapeHtml(conv.oldText)}</div>
-          <div class="conversion-item-arrow">→</div>
-          <div class="conversion-item-new">${escapeHtml(conv.newText)}</div>
-        </div>
-      </div>
-      ${!conv.applied ? `
-        <div class="conversion-item-actions">
-          <button class="conversion-item-btn apply-btn" data-index="${idx}">Apply</button>
-          <button class="conversion-item-btn skip skip-btn" data-index="${idx}">Skip</button>
-        </div>
-      ` : '<div style="color: #4CAF50; font-size: 12px;">✓ Applied</div>'}
-    </div>
-  `).join('');
-  
-  // Add event listeners
-  container.querySelectorAll('.apply-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const idx = parseInt(btn.dataset.index);
-      applyConversion(idx);
-    });
-  });
-  
-  container.querySelectorAll('.skip-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const idx = parseInt(btn.dataset.index);
-      skipConversion(idx);
-    });
-  });
-}
-
-function applyConversion(index) {
-  const conv = pendingConversions[index];
-  if (!conv || conv.applied) return;
-  
-  const lines = currentContent.split('\n');
-  const lineIdx = conv.lineNumber - 1;
-  
-  if (lineIdx >= 0 && lineIdx < lines.length) {
-    const line = lines[lineIdx];
-    const newLine = line.substring(0, conv.index) + conv.newText + line.substring(conv.index + conv.length);
-    lines[lineIdx] = newLine;
-    
-    pushUndoState('Convert: ' + conv.oldText + ' → ' + conv.newText);
-    currentContent = lines.join('\n');
-    updateEditorContent(currentContent);
-    
-    conv.applied = true;
-    renderConversionList();
-    log(`Converted "${conv.oldText}" to "${conv.newText}" on line ${conv.lineNumber}`, 'success');
-  }
-}
-
-function skipConversion(index) {
-  pendingConversions.splice(index, 1);
-  renderConversionList();
-}
-
-document.getElementById('applyAllConversionsBtn')?.addEventListener('click', () => {
-  const unapplied = pendingConversions.filter(c => !c.applied);
-  
-  if (unapplied.length === 0) return;
-  
-  if (!confirm(`Apply all ${unapplied.length} conversions?`)) return;
-  
-  pushUndoState('Apply All Reforged Conversions');
-  
-  // Apply from end to start to preserve indices
-  const sorted = [...pendingConversions].sort((a, b) => {
-    if (a.lineNumber !== b.lineNumber) return b.lineNumber - a.lineNumber;
-    return b.index - a.index;
-  });
-  
-  let lines = currentContent.split('\n');
-  
-  for (const conv of sorted) {
-    if (conv.applied) continue;
-    
-    const lineIdx = conv.lineNumber - 1;
-    if (lineIdx >= 0 && lineIdx < lines.length) {
-      const line = lines[lineIdx];
-      const newLine = line.substring(0, conv.index) + conv.newText + line.substring(conv.index + conv.length);
-      lines[lineIdx] = newLine;
-      conv.applied = true;
-    }
-  }
-  
-  currentContent = lines.join('\n');
-  updateEditorContent(currentContent);
-  renderConversionList();
-  log(`Applied ${unapplied.length} conversions`, 'success');
-});
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
 document.getElementById('compareDocsBtn')?.addEventListener('click', () => {
   // Pre-fill with current file if available
   if (currentFilePath) {
@@ -2497,19 +1659,6 @@ document.getElementById('settingsBtn')?.addEventListener('click', async () => {
   if (syncCheckbox) {
     syncCheckbox.checked = !!syncScrollEnabled;
   }
-
-  // Game system & edition
-  const systemSelect = document.getElementById('settingGameSystem');
-  const editionSelect = document.getElementById('settingGameEdition');
-  if (systemSelect) {
-    systemSelect.value = config.gameSystem || 'cnc';
-  }
-  if (editionSelect) {
-    editionSelect.value = config.gameEdition || 'reforged';
-  }
-
-  // Reflect current values in header indicator
-  updateSystemIndicator();
   
   // Show modal
   const modal = document.getElementById('settingsModal');
@@ -2530,16 +1679,6 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   const syncCheckbox = document.getElementById('settingSyncEnabled');
   syncScrollEnabled = !!(syncCheckbox && syncCheckbox.checked);
   config.syncScrollEnabled = syncScrollEnabled;
-
-  // Persist game system & edition
-  const systemSelect = document.getElementById('settingGameSystem');
-  const editionSelect = document.getElementById('settingGameEdition');
-  if (systemSelect) {
-    config.gameSystem = systemSelect.value || 'cnc';
-  }
-  if (editionSelect) {
-    config.gameEdition = editionSelect.value || 'reforged';
-  }
   
   // Save config
   const result = await window.electronAPI.saveConfig(config);
@@ -2547,7 +1686,6 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   if (result.success) {
     log('Settings saved successfully', 'success');
     updateStatus('Settings saved', 'success');
-    updateSystemIndicator();
   } else {
     log(`Failed to save settings: ${result.message}`, 'error');
   }
@@ -2905,13 +2043,14 @@ function updateHeaderNavigator() {
   const sections = extractSections(currentContent || '');
   allSections = sections; // reuse existing sections array
 
+
+  // Clear existing content safely
+  container.textContent = '';
+
   // Check if sections actually changed - avoid DOM thrashing
   const hash = (sections || []).length + ':' + (sections || []).map(s => s.header).join('|');
   if (lastSectionHash === hash) return; // No change, skip update
   lastSectionHash = hash;
-
-  // Clear existing content safely
-  container.textContent = '';
 
 
   if (!sections || sections.length === 0) {
@@ -2927,7 +2066,6 @@ function updateHeaderNavigator() {
     const item = document.createElement('div');
     item.className = `nav-item nav-level-${Math.min(s.level, 6)}`;
     item.dataset.index = idx;
-    item.dataset.level = s.level;
 
     const dot = document.createElement('div');
     dot.className = 'nav-dot';
@@ -2958,8 +2096,6 @@ function updateHeaderNavigator() {
 
     container.appendChild(item);
   });
-
-  applyHeaderCollapseState();
 }
 
 function navigateToSection(index) {
@@ -2971,12 +2107,22 @@ function navigateToSection(index) {
   navContext.mode = 'header';
   navContext.index = index;
   updateNavButtonsForContext();
-  activeStatStartLine = null;
-  updateLineInfoDisplay();
 
+
+  // Scroll Preview (text) to the specific line
+  jumpEditorToLine(target.startLine);
 
   // Jump editor to the section start (keeps caret aligned with navigation)
   jumpEditorToLine(target.startLine, false);
+
+  // Scroll Preview (text) proportionally by line
+  const preview = document.getElementById('previewContent');
+  if (preview) {
+    const linesTotal = (currentContent || '').split('\n').length || 1;
+    const ratio = Math.min(1, Math.max(0, (target.startLine - 1) / linesTotal));
+    const maxScroll = preview.scrollHeight - preview.clientHeight;
+    preview.scrollTop = Math.floor(ratio * maxScroll);
+  }
 
 
   // Scroll Rendered to the matching heading element
@@ -3016,33 +2162,6 @@ function navigateToSection(index) {
   }
 }
 
-function highlightHeaderForLine(lineNumber) {
-  const sections = allSections || [];
-  if (!sections.length || !lineNumber) return;
-
-  // Find the last section whose startLine is <= lineNumber
-  let bestIndex = -1;
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-    if (section && typeof section.startLine === 'number' && section.startLine <= lineNumber) {
-      bestIndex = i;
-    } else if (section && section.startLine > lineNumber) {
-      break;
-    }
-  }
-  if (bestIndex === -1) return;
-
-  const container = document.getElementById('navigatorList');
-  if (!container) return;
-
-  container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const activeItem = container.querySelector(`.nav-item[data-index="${bestIndex}"]`);
-  if (activeItem) {
-    activeItem.classList.add('active');
-    activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
 // ============================================================================
 // STAT BLOCK NAVIGATION
 // ============================================================================
@@ -3078,60 +2197,6 @@ async function analyzeDocumentStatBlocks() {
   }, ANALYSIS_DEBOUNCE);
 }
 
-// Extract traps and hazards from document (separate from stat blocks)
-function extractTrapsAndHazards(content) {
-  if (!content) return [];
-  
-  const lines = content.split('\n');
-  const trapsAndHazards = [];
-  const seen = new Set(); // Deduplicate
-  
-  // Hazard keywords from Python analysis
-  const hazardKeywords = /(pit\s+trap|covered\s+pit|open\s+pit|snare|net\s+trap|spear\s+trap|pressure\s+plate|alarm|laughing\s+gas|sleeping\s+gas|green\s+slime|gray\s+ooze|air\s+fungus|exploding|curse|aversion|ammonia|secret\s+trap\s+door)/i;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    
-    // Must have CL rating AND hazard keywords (from Python logic)
-    if (/CL\s*\d+/i.test(line) && hazardKeywords.test(line)) {
-      // Extract the most relevant bold text (prefer trap-related names)
-      const boldMatches = line.match(/\*\*([^*]+)\*\*/g);
-      if (boldMatches) {
-        // Find the bold text that contains trap/hazard keywords
-        let name = null;
-        for (const boldMatch of boldMatches) {
-          const cleanMatch = boldMatch.replace(/\*\*/g, '').replace(/^[_:\s]+|[_:\s]+$/g, '').trim();
-          if (hazardKeywords.test(cleanMatch)) {
-            name = cleanMatch;
-            break;
-          }
-        }
-        
-        // Fallback to first bold text if no keyword match
-        if (!name && boldMatches.length > 0) {
-          name = boldMatches[0].replace(/\*\*/g, '').replace(/^[_:\s]+|[_:\s]+$/g, '').trim();
-        }
-        
-        if (name && !seen.has(name.toLowerCase())) {
-          seen.add(name.toLowerCase());
-          trapsAndHazards.push({
-            name,
-            raw: line,
-            fullText: line,
-            lineNumber: i + 1,
-            lineStart: i + 1,
-            lineEnd: i + 1,
-            context: 'Trap/Hazard',
-            type: null // Will be classified later
-          });
-        }
-      }
-    }
-  }
-  
-  return trapsAndHazards;
-}
-
 function updateStatBlockNavigator(blocks) {
   const container = document.getElementById('statBlockNavigator');
   const countEl = document.getElementById('statBlockCount');
@@ -3141,371 +2206,61 @@ function updateStatBlockNavigator(blocks) {
   // Store full list
   statBlocks = Array.isArray(blocks) ? blocks : [];
   
-  // Add traps and hazards
-  const trapsAndHazards = extractTrapsAndHazards(currentContent || '');
-  statBlocks = statBlocks.concat(trapsAndHazards);
-  
   // Update count badge
-  const sections = extractSections(currentContent || '');
-  allSections = sections; // reuse existing sections array
+  if (countEl) countEl.textContent = statBlocks.length;
 
   if (!statBlocks || statBlocks.length === 0) {
     container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks detected in this document.</p>';
     if (countEl) countEl.textContent = '0';
-    activeStatStartLine = null;
-    updateLineInfoDisplay();
     return;
   }
 
   // Classify and enhance blocks
-  statBlocks = augmentStatBlocksFromAlphabeticalList(statBlocks, currentContent || '');
   statBlocks = statBlocks.map((block, idx) => {
     block._originalIndex = idx;
-    block._uniqueId = `${block.name || 'unknown'}_${block.lineNumber || idx}_${idx}`; // Unique ID for duplicates
     block.type = block.type || classifyStatBlock(block);
     block.context = block.context || findBlockContext(block);
-    block.isLegacy = detectLegacyFormat(block);
-    block._reviewKey = buildReviewKey(block);
-    block.reviewed = getReviewFlag(block._reviewKey);
     return block;
   });
 
-  if (countEl) countEl.textContent = statBlocks.length.toString();
-
   renderStatBlockList();
-  updateReviewSummary();
 }
 
 // Classify stat block by type
 function classifyStatBlock(block) {
-  let name = (block.name || '').toLowerCase();
-  const originalName = block.name || '';
-  const text = (block.raw || block.fullText || '').toLowerCase();
+  const name = (block.name || '').toLowerCase();
+  const text = (block.raw || '').toLowerCase();
   
-  // If this was extracted as a trap/hazard, classify it appropriately
-  if (block.context === 'Trap/Hazard') {
-    // Check if it's a trap or hazard based on keywords
-    if (/(pit\s+trap|covered\s+pit|open\s+pit|snare|net\s+trap|spear\s+trap|pressure\s+plate|alarm|trap)/i.test(name)) {
-      return 'trap';
-    }
-    if (/(laughing\s+gas|sleeping\s+gas|green\s+slime|gray\s+ooze|curse|aversion|ammonia|exploding|flesh\s+beetle)/i.test(name)) {
-      return 'hazard';
-    }
-    // Default to trap for Trap/Hazard context
-    return 'trap';
-  }
-  
-  // Strip quantity patterns for better classification
-  name = name.replace(/\s*x\s*\d+$/i, '').replace(/\s*\d+x$/i, '').replace(/\s*\d+$/i, '').trim();
-  
-  const combined = `${name} ${text}`;
-
-  const hasHpOrHd = /\b(hp\s*\d+|hd\s*\d+d?\d*)\b/i.test(combined);
-  const hasAc = /\bac\b\s*\d+/i.test(combined);
-  const hasStatSignals = hasHpOrHd && hasAc;
-
-  // Room/Architectural patterns - check BEFORE NPC detection for location names
-  // Use word boundaries to avoid matching creature names like "Cave bats"
-  if (/\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage)\b/i.test(combined) ||
-      /\b(cave|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined) ||
-      /\b(sq\.?\s*ft|square\s*feet|feet\s*x\s*\d+|\d+\s*x\s*\d+|\d+\s*ft\s*x\s*\d+|dimensions?\b)/i.test(combined)) {
-    return 'feature';
-  }
-  
-  // Detect if this is a named NPC (proper name, not generic)
-  const isNamedNPC = detectNamedNPC(originalName);
-  
-  // NPC keywords (explicit people/roles)
-  if (isNamedNPC || 
-      /(\\bnpc\\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer)/i.test(combined) ||
+  // NPC keywords
+  if (/(npc|guard|merchant|innkeeper|priest|wizard|knight|villager)/i.test(name) || 
       /personality|attitude|demeanor/i.test(text)) {
-    return isNamedNPC ? 'npc-named' : 'npc';
+    return 'npc';
   }
   
-  // Monster keywords (expanded) - check this AFTER room patterns
-  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|wood elf|wood elves|serjeant|lieutenant|fekk|yeexuul)/i.test(combined) ||
-      /monster|creature|spawn/i.test(text) ||
-      hasStatSignals;
-  
-  if (isMonster) {
-    // Check if also a hazard (dual categorization) - only for specific hazard creatures
-    const isHazardToo = /(green\s+slime|gray\s+ooze|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
-    return isHazardToo ? 'hazard' : 'monster'; // Prioritize hazard for dual-category entities
+  // Monster keywords
+  if (/(dragon|goblin|orc|troll|skeleton|zombie|demon|devil|giant|beast)/i.test(name) ||
+      /monster|creature|spawn/i.test(text)) {
+    return 'monster';
   }
   
-  // Trap detection - check for explicit trap indicators
-  // Match names like "Pit Trap [X]", "Covered pit trap", "Spear trap", etc.
-  if (/\b(pit|covered|open|spear|net|alarm|pressure)\s+(trap|plate)/i.test(name) ||
-      /\btrap\b.*\[(x|X)\]/i.test(name) ||
-      /(snare|net\s+trap|laughing\s+gas|sleeping\s+gas)/i.test(name)) {
-    return 'trap';
-  }
-  
-  // Also check for trap context in text (CL ratings, damage, triggers)
-  if (/\btrap\b/i.test(name) && /(CL\s*\d+|triggers|collapses|damage|save)/i.test(text)) {
-    return 'trap';
-  }
-  
-  // Hazard keywords (environmental dangers)
-  if (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetles|sunset|mushrooms)/i.test(combined) ||
+  // Hazard keywords
+  if (/(poison|acid|fire|lava|spikes|pit|chasm|gas)/i.test(name) ||
       /hazard|environmental|danger|save vs/i.test(text)) {
     return 'hazard';
   }
   
-  // Feature (only for specific environmental elements)
-  if (/(fountain|altar|statue|door|chest|room)/i.test(combined)) {
+  // Trap keywords
+  if (/(trap|snare|tripwire|pressure plate|dart|blade)/i.test(name) ||
+      /trap|trigger|mechanism/i.test(text)) {
+    return 'trap';
+  }
+  
+  // Feature (default for environmental elements)
+  if (/(fountain|altar|statue|door|chest|room)/i.test(name)) {
     return 'feature';
   }
   
-  // Default to monster if it has creature-like words but didn't match above
-  if (/(elf|elves|gnoll|gnolls|kobold|kobolds|goblin|goblins|orc|orcs|human|humans|man|men|woman|women|child|children|male|female)/i.test(combined)) {
-    return 'monster';
-  }
-  
-  return 'feature'; // Final fallback
-}
-
-// Extract stat block names using the same pattern as Python analysis
-function extractStatBlockNames(content) {
-  if (!content) return [];
-  
-  // Match Python pattern: **Name:** _(This.*?vital stats are|HP|He is a|She is a|It is a).*?HP
-  const statBlockPattern = /\*\*([^\*]+)\*\*[:\s]*_?\((?:This.*?vital stats are|HP|He is a|She is a|It is a).*?HP/gi;
-  const statBlockNames = new Set();
-  
-  let match;
-  while ((match = statBlockPattern.exec(content)) !== null) {
-    const name = match[1].trim();
-    if (name) {
-      statBlockNames.add(name);
-    }
-  }
-  
-  return Array.from(statBlockNames);
-}
-
-// Extract proper names from document content to find missing stat blocks
-function extractReferencedNames(content) {
-  if (!content) return [];
-  
-  const lines = content.split('\n');
-  const referencedNames = new Set();
-  
-  // Patterns to extract proper names (more focused than before)
-  const patterns = [
-    // Quoted names: "Name", 'Name' (handle hyphens)
-    /["']([A-Z][a-z]+(?:[-\s][A-Z][a-z]+)*)["']/g,
-    // Bold names: **Name** (handle hyphens)
-    /\*\*([A-Z][a-z]+(?:[-\s][A-Z][a-z]+)*)\*\*/g,
-    // Title + name patterns: King Griggle-gruk, Queen Someone
-    /\b(King|Queen|Lord|Lady|Sir|Captain|Chieftain|Chief|Leader|Shaman|Priest|Priestess)\s+([A-Z][a-z]+(?:[-\s][A-Z][a-z]+)*)\b/g
-  ];
-  
-  for (const line of lines) {
-    // Skip lines that reference other modules
-    if (/\(CZY\s+environs|Ruins\s+of\s+the\s+Castle\s+Precincts|Appendix\s+[A-D]\)/i.test(line)) {
-      continue;
-    }
-    
-    for (const pattern of patterns) {
-      let match;
-      while ((match = pattern.exec(line)) !== null) {
-        const name = match[1] || match[2]; // Handle both capture groups
-        if (name && name.length > 2 && !/^(Table|Block|Section|Room|Area|Authors|Contributor|Edited|Production|Cover|Cartography|Special|Playtesters|Appendix|Mapping|Getting|Sages|Mages|Outs|Rumors|College|Green|Old|Little|False|Outside|Animal|Movement|Swamp|Approaching|LAYOUT|Tactics|Wood|Bandit|Secret|Kree-Gubs|Gublinish|Skull|Ioun|Giant|Concealed|Black|Watery)\s*\d*/i.test(name)) {
-          referencedNames.add(name.trim());
-        }
-      }
-    }
-  }
-  
-  return Array.from(referencedNames);
-}
-
-// Find names referenced in document but missing from stat blocks
-function findMissingStatBlocks() {
-  if (!currentContent) return [];
-  
-  const referencedNames = extractReferencedNames(currentContent);
-  const statBlockNames = extractStatBlockNames(currentContent);
-  const statBlockNamesSet = new Set(
-    statBlockNames.map(name => name.toLowerCase().trim())
-  );
-  
-  const missing = referencedNames.filter(name => {
-    const normalizedName = name.toLowerCase().trim();
-    return !statBlockNamesSet.has(normalizedName) && 
-           !statBlockNamesSet.has(normalizedName.replace(/^king\s+|queen\s+|lord\s+|lady\s+|sir\s+/i, '')) &&
-           !statBlockNamesSet.has(normalizedName.replace(/\s+\([^)]+\)$/, '')); // Remove trailing parenthetical
-  });
-  
-  return missing.sort();
-}
-
-// Show missing stat blocks report
-function showMissingStatBlocksReport() {
-  const missing = findMissingStatBlocks();
-  
-  if (missing.length === 0) {
-    alert('All referenced names have corresponding stat blocks!');
-    return;
-  }
-  
-  const report = missing.join('\n');
-  const message = `The following ${missing.length} names are referenced in the document but have no stat blocks:\n\n${report}\n\nConsider creating stat blocks for these entities or removing references if they're not needed.`;
-  
-  if (confirm(`${message}\n\nCopy this list to clipboard?`)) {
-    navigator.clipboard.writeText(report).then(() => {
-      log('Missing stat blocks list copied to clipboard', 'success');
-    }).catch(err => {
-      log('Failed to copy to clipboard', 'error');
-    });
-  }
-}
-
-// Detect if a name represents a unique named NPC vs generic monster
-function detectNamedNPC(name) {
-  if (!name || name.length < 3) return false;
-  
-  // Exclude structural/meta elements (tables, blocks, sections)
-  if (/^(table|block|section|area|room|chapter|part|appendix)\s*\d+/i.test(name)) {
-    return false;
-  }
-  
-  // Exclude location/area names (not NPCs)
-  if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|lair|den)/i.test(name)) {
-    return false;
-  }
-  
-  // Exclude boxed text markers and other formatting
-  if (/^(<<|>>|begin|end|boxed|text)/i.test(name)) {
-    return false;
-  }
-  
-  // Generic quantity indicators = not a named NPC
-  if (/\b(x\s*\d+|\d+\s*x|patrol|warriors?|guards?|sentries|males?|females?|young|raiders?|scouts?)\b/i.test(name)) {
-    return false;
-  }
-  
-  // Generic monster types = not a named NPC
-  const genericMonsters = [
-    'ape', 'bandit', 'bear', 'bat', 'boar', 'bugbear', 'centipede', 'beetle',
-    'elf', 'gnoll', 'goblin', 'griffon', 'hobgoblin', 'kobold', 'lion',
-    'lizardfolk', 'losel', 'commoner', 'naga', 'nixie', 'orc', 'otter',
-    'owlbear', 'rat', 'riverman', 'snake', 'spider', 'stirge', 'thief',
-    'turtle', 'wolf', 'wolverine', 'ogre', 'children', 'batrachianoid',
-    'harpy', 'tick', 'mastiff', 'animal', 'herd', 'brigand', 'giant',
-    'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
-    'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivorous'
-  ];
-  
-  // Check first word and also check for "Type, descriptor" pattern (e.g., "Bear, black")
-  const nameLower = name.toLowerCase();
-  const firstWord = name.split(/[\s,]+/)[0].toLowerCase();
-  
-  if (genericMonsters.includes(firstWord)) {
-    return false;
-  }
-  
-  // Check for generic patterns like "Black Bear", "Giant rats", "Cave bats"
-  const nameParts = name.split(/\s+/);
-  if (nameParts.length >= 2) {
-    const secondWord = nameParts[1].toLowerCase().replace(/[,()]/g, '');
-    // If first word is descriptor and second is monster type
-    if (genericMonsters.includes(firstWord) && genericMonsters.includes(secondWord)) {
-      return false;
-    }
-    // If second word is monster type (e.g., "Black Bear", "Giant rats")
-    if (genericMonsters.includes(secondWord)) {
-      return false;
-    }
-  }
-  
-  // Check for role-based names (Brigand, crossbowman)
-  if (/^(brigand|bandit|guard|warrior|scout|raider|sentry|patrol)\b/i.test(nameLower)) {
-    return false;
-  }
-  
-  // Quoted names are usually unique ("Charlie", "Pinky")
-  if (/["']/.test(name)) return true;
-  
-  // Check for proper capitalized names (not just generic titles)
-  // Names like "Grimlock Manface", "Fekk", "King Griggle-gruk"
-  const words = name.split(/\s+/);
-  const hasProperName = words.some(word => {
-    // Must start with capital and not be a generic title alone
-    if (!/^[A-Z]/.test(word)) return false;
-    const lower = word.toLowerCase();
-    // Exclude generic titles when standalone
-    const genericTitles = ['the', 'king', 'queen', 'chief', 'chieftain', 'leader', 'lord', 'lady', 'sir', 'captain', 'lieutenant', 'serjeant', 'shaman', 'priest'];
-    return !genericTitles.includes(lower);
-  });
-  
-  return hasProperName;
-}
-
-// Detect if stat block uses legacy format (needs Reforged conversion)
-function detectLegacyFormat(block) {
-  const text = (block.raw || block.fullText || '').toLowerCase();
-  
-  // Reforged indicators (C&C Reforged specific)
-  const hasReforgedKeywords = /\b(primary attributes?|secondary attributes?|disposition|carries?|wears?)\b/i.test(text);
-  
-  // Legacy indicators (old D&D/AD&D style)
-  const hasLegacyKeywords = /\b(thac0|saving throws?|to hit|morale|treasure type|no\. appearing)\b/i.test(text);
-  
-  // If it has Reforged keywords, it's updated
-  if (hasReforgedKeywords) return false;
-  
-  // If it has legacy keywords or lacks Reforged structure, it's legacy
-  if (hasLegacyKeywords) return true;
-  
-  // Check for minimal Reforged structure
-  const hasHP = /\bhp\s*\d+/i.test(text);
-  const hasAC = /\bac\s*\d+/i.test(text);
-  const hasDisposition = /\bdisposition\b/i.test(text);
-  const hasPrimaryAttrs = /\bprimary attributes?\b/i.test(text);
-  
-  // If it has HP/AC but missing disposition or primary attributes, likely legacy
-  if ((hasHP || hasAC) && (!hasDisposition || !hasPrimaryAttrs)) {
-    return true;
-  }
-  
-  return false; // Assume modern if unclear
-}
-
-function buildReviewKey(block) {
-  const fileKey = currentFilePath || 'global';
-  const name = block.name || `block-${block.index || block._originalIndex || block.lineNumber || '0'}`;
-  const line = block.lineNumber || block.lineStart || 0;
-  return `review:${fileKey}::${name}::${line}`;
-}
-
-function getReviewFlag(key) {
-  if (key in reviewState) return reviewState[key];
-  try {
-    const val = window.localStorage.getItem(key);
-    if (val === '1') {
-      reviewState[key] = true;
-      return true;
-    }
-  } catch (e) {
-    // ignore storage errors
-  }
-  reviewState[key] = false;
-  return false;
-}
-
-function setReviewFlag(key, value) {
-  reviewState[key] = !!value;
-  try {
-    if (value) {
-      window.localStorage.setItem(key, '1');
-    } else {
-      window.localStorage.removeItem(key);
-    }
-  } catch (e) {
-    // ignore storage errors
-  }
+  return 'feature'; // Default
 }
 
 // Find which header/area this block belongs to
@@ -3534,37 +2289,20 @@ function findBlockContext(block) {
   return '';
 }
 
-// Helper to get currently filtered stat blocks
-function getFilteredStatBlocks() {
+function renderStatBlockList() {
+  const container = document.getElementById('statBlockNavigator');
+  if (!container) return;
+
+  // Apply filters
   const searchInput = document.getElementById('statBlockSearch');
   const typeFilter = document.getElementById('statBlockTypeFilter');
-  const statusFilter = document.getElementById('statBlockReviewFilter');
   const errorsOnly = document.getElementById('statBlockShowErrors');
   
   const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
   const selectedType = typeFilter ? typeFilter.value : 'all';
-  const selectedStatus = statusFilter ? statusFilter.value : 'all';
   const showErrorsOnly = errorsOnly ? errorsOnly.checked : false;
-  
-  let blocksToFilter = statBlocks;
-  
-  // If showing missing stat blocks, create synthetic entries
-  if (selectedType === 'missing') {
-    const missingNames = findMissingStatBlocks();
-    blocksToFilter = missingNames.map(name => ({
-      name,
-      type: 'missing',
-      context: 'Referenced but Missing',
-      lineNumber: null,
-      lineStart: null,
-      lineEnd: null,
-      raw: '',
-      fullText: '',
-      isSynthetic: true
-    }));
-  }
-  
-  return blocksToFilter.filter(block => {
+
+  let filtered = statBlocks.filter(block => {
     // Search filter
     if (searchTerm) {
       const name = (block.name || '').toLowerCase();
@@ -3574,15 +2312,9 @@ function getFilteredStatBlocks() {
       }
     }
     
-    // Type filter (skip for missing since we already filtered)
-    if (selectedType !== 'all' && selectedType !== 'missing' && block.type !== selectedType) {
+    // Type filter
+    if (selectedType !== 'all' && block.type !== selectedType) {
       return false;
-    }
-
-    // Status filter (skip for synthetic missing entries)
-    if (!block.isSynthetic) {
-      if (selectedStatus === 'reviewed' && !block.reviewed) return false;
-      if (selectedStatus === 'unreviewed' && block.reviewed) return false;
     }
     
     const validation = block.validation || {};
@@ -3591,86 +2323,29 @@ function getFilteredStatBlocks() {
       : (validation.errors ? validation.errors.length : 0);
     const hasErrors = errorCount > 0;
 
-    // Errors filter (skip for synthetic missing entries)
-    if (!block.isSynthetic && showErrorsOnly && !hasErrors) {
+    // Errors filter
+    if (showErrorsOnly && !hasErrors) {
       return false;
     }
     
     return true;
   });
-}
-
-function renderStatBlockList() {
-  const container = document.getElementById('statBlockNavigator');
-  if (!container) return;
-
-  let filtered = getFilteredStatBlocks();
 
   if (filtered.length === 0) {
     container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks match the filter.</p>';
     return;
   }
 
-  // Sort based on mode
-  if (statBlockSortMode === 'alphabetical') {
-    filtered.sort((a, b) => {
-      const nameA = (a.name || '').toLowerCase();
-      const nameB = (b.name || '').toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
-  // Group by context (area/room header) or alphabetically
+  // Group by context (area/room header)
   const groups = new Map();
-  if (statBlockSortMode === 'section') {
-    filtered.forEach(block => {
-      const ctx = (block.context && block.context.trim()) ? block.context.trim() : 'No Context';
-      if (!groups.has(ctx)) groups.set(ctx, []);
-      groups.get(ctx).push(block);
-    });
-  } else {
-    // Alphabetical: group by first letter
-    filtered.forEach(block => {
-      const name = block.name || 'Unknown';
-      // Remove leading underscores, quotes, numbers, and special chars
-      let cleanName = name.replace(/^[_"'\d\s\-]+/, '');
-      // Skip common articles (The, A, An) for alphabetization
-      cleanName = cleanName.replace(/^(The|A|An)\s+/i, '');
-      const match = cleanName.match(/[A-Za-z]/);
-      const firstLetter = match ? match[0].toUpperCase() : '#';
-      if (!groups.has(firstLetter)) groups.set(firstLetter, []);
-      groups.get(firstLetter).push(block);
-    });
-  }
+  filtered.forEach(block => {
+    const ctx = (block.context && block.context.trim()) ? block.context.trim() : 'No Context';
+    if (!groups.has(ctx)) groups.set(ctx, []);
+    groups.get(ctx).push(block);
+  });
 
   let html = '';
-  
-  // Sort groups
-  const sortedGroups = Array.from(groups.entries()).sort((a, b) => {
-    const keyA = a[0];
-    const keyB = b[0];
-    
-    if (statBlockSortMode === 'section') {
-      // For section mode, sort by first block's line number (document order)
-      // Always put "Alphabetical Listing" at the end
-      if (keyA === 'Alphabetical Listing') return 1;
-      if (keyB === 'Alphabetical Listing') return -1;
-      
-      const firstBlockA = a[1][0];
-      const firstBlockB = b[1][0];
-      const lineA = firstBlockA.lineNumber || firstBlockA.lineStart || 0;
-      const lineB = firstBlockB.lineNumber || firstBlockB.lineStart || 0;
-      return lineA - lineB;
-    } else {
-      // For alphabetical mode, sort by letter
-      // Put '#' at the end
-      if (keyA === '#') return 1;
-      if (keyB === '#') return -1;
-      return keyA.localeCompare(keyB);
-    }
-  });
-  
-  sortedGroups.forEach(([ctx, blocksInGroup]) => {
+  groups.forEach((blocksInGroup, ctx) => {
     const collapsed = !!statContextCollapsed[ctx];
     const groupId = ctx.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'no-context';
 
@@ -3686,7 +2361,6 @@ function renderStatBlockList() {
     blocksInGroup.forEach((block) => {
       const idx = block._originalIndex;
       const activeClass = activeStatIndex === idx ? 'active' : '';
-      const reviewedClass = block.reviewed ? ' reviewed' : '';
 
       const validation = block.validation || {};
       const errorCount = (typeof validation.errorCount === 'number')
@@ -3704,20 +2378,12 @@ function renderStatBlockList() {
         const label = warningCount === 1 ? '1 warning' : `${warningCount} warnings`;
         statusBadge = `<span style="margin-left:6px;font-size:11px;padding:1px 6px;border-radius:10px;background:#fff4e5;color:#b26a00;white-space:nowrap;">⚠ ${label}</span>`;
       }
-      
-      // Add legacy badge if stat block needs Reforged conversion
-      let legacyBadge = '';
-      if (block.isLegacy) {
-        legacyBadge = `<span style="margin-left:6px;font-size:11px;padding:1px 6px;border-radius:10px;background:#e3f2fd;color:#1976d2;white-space:nowrap;">🔄 Legacy</span>`;
-      }
 
       html += `
-          <div class="stat-block-item ${activeClass}${reviewedClass}" data-index="${idx}">
+          <div class="stat-block-item ${activeClass}" data-index="${idx}">
             <div class="stat-block-name">
               ${escapeHtml(block.name || `Block ${idx + 1}`)}
               <span class="stat-block-type ${block.type}">${block.type}</span>
-              <button class="review-toggle" data-index="${idx}" title="${block.reviewed ? 'Mark unreviewed' : 'Mark reviewed'}">${block.reviewed ? '✔' : '○'}</button>
-              ${legacyBadge}
               ${statusBadge}
             </div>
             ${block.context ? `<div class="stat-block-context">${escapeHtml(block.context)}</div>` : ''}
@@ -3732,32 +2398,14 @@ function renderStatBlockList() {
   });
 
   container.innerHTML = html;
-  updateReviewSummary();
 
-  // Bind click events for stat block items - navigate and show validation details
+  // Bind click events for stat block items - navigate only, details are optional
   container.querySelectorAll('.stat-block-item').forEach(item => {
     item.addEventListener('click', () => {
       const index = parseInt(item.getAttribute('data-index'), 10);
       if (!Number.isNaN(index) && statBlocks[index]) {
         navigateToStatBlock(statBlocks[index]);
-        showValidationDetails(statBlocks[index]);
       }
-    });
-  });
-
-  // Bind review toggles
-  container.querySelectorAll('.review-toggle').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const idx = parseInt(btn.getAttribute('data-index'), 10);
-      const block = statBlocks[idx];
-      if (!block) return;
-      const key = block._reviewKey || buildReviewKey(block);
-      const newVal = !getReviewFlag(key);
-      setReviewFlag(key, newVal);
-      block.reviewed = newVal;
-      renderStatBlockList();
-      updateReviewSummary();
     });
   });
 
@@ -3780,154 +2428,17 @@ function renderStatBlockList() {
   });
 }
 
-function setHeaderCollapse(collapse) {
-  headersCollapsed = !!collapse;
-  applyHeaderCollapseState();
-}
-
-function applyHeaderCollapseState() {
-  const list = document.getElementById('navigatorList');
-  if (!list) return;
-  const items = list.querySelectorAll('.nav-item');
-  items.forEach((item) => {
-    const level = parseInt(item.dataset.level || '1', 10);
-    if (headersCollapsed) {
-      if (level > 1) {
-        item.style.display = 'none';
-      } else {
-        item.style.display = '';
-      }
-    } else {
-      item.style.display = '';
-    }
-  });
-  // Update button labels
-  const expandBtn = document.getElementById('expandHeadersBtn');
-  const collapseBtn = document.getElementById('collapseHeadersBtn');
-  if (expandBtn && collapseBtn) {
-    if (headersCollapsed) {
-      expandBtn.disabled = false;
-      collapseBtn.disabled = true;
-    } else {
-      expandBtn.disabled = true;
-      collapseBtn.disabled = false;
-    }
-  }
-}
-
 // Wire up search and filter controls
 document.getElementById('statBlockSearch')?.addEventListener('input', renderStatBlockList);
 document.getElementById('statBlockTypeFilter')?.addEventListener('change', renderStatBlockList);
-document.getElementById('statBlockReviewFilter')?.addEventListener('change', renderStatBlockList);
 document.getElementById('statBlockShowErrors')?.addEventListener('change', renderStatBlockList);
 
-// Wire up sort mode toggle
-document.getElementById('sortBySection')?.addEventListener('click', () => {
-  statBlockSortMode = 'section';
-  document.getElementById('sortBySection')?.classList.add('active');
-  document.getElementById('sortAlphabetical')?.classList.remove('active');
-  renderStatBlockList();
-});
-
-document.getElementById('sortAlphabetical')?.addEventListener('click', () => {
-  const typeFilter = document.getElementById('statBlockTypeFilter');
-  const selectedType = typeFilter ? typeFilter.value : 'all';
-  
-  // Only allow alphabetical sort when a specific type is selected
-  if (selectedType === 'all') {
-    return; // Do nothing if "All Types" is selected
-  }
-  
-  statBlockSortMode = 'alphabetical';
-  document.getElementById('sortAlphabetical')?.classList.add('active');
-  document.getElementById('sortBySection')?.classList.remove('active');
-  renderStatBlockList();
-});
-
-// Update alphabetical button state when type filter changes
-document.getElementById('statBlockTypeFilter')?.addEventListener('change', () => {
-  const typeFilter = document.getElementById('statBlockTypeFilter');
-  const selectedType = typeFilter ? typeFilter.value : 'all';
-  const alphabeticalBtn = document.getElementById('sortAlphabetical');
-  
-  if (selectedType === 'all') {
-    // Disable alphabetical sort and switch to section view
-    if (statBlockSortMode === 'alphabetical') {
-      statBlockSortMode = 'section';
-      document.getElementById('sortBySection')?.classList.add('active');
-      alphabeticalBtn?.classList.remove('active');
-    }
-    alphabeticalBtn?.classList.add('disabled');
-    alphabeticalBtn?.setAttribute('disabled', 'true');
-  } else {
-    alphabeticalBtn?.classList.remove('disabled');
-    alphabeticalBtn?.removeAttribute('disabled');
-  }
-  
-  renderStatBlockList();
-});
-document.getElementById('expandStatGroupsBtn')?.addEventListener('click', () => setStatGroupCollapsed(false));
-document.getElementById('collapseStatGroupsBtn')?.addEventListener('click', () => setStatGroupCollapsed(true));
-document.getElementById('missingStatBlocksBtn')?.addEventListener('click', () => showMissingStatBlocksReport());
-
 // Manual refresh: allow explicit re-analysis on demand (read-only)
-  document.getElementById('refreshStatBlocksBtn')?.addEventListener('click', () => {
-    analyzeDocumentStatBlocks();
-  });
-
-  const reviewFilter = document.getElementById('statBlockReviewFilter');
-  reviewFilter?.addEventListener('change', () => {
-    statFilters.status = reviewFilter.value || 'all';
-    renderStatBlockList();
-  });
-
-// Wire up bulk review operations
-document.getElementById('markAllReviewedBtn')?.addEventListener('click', () => {
-  if (!confirm('Mark all visible stat blocks as reviewed?')) return;
-  const filtered = getFilteredStatBlocks();
-  filtered.forEach(block => {
-    const key = block._reviewKey || buildReviewKey(block);
-    setReviewFlag(key, true);
-    block.reviewed = true;
-  });
-  renderStatBlockList();
-  log(`Marked ${filtered.length} blocks as reviewed`, 'success');
+document.getElementById('refreshStatBlocksBtn')?.addEventListener('click', () => {
+  analyzeDocumentStatBlocks();
 });
-
-document.getElementById('markAllUnreviewedBtn')?.addEventListener('click', () => {
-  if (!confirm('Mark all visible stat blocks as unreviewed?')) return;
-  const filtered = getFilteredStatBlocks();
-  filtered.forEach(block => {
-    const key = block._reviewKey || buildReviewKey(block);
-    setReviewFlag(key, false);
-    block.reviewed = false;
-  });
-  renderStatBlockList();
-  log(`Marked ${filtered.length} blocks as unreviewed`, 'success');
-});
-
-document.getElementById('clearReviewStateBtn')?.addEventListener('click', () => {
-  if (!confirm('Clear ALL review state for this file? This cannot be undone.')) return;
-  statBlocks.forEach(block => {
-    const key = block._reviewKey || buildReviewKey(block);
-    setReviewFlag(key, false);
-    block.reviewed = false;
-  });
-  renderStatBlockList();
-  log('Cleared all review state', 'success');
-});
-
-function setStatGroupCollapsed(collapsed) {
-  const contexts = new Set(
-    statBlocks.map(b => (b.context && b.context.trim()) ? b.context.trim() : 'No Context')
-  );
-  statContextCollapsed = {};
-  contexts.forEach(ctx => { statContextCollapsed[ctx] = collapsed; });
-  renderStatBlockList();
-}
 
 function navigateToStatBlock(block) {
-  console.log('=== navigateToStatBlock called ===', block?.name);
   if (!block) return;
 
   // Determine active index
@@ -3937,30 +2448,6 @@ function navigateToStatBlock(block) {
     navContext.mode = 'stat-block';
     navContext.index = idx;
     updateNavButtonsForContext();
-    activeStatStartLine = block.lineNumber || block.lineStart || null;
-    updateLineInfoDisplay();
-    // If there's a matching header context, highlight it in the right-hand navigator
-    if (allSections && allSections.length > 0) {
-      const matchIdx = allSections.findIndex(
-        (s) => (s.startLine && activeStatStartLine && Math.abs(s.startLine - activeStatStartLine) <= 2) ||
-               (block.context && s.header && s.header.trim().toLowerCase() === block.context.trim().toLowerCase())
-      );
-      if (matchIdx >= 0) {
-        try {
-          const navList = document.getElementById('navigatorList');
-          if (navList) {
-            navList.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const targetNav = navList.querySelector(`.nav-item[data-index="${matchIdx}"]`);
-            if (targetNav) {
-              targetNav.classList.add('active');
-              targetNav.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }
-        } catch (e) {
-          // ignore navigator highlight errors
-        }
-      }
-    }
   }
 
   // Update navigator active state
@@ -3977,80 +2464,49 @@ function navigateToStatBlock(block) {
   }
 
   // Jump cursor to the stat block in the editor
-  let line = block.lineNumber || block.lineStart || 1;
-  
-  // First, try to verify the line number is still accurate by checking if the content matches
-  if (block.name && currentContent && line > 0) {
-    const lines = currentContent.split('\n');
-    const targetLine = lines[line - 1];
-    
-    // If the stored line still contains the block name or raw content, trust it
-    if (targetLine && (
-      targetLine.toLowerCase().includes(block.name.toLowerCase()) ||
-      (block.raw && targetLine.includes(block.raw.substring(0, 30)))
-    )) {
-      // Line number is still accurate, use it directly
-      console.log(`[Navigate] Using stored line ${line} for "${block.name}"`);
-    } else {
-      // Line number is stale, search for the block
-      console.log(`[Navigate] Line ${line} stale for "${block.name}", searching...`);
-      const searchName = block.name.replace(/["']/g, '').trim();
-      
-      // Search the entire document for the best match
-      let bestMatch = null;
-      let bestDistance = Infinity;
-      
-      for (let i = 0; i < lines.length; i++) {
-        const lineText = lines[i];
-        
-        // Try to match the raw content first (most precise)
-        if (block.raw && lineText.includes(block.raw.substring(0, 50))) {
-          bestMatch = i + 1;
-          bestDistance = 0;
-          break;
-        }
-        
-        // Look for the name with various formatting patterns
-        const patterns = [
-          new RegExp(`\\*\\*${searchName}[:\\s]`, 'i'), // **Name: or **Name 
-          new RegExp(`\\b${searchName}\\b`, 'i'),
-          new RegExp(`\\b${searchName.replace(/\s+/g, '[\\s\\*]+')}\\b`, 'i')
-        ];
-        
-        // For structural elements like "Block X", also try header patterns
-        if (/^(block|section|area|room)\s*\d+/i.test(searchName)) {
-          patterns.push(new RegExp(`^#{1,6}\\s*${searchName}\\b`, 'i'));
-          patterns.push(new RegExp(`^${searchName}\\b`, 'i'));
-        }
-        
-        for (const pattern of patterns) {
-          if (pattern.test(lineText)) {
-            const distance = Math.abs(i + 1 - line);
-            // Prefer exact matches, then closest to expected line
-            if (distance < bestDistance) {
-              bestMatch = i + 1;
-              bestDistance = distance;
-            }
-          }
-        }
-      }
-      
-      if (bestMatch !== null) {
-        line = bestMatch;
-        console.log(`[Navigate] Found "${block.name}" at line ${line}`);
+  const line = block.lineNumber || block.lineStart || 1;
+  jumpEditorToLine(line, true);
+
+  // Scroll Rendered tab to the stat block and apply highlight
+  const rendered = document.getElementById('renderedContent');
+  if (rendered) {
+    // Remove previous highlights
+    rendered.querySelectorAll('.rendered-stat-highlight').forEach(el => {
+      el.classList.remove('rendered-stat-highlight');
+    });
+
+    // Find the best matching element by name or by searching for block.fullText
+    let targetElement = null;
+    const candidates = rendered.querySelectorAll('p, div, pre, li, strong, em');
+    for (const el of candidates) {
+      const text = (el.textContent || '').toLowerCase();
+      if (block.name && text.includes(block.name.toLowerCase())) {
+        targetElement = el;
+        break;
       }
     }
-  }
-  
-  const jumpResult = jumpEditorToLine(line, true);
 
-  // Flash the block name in the editor briefly to aid visual tracking
-  if (block.name) {
-    flashNameInEditor(block.name, jumpResult?.charOffset || getCharOffsetForLine(line));
+    if (!targetElement && block.fullText) {
+      for (const el of candidates) {
+        const text = (el.textContent || '').toLowerCase();
+        if (text.includes((block.fullText || '').toLowerCase().slice(0, 40))) {
+          targetElement = el;
+          break;
+        }
+      }
+    }
+
+    if (targetElement) {
+      // Apply soft highlight
+      targetElement.classList.add('rendered-stat-highlight');
+      // Center in view
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
-  // Sync header navigator highlight & scroll to matching section
-  highlightHeaderForLine(line);
+  // Switch to Markdown tab to show the editor with cursor positioned
+  const markdownTab = document.querySelector('[data-tab="markdownTab"]');
+  if (markdownTab) markdownTab.click();
 
   log(`Navigated to stat block: ${block.name || 'Unknown'}`, 'info');
 }
@@ -4237,17 +2693,483 @@ async function showStatDetails(block) {
 }
 
 // ============================================================================
+// STRUCTURAL FIND & REPLACE
+// ============================================================================
+
+const SMART_PATTERNS = {
+  // Reforged Compliance
+  'old-alignment': { pattern: '\\b(Chaotic|Lawful|True Neutral)\\b', flags: 'g', label: 'Old Alignment' },
+  'sentence-rule': { pattern: '[;,](?=\\s*[A-Z])', flags: 'g', label: 'Sentence Rule' },
+  'attr-check': { pattern: '\\b(Str|Dex|Con|Int|Wis|Cha)\\s*(\\+|-)?\\d+', flags: 'gi', label: 'Attribute Check' },
+  'magic-item': { pattern: '\\b([A-Z][a-z]+)\\s\\+\\d', flags: 'g', label: 'Magic Item' },
+  
+  // OCR Repair
+  'broken-dice': { pattern: '\\b[Il1oO]d\\d+', flags: 'g', label: 'Broken Dice' },
+  'zero-vs-o': { pattern: '\\b[A-Z][a-z]+O\\b', flags: 'g', label: 'Zero vs Letter O' },
+  'fake-periods': { pattern: '\\s\\.\\s', flags: 'g', label: 'Fake Periods' },
+  'fused-words': { pattern: '[a-z][A-Z]', flags: 'g', label: 'Fused Words' },
+  
+  // Narrative Polish
+  'level-super': { pattern: '\\b(\\d+)(st|nd|rd|th)\\slevel', flags: 'gi', label: 'Level Superscript' },
+  'dc-format': { pattern: '\\bDC\\s*(\\d+)', flags: 'g', label: 'DC Formatting' },
+  'hit-dice': { pattern: '\\bHD\\b', flags: 'g', label: 'Hit Dice Label' }
+};
+
+let findState = {
+  matches: [],
+  currentIndex: -1,
+  scope: 'all', // 'all', 'stat-blocks', 'headers', 'selection'
+  useRegex: false
+};
+
+function initFindReplace() {
+  const strip = document.getElementById('findReplaceStrip');
+  const reviewModal = document.getElementById('reviewModeModal');
+  if (!strip || !reviewModal) return;
+
+  // Toggle Strip Visibility (Shortcut: Ctrl+F)
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      e.preventDefault();
+      toggleFindStrip();
+    }
+  });
+
+  document.getElementById('closeFindStripBtn')?.addEventListener('click', () => {
+    strip.style.display = 'none';
+  });
+
+  // Input Events
+  const findInput = document.getElementById('findInput');
+  const replaceInput = document.getElementById('replaceInput');
+  
+  findInput?.addEventListener('input', () => {
+    // Debounce search if needed, or just clear state
+    findState.matches = [];
+    findState.currentIndex = -1;
+    updateFindStatus('');
+  });
+
+  document.getElementById('findNextBtn')?.addEventListener('click', () => findNext(true));
+  document.getElementById('findPrevBtn')?.addEventListener('click', () => findNext(false));
+  document.getElementById('replaceBtn')?.addEventListener('click', replaceCurrent);
+  document.getElementById('replaceAllBtn')?.addEventListener('click', prepareReplaceAll);
+  
+  // Smart Patterns
+  const smartBtn = document.getElementById('smartPatternsBtn');
+  const smartMenu = document.getElementById('smartPatternsMenu');
+  
+  // Populate Smart Patterns Menu
+  if (smartMenu && Object.keys(SMART_PATTERNS).length > 0) {
+    let html = '';
+    // Group by category if we want, or just list them
+    // For now, flat list with simple section headers based on keys/comments?
+    // Let's just list them all.
+    Object.entries(SMART_PATTERNS).forEach(([key, preset]) => {
+      html += `<div class="pattern-item" data-pattern="${key}" title="${preset.pattern}">${preset.label}</div>`;
+    });
+    smartMenu.innerHTML = html;
+  }
+  
+  smartBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    smartMenu.style.display = smartMenu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', () => {
+    if (smartMenu) smartMenu.style.display = 'none';
+  });
+
+  // Pattern click handlers (using delegation)
+  smartMenu?.addEventListener('click', (e) => {
+    if (e.target.classList.contains('pattern-item')) {
+      e.stopPropagation();
+      const key = e.target.dataset.pattern;
+      const preset = SMART_PATTERNS[key];
+      if (preset && findInput) {
+        findInput.value = preset.pattern;
+        const regexToggle = document.getElementById('useRegexCheck');
+        if (regexToggle) regexToggle.checked = true; // Auto-enable regex
+        
+        smartMenu.style.display = 'none';
+        updateFindStatus(`Loaded: ${preset.label}`);
+        findInput.focus();
+        
+        // Optional: Run search immediately?
+        // findNext(true); 
+      }
+    }
+  });
+
+  // Review Mode Handlers
+  document.getElementById('cancelReviewBtn')?.addEventListener('click', closeReviewMode);
+  document.getElementById('executeReplaceBtn')?.addEventListener('click', executeReplaceAll);
+}
+
+function toggleFindStrip() {
+  const strip = document.getElementById('findReplaceStrip');
+  const input = document.getElementById('findInput');
+  if (strip.style.display === 'flex') {
+    strip.style.display = 'none';
+  } else {
+    strip.style.display = 'flex';
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }
+}
+
+function updateFindStatus(msg, type = 'info') {
+  // Use a tooltip or a small label in the strip? 
+  // For now, let's flash the placeholder or use log
+  const input = document.getElementById('findInput');
+  if (input && msg) {
+    const original = input.placeholder;
+    input.setAttribute('title', msg); // simple tooltip
+  }
+}
+
+// ----------------------------------------------------------------------------
+// SEARCH LOGIC
+// ----------------------------------------------------------------------------
+
+function getSearchRanges(scope) {
+  const content = currentContent || '';
+  const lines = content.split('\n');
+  const totalLength = content.length;
+  
+  if (scope === 'all') {
+    return [{ start: 0, end: totalLength }];
+  }
+
+  if (scope === 'selection') {
+    const editor = document.getElementById('markdownEditor');
+    if (editor && editor.selectionStart !== editor.selectionEnd) {
+      return [{ start: editor.selectionStart, end: editor.selectionEnd }];
+    }
+    return [{ start: 0, end: totalLength }]; // Fallback
+  }
+
+  const ranges = [];
+  
+  // Calculate line offsets (start char index for each line)
+  const lineOffsets = [];
+  let charCount = 0;
+  for (let i = 0; i < lines.length; i++) {
+    lineOffsets.push(charCount);
+    charCount += lines[i].length + 1; // +1 for newline
+  }
+  lineOffsets.push(charCount); // End of file
+
+  if (scope === 'headers') {
+    lines.forEach((line, idx) => {
+      if (line.trim().startsWith('#')) {
+        ranges.push({
+          start: lineOffsets[idx],
+          end: lineOffsets[idx + 1] - 1 // Exclude newline usually
+        });
+      }
+    });
+  }
+  else if (scope === 'stat-blocks') {
+    // Combine statBlocks and sections to find boundaries
+    // Sort all "Stop Markers" (Next Block or Next Section)
+    const boundaries = [
+      ...statBlocks.map(b => ({ line: b.lineNumber, type: 'start' })),
+      ...allSections.map(s => ({ line: s.startLine, type: 'stop' }))
+    ].sort((a, b) => a.line - b.line);
+
+    // Filter stat blocks
+    statBlocks.forEach(block => {
+      const startLine = block.lineNumber;
+      const startIdx = lineOffsets[startLine - 1]; // Line numbers are 1-based
+      
+      // Find end line
+      // Look for the next boundary that is > startLine
+      const nextBoundary = boundaries.find(b => b.line > startLine);
+      const endLine = nextBoundary ? nextBoundary.line - 1 : lines.length;
+      
+      // Safety: Ensure endLine >= startLine
+      if (endLine >= startLine) {
+        const endIdx = lineOffsets[endLine] - 1; // End of the endLine
+        ranges.push({ start: startIdx, end: endIdx });
+      }
+    });
+  }
+
+  return ranges;
+}
+
+function runSearch() {
+  const query = document.getElementById('findInput').value;
+  // Use optional chaining or get the correct ID
+  const useRegexEl = document.getElementById('useRegexCheck') || document.getElementById('useRegexToggle');
+  const useRegex = useRegexEl ? useRegexEl.checked : false;
+  
+  // Also check scope select ID - index.html uses searchScopeSelect
+  const scopeEl = document.getElementById('searchScopeSelect') || document.getElementById('scopeSelect');
+  const scope = scopeEl ? scopeEl.value : 'all';
+
+  if (!query) return [];
+
+  const text = currentContent || '';
+  const ranges = getSearchRanges(scope);
+  let regex;
+
+  try {
+    const flags = 'gm'; // Global multiline
+    regex = useRegex 
+      ? new RegExp(query, flags) 
+      : new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags); // Escape literal
+  } catch (e) {
+    log('Invalid Regex', 'error');
+    return [];
+  }
+
+  const matches = [];
+  let match;
+  
+  // Reset lastIndex because of 'g' flag
+  regex.lastIndex = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    const start = match.index;
+    const end = start + match[0].length;
+
+    // Check if match is within valid scope ranges
+    const inScope = ranges.some(r => start >= r.start && end <= r.end);
+    
+    if (inScope) {
+      matches.push({
+        start,
+        end,
+        text: match[0],
+        index: matches.length
+      });
+    }
+
+    // Prevent infinite loop on zero-length matches
+    if (match.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+  }
+
+  return matches;
+}
+
+function findNext(forward = true) {
+  const matches = runSearch();
+  findState.matches = matches;
+  
+  if (matches.length === 0) {
+    updateStatus('No matches found', 'warning');
+    return;
+  }
+
+  const editor = document.getElementById('markdownEditor');
+  const currentPos = editor.selectionStart;
+
+  // Find next match relative to cursor
+  let nextMatch;
+  if (forward) {
+    nextMatch = matches.find(m => m.start > currentPos) || matches[0]; // Wrap around
+  } else {
+    // Find last match before cursor
+    const before = matches.filter(m => m.start < currentPos);
+    nextMatch = before.length > 0 ? before[before.length - 1] : matches[matches.length - 1]; // Wrap
+  }
+
+  if (nextMatch) {
+    selectMatchInEditor(nextMatch);
+    updateStatus(`Match ${matches.indexOf(nextMatch) + 1} of ${matches.length}`, 'info');
+  }
+}
+
+function selectMatchInEditor(match) {
+  const editor = document.getElementById('markdownEditor');
+  if (editor) {
+    editor.focus();
+    editor.setSelectionRange(match.start, match.end);
+    
+    // Scroll into view logic handled by setSelectionRange/focus usually, 
+    // but we can ensure it with our jump helper if needed.
+    // Calculating line number for jump:
+    const textBefore = (currentContent || '').substring(0, match.start);
+    const lineNum = textBefore.split('\n').length;
+    
+    // Smooth scroll
+    const lineHeight = 20; // Approx
+    const visibleLines = editor.clientHeight / lineHeight;
+    editor.scrollTop = (lineNum - (visibleLines / 2)) * lineHeight;
+  }
+}
+
+function replaceCurrent() {
+  const editor = document.getElementById('markdownEditor');
+  const replaceText = document.getElementById('replaceInput').value;
+  
+  // Check if current selection matches the find query
+  // (Simplified: Just check if we have a selection)
+  if (editor.selectionStart === editor.selectionEnd) {
+    findNext(true); // Nothing selected, find next
+    return;
+  }
+  
+  // Execute replacement via insertText to preserve history if possible, 
+  // or setRangeText
+  editor.setRangeText(replaceText, editor.selectionStart, editor.selectionEnd, 'select');
+  currentContent = editor.value; // Sync
+  setEditorUnsavedState();
+  updateRenderedTab(currentContent);
+  
+  // Move to next
+  findNext(true);
+}
+
+// ----------------------------------------------------------------------------
+// REVIEW MODE (REPLACE ALL)
+// ----------------------------------------------------------------------------
+
+function prepareReplaceAll() {
+  const matches = runSearch();
+  if (matches.length === 0) {
+    alert('No matches found.');
+    return;
+  }
+
+  // Check scope select ID - index.html uses searchScopeSelect
+  const scopeEl = document.getElementById('searchScopeSelect') || document.getElementById('scopeSelect');
+  const scope = scopeEl ? scopeEl.value : 'all';
+  
+  const replaceText = document.getElementById('replaceInput').value;
+  
+  findState.matches = matches; // Store for execution
+  findState.replaceText = replaceText;
+
+  // Analysis for Breakdown
+  const headerRanges = getSearchRanges('headers');
+  const statRanges = getSearchRanges('stat-blocks');
+  
+  let headerCount = 0;
+  let statCount = 0;
+  let proseCount = 0;
+  
+  // Augment matches with type
+  const classifiedMatches = matches.map(m => {
+    let type = 'prose';
+    // Check header (priority)
+    if (headerRanges.some(r => m.start >= r.start && m.end <= r.end)) {
+      type = 'header';
+      headerCount++;
+    }
+    // Check stat block
+    else if (statRanges.some(r => m.start >= r.start && m.end <= r.end)) {
+      type = 'stat';
+      statCount++;
+    }
+    else {
+      proseCount++;
+    }
+    return { ...m, type };
+  });
+
+  // Populate Review Modal
+  const modal = document.getElementById('reviewModeModal');
+  const countEl = document.getElementById('reviewTotalMatches');
+  const previewEl = document.getElementById('reviewPreviewContent');
+  
+  if (countEl) countEl.textContent = `${matches.length}`;
+  
+  // Update breakdown counts
+  const headerEl = document.getElementById('reviewHeaderMatches');
+  const statEl = document.getElementById('reviewStatMatches');
+  const proseEl = document.getElementById('reviewProseMatches');
+  
+  if (headerEl) headerEl.textContent = headerCount;
+  if (statEl) statEl.textContent = statCount;
+  if (proseEl) proseEl.textContent = proseCount;
+  
+  // Generate Highlighting HTML
+  // We take the full content and wrap matches in <mark>
+  let html = '';
+  let lastIdx = 0;
+  const content = currentContent;
+  
+  // Matches are sorted by start index
+  classifiedMatches.forEach(m => {
+    // Append text before match (escaped)
+    html += escapeHtml(content.substring(lastIdx, m.start));
+    
+    // Append highlighted match with context class
+    const matchText = content.substring(m.start, m.end);
+    // Classes: review-highlight scope-header, scope-stat, or just scope-prose (default)
+    const scopeClass = m.type === 'header' ? 'scope-header' : 
+                       m.type === 'stat' ? 'scope-stat' : 'scope-prose';
+                       
+    html += `<mark class="review-highlight ${scopeClass}" title="Will replace with: ${replaceText}">${escapeHtml(matchText)}</mark>`;
+    
+    lastIdx = m.end;
+  });
+  
+  // Append remaining text
+  html += escapeHtml(content.substring(lastIdx));
+  
+  // Basic line break formatting for preview
+  previewEl.innerHTML = html.replace(/\n/g, '<br>');
+  
+  modal.style.display = 'flex';
+}
+
+function closeReviewMode() {
+  document.getElementById('reviewModeModal').style.display = 'none';
+  findState.matches = []; // Clear
+}
+
+function executeReplaceAll() {
+  const matches = findState.matches;
+  const replaceText = findState.replaceText;
+  
+  if (!matches || matches.length === 0) return;
+  
+  saveUndoState('Replace All');
+  
+  let newContent = '';
+  let lastIdx = 0;
+  const content = currentContent;
+  
+  // Reconstruct string
+  matches.forEach(m => {
+    newContent += content.substring(lastIdx, m.start);
+    newContent += replaceText;
+    lastIdx = m.end;
+  });
+  newContent += content.substring(lastIdx);
+  
+  // Apply
+  currentContent = newContent;
+  updateMarkdownEditor(currentContent);
+  updateRenderedTab(currentContent);
+  setEditorUnsavedState();
+  
+  closeReviewMode();
+  updateStatus(`Replaced ${matches.length} occurrences.`, 'success');
+  addChangeLogEntry('Replace All', `Replaced ${matches.length} matches with "${replaceText}"`);
+}
+
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
 async function initialize() {
+  initFindReplace();
   log('TRPG MD Workbench ready', 'info');
   updateStatus('Ready', 'success');
   
   // Initialize drag and drop
   initializeDragAndDrop();
-  // Initialize Find/Replace strip (Ctrl/Cmd+F or Find button)
-  initFindReplace();
   
   // Load config
   const loadedConfig = await window.electronAPI.loadConfig();
@@ -4266,11 +3188,6 @@ async function initialize() {
       syncScrollEnabled = !!config.syncScrollEnabled;
     }
   }
-  // Ensure filters start at default "all"
-  const typeSelect = document.getElementById('statBlockTypeFilter');
-  if (typeSelect) typeSelect.value = statFilters.type || 'all';
-  const statusSelect = document.getElementById('statBlockReviewFilter');
-  if (statusSelect) statusSelect.value = statFilters.status || 'all';
 
   // Wire sidebar collapse toggle
   const sidebar = document.querySelector('.sidebar');
@@ -4292,24 +3209,11 @@ async function initialize() {
   // Wire scroll sync header toggle
   const scrollSyncToggle = document.getElementById('scrollSyncToggle');
   if (scrollSyncToggle) {
-    scrollSyncToggle.checked = true;
-    syncScrollEnabled = true;
+    scrollSyncToggle.checked = isSyncEnabled();
     scrollSyncToggle.addEventListener('change', () => {
       syncScrollEnabled = !!scrollSyncToggle.checked;
-      const label = scrollSyncToggle.closest('.scroll-sync-toggle');
-      if (label) {
-        label.classList.toggle('active', !!scrollSyncToggle.checked);
-      }
     });
-    // ensure visual state on load
-    const label = scrollSyncToggle.closest('.scroll-sync-toggle');
-    if (label) {
-      label.classList.toggle('active', true);
-    }
   }
-
-  // Find/Replace strip
-  initFindReplace();
 
   // Bind core header actions
   document.getElementById('saveBtn')?.addEventListener('click', () => saveCurrentFile());
@@ -4318,18 +3222,6 @@ async function initialize() {
   // Bind Next/Prev navigation buttons (context-aware)
   document.getElementById('nextStatBtn')?.addEventListener('click', () => navigateNextByContext());
   document.getElementById('prevStatBtn')?.addEventListener('click', () => navigatePrevByContext());
-
-  // Header navigator controls
-  document.getElementById('refreshNavigatorBtn')?.addEventListener('click', () => {
-    // Sync currentContent from editor before refreshing
-    const editor = document.getElementById('markdownEditor');
-    if (editor) {
-      currentContent = editor.value;
-    }
-    updateHeaderNavigator();
-  });
-  document.getElementById('expandHeadersBtn')?.addEventListener('click', () => setHeaderCollapse(false));
-  document.getElementById('collapseHeadersBtn')?.addEventListener('click', () => setHeaderCollapse(true));
 
   // Keyboard shortcuts: Ctrl/Cmd + Alt + ArrowUp/ArrowDown for previous/next
   document.addEventListener('keydown', (e) => {
@@ -4644,15 +3536,6 @@ async function initialize() {
   // Wire up markdown editor for real-time editing
   const markdownEditor = document.getElementById('markdownEditor');
   if (markdownEditor) {
-    // Preserve scroll position on paste
-    markdownEditor.addEventListener('paste', (e) => {
-      const scrollTop = markdownEditor.scrollTop;
-      // Restore scroll position after paste completes
-      setTimeout(() => {
-        markdownEditor.scrollTop = scrollTop;
-      }, 0);
-    });
-    
     // Update content on input
     markdownEditor.addEventListener('input', () => {
       // Skip if we just set this from code - prevents cascading updates
@@ -4668,7 +3551,6 @@ async function initialize() {
         updateRenderedTab(currentContent);
         updateSummaryTab(currentContent);
         updateHeaderNavigator();
-        updateLineInfoDisplay();
 
         // Re-run stat-block analysis automatically (read-only, debounced)
         analyzeDocumentStatBlocks();
@@ -4678,27 +3560,6 @@ async function initialize() {
     // Track selection for Quick Tools
     markdownEditor.addEventListener('mouseup', captureSelection);
     markdownEditor.addEventListener('keyup', captureSelection);
-
-    // Open Find/Replace via header button
-    document.getElementById('openFindBtn')?.addEventListener('click', () => toggleFindStrip());
-    
-    // Track when user manually clicks into editor
-    markdownEditor.addEventListener('mousedown', () => {
-      userHasClickedEditor = true;
-      updateLineInfoDisplay();
-    });
-    markdownEditor.addEventListener('focus', (e) => {
-      // Only set flag if focus came from user interaction (not programmatic)
-      if (e.relatedTarget || document.activeElement === markdownEditor) {
-        // Check if this was triggered by a click or tab key
-        if (e.sourceCapabilities || e.isTrusted) {
-          userHasClickedEditor = true;
-          updateLineInfoDisplay();
-        }
-      }
-    });
-    
-    // No sync needed - Edit/Preview toggle handles this
   }
 
   // Initialize navigation button labels based on default context
@@ -5103,467 +3964,6 @@ async function applyApprovedChanges() {
   log(`Applied ${approved.length} approved change(s)`, 'success');
 }
 
-// ============================================================================
-// CHECKPOINT EXPORT/IMPORT
-// ============================================================================
-
-document.getElementById('reanalyzeDocBtn')?.addEventListener('click', async () => {
-  if (!currentContent) {
-    log('No document loaded', 'error');
-    return;
-  }
-  
-  log('Re-analyzing document...', 'info');
-  await analyzeDocumentStatBlocks(currentContent);
-  log('Analysis complete', 'success');
-});
-
-document.getElementById('exportCheckpointBtn')?.addEventListener('click', async () => {
-  if (!statBlocks || statBlocks.length === 0) {
-    log('No stat blocks to export', 'error');
-    return;
-  }
-  
-  const checkpoint = {
-    document: {
-      path: currentFilePath || 'unknown',
-      timestamp: new Date().toISOString(),
-      hash: hashString(currentContent || ''),
-      appVersion: '1.0.0'
-    },
-    analysis: {
-      filters: statFilters,
-      sortMode: statBlockSortMode,
-      statBlocks: statBlocks.map(block => ({
-        id: `${block.name}@${block.lineStart}`,
-        name: block.name,
-        type: block.type,
-        context: block.context,
-        lineStart: block.lineStart,
-        lineEnd: block.lineEnd,
-        raw: block.raw || block.fullText,
-        validation: {
-          ...(block.validation || { errors: [], warnings: [] }),
-          reviewed: block.reviewed || false
-        }
-      }))
-    }
-  };
-  
-  const result = await window.electronAPI.exportCheckpoint(checkpoint);
-  if (result.success) {
-    log(`Checkpoint exported to ${result.path}`, 'success');
-  } else if (!result.cancelled) {
-    log(`Export failed: ${result.message}`, 'error');
-  }
-});
-
-document.getElementById('importCheckpointBtn')?.addEventListener('click', async () => {
-  const result = await window.electronAPI.importCheckpoint();
-  
-  if (!result.success) {
-    if (!result.cancelled) {
-      log(`Import failed: ${result.message}`, 'error');
-    }
-    return;
-  }
-  
-  const checkpoint = result.checkpoint;
-  log(`Loaded checkpoint from ${checkpoint.document.timestamp}`, 'info');
-  log(`Checkpoint contains ${checkpoint.analysis.statBlocks.length} stat blocks`, 'info');
-  
-  // Restore review state from checkpoint
-  let restoredCount = 0;
-  checkpoint.analysis.statBlocks.forEach(cb => {
-    // Match by name and line number
-    const match = statBlocks.find(sb => sb.name === cb.name && sb.lineStart === cb.lineStart);
-    if (match && cb.validation && cb.validation.reviewed) {
-      const key = match._reviewKey || buildReviewKey(match);
-      setReviewFlag(key, true);
-      match.reviewed = true;
-      restoredCount++;
-    }
-  });
-  
-  if (restoredCount > 0) {
-    log(`Restored ${restoredCount} review checkmarks from checkpoint`, 'success');
-    renderStatBlockList();
-  }
-  
-  // Compare with current analysis
-  if (statBlocks.length > 0) {
-    const added = checkpoint.analysis.statBlocks.filter(cb => 
-      !statBlocks.some(sb => sb.name === cb.name && sb.lineStart === cb.lineStart)
-    );
-    const removed = statBlocks.filter(sb =>
-      !checkpoint.analysis.statBlocks.some(cb => cb.name === sb.name && cb.lineStart === sb.lineStart)
-    );
-    const changed = checkpoint.analysis.statBlocks.filter(cb => {
-      const current = statBlocks.find(sb => sb.name === cb.name && sb.lineStart === cb.lineStart);
-      return current && (current.raw !== cb.raw || current.type !== cb.type);
-    });
-    
-    log(`Comparison: ${added.length} added, ${removed.length} removed, ${changed.length} changed`, 'info');
-    
-    if (added.length > 0) {
-      log(`Added blocks: ${added.map(b => b.name).join(', ')}`, 'info');
-    }
-    if (removed.length > 0) {
-      log(`Removed blocks: ${removed.map(b => b.name).join(', ')}`, 'info');
-    }
-    if (changed.length > 0) {
-      log(`Changed blocks: ${changed.map(b => b.name).join(', ')}`, 'info');
-    }
-  }
-});
-
-// ============================================================================
-// CANONICALIZATION
-// ============================================================================
-
-let canonicalizeResults = [];
-
-document.getElementById('canonicalizeBtn')?.addEventListener('click', async () => {
-  if (!statBlocks || statBlocks.length === 0) {
-    log('No stat blocks to canonicalize', 'error');
-    return;
-  }
-  
-  log('Canonicalizing stat blocks...', 'info');
-  
-  try {
-    const result = await window.electronAPI.canonicalizeStatBlocks(statBlocks);
-    
-    if (!result.success) {
-      log(`Canonicalization failed: ${result.message}`, 'error');
-      return;
-    }
-    
-    canonicalizeResults = result.results;
-    
-    // Filter to only valid stat blocks with changes (skip non-stat objects)
-    const withChanges = canonicalizeResults.filter(r => 
-      r.confidence !== 'skipped' && r.changes && r.changes.length > 0
-    );
-    
-    const skipped = canonicalizeResults.filter(r => r.confidence === 'skipped');
-    
-    if (skipped.length > 0) {
-      log(`Skipped ${skipped.length} non-stat objects (places, items, traps, etc.)`, 'info');
-    }
-    
-    if (withChanges.length === 0) {
-      log('All stat blocks are already canonical', 'success');
-      return;
-    }
-    
-    // Show preview modal
-    showCanonicalizePreview(withChanges);
-    
-  } catch (error) {
-    log(`Canonicalization error: ${error.message}`, 'error');
-  }
-});
-
-function showCanonicalizePreview(results) {
-  const modal = document.getElementById('canonicalizeModal');
-  const status = document.getElementById('canonicalizeStatus');
-  const preview = document.getElementById('canonicalizePreview');
-  
-  if (!modal || !status || !preview) return;
-  
-  // Update status
-  status.innerHTML = `<strong>${results.length} stat blocks</strong> will be transformed to canonical format. Review changes below:`;
-  
-  // Build preview HTML
-  let html = '';
-  results.forEach((result, idx) => {
-    const confidence = result.confidence || 'medium';
-    const confidenceColor = confidence === 'high' ? '#28a745' : confidence === 'medium' ? '#ffc107' : '#dc3545';
-    
-    html += `
-      <div style="margin-bottom: 24px; padding: 12px; border: 1px solid #dee2e6; border-radius: 6px; background: white;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="font-size: 13px;">${escapeHtml(result.name || 'Unknown')}</strong>
-          <span style="font-size: 11px; padding: 2px 6px; border-radius: 3px; background: ${confidenceColor}; color: white;">
-            ${confidence} confidence
-          </span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <div style="font-size: 11px; color: #6c757d; margin-bottom: 4px;">BEFORE:</div>
-          <pre style="margin: 0; padding: 8px; background: #fff3cd; border-radius: 4px; font-size: 11px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(result.original || '')}</pre>
-        </div>
-        <div>
-          <div style="font-size: 11px; color: #6c757d; margin-bottom: 4px;">AFTER:</div>
-          <pre style="margin: 0; padding: 8px; background: #d4edda; border-radius: 4px; font-size: 11px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(result.canonical || '')}</pre>
-        </div>
-        ${result.changes && result.changes.length > 0 ? `
-          <div style="margin-top: 8px; font-size: 11px; color: #6c757d;">
-            <strong>Changes:</strong> ${result.changes.map(c => c.description).join(', ')}
-          </div>
-        ` : ''}
-      </div>
-    `;
-  });
-  
-  preview.innerHTML = html;
-  modal.style.display = 'flex';
-}
-
-document.getElementById('closeCanonicalizeModal')?.addEventListener('click', () => {
-  document.getElementById('canonicalizeModal').style.display = 'none';
-});
-
-document.getElementById('cancelCanonicalizeBtn')?.addEventListener('click', () => {
-  document.getElementById('canonicalizeModal').style.display = 'none';
-});
-
-document.getElementById('applyCanonicalizeBtn')?.addEventListener('click', async () => {
-  const autoReview = document.getElementById('autoReviewCanonical')?.checked;
-  
-  if (canonicalizeResults.length === 0) {
-    log('No canonicalization results to apply', 'error');
-    return;
-  }
-  
-  // Apply transformations to document
-  let newContent = currentContent;
-  let appliedCount = 0;
-  
-  // Sort by line number descending to avoid offset issues
-  const sorted = [...canonicalizeResults]
-    .filter(r => r.changes && r.changes.length > 0)
-    .sort((a, b) => (b.lineNumber || 0) - (a.lineNumber || 0));
-  
-  for (const result of sorted) {
-    if (result.original && result.canonical) {
-      // Replace first occurrence (should be unique due to line-specific matching)
-      const escaped = result.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(escaped);
-      if (regex.test(newContent)) {
-        newContent = newContent.replace(regex, result.canonical);
-        appliedCount++;
-        
-        // Mark as reviewed if option is checked
-        if (autoReview) {
-          const block = statBlocks.find(b => b.name === result.name && b.lineNumber === result.lineNumber);
-          if (block) {
-            const key = block._reviewKey || buildReviewKey(block);
-            setReviewFlag(key, true);
-          }
-        }
-      }
-    }
-  }
-  
-  if (appliedCount > 0) {
-    // Save undo state
-    pushUndoState('Canonicalize Stat Blocks');
-    
-    // Update content
-    currentContent = newContent;
-    updateEditorContent(newContent);
-    setEditorUnsavedState();
-    
-    log(`Applied ${appliedCount} canonical transformations`, 'success');
-    
-    // Re-analyze to update navigator
-    await analyzeDocumentStatBlocks();
-    
-    // Close modal
-    document.getElementById('canonicalizeModal').style.display = 'none';
-  } else {
-    log('No transformations could be applied', 'error');
-  }
-});
-
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString(16);
-}
-
 // Start app
-/**
- * Show validation details for selected stat block
- */
-function showValidationDetails(block) {
-  const panel = document.getElementById('statDetailsPanel');
-  const content = document.getElementById('statDetailsContent');
-  
-  if (!panel || !content) return;
-  
-  // Show panel
-  panel.style.display = 'flex';
-  
-  // Build validation details HTML
-  let html = '';
-  
-  // Classification section
-  if (block.classification) {
-    const format = block.classification.format || 'unknown';
-    const formatClass = `class-${format.toLowerCase()}`;
-    const formatLabel = {
-      'A': 'Class A: Classed NPC',
-      'B': 'Class B: Humanoid Monster',
-      'C': 'Class C: True Monster',
-      'D': 'Class D: Unit/Troop',
-      'generic': 'Generic Format'
-    }[format] || 'Unknown';
-    
-    const confidence = block.classification.confidence || 'unknown';
-    const confidenceClass = confidence.toLowerCase();
-    
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Classification</div>
-        <div class="validation-classification">
-          <span class="validation-class-badge ${formatClass}">${formatLabel}</span>
-          <span class="validation-confidence ${confidenceClass}">${confidence} confidence</span>
-          <div class="validation-reasoning">${block.classification.reasoning || 'No reasoning provided'}</div>
-        </div>
-      </div>
-    `;
-  }
-  
-  // Warnings section
-  const validation = block.validation || {};
-  const warnings = validation.warnings || [];
-  const errors = validation.errors || [];
-  
-  if (errors.length > 0 || warnings.length > 0) {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Issues</div>
-        <div class="validation-warnings">
-    `;
-    
-    errors.forEach(err => {
-      html += `
-        <div class="validation-warning-item" style="background-color:#f8d7da;border-left-color:#dc3545;">
-          <span class="validation-warning-icon" style="color:#721c24;">⚠</span>
-          <span>${escapeHtml(err)}</span>
-        </div>
-      `;
-    });
-    
-    warnings.forEach(warn => {
-      html += `
-        <div class="validation-warning-item">
-          <span class="validation-warning-icon">⚠</span>
-          <span>${escapeHtml(warn)}</span>
-        </div>
-      `;
-    });
-    
-    html += `
-        </div>
-      </div>
-    `;
-  } else {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Issues</div>
-        <div class="validation-warnings">
-          <div class="validation-no-warnings">No validation issues detected</div>
-        </div>
-      </div>
-    `;
-  }
-  
-  // Key attributes comparison
-  if (block.classification) {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Key Attributes</div>
-        <div class="validation-comparison">
-    `;
-    
-    // Format
-    html += `
-      <div class="validation-comparison-row">
-        <div class="validation-comparison-label">Format</div>
-        <div class="validation-comparison-value match">${block.classification.format || 'Unknown'}</div>
-      </div>
-    `;
-    
-    // Type
-    if (block.type) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Type</div>
-          <div class="validation-comparison-value">${escapeHtml(block.type)}</div>
-        </div>
-      `;
-    }
-    
-    // Step
-    if (block.classification.step) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Rule Step</div>
-          <div class="validation-comparison-value">${block.classification.step}</div>
-        </div>
-      `;
-    }
-    
-    // Subtype
-    if (block.classification.subtype) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Subtype</div>
-          <div class="validation-comparison-value">${escapeHtml(block.classification.subtype)}</div>
-        </div>
-      `;
-    }
-    
-    html += `
-        </div>
-      </div>
-    `;
-  }
-  
-  // Raw stat block preview
-  if (block.fullText || block.raw) {
-    const text = block.fullText || block.raw || '';
-    const preview = text.length > 200 ? text.substring(0, 200) + '...' : text;
-    
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Stat Block Text</div>
-        <div class="validation-comparison">
-          <div class="validation-comparison-row">
-            <div class="validation-comparison-label">Content</div>
-            <div class="validation-comparison-value" style="font-size:10px;line-height:1.3;">${escapeHtml(preview)}</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  content.innerHTML = html;
-}
-
-// Close validation panel button
-document.getElementById('closeValidationBtn')?.addEventListener('click', () => {
-  const panel = document.getElementById('statDetailsPanel');
-  if (panel) panel.style.display = 'none';
-});
-
 initialize();
 updateUndoButton();
-
-// Set default UI state for stat block navigator
-setTimeout(() => {
-  const typeFilter = document.getElementById('statBlockTypeFilter');
-  const alphabeticalBtn = document.getElementById('sortAlphabetical');
-  const sectionBtn = document.getElementById('sortBySection');
-  
-  if (typeFilter) typeFilter.value = 'monster';
-  if (alphabeticalBtn) alphabeticalBtn.classList.add('active');
-  if (sectionBtn) sectionBtn.classList.remove('active');
-}, 100);

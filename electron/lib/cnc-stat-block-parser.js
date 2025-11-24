@@ -195,13 +195,19 @@ function scanForGenericStatBlocks(markdownDocument) {
     const line = lines[i].trim();
     if (!line) continue;
 
+    // Normalize leading numbering/bullets before evaluating the name
+    const normalizedLine = line
+      .replace(/^\d+\s*[\.\)]\s*/, '')  // strip "1." or "1)" prefixes
+      .replace(/^[-*+]\s*/, '')        // strip bullet symbols
+      .trim();
+
     // Heuristic 1: Line looks like a name
     // - Starts with ** (bold) OR is Title Case
     // - Not too long (e.g. < 60 chars)
-    const isBoldStart = line.startsWith('**');
-    const isTitleCase = /^[A-Z][a-zA-Z0-9' -]+$/.test(line.replace(/[*_]/g, '')); // Simplified check
+    const isBoldStart = normalizedLine.startsWith('**');
+    const isTitleCase = /^[A-Z][a-zA-Z0-9' (),.-]+$/.test(normalizedLine.replace(/[*_]/g, '')); // Simplified check
 
-    if ((isBoldStart || isTitleCase) && line.length < 60) {
+    if ((isBoldStart || isTitleCase) && normalizedLine.length < 80) {
       // Look ahead 1-5 lines for HP/Hit Points
       let foundHP = false;
       let buffer = [line];
@@ -222,7 +228,7 @@ function scanForGenericStatBlocks(markdownDocument) {
       if (foundHP) {
         // Construct a generic result object
         // Extract name without markup
-        const nameRaw = line.replace(/^\*\*|\*\*$/g, '').trim();
+        const nameRaw = normalizedLine.replace(/^\*\*|\*\*$/g, '').trim();
 
         genericBlocks.push({
           name: nameRaw,
@@ -250,6 +256,93 @@ function scanForGenericStatBlocks(markdownDocument) {
   return genericBlocks;
 }
 
+function scanForInlineHpStatBlocks(markdownDocument) {
+  const inlineBlocks = [];
+  if (!markdownDocument) return inlineBlocks;
+
+  const pattern = /(?:^|\s)(?:\d+\.\s*)?([A-Z"'][^()\n]{0,80}?)\s*\((HP\s*\d+[^)]*)\)/g;
+
+  let match;
+  while ((match = pattern.exec(markdownDocument)) !== null) {
+    const fullText = (match[0] || '').trim();
+    const nameRaw = (match[1] || '').trim();
+
+    if (!nameRaw || nameRaw.length > 80) continue;
+
+    const beforeText = markdownDocument.substring(0, match.index);
+    const lineNumber = (beforeText.match(/\n/g) || []).length + 1;
+
+    inlineBlocks.push({
+      name: nameRaw,
+      fullText,
+      lineNumber,
+      index: match.index,
+      classification: {
+        format: 'generic',
+        category: 'Generic / Other System',
+        subtype: 'Unknown',
+        confidence: 'Low',
+        step: 'heuristic-inline-scan'
+      },
+      validation: {
+        isValid: true,
+        errors: [],
+        warnings: [],
+        errorCount: 0,
+        warningCount: 0
+      }
+    });
+  }
+
+  return inlineBlocks;
+}
+
+function scanForGlossaryStatBlocks(markdownDocument) {
+  const glossaryBlocks = [];
+  if (!markdownDocument) return glossaryBlocks;
+
+  // Allow optional underscores before/after parentheses to prevent flicker during editing
+  // Use [\s\S] to match across line breaks
+  const pattern = /\*\*([^*]+?)\*\*\s*_?\(([\s\S]*?\bHP\b[\s\S]*?)\)_?/g;
+
+  let match;
+  while ((match = pattern.exec(markdownDocument)) !== null) {
+    const fullText = (match[0] || '').trim();
+    let nameRaw = (match[1] || '').trim();
+
+    // Remove trailing colon from bold name if present (e.g., "Bandit:")
+    nameRaw = nameRaw.replace(/:\s*$/, '');
+
+    if (!nameRaw || nameRaw.length > 100) continue;
+
+    const beforeText = markdownDocument.substring(0, match.index);
+    const lineNumber = (beforeText.match(/\n/g) || []).length + 1;
+
+    glossaryBlocks.push({
+      name: nameRaw,
+      fullText,
+      lineNumber,
+      index: match.index,
+      classification: {
+        format: 'generic',
+        category: 'Generic / Other System',
+        subtype: 'Unknown',
+        confidence: 'Low',
+        step: 'heuristic-glossary-scan'
+      },
+      validation: {
+        isValid: true,
+        errors: [],
+        warnings: [],
+        errorCount: 0,
+        warningCount: 0
+      }
+    });
+  }
+
+  return glossaryBlocks;
+}
+
 /**
  * Batch analyze multiple stat blocks from a document
  * 
@@ -259,7 +352,9 @@ function scanForGenericStatBlocks(markdownDocument) {
  */
 function analyzeBatch(markdownDocument, options = {}) {
   const results = [];
-  const statBlockPattern = /\*\*([^*]+)\*\*\s*\(([^)]+)\)/g;
+  // Allow optional underscores before/after parentheses to prevent flicker during editing
+  // Use [\s\S] instead of . to match across line breaks
+  const statBlockPattern = /\*\*([^*]+)\*\*\s*_?\(([\s\S]*?)\)_?/g;
   
   // Track ranges covered by strict parser to avoid duplicates
   const coveredRanges = []; // {start, end}
@@ -299,6 +394,9 @@ function analyzeBatch(markdownDocument, options = {}) {
 
   // Second pass: Generic scanner
   const genericBlocks = scanForGenericStatBlocks(markdownDocument);
+  const inlineBlocks = scanForInlineHpStatBlocks(markdownDocument);
+  const glossaryBlocks = scanForGlossaryStatBlocks(markdownDocument);
+  const allGenericBlocks = genericBlocks.concat(inlineBlocks, glossaryBlocks);
 
   // Filter out generic blocks that overlap with strict blocks
   // Note: scanForGenericStatBlocks doesn't return exact indices for now,
@@ -307,7 +405,7 @@ function analyzeBatch(markdownDocument, options = {}) {
   // For now, let's just append them. The UI usually handles list display.
   // To prevent obvious duplicates, check if the "name" was already found on the same line.
 
-  for (const gb of genericBlocks) {
+  for (const gb of allGenericBlocks) {
       const isDuplicate = results.some(r =>
           r.lineNumber === gb.lineNumber ||
           (r.name === gb.name && Math.abs(r.lineNumber - gb.lineNumber) <= 1)

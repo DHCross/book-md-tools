@@ -1572,15 +1572,15 @@ export function buildCanonicalParenthetical(
 
   // VERSION 3.0 CRITICAL FIX: Attribute Formatting Based on Format
   // Format A (Classed NPCs): Long-form attribute list
-  // Format B (Monsters): Shorthand "physical" or "mental"
-  // Format C (Units): Shorthand with plural pronouns
+  // Format C (Units): Shorthand placeholder with plural pronouns
+  // Format B (Monsters): NO attribute sentence (singular monsters rely on saves text)
   let normalizedAttrs: NormalizedAttributesResult | undefined;
 
   if (v3Classification.format === 'A') {
     // Format A: Classed NPCs always get long-form attribute list
     normalizedAttrs = { type: 'list', value: formatOxfordList(PHB_ATTRIBUTE_ORDER) };
-  } else {
-    // Format B/C: Monsters and Units get shorthand
+  } else if (v3Classification.format === 'C') {
+    // Format C: Units get shorthand placeholder (default to physical if unspecified)
     if (data.attributes) {
       normalizedAttrs = normalizeAttributes(data.attributes, {
         isUnit,
@@ -1588,14 +1588,9 @@ export function buildCanonicalParenthetical(
         levelText: data.level
       });
     }
-    // Default to physical for B/C if no attributes specified
     if (!normalizedAttrs) {
       normalizedAttrs = { type: 'prime', value: 'physical' };
     }
-    // For monsters/units, prefer shorthand prime attributes even if a
-    // specific attribute token was extracted (e.g., 'strength' from 'strength save').
-    // The canonical mandate is to use 'physical'/'mental' for non-classed entities
-    // unless the source explicitly states 'mental'.
     if (normalizedAttrs && normalizedAttrs.type === 'list') {
       const lowered = (data.attributes || '').toLowerCase();
       const prime = /\bmental\b/.test(lowered) ? 'mental' : 'physical';
@@ -1608,11 +1603,9 @@ export function buildCanonicalParenthetical(
       // Format A: Long-form with singular possessive
       let possessive = fallbackBase;
       parts.push(`${possessive} primary attributes are ${normalizedAttrs.value}`);
-    } else if (normalizedAttrs.type === 'prime') {
-      // Format B/C: Shorthand
-      // Format C uses plural pronouns, Format B uses singular
-      const possessive = v3Classification.format === 'C' ? 'Their' : resolvedPossessive;
-      parts.push(`${possessive} primary attributes are ${normalizedAttrs.value}`);
+    } else if (normalizedAttrs.type === 'prime' && v3Classification.format === 'C') {
+      // Format C only: Shorthand placeholder with plural pronoun
+      parts.push(`Their primary attributes are ${normalizedAttrs.value}`);
     }
   }
 

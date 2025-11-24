@@ -2,7 +2,7 @@
    (HP 23, AC 15, disposition neutrality. Its primary attributes are physical.)  
 2. Bandit  
    (HP 4, AC 13, disposition neutral/evil. Its primary attributes are physical. He carries 6 silver in coin.)  
-3. Bandit Lieutenant  
+3. Bandit, Lieutenant  
    (HP 14, AC 14, disposition neutral/evil. His primary attributes are strength, dexterity, constitution, intelligence, wisdom, and charisma. He carries 6 gold in coin.)  
 4. Bat, Giant Cave  
    (HP 1, AC 12, disposition neutrality. Its primary attributes are physical.)  

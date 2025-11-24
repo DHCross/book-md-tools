@@ -50,4 +50,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   analyzeStatBlock: (content) => ipcRenderer.invoke('analyze-stat-block', content),
   validateStatBlock: (content) => ipcRenderer.invoke('validate-stat-block', content),
   fixStatBlock: (content) => ipcRenderer.invoke('fix-stat-block', content),
+  canonicalizeStatBlocks: (blocks) => ipcRenderer.invoke('canonicalize-stat-blocks', blocks),
+  
+  // Checkpoint Export/Import
+  exportCheckpoint: (data) => ipcRenderer.invoke('export-checkpoint', data),
+  importCheckpoint: () => ipcRenderer.invoke('import-checkpoint'),
+  
+  // Reforged Name Conversion
+  loadConversionCsvs: () => ipcRenderer.invoke('load-conversion-csvs'),
 });

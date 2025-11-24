@@ -32,7 +32,10 @@
           <!-- Context-aware Next/Prev navigation -->
           <button id="prevStatBtn" class="btn tertiary nav-action-btn" title="Previous (Ctrl+Alt+↑)">◀ Prev</button>
           <button id="nextStatBtn" class="btn tertiary nav-action-btn" title="Next (Ctrl+Alt+↓)">Next ▶</button>
-          <button id="openFindBtn" class="btn secondary" title="Open Find/Replace (Ctrl+F)">🔍 Find</button>
+          <label class="scroll-sync-toggle" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#555;">
+            <input type="checkbox" id="scrollSyncToggle" />
+            <span>Scroll Sync</span>
+          </label>
         </div>
         <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
           <button id="openFileBtn" class="btn secondary">📂 Open</button>
@@ -45,9 +48,6 @@
             <input type="checkbox" id="buildHeadersLooseCheck" />
             Infer headings (no Markdown)
           </label>
-        </div>
-        <div class="mode-toggle system-indicator" style="display:flex;align-items:center;gap:4px;margin-right:8px;font-size:12px;color:#e9ecef;">
-          <span id="systemIndicatorLabel">Castles &amp; Crusades — Reforged</span>
         </div>
         <button id="quickToolsBtn" class="btn secondary">⚡ Quick Tools</button>
         <button id="settingsBtn" class="btn secondary">⚙️ Settings</button>
@@ -127,14 +127,6 @@
           <h3>Document Comparator</h3>
           <button id="compareDocsBtn" class="btn secondary full-width">🔍 Compare Documents</button>
         </div>
-        
-        <!-- Reforged Conversion -->
-        <div class="sidebar-section">
-          <h3>Reforged Conversion
-            <span class="info-icon" title="Convert old spell and magic item names to Reforged names.&#10;&#10;Uses CSV mappings from CnC Name Changes folder.&#10;• Preview changes before applying&#10;• Undo support&#10;• Preserves formatting">ℹ️</span>
-          </h3>
-          <button id="convertReforgedBtn" class="btn secondary full-width">🔄 Convert to Reforged</button>
-        </div>
 
           <!-- Table Tools -->
           <div class="sidebar-section">
@@ -151,11 +143,15 @@
       </aside>
 
       <!-- Main Panel: Tabs & Content -->
-      <section class="content">
+      <section class="content" style="position: relative;">
         <!-- Heads-Up Find/Replace Strip -->
         <div id="findReplaceStrip" class="find-replace-strip" style="display: none;">
           <div class="fr-group">
             <input type="text" id="findInput" placeholder="Find..." class="fr-input" />
+            <button id="smartPatternsBtn" class="fr-btn-icon" title="Smart Patterns">⚡</button>
+            <div id="smartPatternsMenu" class="dropdown-menu smart-patterns-menu">
+              <!-- Populated by JS -->
+            </div>
           </div>
           <div class="fr-group">
             <input type="text" id="replaceInput" placeholder="Replace..." class="fr-input" />
@@ -176,10 +172,6 @@
             <label class="fr-toggle" title="Case Sensitive">
               <input type="checkbox" id="caseSensitiveCheck" />
               <span class="fr-toggle-label">Aa</span>
-            </label>
-            <label class="fr-toggle" title="Match Whole Word">
-              <input type="checkbox" id="wholeWordCheck" />
-              <span class="fr-toggle-label">W</span>
             </label>
           </div>
           <div class="fr-divider"></div>
@@ -207,17 +199,17 @@
         <!-- Tabs -->
         <div class="tabs">
           <div class="tab-buttons">
-            <button class="tab-btn active" data-tab="editorTab">Editor</button>
-            <button class="tab-btn" data-tab="conversionTab">Reforged Conversion</button>
+            <button class="tab-btn active" data-tab="markdownTab">Markdown</button>
+            <button class="tab-btn" data-tab="renderedTab">Rendered</button>
             <button class="tab-btn" data-tab="summaryTab">Summary</button>
             <button class="tab-btn" data-tab="comparisonTab">Comparison</button>
-            <button class="tab-btn" data-tab="tableToolsTab">Table Tools</button>
+              <button class="tab-btn" data-tab="tableToolsTab">Table Tools</button>
             <button class="tab-btn" data-tab="logTab">Activity</button>
           </div>
 
           <div class="tab-contents">
-            <!-- Combined Editor Tab (Markdown + Rendered with toggle) -->
-            <div id="editorTab" class="tab-content active">
+            <!-- Markdown Editor Tab (editable source of truth) -->
+            <div id="markdownTab" class="tab-content active">
               <!-- TRPG Markdown Toolbar -->
               <div id="markdownToolbar" class="markdown-toolbar">
                 <!-- Formatting Group -->
@@ -264,60 +256,33 @@
                   <button class="toolbar-btn" id="btnQuote" title="Blockquote" data-action="quote">❝</button>
                   <button class="toolbar-btn trpg-specific" id="btnBoxedText" title="Insert Boxed Text" data-action="boxed">📦</button>
                 </div>
-              
-              <div class="toolbar-divider"></div>
-              
-              <!-- GM Tools Group -->
-              <div class="toolbar-group trpg-specific">
-                <button class="toolbar-btn" id="btnGMNote" title="Insert GM Note" data-action="gm-note">GM</button>
-                <button class="toolbar-btn" id="btnStatBlock" title="Insert Stat Block Template" data-action="stat-block">⚔️</button>
-              </div>
-              
-              <div class="toolbar-divider"></div>
-              
-              <!-- Label Tools -->
-              <div class="toolbar-group">
-                <button class="toolbar-btn" id="btnBoldLabel" title="Bold Label (text before colon)" data-action="bold-label">
-                  <strong>Label:</strong>
-                </button>
-              </div>
-            </div>
-                        <div class="editor-shell">
-                <div class="line-info-column">
-                  <div class="line-info-row">
-                    <div class="line-info-label">Cursor</div>
-                    <div id="lineInfoCurrent" class="line-info-value">—</div>
-                  </div>
-                  <div class="line-info-row">
-                    <div class="line-info-label">Stat start</div>
-                    <div id="lineInfoBlock" class="line-info-value">—</div>
-                  </div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- GM Tools Group -->
+                <div class="toolbar-group trpg-specific">
+                  <button class="toolbar-btn" id="btnGMNote" title="Insert GM Note" data-action="gm-note">GM</button>
+                  <button class="toolbar-btn" id="btnStatBlock" title="Insert Stat Block Template" data-action="stat-block">⚔️</button>
                 </div>
-                <textarea id="markdownEditor" class="markdown-editor" placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
-                <div id="editorStatus" class="editor-status">Ready</div>
+                
+                <div class="toolbar-divider"></div>
+                
+                <!-- Label Tools -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnBoldLabel" title="Bold Label (text before colon)" data-action="bold-label">
+                    <strong>Label:</strong>
+                  </button>
+                </div>
               </div>
+              
+              <textarea id="markdownEditor" class="markdown-editor" placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
+              <div id="editorStatus" class="editor-status">Ready</div>
             </div>
 
-            <!-- Reforged Conversion Tab -->
-            <div id="conversionTab" class="tab-content">
-              <div class="conversion-panel">
-                <div class="conversion-header">
-                  <h3>Spell & Magic Item Conversion</h3>
-                  <div class="conversion-actions">
-                    <button id="scanConversionsBtn" class="btn secondary">🔍 Scan Document</button>
-                    <button id="applyAllConversionsBtn" class="btn primary" disabled>✓ Apply All</button>
-                  </div>
-                </div>
-                
-                <div class="conversion-stats">
-                  <span id="conversionCount">0 conversions found</span>
-                </div>
-                
-                <div class="conversion-list-container">
-                  <div id="conversionList" class="conversion-list">
-                    <p class="placeholder">Click "Scan Document" to find spell and magic item names that can be converted to Reforged format.</p>
-                  </div>
-                </div>
+            <!-- Rendered Tab (HTML) -->
+            <div id="renderedTab" class="tab-content">
+              <div id="renderedContent" class="rendered-content">
+                <p class="placeholder">Start typing in the Markdown tab to see rendered output here.</p>
               </div>
             </div>
 
@@ -489,11 +454,8 @@
         <div class="nav-column stat-nav-column">
           <div class="stat-nav-header">
             <h3>Stat Block Navigator</h3>
-            <div style="display: flex; gap: 3px; align-items: center; flex-wrap: wrap;">
-              <button id="reanalyzeDocBtn" class="btn secondary" style="padding:2px 6px;font-size:10px;" title="Re-run full stat block analysis and validation">🔄 Re-analyze</button>
-              <button id="exportCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Export current analysis as JSON checkpoint">💾 Export Checkpoint</button>
-              <button id="importCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Load and compare checkpoint">📂 Import</button>
-              <button id="refreshStatBlocksBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Refresh display">↻</button>
+            <div>
+              <button id="refreshStatBlocksBtn" class="btn tertiary" style="padding:2px 8px;font-size:11px;" title="Re-run stat block analysis on current document">Refresh</button>
               <span id="statBlockCount" class="stat-count">0</span>
             </div>
           </div>
@@ -505,49 +467,17 @@
             <div class="stat-filters">
               <select id="statBlockTypeFilter" class="stat-filter-select">
                 <option value="all">All Types</option>
-                <option value="npc-named">Named NPCs</option>
-                <option value="npc">Generic Monsters</option>
+                <option value="npc">NPCs</option>
                 <option value="monster">Monsters</option>
                 <option value="hazard">Hazards</option>
                 <option value="trap">Traps</option>
                 <option value="feature">Features</option>
-                <option value="missing">Missing Stat Blocks</option>
-              </select>
-              <select id="statBlockReviewFilter" class="stat-filter-select">
-                <option value="all">All statuses</option>
-                <option value="unreviewed">Unreviewed</option>
-                <option value="reviewed">Reviewed</option>
               </select>
               
               <label class="stat-filter-checkbox">
                 <input type="checkbox" id="statBlockShowErrors" />
                 <span>Errors only</span>
               </label>
-            </div>
-
-            <div class="stat-nav-collapsers">
-              <button id="expandStatGroupsBtn" class="btn tertiary stat-collapse-btn">Expand all</button>
-              <button id="collapseStatGroupsBtn" class="btn tertiary stat-collapse-btn">Collapse all</button>
-              <button id="missingStatBlocksBtn" class="btn tertiary stat-collapse-btn" title="Find names referenced in document but missing stat blocks">Missing</button>
-            </div>
-            
-            <div class="stat-sort-controls">
-              <label class="stat-sort-label">Sort:</label>
-              <button id="sortBySection" class="btn tertiary stat-sort-btn active">By Section</button>
-              <button id="sortAlphabetical" class="btn tertiary stat-sort-btn">Alphabetical</button>
-            </div>
-            
-            <div class="stat-review-summary">
-              <label class="stat-sort-label">Reviewed:</label>
-              <div class="stat-review-body">
-                <div id="reviewedSummaryStatus" class="stat-review-status">No blocks reviewed yet</div>
-                <div id="reviewedSummaryList" class="stat-review-list">
-                  <div id="reviewSummaryTotal">Total: 0 / 0</div>
-                  <div id="reviewSummaryMonsters">Monsters: 0 / 0</div>
-                  <div id="reviewSummaryNPCs">NPCs: 0 / 0</div>
-                  <p class="placeholder">Use the ○ button on any stat block to mark it as reviewed.</p>
-                </div>
-              </div>
             </div>
           </div>
           
@@ -557,14 +487,12 @@
           </div>
         </div>
 
-        <!-- Validation Details Panel -->
-        <div id="statDetailsPanel" class="stat-details-panel" style="display:none;">
-          <div class="validation-header">
-            <h4>Validation Details</h4>
-            <button id="closeValidationBtn" class="validation-close-btn" title="Close validation panel">×</button>
-          </div>
-          <div id="statDetailsContent" class="validation-content">
-            <p class="placeholder">Select a stat block to see classification and validation details.</p>
+        <!-- Stat Block Details Panel -->
+        <div id="statDetailsPanel" class="stat-details-panel" style="display:none; padding:12px; border-top:1px solid #e9ecef;">
+          <h4>Stat Block Details</h4>
+          <div id="statDetailsContent">
+            <p class="placeholder">Select a stat block to see validation and quick-fix options.</p>
+
           </div>
         </div>
       </aside>
@@ -574,14 +502,6 @@
         <div class="nav-column header-nav-column">
           <div class="navigator-header">
             <h3>Navigator</h3>
-            <div class="header-nav-controls">
-              <button id="refreshNavigatorBtn" class="header-nav-btn" title="Rescan headers">↻</button>
-              <button id="expandHeadersBtn" class="header-nav-btn" title="Expand all headers">Expand</button>
-              <button id="collapseHeadersBtn" class="header-nav-btn" title="Collapse all headers">Collapse</button>
-            </div>
-          </div>
-          <div class="header-nav-collapsers">
-            <span>Structure</span>
           </div>
           <div id="navigatorList" class="navigator-list">
             <p class="placeholder" style="padding: 12px;">Add headings (H1–H4) to see document structure here.</p>
@@ -662,18 +582,6 @@
                 Sync Rendered → Markdown Editor
               </label>
               <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in Rendered pane jumps the editor cursor to the corresponding line. Default: OFF. Turn on only when you want mirrored scrolling.</p>
-            </div>
-            <div class="form-group">
-              <label for="settingGameSystem">Game System:</label>
-              <select id="settingGameSystem" class="form-input">
-                <option value="cnc" selected>Castles &amp; Crusades</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="settingGameEdition">Edition / Profile:</label>
-              <select id="settingGameEdition" class="form-input">
-                <option value="reforged" selected>Reforged (Revised M&amp;T)</option>
-              </select>
             </div>
           </div>
         </div>
@@ -832,34 +740,29 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Canonicalization Preview Modal -->
-  <div id="canonicalizeModal" class="modal" style="display: none;">
-    <div class="modal-backdrop"></div>
-    <div class="modal-dialog" style="max-width: 900px;">
-      <div class="modal-content">
+    <!-- Review Mode Modal (Replace All Safety) -->
+    <div id="reviewModeModal" class="modal" style="display: none;">
+      <div class="modal-content large-modal" style="max-width: 900px; height: 85vh;">
         <div class="modal-header">
-          <h2>Canonicalization Preview</h2>
-          <button class="modal-close" id="closeCanonicalizeModal">&times;</button>
+          <h2>🔍 Review Replacements</h2>
+          <button id="closeReviewModeBtn" class="modal-close">&times;</button>
         </div>
-        <div class="modal-body">
-          <div id="canonicalizeStatus" style="margin-bottom: 16px; padding: 12px; background: #e7f3ff; border-radius: 6px; font-size: 13px;">
-            <!-- Status message -->
+        <div class="modal-body" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="review-stats-bar" style="margin-bottom: 16px; padding: 12px; background: #e7f3ff; border-radius: 6px; display: flex; gap: 24px; align-items: center; border: 1px solid #b6d4fe;">
+            <div><strong>Total Matches:</strong> <span id="reviewTotalMatches">0</span></div>
+            <div><span class="dot-indicator header-dot"></span> Headers: <span id="reviewHeaderMatches">0</span></div>
+            <div><span class="dot-indicator stat-dot"></span> Stat Blocks: <span id="reviewStatMatches">0</span></div>
+            <div><span class="dot-indicator prose-dot"></span> Prose: <span id="reviewProseMatches">0</span></div>
           </div>
-          <div style="margin-bottom: 16px;">
-            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
-              <input type="checkbox" id="autoReviewCanonical" checked />
-              <span>Automatically mark canonicalized blocks as reviewed</span>
-            </label>
-          </div>
-          <div id="canonicalizePreview" style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; padding: 12px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px;">
-            <!-- Preview content will be injected here -->
+          
+          <div class="review-preview-container" style="flex: 1; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; position: relative;">
+            <pre id="reviewPreviewContent" class="review-preview-text"></pre>
           </div>
         </div>
         <div class="modal-footer">
-          <button id="applyCanonicalizeBtn" class="btn primary">✅ Apply All Transformations</button>
-          <button id="cancelCanonicalizeBtn" class="btn secondary">Cancel</button>
+          <button id="executeReplaceBtn" class="btn primary">🚀 Execute Replacements</button>
+          <button id="cancelReviewBtn" class="btn secondary">Cancel</button>
         </div>
       </div>
     </div>
