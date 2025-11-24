@@ -42,6 +42,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     convertTableMultiFormat: (inputText, format) =>
       ipcRenderer.invoke('convert-table-multi-format', inputText, format),
 
+  // Velocity Data
+  getVelocityData: () => ipcRenderer.invoke('get-velocity-data'),
+
   // Config Operations
   loadConfig: () => ipcRenderer.invoke('load-config'),
   saveConfig: (config) => ipcRenderer.invoke('save-config'),

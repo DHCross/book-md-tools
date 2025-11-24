@@ -50,6 +50,7 @@
           <span id="systemIndicatorLabel">Castles &amp; Crusades — Reforged</span>
         </div>
         <button id="quickToolsBtn" class="btn secondary">⚡ Quick Tools</button>
+        <button id="velocityDashboardBtn" class="btn secondary">📊 Velocity Dashboard</button>
         <button id="settingsBtn" class="btn secondary">⚙️ Settings</button>
       </div>
     </header>
@@ -632,6 +633,189 @@
               <div class="tool-name">Document Comparator</div>
               <div class="tool-desc">Compare two document versions</div>
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Velocity Dashboard Modal -->
+    <div id="velocityDashboardModal" class="modal" style="display: none;">
+      <div class="modal-content velocity-dashboard">
+        <div class="modal-header">
+          <h2>📊 Velocity Dashboard</h2>
+          <button id="closeVelocityDashboardBtn" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body velocity-body">
+          <!-- Dashboard Tabs -->
+          <div class="velocity-tabs">
+            <button class="velocity-tab active" data-tab="overview">Overview</button>
+            <button class="velocity-tab" data-tab="development">Development</button>
+            <button class="velocity-tab" data-tab="conversion">Conversion</button>
+            <button class="velocity-tab" data-tab="forecast">Forecast</button>
+          </div>
+
+          <!-- Tab Content -->
+          <div id="velocityOverview" class="velocity-tab-content active">
+            <div class="velocity-grid">
+              <div class="velocity-card">
+                <div class="card-header">
+                  <h3>📈 Overall Progress</h3>
+                  <span class="card-badge">Live</span>
+                </div>
+                <div class="card-metrics">
+                  <div class="metric">
+                    <span class="metric-label">Total Monsters</span>
+                    <span class="metric-value" id="totalMonsters">140</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Converted</span>
+                    <span class="metric-value" id="convertedMonsters">10</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Progress</span>
+                    <span class="metric-value" id="progressPercent">7%</span>
+                  </div>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill" style="width: 7%"></div>
+                </div>
+              </div>
+
+              <div class="velocity-card">
+                <div class="card-header">
+                  <h3>⏱️ Current Session</h3>
+                  <span class="card-badge">Today</span>
+                </div>
+                <div class="card-metrics">
+                  <div class="metric">
+                    <span class="metric-label">Session Time</span>
+                    <span class="metric-value" id="sessionTime">0h 0m</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Monsters Today</span>
+                    <span class="metric-value" id="monstersToday">0</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Avg Time/Monster</span>
+                    <span class="metric-value" id="avgTimePerMonster">--</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="velocity-card">
+                <div class="card-header">
+                  <h3>🎯 Velocity Metrics</h3>
+                  <span class="card-badge">7 Days</span>
+                </div>
+                <div class="card-metrics">
+                  <div class="metric">
+                    <span class="metric-label">Conversion Rate</span>
+                    <span class="metric-value" id="conversionRate">5/day</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Dev Commits</span>
+                    <span class="metric-value" id="devCommits">9</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Productivity</span>
+                    <span class="metric-value" id="productivity">85%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Chart -->
+            <div class="velocity-chart-container">
+              <h4>7-Day Conversion Trend</h4>
+              <div class="mini-chart" id="conversionTrendChart">
+                <!-- Chart will be rendered here -->
+              </div>
+            </div>
+          </div>
+
+          <div id="velocityDevelopment" class="velocity-tab-content">
+            <div class="velocity-card">
+              <div class="card-header">
+                <h3>🛠️ Development Activity</h3>
+                <span class="card-badge">Code</span>
+              </div>
+              <div class="dev-metrics">
+                <div class="dev-metric-row">
+                  <span>Commits This Week</span>
+                  <span id="commitsThisWeek">9</span>
+                </div>
+                <div class="dev-metric-row">
+                  <span>Features Added</span>
+                  <span id="featuresAdded">5</span>
+                </div>
+                <div class="dev-metric-row">
+                  <span>Bugs Fixed</span>
+                  <span id="bugsFixed">3</span>
+                </div>
+                <div class="dev-metric-row">
+                  <span>Code Changes</span>
+                  <span id="codeChanges">+2,847 lines</span>
+                </div>
+                <div class="dev-metric-row">
+                  <span>Code Survival Rate</span>
+                  <span id="codeSurvivalRate">--%</span>
+                </div>
+                <div class="dev-metric-row">
+                  <span>AI Paste Count</span>
+                  <span id="aiPasteCount">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="velocityConversion" class="velocity-tab-content">
+            <div class="velocity-card">
+              <div class="card-header">
+                <h3>🔄 Conversion Work</h3>
+                <span class="card-badge">Manual</span>
+              </div>
+              <div class="conversion-timeline">
+                <div class="timeline-item">
+                  <div class="timeline-time">Today, 3:28 AM</div>
+                  <div class="timeline-event">Exported checkpoint (10 monsters converted)</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-time">Yesterday, 11:45 PM</div>
+                  <div class="timeline-event">Converted Bugbear, Elf variants</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-time">Yesterday, 9:30 PM</div>
+                  <div class="timeline-event">Converted Bandit variants</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="velocityForecast" class="velocity-tab-content">
+            <div class="velocity-card">
+              <div class="card-header">
+                <h3>🔮 Project Forecast</h3>
+                <span class="card-badge">Predictive</span>
+              </div>
+              <div class="forecast-metrics">
+                <div class="forecast-item">
+                  <span class="forecast-label">Est. Completion Date</span>
+                  <span class="forecast-value" id="estCompletion">Dec 15, 2025</span>
+                </div>
+                <div class="forecast-item">
+                  <span class="forecast-label">Days Remaining</span>
+                  <span class="forecast-value" id="daysRemaining">21</span>
+                </div>
+                <div class="forecast-item">
+                  <span class="forecast-label">Required Rate</span>
+                  <span class="forecast-value" id="requiredRate">6.7 monsters/day</span>
+                </div>
+                <div class="forecast-item">
+                  <span class="forecast-label">Current Rate</span>
+                  <span class="forecast-value" id="currentRate">5.0 monsters/day</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

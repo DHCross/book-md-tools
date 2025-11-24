@@ -402,9 +402,11 @@ function fetchCommitData(repo, since) {
   // ============================================================================
   function fetchCommitDataLocal(since) {
     try {
-      const fmt = '%H%x1f%an%x1f%ae%x1f%ai%x1f%s';
-      const cmd = `git log --since="${since}" --pretty=format:"${fmt}"`;
+      const fmt = 'COMMIT:%H|%an|%ae|%ai|%s';
+      // Use --numstat to get lines added/deleted
+      const cmd = `git log --since="${since}" --numstat --pretty=format:"${fmt}"`;
       const out = execSync(cmd, { encoding: 'utf8' });
+
       if (!out || !out.trim()) {
         return {
           total_commits: 0,
@@ -413,19 +415,62 @@ function fetchCommitData(repo, since) {
           commits_per_hour: 0,
           start: null,
           end: null,
+          ai_paste_count: 0,
         };
       }
 
-      const commits = out.split('\n').map(line => {
-        const parts = line.split('\x1f');
-        return {
-          sha: parts[0],
-          author: parts[1],
-          email: parts[2],
-          date: parts[3],
-          subject: parts[4],
-        };
-      });
+      const lines = out.split('\n');
+      const commits = [];
+      let currentCommit = null;
+
+      for (const line of lines) {
+        if (line.startsWith('COMMIT:')) {
+          if (currentCommit) {
+            commits.push(currentCommit);
+          }
+          const parts = line.substring(7).split('|');
+          currentCommit = {
+            sha: parts[0],
+            author: parts[1],
+            email: parts[2],
+            date: parts[3],
+            subject: parts[4],
+            lines_added: 0,
+            lines_deleted: 0,
+          };
+        } else if (currentCommit && line.trim()) {
+          const stats = line.split(/\s+/);
+          if (stats.length >= 2) {
+            const added = parseInt(stats[0], 10);
+            const deleted = parseInt(stats[1], 10);
+            if (!isNaN(added)) currentCommit.lines_added += added;
+            if (!isNaN(deleted)) currentCommit.lines_deleted += deleted;
+          }
+        }
+      }
+      if (currentCommit) {
+        commits.push(currentCommit);
+      }
+
+      // Sort by date ascending to calculate time diffs correctly
+      commits.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      let aiPasteCount = 0;
+      for (let i = 0; i < commits.length; i++) {
+        const commit = commits[i];
+        let timeDiffSeconds = Infinity;
+        if (i > 0) {
+          const prev = commits[i - 1];
+          const diffMs = new Date(commit.date) - new Date(prev.date);
+          timeDiffSeconds = diffMs / 1000;
+        }
+        
+        // Heuristic: > 20 lines added and < 60s since last commit
+        if (commit.lines_added > 20 && timeDiffSeconds < 60) {
+            aiPasteCount++;
+            commit.is_likely_ai = true;
+        }
+      }
 
       const dates = commits.map(c => new Date(c.date));
       const startDate = new Date(Math.min(...dates));
@@ -442,11 +487,114 @@ function fetchCommitData(repo, since) {
         commits_per_hour: commitsPerHour,
         start: startDate.toISOString(),
         end: endDate.toISOString(),
-        samples: commits.slice(0, 20).map(c => ({ sha: c.sha, author: c.author, date: c.date, subject: c.subject })),
+        samples: commits.slice(-20).map(c => ({ 
+            sha: c.sha, 
+            author: c.author, 
+            date: c.date, 
+            subject: c.subject,
+            lines_added: c.lines_added,
+            is_likely_ai: c.is_likely_ai
+        })),
+        ai_paste_count: aiPasteCount,
+        commits: commits, // Return full list for churn analysis
       };
     } catch (err) {
       throw new Error(`Local git log failed: ${err.message}`);
     }
+  }
+
+  // ============================================================================
+  // CHURN ANALYSIS (Code Survival Rate)
+  // ============================================================================
+  function calculateCodeSurvival(commits) {
+    if (!commits || commits.length === 0) return null;
+
+    // Only analyze commits older than 24h to measure meaningful survival
+    const now = new Date();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const eligibleCommits = commits.filter(c => (now - new Date(c.date)) > oneDayMs);
+
+    if (eligibleCommits.length === 0) return null;
+
+    let totalLinesAdded = 0;
+    let totalLinesSurviving = 0;
+    let analyzedCount = 0;
+
+    // Limit to recent 10 eligible commits to avoid performance hit
+    const sample = eligibleCommits.slice(-10);
+
+    for (const commit of sample) {
+      try {
+        // Get files changed in this commit
+        const filesCmd = `git show --name-only --pretty="" ${commit.sha}`;
+        const rawFiles = execSync(filesCmd, { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
+        
+        const files = rawFiles.map(f => {
+            // Git quotes files with spaces/special chars. Strip surrounding quotes if present.
+            if (f.startsWith('"') && f.endsWith('"')) {
+                return f.slice(1, -1);
+            }
+            return f;
+        });
+
+        for (const file of files) {
+          if (!fs.existsSync(file)) {
+              // File deleted -> 0 survival for this file's contribution
+              // We still count the added lines as "lost"
+              const statsCmd = `git show --numstat --pretty="" ${commit.sha} -- "${file}"`;
+              try {
+                  const statsOut = execSync(statsCmd, { encoding: 'utf8' }).trim();
+                  if (statsOut) {
+                      const [added] = statsOut.split(/\s+/);
+                      const linesAdded = parseInt(added, 10);
+                      if (!isNaN(linesAdded)) totalLinesAdded += linesAdded;
+                  }
+              } catch (e) { /* ignore */ }
+              continue;
+          }
+
+          // Get lines added to this file in this commit
+          const statsCmd = `git show --numstat --pretty="" ${commit.sha} -- "${file}"`;
+          const statsOut = execSync(statsCmd, { encoding: 'utf8' }).trim();
+          if (!statsOut) continue;
+          
+          const [added] = statsOut.split(/\s+/);
+          const linesAdded = parseInt(added, 10);
+          
+          if (isNaN(linesAdded) || linesAdded <= 0) continue;
+
+          // Check how many lines from this commit survive in HEAD
+          // Use git blame to find lines attributed to this SHA
+          // We use a shell pipeline, so we need to be careful with execSync
+          try {
+              const blameCmd = `git blame --line-porcelain "${file}" | grep "^${commit.sha}" | wc -l`;
+              const surviving = parseInt(execSync(blameCmd, { encoding: 'utf8' }).trim(), 10);
+              
+              totalLinesAdded += linesAdded;
+              totalLinesSurviving += surviving;
+          } catch (e) {
+              // grep returns 1 if no lines found (0 matches)
+              if (e.status === 1) {
+                   totalLinesAdded += linesAdded;
+                   // 0 surviving
+              }
+          }
+        }
+        analyzedCount++;
+      } catch (err) {
+        // Ignore errors for individual commits
+      }
+    }
+
+    if (totalLinesAdded === 0) return null;
+
+    return {
+      survival_rate: totalLinesSurviving / totalLinesAdded,
+      churn_ratio: 1 - (totalLinesSurviving / totalLinesAdded),
+      samples_analyzed: analyzedCount,
+      total_lines_added: totalLinesAdded,
+      total_lines_surviving: totalLinesSurviving
+    };
   }
 
   // ============================================================================
@@ -550,6 +698,9 @@ async function analyzeAndEstimate(isBlitz = false, forceLocal = false) {
   const sessionEnd = sessionData.end || timestamp;
   const phasesSnapshot = snapshotPhaseStatuses();
 
+  // Calculate Churn (Code Survival)
+  const churnMetrics = calculateCodeSurvival(sessionData.commits);
+
   // Log current run
   const runLogEntry = {
     id: randomUUID(),
@@ -565,6 +716,8 @@ async function analyzeAndEstimate(isBlitz = false, forceLocal = false) {
     commits_per_hour: commitsPerHour,
     commitCount,
     totalDurationSeconds,
+    ai_paste_count: sessionData.ai_paste_count || 0,
+    churn_metrics: churnMetrics,
     start: sessionStart,
     end: sessionEnd,
     phases: phasesSnapshot,
@@ -604,6 +757,13 @@ async function analyzeAndEstimate(isBlitz = false, forceLocal = false) {
     console.log(`   Total Elapsed: ${elapsedH}h ${elapsedM}m`);
     console.log(`   Commits: ${commitCount}`);
     console.log(`   Commits/Hour: ${displayRate.toFixed(2)}`);
+    if (sessionData.ai_paste_count > 0) {
+        console.log(`   🤖 AI Paste Detected: ${sessionData.ai_paste_count} commits`);
+    }
+    if (churnMetrics) {
+        console.log(`   📉 Code Churn (24h+): ${(churnMetrics.churn_ratio * 100).toFixed(1)}%`);
+        console.log(`      (Based on ${churnMetrics.samples_analyzed} recent commits: ${churnMetrics.total_lines_surviving}/${churnMetrics.total_lines_added} lines survived)`);
+    }
     console.log(`   First Commit: ${sessionStart}`);
     console.log(`   Last Commit: ${sessionEnd}`);
   }
@@ -696,6 +856,14 @@ async function analyzeAndEstimate(isBlitz = false, forceLocal = false) {
 // ============================================================================
 
 function main() {
+  // Ensure we are at repo root for git commands and file paths to work consistently
+  try {
+    const repoRoot = execSync('git rev-parse --show-toplevel', { encoding: 'utf8' }).trim();
+    process.chdir(repoRoot);
+  } catch (e) {
+    console.warn('⚠️  Could not determine repo root. Git commands might fail.');
+  }
+
   const args = process.argv.slice(2);
 
   const showHelp = args.includes('--help') || args.includes('-h');

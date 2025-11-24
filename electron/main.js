@@ -820,6 +820,30 @@ ipcMain.handle('save-file', async (event, filePath, content) => {
   }
 });
 
+// IPC: Get Velocity Data
+ipcMain.handle('get-velocity-data', async () => {
+  const logPath = path.join(REPO_ROOT, 'velocity-log.jsonl');
+  try {
+    if (fs.existsSync(logPath)) {
+      const content = fs.readFileSync(logPath, 'utf-8');
+      // Parse JSONL
+      const lines = content.split('\n').filter(line => line.trim());
+      const entries = lines.map(line => {
+        try {
+          return JSON.parse(line);
+        } catch (e) {
+          return null;
+        }
+      }).filter(e => e !== null);
+      
+      return { success: true, data: entries };
+    }
+    return { success: false, message: 'Velocity log not found' };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
 // IPC: Load config
 ipcMain.handle('load-config', async () => {
   const configPath = path.join(REPO_ROOT, 'pyproject.toml');

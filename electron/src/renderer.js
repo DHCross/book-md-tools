@@ -3756,6 +3756,12 @@ function renderStatBlockList() {
       const newVal = !getReviewFlag(key);
       setReviewFlag(key, newVal);
       block.reviewed = newVal;
+      
+      // Track conversion if marking as reviewed (completed conversion)
+      if (newVal && trackConversion) {
+        trackConversion(block.name || `Block ${idx + 1}`);
+      }
+      
       renderStatBlockList();
       updateReviewSummary();
     });
@@ -5554,8 +5560,230 @@ document.getElementById('closeValidationBtn')?.addEventListener('click', () => {
   if (panel) panel.style.display = 'none';
 });
 
+// ============================================================================
+// VELOCITY DASHBOARD FUNCTIONALITY
+// ============================================================================
+
+// Velocity Dashboard state
+let velocityData = {
+  sessionStart: Date.now(),
+  conversionsToday: 0,
+  sessionConversions: [],
+  developmentCommits: 0,
+  lastUpdate: Date.now()
+};
+
+// Open Velocity Dashboard
+document.getElementById('velocityDashboardBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('velocityDashboardModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    updateVelocityDashboard();
+  }
+});
+
+// Close Velocity Dashboard
+document.getElementById('closeVelocityDashboardBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('velocityDashboardModal');
+  if (modal) modal.style.display = 'none';
+});
+
+// Tab switching
+document.querySelectorAll('.velocity-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const targetTab = tab.getAttribute('data-tab');
+    
+    // Hide all tab contents
+    document.querySelectorAll('.velocity-tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.velocity-tab').forEach(t => {
+      t.classList.remove('active');
+    });
+    
+    // Show target tab content
+    const targetContent = document.getElementById(`velocity${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`);
+    if (targetContent) {
+      targetContent.classList.add('active');
+    }
+    
+    // Add active class to clicked tab
+    tab.classList.add('active');
+  });
+});
+
+// Update velocity dashboard with current data
+async function updateVelocityDashboard() {
+  // Calculate session time
+  const sessionDuration = Date.now() - velocityData.sessionStart;
+  const sessionHours = Math.floor(sessionDuration / (1000 * 60 * 60));
+  const sessionMinutes = Math.floor((sessionDuration % (1000 * 60 * 60)) / (1000 * 60));
+  
+  // Update overview tab
+  document.getElementById('sessionTime').textContent = `${sessionHours}h ${sessionMinutes}m`;
+  document.getElementById('monstersToday').textContent = velocityData.conversionsToday;
+  
+  // Calculate average time per monster
+  const avgTime = velocityData.sessionConversions.length > 0
+    ? sessionDuration / velocityData.sessionConversions.length / (1000 * 60)
+    : 0;
+  document.getElementById('avgTimePerMonster').textContent = avgTime > 0
+    ? `${avgTime.toFixed(1)} min`
+    : '--';
+  
+  // Update progress (using current stat blocks)
+  if (statBlocks && statBlocks.length > 0) {
+    const total = statBlocks.length;
+    const converted = statBlocks.filter(block => 
+      block.validation && block.validation.errorCount === 0 && block.validation.warningCount === 0
+    ).length;
+    const progress = Math.round((converted / total) * 100);
+    
+    document.getElementById('totalMonsters').textContent = total;
+    document.getElementById('convertedMonsters').textContent = converted;
+    document.getElementById('progressPercent').textContent = `${progress}%`;
+    document.getElementById('progressFill').style.width = `${progress}%`;
+    
+    // Update forecast
+    const remaining = total - converted;
+    const rate = velocityData.conversionsToday > 0 ? velocityData.conversionsToday : 5; // fallback rate
+    const daysRemaining = Math.ceil(remaining / rate);
+    const estDate = new Date();
+    estDate.setDate(estDate.getDate() + daysRemaining);
+    
+    document.getElementById('estCompletion').textContent = estDate.toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric'
+    });
+    document.getElementById('daysRemaining').textContent = daysRemaining;
+    document.getElementById('requiredRate').textContent = `${(remaining / 21).toFixed(1)} monsters/day`;
+    document.getElementById('currentRate').textContent = `${rate.toFixed(1)} monsters/day`;
+  }
+  
+  // Update development metrics
+  document.getElementById('devCommits').textContent = velocityData.developmentCommits;
+  document.getElementById('conversionRate').textContent = `${velocityData.conversionsToday}/day`;
+
+  // Fetch real velocity data from log
+  try {
+    const result = await window.electronAPI.getVelocityData();
+    if (result.success && result.data && result.data.length > 0) {
+      // Get the most recent entry
+      const latest = result.data[result.data.length - 1];
+      
+      // Code Survival Rate
+      if (latest.churn_metrics && latest.churn_metrics.survival_rate !== undefined) {
+        const survivalRate = latest.churn_metrics.survival_rate;
+        const survivalEl = document.getElementById('codeSurvivalRate');
+        if (survivalEl) {
+            survivalEl.textContent = `${(survivalRate * 100).toFixed(1)}%`;
+        }
+      }
+      
+      // AI Paste Count
+      if (latest.ai_paste_count !== undefined) {
+        const aiPasteCount = latest.ai_paste_count;
+        const aiPasteEl = document.getElementById('aiPasteCount');
+        if (aiPasteEl) {
+            aiPasteEl.textContent = aiPasteCount;
+        }
+      }
+
+      // Code Changes (Churn) - using churn_ratio
+      if (latest.churn_metrics && latest.churn_metrics.churn_ratio !== undefined) {
+        const churn = latest.churn_metrics.churn_ratio;
+        const churnEl = document.getElementById('codeChanges');
+        if (churnEl) {
+             churnEl.textContent = `${(churn * 100).toFixed(1)}% Churn`;
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load velocity log data', e);
+  }
+  
+  // Render mini chart
+  renderMiniChart();
+}// Render mini conversion trend chart
+function renderMiniChart() {
+  const chartContainer = document.getElementById('conversionTrendChart');
+  if (!chartContainer) return;
+  
+  // Generate mock data for the last 7 days
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const data = [3, 5, 2, 8, 4, 6, velocityData.conversionsToday];
+  const maxValue = Math.max(...data, 10);
+  
+  // Create simple bar chart
+  const chartHTML = `
+    <div style="display: flex; align-items: end; height: 100%; gap: 8px; padding: 10px;">
+      ${days.map((day, index) => `
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+          <div style="width: 100%; background: #007bff; height: ${(data[index] / maxValue) * 80}px; border-radius: 2px;"></div>
+          <span style="font-size: 10px; color: #6c757d; margin-top: 4px;">${day}</span>
+          <span style="font-size: 9px; color: #495057; font-weight: 500;">${data[index]}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  chartContainer.innerHTML = chartHTML;
+}
+
+// Track conversion when stat block is marked as reviewed
+function trackConversion(blockName) {
+  const now = Date.now();
+  velocityData.sessionConversions.push({
+    name: blockName,
+    timestamp: now
+  });
+  velocityData.conversionsToday++;
+  velocityData.lastUpdate = now;
+  
+  // Update dashboard if it's open
+  const modal = document.getElementById('velocityDashboardModal');
+  if (modal && modal.style.display !== 'none') {
+    updateVelocityDashboard();
+  }
+}
+
+// Track development activity (mock for now)
+function trackDevelopmentActivity() {
+  velocityData.developmentCommits++;
+}
+
+// Initialize velocity tracking
+function initializeVelocityTracking() {
+  // Load saved data from localStorage if available
+  const saved = localStorage.getItem('velocityData');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      // Check if it's the same day
+      const today = new Date().toDateString();
+      const lastDate = new Date(parsed.lastUpdate).toDateString();
+      
+      if (today === lastDate) {
+        velocityData = { ...parsed, sessionStart: Date.now() };
+      } else {
+        // New day, reset daily counters
+        velocityData.conversionsToday = 0;
+      }
+    } catch (e) {
+      console.error('Failed to load velocity data:', e);
+    }
+  }
+  
+  // Save data periodically
+  setInterval(() => {
+    localStorage.setItem('velocityData', JSON.stringify(velocityData));
+  }, 30000); // every 30 seconds
+}
+
 initialize();
 updateUndoButton();
+initializeVelocityTracking();
 
 // Set default UI state for stat block navigator
 setTimeout(() => {
