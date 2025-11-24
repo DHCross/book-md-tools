@@ -211,7 +211,7 @@ function initializeDragAndDrop() {
 
     // Check if it's a valid markdown/text file
     const validExtensions = ['.md', '.markdown', '.txt'];
-    const hasValidExtension = validExtensions.some(ext => 
+    const hasValidExtension = validExtensions.some(ext =>
       filePath.toLowerCase().endsWith(ext)
     );
 
@@ -237,10 +237,10 @@ function parseCSVLine(line) {
   const result = [];
   let current = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
-    
+
     if (char === '"') {
       inQuotes = !inQuotes;
     } else if (char === ',' && !inQuotes) {
@@ -257,22 +257,22 @@ function parseCSVLine(line) {
 async function loadConversionMappings() {
   try {
     console.log('[DEBUG] Calling loadConversionCsvs...');
-    
+
     if (!window.electronAPI || !window.electronAPI.loadConversionCsvs) {
       console.error('[DEBUG] loadConversionCsvs API not available - app needs restart');
       log('Please restart the app to enable conversion feature', 'error');
       return false;
     }
-    
+
     const result = await window.electronAPI.loadConversionCsvs();
     console.log('[DEBUG] CSV load result:', result);
-    
+
     if (!result.success) {
       log('Failed to load conversion CSVs: ' + result.message, 'error');
       console.error('[DEBUG] CSV load error:', result.message);
       return false;
     }
-    
+
     // Parse spell CSV (Original, Old New Name, New Name)
     if (result.spells) {
       const spellLines = result.spells.split('\n').slice(1); // Skip header
@@ -288,7 +288,7 @@ async function loadConversionMappings() {
         }
       }
     }
-    
+
     // Parse item CSV (Old_Name, New_Name)
     if (result.items) {
       const itemLines = result.items.split('\n').slice(1); // Skip header
@@ -304,7 +304,7 @@ async function loadConversionMappings() {
         }
       }
     }
-    
+
     log(`Loaded ${conversionMappings.spells.size} spell conversions and ${conversionMappings.items.size} item conversions`, 'success');
     return true;
   } catch (error) {
@@ -316,12 +316,12 @@ async function loadConversionMappings() {
 function findReplacements(content) {
   const replacements = [];
   const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items]);
-  
+
   for (const [oldName, newName] of allMappings) {
     // Create regex that matches the old name (case-insensitive, whole word)
     const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
     let match;
-    
+
     while ((match = regex.exec(content)) !== null) {
       replacements.push({
         oldText: match[0], // Preserve original case
@@ -331,7 +331,7 @@ function findReplacements(content) {
       });
     }
   }
-  
+
   // Sort by index (descending) so we can replace from end to start
   return replacements.sort((a, b) => b.index - a.index);
 }
@@ -341,13 +341,13 @@ async function convertToReforged() {
     log('No document loaded', 'error');
     return;
   }
-  
+
   // Load mappings if not already loaded
   if (conversionMappings.spells.size === 0 && conversionMappings.items.size === 0) {
     const loaded = await loadConversionMappings();
     if (!loaded) return;
   }
-  
+
   // Add manual overrides for specific cases from Gemini analysis
   const manualOverrides = new Map([
     // Potions (specific item conversions)
@@ -355,13 +355,13 @@ async function convertToReforged() {
     ['potion of cure poison', 'Potion of Delay Toxin'],
     ['potion of cure critical wounds', 'Potion of Heal Critical Wounds'],
     ['potion of cure light wounds', 'Potion of Heal Light Wounds'],
-    
+
     // Protection spells - keep alignment distinctions (C&C standard)
     ['protection from good', 'Protection from Disposition'],
     ['protection from evil', 'Protection from Disposition'],
     ['protection from chaos', 'Protection from Disposition'],
     ['protection from law', 'Protection from Disposition'],
-    
+
     // C&C standard terms - keep as-is
     ['turn undead', 'Turn Undead'],
     ['nerve check', 'Nerve Check'], // Custom module mechanic
@@ -370,17 +370,17 @@ async function convertToReforged() {
     ['darkvision', 'Darkvision'],
     ['twilight vision', 'Twilight Vision']
   ]);
-  
+
   // Merge manual overrides with CSV mappings
   const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items, ...manualOverrides]);
-  
+
   const replacements = findReplacementsWithMappings(currentContent, allMappings);
-  
+
   if (replacements.length === 0) {
     log('No old names found to convert', 'info');
     return;
   }
-  
+
   // Show preview dialog with warnings for special cases
   let warnings = [];
   if (replacements.some(r => r.oldText.toLowerCase().includes('nerve check'))) {
@@ -389,26 +389,26 @@ async function convertToReforged() {
   if (replacements.some(r => r.oldText.toLowerCase().includes('batrachianoid'))) {
     warnings.push('ℹ️ "Batrachianoid" is the correct C&C term (not "Bullywug") - keeping as-is');
   }
-  
+
   const message = `Found ${replacements.length} name(s) to convert:\n\n` +
     replacements.slice(0, 10).map(r => `• "${r.oldText}" → "${r.newText}"`).join('\n') +
     (replacements.length > 10 ? `\n... and ${replacements.length - 10} more` : '') +
     (warnings.length > 0 ? '\n\n' + warnings.join('\n') : '') +
     `\n\nApply these changes?`;
-  
+
   if (!confirm(message)) {
     log('Conversion cancelled', 'info');
     return;
   }
-  
+
   // Apply replacements (from end to start to preserve indices)
   let newContent = currentContent;
   for (const replacement of replacements) {
     newContent = newContent.substring(0, replacement.index) +
-                 replacement.newText +
-                 newContent.substring(replacement.index + replacement.length);
+      replacement.newText +
+      newContent.substring(replacement.index + replacement.length);
   }
-  
+
   // Update editor
   pushUndoState('Convert to Reforged Names');
   currentContent = newContent;
@@ -418,12 +418,12 @@ async function convertToReforged() {
 
 function findReplacementsWithMappings(content, mappings) {
   const replacements = [];
-  
+
   for (const [oldName, newName] of mappings) {
     // Create regex that matches the old name (case-insensitive, whole word)
     const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
     let match;
-    
+
     while ((match = regex.exec(content)) !== null) {
       replacements.push({
         oldText: match[0], // Preserve original case
@@ -433,7 +433,7 @@ function findReplacementsWithMappings(content, mappings) {
       });
     }
   }
-  
+
   // Sort by index (descending) so we can replace from end to start
   return replacements.sort((a, b) => b.index - a.index);
 }
@@ -445,7 +445,7 @@ function findReplacementsWithMappings(content, mappings) {
 function log(message, type = 'info') {
   const logContainer = document.getElementById('logContent');
   if (!logContainer) return;
-  
+
   const entry = document.createElement('div');
   entry.className = `log-entry log-${type}`;
   const timestamp = new Date().toLocaleTimeString();
@@ -457,7 +457,7 @@ function log(message, type = 'info') {
 function updateStatus(message, type = 'info') {
   const statusBar = document.getElementById('statusBar');
   if (!statusBar) return;
-  
+
   statusBar.textContent = message;
   statusBar.className = `status-bar status-${type}`;
 }
@@ -478,7 +478,7 @@ function addChangeLogEntry(action, details) {
 function updateChangeLogTab() {
   const changeLogContent = document.getElementById('changeLogContent');
   if (!changeLogContent) return;
-  
+
   changeLogContent.innerHTML = changeLog.map(entry => `
     <div class="change-entry">
       <strong>${entry.timestamp}</strong> - ${entry.action}<br>
@@ -898,22 +898,22 @@ function renderDiff(original, modified, mode = 'side-by-side') {
         <div class="diff-column">
           <h4>Original</h4>
           ${originalLines.map((line, i) => {
-            const modLine = modifiedLines[i];
-            const cssClass = !modLine ? 'diff-line-removed' : 
-                            line !== modLine ? 'diff-line-removed' : 
-                            'diff-line-unchanged';
-            return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
-          }).join('')}
+      const modLine = modifiedLines[i];
+      const cssClass = !modLine ? 'diff-line-removed' :
+        line !== modLine ? 'diff-line-removed' :
+          'diff-line-unchanged';
+      return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
+    }).join('')}
         </div>
         <div class="diff-column">
           <h4>Modified</h4>
           ${modifiedLines.map((line, i) => {
-            const origLine = originalLines[i];
-            const cssClass = !origLine ? 'diff-line-added' : 
-                            line !== origLine ? 'diff-line-added' : 
-                            'diff-line-unchanged';
-            return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
-          }).join('')}
+      const origLine = originalLines[i];
+      const cssClass = !origLine ? 'diff-line-added' :
+        line !== origLine ? 'diff-line-added' :
+          'diff-line-unchanged';
+      return `<div class="diff-line ${cssClass}">${escapeHtml(line) || '&nbsp;'}</div>`;
+    }).join('')}
         </div>
       </div>
     `;
@@ -921,11 +921,11 @@ function renderDiff(original, modified, mode = 'side-by-side') {
     // Unified diff
     let diffHtml = '<div class="diff-unified"><pre>';
     const maxLen = Math.max(originalLines.length, modifiedLines.length);
-    
+
     for (let i = 0; i < maxLen; i++) {
       const origLine = originalLines[i];
       const modLine = modifiedLines[i];
-      
+
       if (origLine === modLine) {
         diffHtml += `<div class="diff-line diff-line-unchanged"> ${escapeHtml(origLine) || ''}</div>`;
       } else {
@@ -937,7 +937,7 @@ function renderDiff(original, modified, mode = 'side-by-side') {
         }
       }
     }
-    
+
     diffHtml += '</pre></div>';
     container.innerHTML = diffHtml;
   }
@@ -986,12 +986,12 @@ async function saveCurrentFile() {
 async function saveCurrentFileAs() {
   const defaultName = currentFilePath ? currentFilePath.split('/').pop() : 'untitled.md';
   const savePath = await window.electronAPI.selectSaveLocation(defaultName);
-  
+
   if (!savePath) {
     log('Save cancelled', 'info');
     return false;
   }
-  
+
   currentFilePath = savePath;
   document.getElementById('inputPath').value = savePath;
   return saveCurrentFile();
@@ -1004,17 +1004,17 @@ function applyToolOutput(toolOutput, toolName) {
   currentContent = toolOutput;
   // DO NOT update savedContent here - editor is now unsaved after tool runs
   // User must explicitly Save to write to disk
-  
+
   updateMarkdownEditor(toolOutput);
   updateRenderedTab(toolOutput);
   updateSummaryTab(toolOutput);
   updateHeaderNavigator();
   analyzeDocumentStatBlocks();
-  
+
   addChangeLogEntry('Tool Applied', `Applied: ${toolName}`);
   updateStatus(`${toolName} applied - remember to Save`, 'success');
   log(`${toolName} applied (unsaved)`, 'success');
-  
+
   // Mark editor as unsaved
   setEditorUnsavedState();
 }
@@ -1029,17 +1029,17 @@ async function runSafeTool(toolName, runToolFunction) {
   // Step 1: Check for unsaved changes
   if (hasUnsavedChanges()) {
     const action = await promptSaveBeforeTool();
-    
+
     if (action === 'cancel') {
       log(`${toolName} cancelled`, 'info');
       return false;
     }
-    
+
     if (action === 'save') {
       const saved = await saveCurrentFile();
       if (!saved) return false; // Save failed, abort
     }
-    
+
     if (action === 'discard') {
       // Revert to last saved state (in memory) - DO NOT reload from disk
       currentContent = savedContent;
@@ -1054,10 +1054,10 @@ async function runSafeTool(toolName, runToolFunction) {
 
   // Step 2: Run the tool on saved content
   const originalContent = savedContent;
-  
+
   showProgress(true);
   updateStatus(`Running ${toolName}...`, 'info');
-  
+
   let toolOutput;
   try {
     toolOutput = await runToolFunction(originalContent);
@@ -1067,12 +1067,12 @@ async function runSafeTool(toolName, runToolFunction) {
     updateStatus(`${toolName} failed`, 'error');
     return false;
   }
-  
+
   showProgress(false);
 
   // Step 3: Show diff and get approval
   const approved = await showDiffPreview(originalContent, toolOutput, toolName);
-  
+
   if (!approved) {
     log(`${toolName} changes rejected`, 'info');
     return false;
@@ -1081,7 +1081,7 @@ async function runSafeTool(toolName, runToolFunction) {
   // Step 4: Save undo state and apply
   saveUndoState(`Before running ${toolName}`, originalContent);
   applyToolOutput(toolOutput, toolName);
-  
+
   return true;
 }
 
@@ -1098,19 +1098,19 @@ function saveUndoState(description, content) {
     filePath: currentFilePath,
     timestamp: new Date().toISOString()
   });
-  
+
   // Limit stack size to prevent memory issues
   if (undoStack.length > 50) {
     undoStack.shift();
   }
-  
+
   updateUndoButton();
 }
 
 function updateUndoButton() {
   const undoBtn = document.getElementById('undoBtn');
   const undoLabel = document.getElementById('undoLabel');
-  
+
   if (undoStack.length > 0) {
     const lastUndo = undoStack[undoStack.length - 1];
     if (undoBtn) {
@@ -1136,19 +1136,19 @@ function undo() {
     log('Nothing to undo', 'warning');
     return;
   }
-  
+
   const state = undoStack.pop();
-  
+
   currentContent = state.content;
   savedContent = state.content;
   currentFilePath = state.filePath;
-  
+
   updateMarkdownEditor(state.content);
   updateRenderedTab(state.content);
   updateSummaryTab(state.content);
   updateHeaderNavigator();
   analyzeDocumentStatBlocks();
-  
+
   log(`Undone: ${state.description}`, 'success');
   updateStatus('Undo successful', 'success');
   addChangeLogEntry('Undo', state.description);
@@ -1166,11 +1166,11 @@ document.getElementById('undoBtn')?.addEventListener('click', undo);
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tabId = btn.dataset.tab;
-    
+
     // Update button states
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
+
     // Update tab content
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const targetTab = document.getElementById(tabId);
@@ -1193,7 +1193,7 @@ async function handleOpenFileClick() {
     await loadFile(filePath);
     updateStatus(`Loaded: ${filePath.split('/').pop()}`, 'success');
     log(`Loaded file: ${filePath}`, 'info');
-    
+
     // Switch to Editor tab
     const editorTab = document.querySelector('[data-tab="editorTab"]');
     if (editorTab) editorTab.click();
@@ -1207,7 +1207,7 @@ async function loadFile(filePath) {
   showProgress(true);
   const content = await window.electronAPI.readFile(filePath);
   showProgress(false);
-  
+
   if (content) {
     currentContent = content;
     savedContent = content; // Track saved state
@@ -1270,12 +1270,12 @@ let lastRenderedHash = null; // Track last rendered content to avoid duplicate r
 function updateRenderedTab(content) {
   const rendered = document.getElementById('renderedContent');
   if (!rendered) return;
-  
+
   // Simple hash to detect if content actually changed
   const hash = content.length + ':' + content.substring(0, 100);
   if (lastRenderedHash === hash) return; // Already rendered this content
   lastRenderedHash = hash;
-  
+
   // Use marked library for proper Markdown rendering
   if (typeof marked !== 'undefined') {
     // Ensure headings have ids for navigation
@@ -1296,10 +1296,10 @@ function updateRenderedTab(content) {
       .replace(/\n\n/g, '</p><p>')
       .replace(/\n/g, '<br>');
   }
-  
+
   // Add data-line attributes to rendered elements
   addLineAttributesToRendered(rendered, content);
-  
+
   // Track selection changes in Rendered
   rendered.addEventListener('mouseup', captureSelection);
   rendered.addEventListener('keyup', captureSelection);
@@ -1309,7 +1309,7 @@ function addLineAttributesToRendered(rendered, content) {
   const htmlLength = rendered?.innerHTML?.length || 0;
   const childCount = rendered?.children ? rendered.children.length : 0;
   console.log('addLineAttributesToRendered: rendered.innerHTML length =', htmlLength, 'children =', childCount);
-  
+
   let topLevelElements = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, table');
   console.log('addLineAttributesToRendered: found', topLevelElements.length, 'elements');
   if (!topLevelElements.length) {
@@ -1366,9 +1366,9 @@ function updateLineInfoDisplay() {
   } else {
     if (currentLineEl) currentLineEl.textContent = '—';
   }
-  
+
   if (blockLineEl) blockLineEl.textContent = activeStatStartLine ? activeStatStartLine : '—';
-  
+
   // Toggle visual indicator for active stat block
   if (gutterColumn) {
     if (activeStatStartLine) {
@@ -1382,7 +1382,7 @@ function updateLineInfoDisplay() {
 function jumpEditorToLine(lineNumber, focusEditor = true) {
   const editor = document.getElementById('markdownEditor');
   if (!editor) return;
-  
+
   const content = editor.value || currentContent || '';
   const contentLines = content.split('\n');
   const targetLine = Math.max(1, Math.min(lineNumber, contentLines.length || 1));
@@ -1435,15 +1435,15 @@ function jumpEditorToLine(lineNumber, focusEditor = true) {
 
   // Measure height
   const targetHeight = mirror.scrollHeight;
-  
+
   // Apply scroll with some headroom (e.g. 15% down from top)
   // But clamp it so we don't scroll past end
   const editorHeight = editor.clientHeight;
   const headroom = Math.floor(editorHeight * 0.15);
   const maxScroll = editor.scrollHeight - editorHeight;
-  
+
   const desiredScroll = Math.max(0, Math.min(maxScroll, targetHeight - headroom));
-  
+
   editor.scrollTop = desiredScroll;
 
   // Re-apply caret on the next frame to guard against focus timing quirks
@@ -1476,7 +1476,7 @@ function captureSelection() {
     const selection = window.getSelection();
     selectedText = (selection && selection.toString() || '').trim();
   }
-  
+
   // Update Quick Tools modal hint if open
   updateSelectionModeIndicator();
   updateLineInfoDisplay();
@@ -1515,12 +1515,12 @@ function flashNameInEditor(name, anchorOffset = 0) {
 function updateSummaryTab(content) {
   const summary = document.getElementById('summaryContent');
   if (!summary) return;
-  
+
   const lines = content.split('\n');
   const headers = lines.filter(line => line.startsWith('#'));
   const words = content.split(/\s+/).length;
   const chars = content.length;
-  
+
   summary.innerHTML = `
     <h3>Document Statistics</h3>
     <p><strong>Lines:</strong> ${lines.length}</p>
@@ -1537,24 +1537,24 @@ document.getElementById('exportMarkdownBtn')?.addEventListener('click', async ()
     log('No content to export', 'error');
     return;
   }
-  
-  const defaultName = currentFilePath ? 
-    currentFilePath.split('/').pop().replace('.md', '_export.md') : 
+
+  const defaultName = currentFilePath ?
+    currentFilePath.split('/').pop().replace('.md', '_export.md') :
     'export.md';
-  
+
   const savePath = await window.electronAPI.selectSaveLocation(defaultName);
   if (savePath) {
     showProgress(true);
     const result = await window.electronAPI.saveFile(savePath, currentContent);
     showProgress(false);
-    
+
     if (result.success) {
       // If exporting to the current file, update savedContent
       if (savePath === currentFilePath) {
         savedContent = currentContent;
         clearEditorUnsavedState();
       }
-      
+
       updateStatus('Exported successfully', 'success');
       log(`Exported to: ${savePath}`, 'success');
       addChangeLogEntry('Export', `Saved to: ${savePath}`);
@@ -1569,7 +1569,7 @@ document.getElementById('openOutputBtn')?.addEventListener('click', async () => 
     log('No file selected', 'warning');
     return;
   }
-  
+
   const folderPath = currentFilePath.substring(0, currentFilePath.lastIndexOf('/'));
   await window.electronAPI.openFolder(folderPath);
   log(`Opened folder: ${folderPath}`, 'info');
@@ -1584,31 +1584,31 @@ document.getElementById('runPipelineBtn')?.addEventListener('click', async () =>
     log('Please select an input file first', 'error');
     return;
   }
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   const tablesInline = document.getElementById('tablesInlineCheck')?.checked ?? config.tablesInline;
-  
+
   // Use safety wrapper - pipeline processes saved file
   await runSafeTool('Full Pipeline', async (content) => {
     // Save current content to temp file first
     const tempPath = currentFilePath;
     await window.electronAPI.saveFile(tempPath, content);
-    
+
     // Run pipeline on saved file
     const result = await window.electronAPI.runPipeline(tempPath, outputSuffix, tablesInline);
-    
+
     if (!result.success) {
       throw new Error(result.message);
     }
-    
+
     // Read the output file using the actual path reported by the pipeline (handles versioned filenames)
     const outputPath = result.outputPath || tempPath.replace(/\.md$/, `${outputSuffix}.md`);
     const outputContent = await window.electronAPI.readFile(outputPath);
-    
+
     if (!outputContent) {
       throw new Error('Failed to read pipeline output');
     }
-    
+
     return outputContent;
   });
 });
@@ -1619,27 +1619,27 @@ document.getElementById('formatTextBtn')?.addEventListener('click', async () => 
     log('No content to format', 'error');
     return;
   }
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
-  
+
   // Use safety wrapper like fixTOCBtn
   await runSafeTool('Format Text', async (content) => {
     log('Formatting text...', 'info');
-    
+
     // Pass content directly to IPC handler (not file path)
     const result = await window.electronAPI.formatText(content, outputSuffix);
-    
+
     if (!result.success) {
       throw new Error(result.message || 'Format Text failed');
     }
-    
+
     if (result.content === undefined) {
       throw new Error('Format Text did not return content');
     }
 
     // Record action in changelog
     addChangeLogEntry('Format Text', `Applied formatting with suffix: ${outputSuffix}`);
-    
+
     // Return transformed content (runSafeTool handles the rest)
     return result.content;
   });
@@ -1650,20 +1650,20 @@ document.getElementById('fixTOCBtn')?.addEventListener('click', async () => {
     log('No content to fix', 'error');
     return;
   }
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
-  
+
   // Use safety wrapper
   await runSafeTool('Fix TOC', async (content) => {
     log('Fixing table of contents...', 'info');
-    
+
     // Run TOC fix on in-memory content
     const result = await window.electronAPI.fixTOC(content, outputSuffix);
-    
+
     if (!result.success) {
       throw new Error(result.message || 'TOC fix failed');
     }
-    
+
     if (result.content === undefined) {
       throw new Error('Fix TOC did not return content');
     }
@@ -1682,20 +1682,20 @@ document.getElementById('injectTagsBtn')?.addEventListener('click', async () => 
     log('No content to tag', 'error');
     return;
   }
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || '_tagged';
-  
+
   // Use safety wrapper
   await runSafeTool('Inject Edmunds Tags', async (content) => {
     log('Injecting Edmunds tags...', 'info');
-    
+
     // Run tag injection on in-memory content
     const result = await window.electronAPI.injectTags(content, outputSuffix);
-    
+
     if (!result.success) {
       throw new Error(result.message || 'Tag injection failed');
     }
-    
+
     if (result.content === undefined) {
       throw new Error('Inject Edmunds Tags did not return content');
     }
@@ -1710,20 +1710,20 @@ document.getElementById('stripTagsBtn')?.addEventListener('click', async () => {
     log('No content to strip', 'error');
     return;
   }
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || '_stripped';
-  
+
   // Use safety wrapper
   await runSafeTool('Strip Edmunds Tags', async (content) => {
     log('Stripping Edmunds tags...', 'info');
-    
+
     // Run tag stripping on in-memory content
     const result = await window.electronAPI.stripTags(content, outputSuffix);
-    
+
     if (!result.success) {
       throw new Error(result.message || 'Tag stripping failed');
     }
-    
+
     if (result.content === undefined) {
       throw new Error('Strip Edmunds Tags did not return content');
     }
@@ -1745,18 +1745,18 @@ function extractSections(content) {
   const lines = content.split('\n');
   const sections = [];
   let currentSection = null;
-  
+
   lines.forEach((line, index) => {
     // Match headers (# , ## , ### , etc.)
     const headerMatch = line.match(/^(#{1,6})\s+(.+)/);
-    
+
     if (headerMatch) {
       // Save previous section
       if (currentSection) {
         currentSection.endLine = index - 1;
         sections.push(currentSection);
       }
-      
+
       // Start new section
       const level = headerMatch[1].length;
       const title = headerMatch[2].trim();
@@ -1768,20 +1768,20 @@ function extractSections(content) {
       };
     }
   });
-  
+
   // Save last section
   if (currentSection) {
     currentSection.endLine = lines.length;
     sections.push(currentSection);
   }
-  
+
   return sections;
 }
 
 function renderSectionList() {
   const sectionList = document.getElementById('sectionList');
   if (!sectionList) return;
-  
+
   if (allSections.length === 0) {
     sectionList.innerHTML = `
       <p style="color: #6c757d; text-align: center; padding: 40px 20px;">
@@ -1790,13 +1790,13 @@ function renderSectionList() {
     `;
     return;
   }
-  
+
   let html = '<div style="font-family: monospace; font-size: 13px;">';
   allSections.forEach((section, index) => {
     const indent = (section.level - 1) * 20;
     const isSelected = selectedSections.includes(index);
     const icon = '📄'.repeat(Math.min(section.level, 3));
-    
+
     html += `
       <div style="display: flex; align-items: center; padding: 6px 0; margin-left: ${indent}px;">
         <input type="checkbox" id="section_${index}" data-index="${index}" 
@@ -1812,9 +1812,9 @@ function renderSectionList() {
     `;
   });
   html += '</div>';
-  
+
   sectionList.innerHTML = html;
-  
+
   // Bind checkbox events
   sectionList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
     checkbox.addEventListener('change', (e) => {
@@ -1829,7 +1829,7 @@ function renderSectionList() {
       updateSectionCount();
     });
   });
-  
+
   updateSectionCount();
 }
 
@@ -1845,14 +1845,14 @@ document.getElementById('openSectionPickerBtn')?.addEventListener('click', () =>
   // Close quick tools modal
   const quickToolsModal = document.getElementById('quickToolsModal');
   if (quickToolsModal) quickToolsModal.style.display = 'none';
-  
+
   // Extract sections from current document
   if (currentContent) {
     allSections = extractSections(currentContent);
     selectedSections = allSections.map((_, i) => i); // Select all by default
     renderSectionList();
   }
-  
+
   // Show section picker modal
   const modal = document.getElementById('sectionPickerModal');
   if (modal) modal.style.display = 'flex';
@@ -1883,15 +1883,15 @@ document.getElementById('applySectionsBtn')?.addEventListener('click', () => {
     alert('Please select at least one section to process.');
     return;
   }
-  
+
   // Close modal
   const modal = document.getElementById('sectionPickerModal');
   if (modal) modal.style.display = 'none';
-  
+
   // Show quick tools again with section selection applied
   const quickToolsModal = document.getElementById('quickToolsModal');
   if (quickToolsModal) quickToolsModal.style.display = 'flex';
-  
+
   log(`Section selection applied: ${selectedSections.length} sections`, 'info');
   updateStatus(`${selectedSections.length} sections selected for processing`, 'info');
 });
@@ -1932,7 +1932,7 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
     const convertedLines = result.content.split('\n');
     const changedLines = originalLines.reduce((count, line, i) => count + (line !== convertedLines[i] ? 1 : 0), 0);
 
-    const changeMsg = changedLines > 0 
+    const changeMsg = changedLines > 0
       ? `Built headers: ${changedLines} lines updated`
       : `Built headers: no changes detected`;
 
@@ -1972,10 +1972,10 @@ document.getElementById('closeQuickToolsBtn')?.addEventListener('click', () => {
 function updateSelectionModeIndicator() {
   const indicator = document.getElementById('selectionModeIndicator');
   if (!indicator) return;
-  
+
   if (selectedText && selectedText.length > 0) {
-    const preview = selectedText.length > 50 
-      ? selectedText.substring(0, 50) + '...' 
+    const preview = selectedText.length > 50
+      ? selectedText.substring(0, 50) + '...'
       : selectedText;
     indicator.innerHTML = `
       <strong>✂️ Selection Mode:</strong> Processing ${selectedText.length} characters<br>
@@ -1992,15 +1992,15 @@ async function runQuickTool(toolName) {
     log('Please select an input file first', 'error');
     return;
   }
-  
+
   // Close modal immediately so user can see progress
   const quickToolsModal = document.getElementById('quickToolsModal');
   if (quickToolsModal) quickToolsModal.style.display = 'none';
-  
+
   const outputSuffix = document.getElementById('outputSuffix')?.value || config.defaultOutputSuffix;
   const options = {};
   const isSelectionMode = selectedText && selectedText.length > 0;
-  
+
   // Priority 1: If text is selected, use selection
   if (isSelectionMode) {
     options.filteredContent = selectedText;
@@ -2012,7 +2012,7 @@ async function runQuickTool(toolName) {
     // Extract only selected sections
     const lines = currentContent.split('\n');
     const selectedLines = [];
-    
+
     selectedSections.forEach(index => {
       const section = allSections[index];
       // Extract lines for this section (0-indexed in array, but section uses 1-indexed)
@@ -2020,43 +2020,43 @@ async function runQuickTool(toolName) {
       const endIdx = section.endLine;
       selectedLines.push(...lines.slice(startIdx, endIdx));
     });
-    
+
     options.filteredContent = selectedLines.join('\n');
     options.sectionCount = selectedSections.length;
     log(`Processing ${selectedSections.length} of ${allSections.length} sections`, 'info');
   }
-  
+
   log(`Running ${toolName}...`, 'info');
   updateStatus(`Running ${toolName}...`, 'processing');
   showProgress(true);
-  
+
   const result = await window.electronAPI.runQuickTool(toolName, currentFilePath, outputSuffix, options);
-  
+
   showProgress(false);
-  
+
   if (result.success) {
     log(`${toolName} completed successfully`, 'success');
     updateStatus(`${toolName} complete`, 'success');
-    
+
     // For selection mode, display output in Log tab instead of creating files
     if (isSelectionMode) {
       log('═══════════════════════════════════════════════════', 'info');
       log(`SELECTION TOOL OUTPUT: ${toolName}`, 'info');
       log(`Input: ${selectedText.length} characters`, 'info');
       log('───────────────────────────────────────────────────', 'info');
-      
+
       // Display the tool output
       const output = result.output || result.message || 'No output';
       output.split('\n').forEach(line => {
         if (line.trim()) log(line, 'info');
       });
-      
+
       log('═══════════════════════════════════════════════════', 'info');
-      
+
       // Switch to Log tab to show results
       const logTab = document.querySelector('[data-tab="logTab"]');
       if (logTab) logTab.click();
-      
+
       addChangeLogEntry('Quick Tool', `Ran ${toolName} on ${selectedText.length}-char selection (output in Log)`);
       // If long-line tool and user selected sections or the selection corresponds to a single section,
       // parse the output and add pending changes targets for review.
@@ -2075,7 +2075,7 @@ async function runQuickTool(toolName) {
         parseLongLineOutputAndTrack(result.output, null, false);
       }
     }
-    
+
     // Clear selection after processing
     selectedText = '';
     window.getSelection()?.removeAllRanges();
@@ -2102,7 +2102,7 @@ document.getElementById('qtCompareDocsBtn')?.addEventListener('click', () => {
   // Close quick tools modal
   const quickToolsModal = document.getElementById('quickToolsModal');
   if (quickToolsModal) quickToolsModal.style.display = 'none';
-  
+
   // Open comparator modal
   document.getElementById('compareDocsBtn')?.click();
 });
@@ -2122,14 +2122,14 @@ let pendingConversions = [];
 
 document.getElementById('scanConversionsBtn')?.addEventListener('click', async () => {
   console.log('[DEBUG] Scan button clicked');
-  
+
   if (!currentContent) {
     log('No document loaded', 'error');
     return;
   }
-  
+
   console.log('[DEBUG] Document loaded, content length:', currentContent.length);
-  
+
   // Load mappings if not already loaded
   if (conversionMappings.spells.size === 0 && conversionMappings.items.size === 0) {
     console.log('[DEBUG] Loading conversion mappings...');
@@ -2137,10 +2137,10 @@ document.getElementById('scanConversionsBtn')?.addEventListener('click', async (
     console.log('[DEBUG] Mappings loaded:', loaded);
     if (!loaded) return;
   }
-  
+
   console.log('[DEBUG] Spell mappings:', conversionMappings.spells.size);
   console.log('[DEBUG] Item mappings:', conversionMappings.items.size);
-  
+
   // Manual overrides
   const manualOverrides = new Map([
     ['potion of alter size', 'Potion of Diminution'],
@@ -2153,20 +2153,20 @@ document.getElementById('scanConversionsBtn')?.addEventListener('click', async (
     ['protection from law', 'Protection from Disposition'],
     ['bullywug', 'Batrachianoid']
   ]);
-  
+
   const allMappings = new Map([...conversionMappings.spells, ...conversionMappings.items, ...manualOverrides]);
-  
+
   // Find all conversions with line numbers
   const lines = currentContent.split('\n');
   pendingConversions = [];
-  
+
   for (let lineNum = 0; lineNum < lines.length; lineNum++) {
     const line = lines[lineNum];
-    
+
     for (const [oldName, newName] of allMappings) {
       const regex = new RegExp(`\\b${oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
       let match;
-      
+
       while ((match = regex.exec(line)) !== null) {
         pendingConversions.push({
           oldText: match[0],
@@ -2180,7 +2180,7 @@ document.getElementById('scanConversionsBtn')?.addEventListener('click', async (
       }
     }
   }
-  
+
   renderConversionList();
   log(`Found ${pendingConversions.length} potential conversions`, 'success');
 });
@@ -2189,24 +2189,24 @@ function renderConversionList() {
   const container = document.getElementById('conversionList');
   const countEl = document.getElementById('conversionCount');
   const applyAllBtn = document.getElementById('applyAllConversionsBtn');
-  
+
   if (!container) return;
-  
+
   const unapplied = pendingConversions.filter(c => !c.applied);
-  
+
   if (countEl) {
     countEl.textContent = `${unapplied.length} conversion${unapplied.length !== 1 ? 's' : ''} pending`;
   }
-  
+
   if (applyAllBtn) {
     applyAllBtn.disabled = unapplied.length === 0;
   }
-  
+
   if (pendingConversions.length === 0) {
     container.innerHTML = '<p class="placeholder">No conversions found. The document may already use Reforged names.</p>';
     return;
   }
-  
+
   container.innerHTML = pendingConversions.map((conv, idx) => `
     <div class="conversion-item ${conv.applied ? 'applied' : ''}" data-index="${idx}">
       <div class="conversion-item-content">
@@ -2225,7 +2225,7 @@ function renderConversionList() {
       ` : '<div style="color: #4CAF50; font-size: 12px;">✓ Applied</div>'}
     </div>
   `).join('');
-  
+
   // Add event listeners
   container.querySelectorAll('.apply-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -2234,7 +2234,7 @@ function renderConversionList() {
       applyConversion(idx);
     });
   });
-  
+
   container.querySelectorAll('.skip-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2247,19 +2247,19 @@ function renderConversionList() {
 function applyConversion(index) {
   const conv = pendingConversions[index];
   if (!conv || conv.applied) return;
-  
+
   const lines = currentContent.split('\n');
   const lineIdx = conv.lineNumber - 1;
-  
+
   if (lineIdx >= 0 && lineIdx < lines.length) {
     const line = lines[lineIdx];
     const newLine = line.substring(0, conv.index) + conv.newText + line.substring(conv.index + conv.length);
     lines[lineIdx] = newLine;
-    
+
     pushUndoState('Convert: ' + conv.oldText + ' → ' + conv.newText);
     currentContent = lines.join('\n');
     updateEditorContent(currentContent);
-    
+
     conv.applied = true;
     renderConversionList();
     log(`Converted "${conv.oldText}" to "${conv.newText}" on line ${conv.lineNumber}`, 'success');
@@ -2273,24 +2273,24 @@ function skipConversion(index) {
 
 document.getElementById('applyAllConversionsBtn')?.addEventListener('click', () => {
   const unapplied = pendingConversions.filter(c => !c.applied);
-  
+
   if (unapplied.length === 0) return;
-  
+
   if (!confirm(`Apply all ${unapplied.length} conversions?`)) return;
-  
+
   pushUndoState('Apply All Reforged Conversions');
-  
+
   // Apply from end to start to preserve indices
   const sorted = [...pendingConversions].sort((a, b) => {
     if (a.lineNumber !== b.lineNumber) return b.lineNumber - a.lineNumber;
     return b.index - a.index;
   });
-  
+
   let lines = currentContent.split('\n');
-  
+
   for (const conv of sorted) {
     if (conv.applied) continue;
-    
+
     const lineIdx = conv.lineNumber - 1;
     if (lineIdx >= 0 && lineIdx < lines.length) {
       const line = lines[lineIdx];
@@ -2299,7 +2299,7 @@ document.getElementById('applyAllConversionsBtn')?.addEventListener('click', () 
       conv.applied = true;
     }
   }
-  
+
   currentContent = lines.join('\n');
   updateEditorContent(currentContent);
   renderConversionList();
@@ -2318,7 +2318,7 @@ document.getElementById('compareDocsBtn')?.addEventListener('click', () => {
     compareDoc1Path = currentFilePath;
     document.getElementById('compareDoc1Path').value = currentFilePath;
   }
-  
+
   // Show modal
   const modal = document.getElementById('compareDocsModal');
   if (modal) modal.style.display = 'flex';
@@ -2356,34 +2356,34 @@ document.getElementById('runCompareBtn')?.addEventListener('click', async () => 
   const threshold = parseFloat(document.getElementById('compareThreshold').value) / 100;
   const format = document.getElementById('compareFormat').value;
   const autoSave = document.getElementById('compareAutoSave').checked;
-  
+
   // Validation
   if (!doc1 || !doc2) {
     alert('Please select both documents to compare.');
     return;
   }
-  
+
   if (doc1 === doc2) {
     alert('Cannot compare a document with itself. Please select different documents.');
     return;
   }
-  
+
   // Close modal
   const modal = document.getElementById('compareDocsModal');
   if (modal) modal.style.display = 'none';
-  
+
   // Show progress
   showProgress(true);
   updateStatus('Running document comparison...', 'info');
   log(`Comparing documents: ${doc1.split('/').pop()} vs ${doc2.split('/').pop()}`, 'info');
-  
+
   try {
     // Prepare options
     const options = {
       threshold: threshold,
       format: format
     };
-    
+
     // Add output path if auto-save is enabled
     if (autoSave) {
       const doc1Name = doc1.split('/').pop().replace(/\.[^/.]+$/, '');
@@ -2392,21 +2392,21 @@ document.getElementById('runCompareBtn')?.addEventListener('click', async () => 
       const outputDir = doc1.substring(0, doc1.lastIndexOf('/'));
       options.outputPath = `${outputDir}/comparison_${doc1Name}_vs_${doc2Name}${ext}`;
     }
-    
+
     // Run comparison
     const result = await window.electronAPI.compareDocuments(doc1, doc2, options);
-    
+
     showProgress(false);
-    
+
     if (result.success) {
       updateStatus('Comparison complete', 'success');
       log('Document comparison completed successfully', 'success');
-      
+
       // Parse the output to extract issue count
       const output = result.output || '';
       const issueMatch = output.match(/Found (\d+) issues/);
       const issueCount = issueMatch ? issueMatch[1] : 'unknown';
-      
+
       // Display results in comparison tab
       const comparisonContent = document.getElementById('comparisonContent');
       if (comparisonContent) {
@@ -2418,7 +2418,7 @@ document.getElementById('runCompareBtn')?.addEventListener('click', async () => 
         html += `<p><strong>Issues Found:</strong> ${issueCount}</p>`;
         html += `<p><strong>Threshold:</strong> ${(threshold * 100).toFixed(0)}%</p>`;
         html += `</div>`;
-        
+
         if (result.reportContent) {
           html += '<div class="comparison-report">';
           if (format === 'markdown') {
@@ -2428,7 +2428,7 @@ document.getElementById('runCompareBtn')?.addEventListener('click', async () => 
             html += `<pre>${result.reportContent}</pre>`;
           }
           html += '</div>';
-          
+
           if (result.reportPath) {
             html += `<div class="comparison-footer">`;
             html += `<p>Report saved to: <code>${result.reportPath}</code></p>`;
@@ -2439,25 +2439,25 @@ document.getElementById('runCompareBtn')?.addEventListener('click', async () => 
           html += `<pre>${output}</pre>`;
           html += '</div>';
         }
-        
+
         html += '</div>';
         comparisonContent.innerHTML = html;
       }
-      
+
       // Switch to comparison tab
       const comparisonTab = document.querySelector('[data-tab="comparisonTab"]');
       if (comparisonTab) comparisonTab.click();
-      
+
       // Add to change log
       addChangeLogEntry(
         'Document Comparison',
         `Compared ${doc1.split('/').pop()} vs ${doc2.split('/').pop()} - ${issueCount} issues found`
       );
-      
+
     } else {
       updateStatus('Comparison failed', 'error');
       log(`Comparison failed: ${result.message}`, 'error');
-      
+
       // Show error in comparison tab
       const comparisonContent = document.getElementById('comparisonContent');
       if (comparisonContent) {
@@ -2487,11 +2487,11 @@ document.getElementById('settingsBtn')?.addEventListener('click', async () => {
   if (loadedConfig) {
     config = { ...config, ...loadedConfig };
   }
-  
+
   // Populate settings form
   document.getElementById('settingOutputSuffix').value = config.defaultOutputSuffix || '_cleaned';
   document.getElementById('settingTablesInline').checked = config.tablesInline ?? true;
-  
+
   // Update sync checkbox to reflect current state (simple ON/OFF)
   const syncCheckbox = document.getElementById('settingSyncEnabled');
   if (syncCheckbox) {
@@ -2510,7 +2510,7 @@ document.getElementById('settingsBtn')?.addEventListener('click', async () => {
 
   // Reflect current values in header indicator
   updateSystemIndicator();
-  
+
   // Show modal
   const modal = document.getElementById('settingsModal');
   if (modal) modal.style.display = 'flex';
@@ -2525,7 +2525,7 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   // Gather settings
   config.defaultOutputSuffix = document.getElementById('settingOutputSuffix')?.value || '_cleaned';
   config.tablesInline = document.getElementById('settingTablesInline')?.checked ?? true;
-  
+
   // Save sync preference: checkbox checked = ON, unchecked = OFF
   const syncCheckbox = document.getElementById('settingSyncEnabled');
   syncScrollEnabled = !!(syncCheckbox && syncCheckbox.checked);
@@ -2540,10 +2540,10 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   if (editionSelect) {
     config.gameEdition = editionSelect.value || 'reforged';
   }
-  
+
   // Save config
   const result = await window.electronAPI.saveConfig(config);
-  
+
   if (result.success) {
     log('Settings saved successfully', 'success');
     updateStatus('Settings saved', 'success');
@@ -2551,7 +2551,7 @@ document.getElementById('saveSettingsBtn')?.addEventListener('click', async () =
   } else {
     log(`Failed to save settings: ${result.message}`, 'error');
   }
-  
+
   // Close modal
   const modal = document.getElementById('settingsModal');
   if (modal) modal.style.display = 'none';
@@ -2562,271 +2562,271 @@ document.getElementById('cancelSettingsBtn')?.addEventListener('click', () => {
   if (modal) modal.style.display = 'none';
 });
 
-  // ============================================================================
-  // TABLE TOOLS
-  // ============================================================================
+// ============================================================================
+// TABLE TOOLS
+// ============================================================================
 
-  // Sidebar button: Open Table Tools tab
-  document.getElementById('tableToolsBtn')?.addEventListener('click', () => {
-    const tabBtn = document.querySelector('[data-tab="tableToolsTab"]');
-    tabBtn?.click();
+// Sidebar button: Open Table Tools tab
+document.getElementById('tableToolsBtn')?.addEventListener('click', () => {
+  const tabBtn = document.querySelector('[data-tab="tableToolsTab"]');
+  tabBtn?.click();
+});
+
+// Tool selector buttons
+document.querySelectorAll('.tool-select-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const toolName = btn.dataset.tool;
+
+    // Update active button
+    document.querySelectorAll('.tool-select-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Show corresponding tool panel
+    document.querySelectorAll('.table-tool-panel').forEach(panel => panel.classList.remove('active'));
+    document.getElementById(`${toolName}Tool`)?.classList.add('active');
   });
+});
 
-  // Tool selector buttons
-  document.querySelectorAll('.tool-select-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const toolName = btn.dataset.tool;
-    
-      // Update active button
-      document.querySelectorAll('.tool-select-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    
-      // Show corresponding tool panel
-      document.querySelectorAll('.table-tool-panel').forEach(panel => panel.classList.remove('active'));
-      document.getElementById(`${toolName}Tool`)?.classList.add('active');
+// --- Tool 1: Markdown Table to TSV ---
+
+let mdTableInputPath = null;
+let mdTableOutputPath = null;
+let mdTableResultContent = null;
+
+document.getElementById('browseMdTableBtn')?.addEventListener('click', async () => {
+  const result = await window.electronAPI.selectFile({
+    filters: [
+      { name: 'Markdown Files', extensions: ['md', 'markdown'] },
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  });
+  const selectedPath = (result && result.filePath) ? result.filePath : result;
+
+  if (selectedPath) {
+    mdTableInputPath = selectedPath;
+    document.getElementById('mdTableInput').value = selectedPath;
+
+    // Auto-generate output path
+    const baseName = selectedPath.replace(/\.(md|markdown)$/i, '');
+    mdTableOutputPath = `${baseName}.txt`;
+    document.getElementById('mdTableOutput').value = mdTableOutputPath;
+
+    document.getElementById('runMdTableConvertBtn').disabled = false;
+  }
+});
+
+document.getElementById('browseMdTableOutputBtn')?.addEventListener('click', async () => {
+  const fileName = mdTableInputPath ?
+    mdTableInputPath.split('/').pop().replace(/\.(md|markdown)$/i, '.txt') :
+    'table_output.txt';
+
+  const result = await window.electronAPI.selectSaveLocation(fileName);
+  const savePath = (result && result.filePath) ? result.filePath : result;
+
+  if (savePath) {
+    mdTableOutputPath = savePath;
+    document.getElementById('mdTableOutput').value = savePath;
+  }
+});
+
+document.getElementById('runMdTableConvertBtn')?.addEventListener('click', async () => {
+  if (!mdTableInputPath) return;
+
+  const noHeaders = document.getElementById('mdTableNoHeaders')?.checked || false;
+  const outputPath = mdTableOutputPath || `${mdTableInputPath.replace(/\.(md|markdown)$/i, '')}.txt`;
+
+  log(`Converting markdown table: ${mdTableInputPath}`, 'info');
+  showProgress(true);
+
+  try {
+    const result = await window.electronAPI.convertMdTableToTsv(mdTableInputPath, {
+      outputPath,
+      noHeaders
     });
+
+    showProgress(false);
+
+    if (result.success) {
+      mdTableResultContent = result.content;
+      document.getElementById('mdTableResultContent').textContent = result.content;
+      document.getElementById('mdTableResult').style.display = 'block';
+      document.getElementById('copyMdTableResultBtn').disabled = false;
+
+      log(`Conversion successful: ${outputPath}`, 'success');
+      updateStatus(`Converted to ${outputPath}`, 'success');
+    } else {
+      log(`Conversion failed: ${result.message}`, 'error');
+      updateStatus('Conversion failed', 'error');
+      alert(`Conversion failed: ${result.message}`);
+    }
+  } catch (error) {
+    showProgress(false);
+    log(`Error: ${error.message}`, 'error');
+    alert(`Error: ${error.message}`);
+  }
+});
+
+document.getElementById('copyMdTableResultBtn')?.addEventListener('click', () => {
+  if (mdTableResultContent) {
+    navigator.clipboard.writeText(mdTableResultContent);
+    updateStatus('Copied to clipboard', 'success');
+    log('Result copied to clipboard', 'info');
+  }
+});
+
+// --- Tool 2: Names to Columns ---
+
+let namesInputPath = null;
+let namesOutputPath = null;
+let namesResultContent = null;
+
+document.getElementById('browseNamesBtn')?.addEventListener('click', async () => {
+  const result = await window.electronAPI.selectFile({
+    filters: [
+      { name: 'Text Files', extensions: ['txt', 'md'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
   });
+  const selectedPath = (result && result.filePath) ? result.filePath : result;
 
-  // --- Tool 1: Markdown Table to TSV ---
+  if (selectedPath) {
+    namesInputPath = selectedPath;
+    document.getElementById('namesInput').value = selectedPath;
 
-  let mdTableInputPath = null;
-  let mdTableOutputPath = null;
-  let mdTableResultContent = null;
+    // Auto-generate output path
+    const baseName = selectedPath.replace(/\.[^.]+$/, '');
+    namesOutputPath = `${baseName}-Columns.txt`;
+    document.getElementById('namesOutput').value = namesOutputPath;
 
-  document.getElementById('browseMdTableBtn')?.addEventListener('click', async () => {
-    const result = await window.electronAPI.selectFile({ 
-      filters: [
-        { name: 'Markdown Files', extensions: ['md', 'markdown'] },
-        { name: 'Text Files', extensions: ['txt'] },
-        { name: 'All Files', extensions: ['*'] }
-      ]
+    document.getElementById('runNamesConvertBtn').disabled = false;
+  }
+});
+
+document.getElementById('browseNamesOutputBtn')?.addEventListener('click', async () => {
+  const fileName = namesInputPath ?
+    namesInputPath.split('/').pop().replace(/\.[^.]+$/, '-Columns.txt') :
+    'names-columns.txt';
+
+  const result = await window.electronAPI.selectSaveLocation(fileName);
+  const savePath = (result && result.filePath) ? result.filePath : result;
+
+  if (savePath) {
+    namesOutputPath = savePath;
+    document.getElementById('namesOutput').value = savePath;
+  }
+});
+
+document.getElementById('runNamesConvertBtn')?.addEventListener('click', async () => {
+  if (!namesInputPath) return;
+
+  const columns = parseInt(document.getElementById('namesColumns')?.value || '4', 10);
+  const outputPath = namesOutputPath || `${namesInputPath.replace(/\.[^.]+$/, '')}-Columns.txt`;
+
+  log(`Converting names to columns: ${namesInputPath}`, 'info');
+  showProgress(true);
+
+  try {
+    const result = await window.electronAPI.convertNamesToColumns(namesInputPath, {
+      outputPath,
+      columns
     });
-    const selectedPath = (result && result.filePath) ? result.filePath : result;
-  
-    if (selectedPath) {
-      mdTableInputPath = selectedPath;
-      document.getElementById('mdTableInput').value = selectedPath;
-    
-      // Auto-generate output path
-      const baseName = selectedPath.replace(/\.(md|markdown)$/i, '');
-      mdTableOutputPath = `${baseName}.txt`;
-      document.getElementById('mdTableOutput').value = mdTableOutputPath;
-    
-      document.getElementById('runMdTableConvertBtn').disabled = false;
-    }
-  });
 
-  document.getElementById('browseMdTableOutputBtn')?.addEventListener('click', async () => {
-    const fileName = mdTableInputPath ? 
-      mdTableInputPath.split('/').pop().replace(/\.(md|markdown)$/i, '.txt') : 
-      'table_output.txt';
-  
-    const result = await window.electronAPI.selectSaveLocation(fileName);
-    const savePath = (result && result.filePath) ? result.filePath : result;
-  
-    if (savePath) {
-      mdTableOutputPath = savePath;
-      document.getElementById('mdTableOutput').value = savePath;
-    }
-  });
+    showProgress(false);
 
-  document.getElementById('runMdTableConvertBtn')?.addEventListener('click', async () => {
-    if (!mdTableInputPath) return;
-  
-    const noHeaders = document.getElementById('mdTableNoHeaders')?.checked || false;
-    const outputPath = mdTableOutputPath || `${mdTableInputPath.replace(/\.(md|markdown)$/i, '')}.txt`;
-  
-    log(`Converting markdown table: ${mdTableInputPath}`, 'info');
-    showProgress(true);
-  
-    try {
-      const result = await window.electronAPI.convertMdTableToTsv(mdTableInputPath, {
-        outputPath,
-        noHeaders
-      });
-    
-      showProgress(false);
-    
-      if (result.success) {
-        mdTableResultContent = result.content;
-        document.getElementById('mdTableResultContent').textContent = result.content;
-        document.getElementById('mdTableResult').style.display = 'block';
-        document.getElementById('copyMdTableResultBtn').disabled = false;
-      
-        log(`Conversion successful: ${outputPath}`, 'success');
-        updateStatus(`Converted to ${outputPath}`, 'success');
+    if (result.success) {
+      namesResultContent = result.content;
+      document.getElementById('namesResultContent').textContent = result.content;
+      document.getElementById('namesResult').style.display = 'block';
+      document.getElementById('copyNamesResultBtn').disabled = false;
+
+      log(`Conversion successful: ${outputPath}`, 'success');
+      updateStatus(`Converted to ${outputPath}`, 'success');
+    } else {
+      log(`Conversion failed: ${result.message}`, 'error');
+      updateStatus('Conversion failed', 'error');
+      alert(`Conversion failed: ${result.message}`);
+    }
+  } catch (error) {
+    showProgress(false);
+    log(`Error: ${error.message}`, 'error');
+    alert(`Error: ${error.message}`);
+  }
+});
+
+document.getElementById('copyNamesResultBtn')?.addEventListener('click', () => {
+  if (namesResultContent) {
+    navigator.clipboard.writeText(namesResultContent);
+    updateStatus('Copied to clipboard', 'success');
+    log('Result copied to clipboard', 'info');
+  }
+});
+
+// --- Tool 3: Multi-Format Converter ---
+
+let multiFormatResultContent = null;
+
+document.getElementById('runMultiFormatBtn')?.addEventListener('click', async () => {
+  const inputText = document.getElementById('multiFormatInput')?.value;
+  const format = document.getElementById('multiFormatOutput')?.value || 'tsv';
+
+  if (!inputText || !inputText.trim()) {
+    alert('Please enter input text');
+    return;
+  }
+
+  log(`Converting table to ${format.toUpperCase()}`, 'info');
+  showProgress(true);
+
+  try {
+    const result = await window.electronAPI.convertTableMultiFormat(inputText, format);
+
+    showProgress(false);
+
+    if (result.success) {
+      multiFormatResultContent = result.output;
+      document.getElementById('multiFormatResultContent').textContent = result.output;
+      document.getElementById('multiFormatResult').style.display = 'block';
+      document.getElementById('copyMultiFormatResultBtn').disabled = false;
+
+      // Show orphans if any
+      if (result.orphans && result.orphans.length > 0) {
+        document.getElementById('multiFormatOrphansList').textContent = result.orphans.join('\n');
+        document.getElementById('multiFormatOrphans').style.display = 'block';
       } else {
-        log(`Conversion failed: ${result.message}`, 'error');
-        updateStatus('Conversion failed', 'error');
-        alert(`Conversion failed: ${result.message}`);
+        document.getElementById('multiFormatOrphans').style.display = 'none';
       }
-    } catch (error) {
-      showProgress(false);
-      log(`Error: ${error.message}`, 'error');
-      alert(`Error: ${error.message}`);
+
+      log(`Conversion successful (${format.toUpperCase()})`, 'success');
+      updateStatus('Conversion complete', 'success');
+    } else {
+      log(`Conversion failed: ${result.message}`, 'error');
+      updateStatus('Conversion failed', 'error');
+      alert(`Conversion failed: ${result.message}`);
     }
-  });
+  } catch (error) {
+    showProgress(false);
+    log(`Error: ${error.message}`, 'error');
+    alert(`Error: ${error.message}`);
+  }
+});
 
-  document.getElementById('copyMdTableResultBtn')?.addEventListener('click', () => {
-    if (mdTableResultContent) {
-      navigator.clipboard.writeText(mdTableResultContent);
-      updateStatus('Copied to clipboard', 'success');
-      log('Result copied to clipboard', 'info');
-    }
-  });
+document.getElementById('copyMultiFormatResultBtn')?.addEventListener('click', () => {
+  if (multiFormatResultContent) {
+    navigator.clipboard.writeText(multiFormatResultContent);
+    updateStatus('Copied to clipboard', 'success');
+    log('Result copied to clipboard', 'info');
+  }
+});
 
-  // --- Tool 2: Names to Columns ---
-
-  let namesInputPath = null;
-  let namesOutputPath = null;
-  let namesResultContent = null;
-
-  document.getElementById('browseNamesBtn')?.addEventListener('click', async () => {
-    const result = await window.electronAPI.selectFile({ 
-      filters: [
-        { name: 'Text Files', extensions: ['txt', 'md'] },
-        { name: 'All Files', extensions: ['*'] }
-      ]
-    });
-    const selectedPath = (result && result.filePath) ? result.filePath : result;
-  
-    if (selectedPath) {
-      namesInputPath = selectedPath;
-      document.getElementById('namesInput').value = selectedPath;
-    
-      // Auto-generate output path
-      const baseName = selectedPath.replace(/\.[^.]+$/, '');
-      namesOutputPath = `${baseName}-Columns.txt`;
-      document.getElementById('namesOutput').value = namesOutputPath;
-    
-      document.getElementById('runNamesConvertBtn').disabled = false;
-    }
-  });
-
-  document.getElementById('browseNamesOutputBtn')?.addEventListener('click', async () => {
-    const fileName = namesInputPath ? 
-      namesInputPath.split('/').pop().replace(/\.[^.]+$/, '-Columns.txt') : 
-      'names-columns.txt';
-  
-    const result = await window.electronAPI.selectSaveLocation(fileName);
-    const savePath = (result && result.filePath) ? result.filePath : result;
-  
-    if (savePath) {
-      namesOutputPath = savePath;
-      document.getElementById('namesOutput').value = savePath;
-    }
-  });
-
-  document.getElementById('runNamesConvertBtn')?.addEventListener('click', async () => {
-    if (!namesInputPath) return;
-  
-    const columns = parseInt(document.getElementById('namesColumns')?.value || '4', 10);
-    const outputPath = namesOutputPath || `${namesInputPath.replace(/\.[^.]+$/, '')}-Columns.txt`;
-  
-    log(`Converting names to columns: ${namesInputPath}`, 'info');
-    showProgress(true);
-  
-    try {
-      const result = await window.electronAPI.convertNamesToColumns(namesInputPath, {
-        outputPath,
-        columns
-      });
-    
-      showProgress(false);
-    
-      if (result.success) {
-        namesResultContent = result.content;
-        document.getElementById('namesResultContent').textContent = result.content;
-        document.getElementById('namesResult').style.display = 'block';
-        document.getElementById('copyNamesResultBtn').disabled = false;
-      
-        log(`Conversion successful: ${outputPath}`, 'success');
-        updateStatus(`Converted to ${outputPath}`, 'success');
-      } else {
-        log(`Conversion failed: ${result.message}`, 'error');
-        updateStatus('Conversion failed', 'error');
-        alert(`Conversion failed: ${result.message}`);
-      }
-    } catch (error) {
-      showProgress(false);
-      log(`Error: ${error.message}`, 'error');
-      alert(`Error: ${error.message}`);
-    }
-  });
-
-  document.getElementById('copyNamesResultBtn')?.addEventListener('click', () => {
-    if (namesResultContent) {
-      navigator.clipboard.writeText(namesResultContent);
-      updateStatus('Copied to clipboard', 'success');
-      log('Result copied to clipboard', 'info');
-    }
-  });
-
-  // --- Tool 3: Multi-Format Converter ---
-
-  let multiFormatResultContent = null;
-
-  document.getElementById('runMultiFormatBtn')?.addEventListener('click', async () => {
-    const inputText = document.getElementById('multiFormatInput')?.value;
-    const format = document.getElementById('multiFormatOutput')?.value || 'tsv';
-  
-    if (!inputText || !inputText.trim()) {
-      alert('Please enter input text');
-      return;
-    }
-  
-    log(`Converting table to ${format.toUpperCase()}`, 'info');
-    showProgress(true);
-  
-    try {
-      const result = await window.electronAPI.convertTableMultiFormat(inputText, format);
-    
-      showProgress(false);
-    
-      if (result.success) {
-        multiFormatResultContent = result.output;
-        document.getElementById('multiFormatResultContent').textContent = result.output;
-        document.getElementById('multiFormatResult').style.display = 'block';
-        document.getElementById('copyMultiFormatResultBtn').disabled = false;
-      
-        // Show orphans if any
-        if (result.orphans && result.orphans.length > 0) {
-          document.getElementById('multiFormatOrphansList').textContent = result.orphans.join('\n');
-          document.getElementById('multiFormatOrphans').style.display = 'block';
-        } else {
-          document.getElementById('multiFormatOrphans').style.display = 'none';
-        }
-      
-        log(`Conversion successful (${format.toUpperCase()})`, 'success');
-        updateStatus('Conversion complete', 'success');
-      } else {
-        log(`Conversion failed: ${result.message}`, 'error');
-        updateStatus('Conversion failed', 'error');
-        alert(`Conversion failed: ${result.message}`);
-      }
-    } catch (error) {
-      showProgress(false);
-      log(`Error: ${error.message}`, 'error');
-      alert(`Error: ${error.message}`);
-    }
-  });
-
-  document.getElementById('copyMultiFormatResultBtn')?.addEventListener('click', () => {
-    if (multiFormatResultContent) {
-      navigator.clipboard.writeText(multiFormatResultContent);
-      updateStatus('Copied to clipboard', 'success');
-      log('Result copied to clipboard', 'info');
-    }
-  });
-
-  document.getElementById('clearMultiFormatBtn')?.addEventListener('click', () => {
-    document.getElementById('multiFormatInput').value = '';
-    document.getElementById('multiFormatResult').style.display = 'none';
-    document.getElementById('multiFormatOrphans').style.display = 'none';
-    multiFormatResultContent = null;
-    document.getElementById('copyMultiFormatResultBtn').disabled = true;
-    updateStatus('Cleared input', 'info');
-  });
+document.getElementById('clearMultiFormatBtn')?.addEventListener('click', () => {
+  document.getElementById('multiFormatInput').value = '';
+  document.getElementById('multiFormatResult').style.display = 'none';
+  document.getElementById('multiFormatOrphans').style.display = 'none';
+  multiFormatResultContent = null;
+  document.getElementById('copyMultiFormatResultBtn').disabled = true;
+  updateStatus('Cleared input', 'info');
+});
 
 // ============================================================================
 // DRAG AND DROP FILE HANDLING
@@ -2870,11 +2870,11 @@ function initializeDragAndDrop() {
 
     const file = files[0];
     const filePath = file.path;
-    
+
     // Check if it's a markdown/text file
     const validExtensions = ['.md', '.markdown', '.txt'];
     const hasValidExtension = validExtensions.some(ext => filePath.toLowerCase().endsWith(ext));
-    
+
     if (!hasValidExtension) {
       alert('Please drop a markdown file (.md, .markdown, or .txt)');
       log(`Invalid file type: ${filePath}`, 'error');
@@ -2987,13 +2987,13 @@ function navigateToSection(index) {
     let match = headings.find(h => (h.textContent || '').trim() === target.header);
 
     if (!match) {
-        match = headings.find(h => (h.textContent || '').trim().startsWith(target.header));
+      match = headings.find(h => (h.textContent || '').trim().startsWith(target.header));
     }
 
 
     // Fallback: use data-line attribute if available (requires renderer update to inject it)
     if (!match) {
-        match = headings.find(h => h.getAttribute('data-line') == target.startLine);
+      match = headings.find(h => h.getAttribute('data-line') == target.startLine);
     }
 
 
@@ -3053,10 +3053,10 @@ const ANALYSIS_DEBOUNCE = 300; // ms - throttle rapid analysis calls
 
 async function analyzeDocumentStatBlocks() {
   if (suppressStatAnalysis) return; // Skip if bulk update in progress
-  
+
   // Clear any pending analysis
   clearTimeout(analysisTimeout);
-  
+
   analysisTimeout = setTimeout(async () => {
     if (!currentContent) {
       updateStatBlockNavigator([]);
@@ -3081,17 +3081,17 @@ async function analyzeDocumentStatBlocks() {
 // Extract traps and hazards from document (separate from stat blocks)
 function extractTrapsAndHazards(content) {
   if (!content) return [];
-  
+
   const lines = content.split('\n');
   const trapsAndHazards = [];
   const seen = new Set(); // Deduplicate
-  
+
   // Hazard keywords from Python analysis
   const hazardKeywords = /(pit\s+trap|covered\s+pit|open\s+pit|snare|net\s+trap|spear\s+trap|pressure\s+plate|alarm|laughing\s+gas|sleeping\s+gas|green\s+slime|gray\s+ooze|air\s+fungus|exploding|curse|aversion|ammonia|secret\s+trap\s+door)/i;
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    
+
     // Must have CL rating AND hazard keywords (from Python logic)
     if (/CL\s*\d+/i.test(line) && hazardKeywords.test(line)) {
       // Extract the most relevant bold text (prefer trap-related names)
@@ -3106,12 +3106,12 @@ function extractTrapsAndHazards(content) {
             break;
           }
         }
-        
+
         // Fallback to first bold text if no keyword match
         if (!name && boldMatches.length > 0) {
           name = boldMatches[0].replace(/\*\*/g, '').replace(/^[_:\s]+|[_:\s]+$/g, '').trim();
         }
-        
+
         if (name && !seen.has(name.toLowerCase())) {
           seen.add(name.toLowerCase());
           trapsAndHazards.push({
@@ -3128,23 +3128,23 @@ function extractTrapsAndHazards(content) {
       }
     }
   }
-  
+
   return trapsAndHazards;
 }
 
 function updateStatBlockNavigator(blocks) {
   const container = document.getElementById('statBlockNavigator');
   const countEl = document.getElementById('statBlockCount');
-  
+
   if (!container) return;
-  
+
   // Store full list
   statBlocks = Array.isArray(blocks) ? blocks : [];
-  
+
   // Add traps and hazards
   const trapsAndHazards = extractTrapsAndHazards(currentContent || '');
   statBlocks = statBlocks.concat(trapsAndHazards);
-  
+
   // Update count badge
   const sections = extractSections(currentContent || '');
   allSections = sections; // reuse existing sections array
@@ -3181,7 +3181,7 @@ function classifyStatBlock(block) {
   let name = (block.name || '').toLowerCase();
   const originalName = block.name || '';
   const text = (block.raw || block.fullText || '').toLowerCase();
-  
+
   // If this was extracted as a trap/hazard, classify it appropriately
   if (block.context === 'Trap/Hazard') {
     // Check if it's a trap or hazard based on keywords
@@ -3194,10 +3194,10 @@ function classifyStatBlock(block) {
     // Default to trap for Trap/Hazard context
     return 'trap';
   }
-  
+
   // Strip quantity patterns for better classification
   name = name.replace(/\s*x\s*\d+$/i, '').replace(/\s*\d+x$/i, '').replace(/\s*\d+$/i, '').trim();
-  
+
   const combined = `${name} ${text}`;
 
   const hasHpOrHd = /\b(hp\s*\d+|hd\s*\d+d?\d*)\b/i.test(combined);
@@ -3207,72 +3207,72 @@ function classifyStatBlock(block) {
   // Room/Architectural patterns - check BEFORE NPC detection for location names
   // Use word boundaries to avoid matching creature names like "Cave bats"
   if (/\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage)\b/i.test(combined) ||
-      /\b(cave|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined) ||
-      /\b(sq\.?\s*ft|square\s*feet|feet\s*x\s*\d+|\d+\s*x\s*\d+|\d+\s*ft\s*x\s*\d+|dimensions?\b)/i.test(combined)) {
+    /\b(cave|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined) ||
+    /\b(sq\.?\s*ft|square\s*feet|feet\s*x\s*\d+|\d+\s*x\s*\d+|\d+\s*ft\s*x\s*\d+|dimensions?\b)/i.test(combined)) {
     return 'feature';
   }
-  
+
   // Detect if this is a named NPC (proper name, not generic)
   const isNamedNPC = detectNamedNPC(originalName);
-  
+
   // NPC keywords (explicit people/roles)
-  if (isNamedNPC || 
-      /(\\bnpc\\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer)/i.test(combined) ||
-      /personality|attitude|demeanor/i.test(text)) {
+  if (isNamedNPC ||
+    /(\\bnpc\\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer)/i.test(combined) ||
+    /personality|attitude|demeanor/i.test(text)) {
     return isNamedNPC ? 'npc-named' : 'npc';
   }
-  
+
   // Monster keywords (expanded) - check this AFTER room patterns
   const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|wood elf|wood elves|serjeant|lieutenant|fekk|yeexuul)/i.test(combined) ||
-      /monster|creature|spawn/i.test(text) ||
-      hasStatSignals;
-  
+    /monster|creature|spawn/i.test(text) ||
+    hasStatSignals;
+
   if (isMonster) {
     // Check if also a hazard (dual categorization) - only for specific hazard creatures
     const isHazardToo = /(green\s+slime|gray\s+ooze|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
     return isHazardToo ? 'hazard' : 'monster'; // Prioritize hazard for dual-category entities
   }
-  
+
   // Trap detection - check for explicit trap indicators
   // Match names like "Pit Trap [X]", "Covered pit trap", "Spear trap", etc.
   if (/\b(pit|covered|open|spear|net|alarm|pressure)\s+(trap|plate)/i.test(name) ||
-      /\btrap\b.*\[(x|X)\]/i.test(name) ||
-      /(snare|net\s+trap|laughing\s+gas|sleeping\s+gas)/i.test(name)) {
+    /\btrap\b.*\[(x|X)\]/i.test(name) ||
+    /(snare|net\s+trap|laughing\s+gas|sleeping\s+gas)/i.test(name)) {
     return 'trap';
   }
-  
+
   // Also check for trap context in text (CL ratings, damage, triggers)
   if (/\btrap\b/i.test(name) && /(CL\s*\d+|triggers|collapses|damage|save)/i.test(text)) {
     return 'trap';
   }
-  
+
   // Hazard keywords (environmental dangers)
   if (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetles|sunset|mushrooms)/i.test(combined) ||
-      /hazard|environmental|danger|save vs/i.test(text)) {
+    /hazard|environmental|danger|save vs/i.test(text)) {
     return 'hazard';
   }
-  
+
   // Feature (only for specific environmental elements)
   if (/(fountain|altar|statue|door|chest|room)/i.test(combined)) {
     return 'feature';
   }
-  
+
   // Default to monster if it has creature-like words but didn't match above
   if (/(elf|elves|gnoll|gnolls|kobold|kobolds|goblin|goblins|orc|orcs|human|humans|man|men|woman|women|child|children|male|female)/i.test(combined)) {
     return 'monster';
   }
-  
+
   return 'feature'; // Final fallback
 }
 
 // Extract stat block names using the same pattern as Python analysis
 function extractStatBlockNames(content) {
   if (!content) return [];
-  
+
   // Match Python pattern: **Name:** _(This.*?vital stats are|HP|He is a|She is a|It is a).*?HP
   const statBlockPattern = /\*\*([^\*]+)\*\*[:\s]*_?\((?:This.*?vital stats are|HP|He is a|She is a|It is a).*?HP/gi;
   const statBlockNames = new Set();
-  
+
   let match;
   while ((match = statBlockPattern.exec(content)) !== null) {
     const name = match[1].trim();
@@ -3280,17 +3280,17 @@ function extractStatBlockNames(content) {
       statBlockNames.add(name);
     }
   }
-  
+
   return Array.from(statBlockNames);
 }
 
 // Extract proper names from document content to find missing stat blocks
 function extractReferencedNames(content) {
   if (!content) return [];
-  
+
   const lines = content.split('\n');
   const referencedNames = new Set();
-  
+
   // Patterns to extract proper names (more focused than before)
   const patterns = [
     // Quoted names: "Name", 'Name' (handle hyphens)
@@ -3300,13 +3300,13 @@ function extractReferencedNames(content) {
     // Title + name patterns: King Griggle-gruk, Queen Someone
     /\b(King|Queen|Lord|Lady|Sir|Captain|Chieftain|Chief|Leader|Shaman|Priest|Priestess)\s+([A-Z][a-z]+(?:[-\s][A-Z][a-z]+)*)\b/g
   ];
-  
+
   for (const line of lines) {
     // Skip lines that reference other modules
     if (/\(CZY\s+environs|Ruins\s+of\s+the\s+Castle\s+Precincts|Appendix\s+[A-D]\)/i.test(line)) {
       continue;
     }
-    
+
     for (const pattern of patterns) {
       let match;
       while ((match = pattern.exec(line)) !== null) {
@@ -3317,42 +3317,42 @@ function extractReferencedNames(content) {
       }
     }
   }
-  
+
   return Array.from(referencedNames);
 }
 
 // Find names referenced in document but missing from stat blocks
 function findMissingStatBlocks() {
   if (!currentContent) return [];
-  
+
   const referencedNames = extractReferencedNames(currentContent);
   const statBlockNames = extractStatBlockNames(currentContent);
   const statBlockNamesSet = new Set(
     statBlockNames.map(name => name.toLowerCase().trim())
   );
-  
+
   const missing = referencedNames.filter(name => {
     const normalizedName = name.toLowerCase().trim();
-    return !statBlockNamesSet.has(normalizedName) && 
-           !statBlockNamesSet.has(normalizedName.replace(/^king\s+|queen\s+|lord\s+|lady\s+|sir\s+/i, '')) &&
-           !statBlockNamesSet.has(normalizedName.replace(/\s+\([^)]+\)$/, '')); // Remove trailing parenthetical
+    return !statBlockNamesSet.has(normalizedName) &&
+      !statBlockNamesSet.has(normalizedName.replace(/^king\s+|queen\s+|lord\s+|lady\s+|sir\s+/i, '')) &&
+      !statBlockNamesSet.has(normalizedName.replace(/\s+\([^)]+\)$/, '')); // Remove trailing parenthetical
   });
-  
+
   return missing.sort();
 }
 
 // Show missing stat blocks report
 function showMissingStatBlocksReport() {
   const missing = findMissingStatBlocks();
-  
+
   if (missing.length === 0) {
     alert('All referenced names have corresponding stat blocks!');
     return;
   }
-  
+
   const report = missing.join('\n');
   const message = `The following ${missing.length} names are referenced in the document but have no stat blocks:\n\n${report}\n\nConsider creating stat blocks for these entities or removing references if they're not needed.`;
-  
+
   if (confirm(`${message}\n\nCopy this list to clipboard?`)) {
     navigator.clipboard.writeText(report).then(() => {
       log('Missing stat blocks list copied to clipboard', 'success');
@@ -3365,27 +3365,27 @@ function showMissingStatBlocksReport() {
 // Detect if a name represents a unique named NPC vs generic monster
 function detectNamedNPC(name) {
   if (!name || name.length < 3) return false;
-  
+
   // Exclude structural/meta elements (tables, blocks, sections)
   if (/^(table|block|section|area|room|chapter|part|appendix)\s*\d+/i.test(name)) {
     return false;
   }
-  
+
   // Exclude location/area names (not NPCs)
   if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|lair|den)/i.test(name)) {
     return false;
   }
-  
+
   // Exclude boxed text markers and other formatting
   if (/^(<<|>>|begin|end|boxed|text)/i.test(name)) {
     return false;
   }
-  
+
   // Generic quantity indicators = not a named NPC
   if (/\b(x\s*\d+|\d+\s*x|patrol|warriors?|guards?|sentries|males?|females?|young|raiders?|scouts?)\b/i.test(name)) {
     return false;
   }
-  
+
   // Generic monster types = not a named NPC
   const genericMonsters = [
     'ape', 'bandit', 'bear', 'bat', 'boar', 'bugbear', 'centipede', 'beetle',
@@ -3397,15 +3397,15 @@ function detectNamedNPC(name) {
     'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
     'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivorous'
   ];
-  
+
   // Check first word and also check for "Type, descriptor" pattern (e.g., "Bear, black")
   const nameLower = name.toLowerCase();
   const firstWord = name.split(/[\s,]+/)[0].toLowerCase();
-  
+
   if (genericMonsters.includes(firstWord)) {
     return false;
   }
-  
+
   // Check for generic patterns like "Black Bear", "Giant rats", "Cave bats"
   const nameParts = name.split(/\s+/);
   if (nameParts.length >= 2) {
@@ -3419,15 +3419,15 @@ function detectNamedNPC(name) {
       return false;
     }
   }
-  
+
   // Check for role-based names (Brigand, crossbowman)
   if (/^(brigand|bandit|guard|warrior|scout|raider|sentry|patrol)\b/i.test(nameLower)) {
     return false;
   }
-  
+
   // Quoted names are usually unique ("Charlie", "Pinky")
   if (/["']/.test(name)) return true;
-  
+
   // Check for proper capitalized names (not just generic titles)
   // Names like "Grimlock Manface", "Fekk", "King Griggle-gruk"
   const words = name.split(/\s+/);
@@ -3439,37 +3439,37 @@ function detectNamedNPC(name) {
     const genericTitles = ['the', 'king', 'queen', 'chief', 'chieftain', 'leader', 'lord', 'lady', 'sir', 'captain', 'lieutenant', 'serjeant', 'shaman', 'priest'];
     return !genericTitles.includes(lower);
   });
-  
+
   return hasProperName;
 }
 
 // Detect if stat block uses legacy format (needs Reforged conversion)
 function detectLegacyFormat(block) {
   const text = (block.raw || block.fullText || '').toLowerCase();
-  
+
   // Reforged indicators (C&C Reforged specific)
   const hasReforgedKeywords = /\b(primary attributes?|secondary attributes?|disposition|carries?|wears?)\b/i.test(text);
-  
+
   // Legacy indicators (old D&D/AD&D style)
   const hasLegacyKeywords = /\b(thac0|saving throws?|to hit|morale|treasure type|no\. appearing)\b/i.test(text);
-  
+
   // If it has Reforged keywords, it's updated
   if (hasReforgedKeywords) return false;
-  
+
   // If it has legacy keywords or lacks Reforged structure, it's legacy
   if (hasLegacyKeywords) return true;
-  
+
   // Check for minimal Reforged structure
   const hasHP = /\bhp\s*\d+/i.test(text);
   const hasAC = /\bac\s*\d+/i.test(text);
   const hasDisposition = /\bdisposition\b/i.test(text);
   const hasPrimaryAttrs = /\bprimary attributes?\b/i.test(text);
-  
+
   // If it has HP/AC but missing disposition or primary attributes, likely legacy
   if ((hasHP || hasAC) && (!hasDisposition || !hasPrimaryAttrs)) {
     return true;
   }
-  
+
   return false; // Assume modern if unclear
 }
 
@@ -3511,10 +3511,10 @@ function setReviewFlag(key, value) {
 // Find which header/area this block belongs to
 function findBlockContext(block) {
   if (!currentContent) return '';
-  
+
   const lines = currentContent.split('\n');
   const blockLine = block.lineNumber || block.lineStart || 0;
-  
+
   // Search backwards for nearest header
   for (let i = blockLine - 1; i >= 0; i--) {
     const line = lines[i];
@@ -3530,7 +3530,7 @@ function findBlockContext(block) {
       return headerText;
     }
   }
-  
+
   return '';
 }
 
@@ -3540,14 +3540,14 @@ function getFilteredStatBlocks() {
   const typeFilter = document.getElementById('statBlockTypeFilter');
   const statusFilter = document.getElementById('statBlockReviewFilter');
   const errorsOnly = document.getElementById('statBlockShowErrors');
-  
+
   const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
   const selectedType = typeFilter ? typeFilter.value : 'all';
   const selectedStatus = statusFilter ? statusFilter.value : 'all';
   const showErrorsOnly = errorsOnly ? errorsOnly.checked : false;
-  
+
   let blocksToFilter = statBlocks;
-  
+
   // If showing missing stat blocks, create synthetic entries
   if (selectedType === 'missing') {
     const missingNames = findMissingStatBlocks();
@@ -3563,7 +3563,7 @@ function getFilteredStatBlocks() {
       isSynthetic: true
     }));
   }
-  
+
   return blocksToFilter.filter(block => {
     // Search filter
     if (searchTerm) {
@@ -3573,7 +3573,7 @@ function getFilteredStatBlocks() {
         return false;
       }
     }
-    
+
     // Type filter (skip for missing since we already filtered)
     if (selectedType !== 'all' && selectedType !== 'missing' && block.type !== selectedType) {
       return false;
@@ -3584,7 +3584,7 @@ function getFilteredStatBlocks() {
       if (selectedStatus === 'reviewed' && !block.reviewed) return false;
       if (selectedStatus === 'unreviewed' && block.reviewed) return false;
     }
-    
+
     const validation = block.validation || {};
     const errorCount = (typeof validation.errorCount === 'number')
       ? validation.errorCount
@@ -3595,7 +3595,7 @@ function getFilteredStatBlocks() {
     if (!block.isSynthetic && showErrorsOnly && !hasErrors) {
       return false;
     }
-    
+
     return true;
   });
 }
@@ -3644,18 +3644,18 @@ function renderStatBlockList() {
   }
 
   let html = '';
-  
+
   // Sort groups
   const sortedGroups = Array.from(groups.entries()).sort((a, b) => {
     const keyA = a[0];
     const keyB = b[0];
-    
+
     if (statBlockSortMode === 'section') {
       // For section mode, sort by first block's line number (document order)
       // Always put "Alphabetical Listing" at the end
       if (keyA === 'Alphabetical Listing') return 1;
       if (keyB === 'Alphabetical Listing') return -1;
-      
+
       const firstBlockA = a[1][0];
       const firstBlockB = b[1][0];
       const lineA = firstBlockA.lineNumber || firstBlockA.lineStart || 0;
@@ -3669,7 +3669,7 @@ function renderStatBlockList() {
       return keyA.localeCompare(keyB);
     }
   });
-  
+
   sortedGroups.forEach(([ctx, blocksInGroup]) => {
     const collapsed = !!statContextCollapsed[ctx];
     const groupId = ctx.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'no-context';
@@ -3704,7 +3704,7 @@ function renderStatBlockList() {
         const label = warningCount === 1 ? '1 warning' : `${warningCount} warnings`;
         statusBadge = `<span style="margin-left:6px;font-size:11px;padding:1px 6px;border-radius:10px;background:#fff4e5;color:#b26a00;white-space:nowrap;">⚠ ${label}</span>`;
       }
-      
+
       // Add legacy badge if stat block needs Reforged conversion
       let legacyBadge = '';
       if (block.isLegacy) {
@@ -3756,12 +3756,12 @@ function renderStatBlockList() {
       const newVal = !getReviewFlag(key);
       setReviewFlag(key, newVal);
       block.reviewed = newVal;
-      
+
       // Track conversion if marking as reviewed (completed conversion)
       if (newVal && trackConversion) {
         trackConversion(block.name || `Block ${idx + 1}`);
       }
-      
+
       renderStatBlockList();
       updateReviewSummary();
     });
@@ -3838,12 +3838,12 @@ document.getElementById('sortBySection')?.addEventListener('click', () => {
 document.getElementById('sortAlphabetical')?.addEventListener('click', () => {
   const typeFilter = document.getElementById('statBlockTypeFilter');
   const selectedType = typeFilter ? typeFilter.value : 'all';
-  
+
   // Only allow alphabetical sort when a specific type is selected
   if (selectedType === 'all') {
     return; // Do nothing if "All Types" is selected
   }
-  
+
   statBlockSortMode = 'alphabetical';
   document.getElementById('sortAlphabetical')?.classList.add('active');
   document.getElementById('sortBySection')?.classList.remove('active');
@@ -3855,7 +3855,7 @@ document.getElementById('statBlockTypeFilter')?.addEventListener('change', () =>
   const typeFilter = document.getElementById('statBlockTypeFilter');
   const selectedType = typeFilter ? typeFilter.value : 'all';
   const alphabeticalBtn = document.getElementById('sortAlphabetical');
-  
+
   if (selectedType === 'all') {
     // Disable alphabetical sort and switch to section view
     if (statBlockSortMode === 'alphabetical') {
@@ -3869,7 +3869,7 @@ document.getElementById('statBlockTypeFilter')?.addEventListener('change', () =>
     alphabeticalBtn?.classList.remove('disabled');
     alphabeticalBtn?.removeAttribute('disabled');
   }
-  
+
   renderStatBlockList();
 });
 document.getElementById('expandStatGroupsBtn')?.addEventListener('click', () => setStatGroupCollapsed(false));
@@ -3877,15 +3877,15 @@ document.getElementById('collapseStatGroupsBtn')?.addEventListener('click', () =
 document.getElementById('missingStatBlocksBtn')?.addEventListener('click', () => showMissingStatBlocksReport());
 
 // Manual refresh: allow explicit re-analysis on demand (read-only)
-  document.getElementById('refreshStatBlocksBtn')?.addEventListener('click', () => {
-    analyzeDocumentStatBlocks();
-  });
+document.getElementById('refreshStatBlocksBtn')?.addEventListener('click', () => {
+  analyzeDocumentStatBlocks();
+});
 
-  const reviewFilter = document.getElementById('statBlockReviewFilter');
-  reviewFilter?.addEventListener('change', () => {
-    statFilters.status = reviewFilter.value || 'all';
-    renderStatBlockList();
-  });
+const reviewFilter = document.getElementById('statBlockReviewFilter');
+reviewFilter?.addEventListener('change', () => {
+  statFilters.status = reviewFilter.value || 'all';
+  renderStatBlockList();
+});
 
 // Wire up bulk review operations
 document.getElementById('markAllReviewedBtn')?.addEventListener('click', () => {
@@ -3949,7 +3949,7 @@ function navigateToStatBlock(block) {
     if (allSections && allSections.length > 0) {
       const matchIdx = allSections.findIndex(
         (s) => (s.startLine && activeStatStartLine && Math.abs(s.startLine - activeStatStartLine) <= 2) ||
-               (block.context && s.header && s.header.trim().toLowerCase() === block.context.trim().toLowerCase())
+          (block.context && s.header && s.header.trim().toLowerCase() === block.context.trim().toLowerCase())
       );
       if (matchIdx >= 0) {
         try {
@@ -3984,12 +3984,12 @@ function navigateToStatBlock(block) {
 
   // Jump cursor to the stat block in the editor
   let line = block.lineNumber || block.lineStart || 1;
-  
+
   // First, try to verify the line number is still accurate by checking if the content matches
   if (block.name && currentContent && line > 0) {
     const lines = currentContent.split('\n');
     const targetLine = lines[line - 1];
-    
+
     // If the stored line still contains the block name or raw content, trust it
     if (targetLine && (
       targetLine.toLowerCase().includes(block.name.toLowerCase()) ||
@@ -4001,34 +4001,34 @@ function navigateToStatBlock(block) {
       // Line number is stale, search for the block
       console.log(`[Navigate] Line ${line} stale for "${block.name}", searching...`);
       const searchName = block.name.replace(/["']/g, '').trim();
-      
+
       // Search the entire document for the best match
       let bestMatch = null;
       let bestDistance = Infinity;
-      
+
       for (let i = 0; i < lines.length; i++) {
         const lineText = lines[i];
-        
+
         // Try to match the raw content first (most precise)
         if (block.raw && lineText.includes(block.raw.substring(0, 50))) {
           bestMatch = i + 1;
           bestDistance = 0;
           break;
         }
-        
+
         // Look for the name with various formatting patterns
         const patterns = [
           new RegExp(`\\*\\*${searchName}[:\\s]`, 'i'), // **Name: or **Name 
           new RegExp(`\\b${searchName}\\b`, 'i'),
           new RegExp(`\\b${searchName.replace(/\s+/g, '[\\s\\*]+')}\\b`, 'i')
         ];
-        
+
         // For structural elements like "Block X", also try header patterns
         if (/^(block|section|area|room)\s*\d+/i.test(searchName)) {
           patterns.push(new RegExp(`^#{1,6}\\s*${searchName}\\b`, 'i'));
           patterns.push(new RegExp(`^${searchName}\\b`, 'i'));
         }
-        
+
         for (const pattern of patterns) {
           if (pattern.test(lineText)) {
             const distance = Math.abs(i + 1 - line);
@@ -4040,14 +4040,14 @@ function navigateToStatBlock(block) {
           }
         }
       }
-      
+
       if (bestMatch !== null) {
         line = bestMatch;
         console.log(`[Navigate] Found "${block.name}" at line ${line}`);
       }
     }
   }
-  
+
   const jumpResult = jumpEditorToLine(line, true);
 
   // Flash the block name in the editor briefly to aid visual tracking
@@ -4181,7 +4181,7 @@ async function showStatDetails(block) {
     html += `</div>`;
 
     // Show raw block preview (collapsible)
-    html += `<div style="margin-top:12px;"><details><summary style="cursor:pointer;">Show Raw Stat Block</summary><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(raw || '').replace(/</g,'&lt;')}</pre></details></div>`;
+    html += `<div style="margin-top:12px;"><details><summary style="cursor:pointer;">Show Raw Stat Block</summary><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(raw || '').replace(/</g, '&lt;')}</pre></details></div>`;
 
     content.innerHTML = html;
 
@@ -4225,7 +4225,7 @@ async function showStatDetails(block) {
           addChangeLogEntry('Stat Block Fix', `Applied ${applied.length} fixes to ${block.name || 'stat block'}`);
 
           // Update panel to show applied fixes
-          content.innerHTML = `<p class="success">Applied ${applied.length} fix(es).</p><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(fixedText || '').replace(/</g,'&lt;')}</pre>`;
+          content.innerHTML = `<p class="success">Applied ${applied.length} fix(es).</p><pre style="white-space:pre-wrap;padding:8px;background:#f8f9fa;border-radius:6px;margin-top:8px;">${(fixedText || '').replace(/</g, '&lt;')}</pre>`;
         });
       }
     }
@@ -4249,24 +4249,24 @@ async function showStatDetails(block) {
 async function initialize() {
   log('TRPG MD Workbench ready', 'info');
   updateStatus('Ready', 'success');
-  
+
   // Initialize drag and drop
   initializeDragAndDrop();
   // Initialize Find/Replace strip (Ctrl/Cmd+F or Find button)
   initFindReplace();
-  
+
   // Load config
   const loadedConfig = await window.electronAPI.loadConfig();
   if (loadedConfig) {
     config = { ...config, ...loadedConfig };
-    
+
     // Apply config to UI
     const outputSuffixInput = document.getElementById('outputSuffix');
     if (outputSuffixInput) outputSuffixInput.value = config.defaultOutputSuffix || '_cleaned';
-    
+
     const tablesInlineCheck = document.getElementById('tablesInlineCheck');
     if (tablesInlineCheck) tablesInlineCheck.checked = config.tablesInline ?? true;
-    
+
     // Restore sync preference (simple ON/OFF; default false)
     if ('syncScrollEnabled' in config) {
       syncScrollEnabled = !!config.syncScrollEnabled;
@@ -4345,7 +4345,7 @@ async function initialize() {
       saveCurrentFile();
       return;
     }
-    
+
     // Navigation: Ctrl/Cmd + Alt + ArrowUp/ArrowDown
     if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
     if (e.key === 'ArrowDown') {
@@ -4392,7 +4392,7 @@ async function initialize() {
   // Area dropdown menu
   const areaDropdown = document.getElementById('btnAreaDropdown');
   const areaMenu = document.getElementById('areaDropdownMenu');
-  
+
   if (areaDropdown && areaMenu) {
     areaDropdown.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -4426,7 +4426,7 @@ async function initialize() {
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
     const selectedText = editor.value.substring(start, end);
-    
+
     if (selectedText) {
       const wrapped = before + selectedText + after;
       editor.setRangeText(wrapped, start, end, 'end');
@@ -4447,10 +4447,10 @@ async function initialize() {
 
     const start = editor.selectionStart;
     const value = editor.value;
-    
+
     // Find start of current line
     let lineStart = value.lastIndexOf('\n', start - 1) + 1;
-    
+
     // Insert prefix at line start
     editor.setRangeText(prefix, lineStart, lineStart, 'end');
     editor.selectionStart = editor.selectionEnd = lineStart + prefix.length;
@@ -4478,8 +4478,8 @@ async function initialize() {
 
     const prefix = '#'.repeat(level) + ' ';
     const placeholder = level === 4 ? 'Area Name' :
-                       level === 1 ? 'Section Title' :
-                       level === 2 ? 'Section Title' : 'Subsection';
+      level === 1 ? 'Section Title' :
+        level === 2 ? 'Section Title' : 'Subsection';
 
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
@@ -4521,12 +4521,12 @@ async function initialize() {
       ? selectedRaw.trim().replace(/\s+/g, ' ')
       : 'AREA NAME';
     const text = `**${label}**:\n`;
-    
+
     editor.setRangeText(text, start, end, 'end');
     // Select label text
     editor.selectionStart = start + 2;
     editor.selectionEnd = start + 2 + label.length;
-    
+
     currentContent = editor.value;
     setEditorUnsavedState();
     updateRenderedTab(currentContent);
@@ -4539,11 +4539,11 @@ async function initialize() {
 
     const start = editor.selectionStart;
     const text = '>>[begin boxed text]<<\n\n>>[end boxed text]<<\n';
-    
+
     editor.setRangeText(text, start, start, 'end');
     // Place cursor in middle
     editor.selectionStart = editor.selectionEnd = start + 24; // After first line
-    
+
     currentContent = editor.value;
     setEditorUnsavedState();
     updateRenderedTab(currentContent);
@@ -4563,13 +4563,13 @@ async function initialize() {
 **Treasure:** Loot and items.
 
 `;
-    
+
     const start = editor.selectionStart;
     editor.setRangeText(template, start, start, 'end');
     // Select creature name
     editor.selectionStart = start + 2;
     editor.selectionEnd = start + 2 + 13; // "Creature Name"
-    
+
     currentContent = editor.value;
     setEditorUnsavedState();
     updateRenderedTab(currentContent);
@@ -4591,7 +4591,7 @@ async function initialize() {
         const label = selectedText.substring(0, colonIndex);
         const rest = selectedText.substring(colonIndex);
         const bolded = '**' + label + '**' + rest;
-        
+
         editor.setRangeText(bolded, start, end, 'end');
         currentContent = editor.value;
         setEditorUnsavedState();
@@ -4615,10 +4615,10 @@ async function initialize() {
     let lineStart = value.lastIndexOf('\n', start - 1) + 1;
     let lineEnd = value.indexOf('\n', start);
     if (lineEnd === -1) lineEnd = value.length;
-    
+
     const line = value.substring(lineStart, lineEnd);
     const boldedLine = boldLabelsInLine(line);
-    
+
     if (boldedLine !== line) {
       editor.setRangeText(boldedLine, lineStart, lineEnd, 'end');
       currentContent = editor.value;
@@ -4633,16 +4633,16 @@ async function initialize() {
       // Avoid bolding if it looks like a time or ratio
       const charBefore = offset > 0 ? str[offset - 1] : '';
       const charAfter = str[offset + match.length] || '';
-      
+
       if (/\d/.test(charBefore) || /\d/.test(charAfter)) {
         return match; // Skip times/ratios
       }
-      
+
       // Already bolded?
       if (str.substring(offset - 2, offset) === '**') {
         return match;
       }
-      
+
       return `**${label}**:`;
     });
   }
@@ -4658,18 +4658,18 @@ async function initialize() {
         markdownEditor.scrollTop = scrollTop;
       }, 0);
     });
-    
+
     // Update content on input
     markdownEditor.addEventListener('input', () => {
       // Skip if we just set this from code - prevents cascading updates
       if (isInternalEditorUpdate) return;
-      
+
       if (markdownEditor.value !== currentContent) {
         currentContent = markdownEditor.value;
-        
+
         // Mark as unsaved (even for blank documents)
         setEditorUnsavedState();
-        
+
         // Always update rendered tab and summary in real-time
         updateRenderedTab(currentContent);
         updateSummaryTab(currentContent);
@@ -4687,7 +4687,7 @@ async function initialize() {
 
     // Open Find/Replace via header button
     document.getElementById('openFindBtn')?.addEventListener('click', () => toggleFindStrip());
-    
+
     // Track when user manually clicks into editor
     markdownEditor.addEventListener('mousedown', () => {
       userHasClickedEditor = true;
@@ -4703,7 +4703,7 @@ async function initialize() {
         }
       }
     });
-    
+
     // No sync needed - Edit/Preview toggle handles this
   }
 
@@ -4747,7 +4747,7 @@ Object.entries(formatButtons).forEach(([btnId, { action, label }]) => {
         log('No content loaded', 'error');
         return;
       }
-      
+
       // Use safety wrapper for all format operations
       await runSafeTool(label, async (content) => {
         switch (action) {
@@ -4828,38 +4828,38 @@ function trackChange(sectionIndex, changeType, description, oldContent, newConte
     status: 'pending',
     timestamp: Date.now()
   };
-  
+
   pendingChanges.push(change);
-  
+
   // Update markers
   if (!changeMarkers.has(sectionIndex)) {
     changeMarkers.set(sectionIndex, { status: 'pending', changes: [] });
   }
   changeMarkers.get(sectionIndex).changes.push(change);
-  
+
   updateNavigatorWithChanges();
   updatePendingChangesCounter();
-  
+
   return changeId;
 }
 
 function updateNavigatorWithChanges() {
   const container = document.getElementById('navigatorList');
   if (!container) return;
-  
+
   // Add change indicators to nav items
   changeMarkers.forEach((marker, sectionIndex) => {
     const navItem = container.querySelector(`.nav-item[data-index="${sectionIndex}"]`);
     if (!navItem) return;
-    
+
     // Remove existing indicator
     const existing = navItem.querySelector('.change-indicator');
     if (existing) existing.remove();
-    
+
     // Add new indicator based on status
     const indicator = document.createElement('span');
     indicator.className = `change-indicator change-${marker.status}`;
-    
+
     if (marker.status === 'pending') {
       indicator.textContent = '●';
       indicator.title = `${marker.changes.length} pending change(s)`;
@@ -4870,21 +4870,21 @@ function updateNavigatorWithChanges() {
       indicator.textContent = '✗';
       indicator.title = 'Changes rejected';
     }
-    
+
     navItem.insertBefore(indicator, navItem.firstChild);
   });
 }
 
 function updatePendingChangesCounter() {
   const pendingCount = pendingChanges.filter(c => c.status === 'pending').length;
-  
+
   let counter = document.getElementById('pendingChangesCounter');
-  
+
   if (pendingCount === 0) {
     if (counter) counter.remove();
     return;
   }
-  
+
   if (!counter) {
     counter = document.createElement('div');
     counter.id = 'pendingChangesCounter';
@@ -4892,18 +4892,18 @@ function updatePendingChangesCounter() {
     const navigator = document.querySelector('.navigator');
     if (navigator) navigator.appendChild(counter);
   }
-  
+
   counter.textContent = `${pendingCount} change${pendingCount === 1 ? '' : 's'}`;
 }
 
 function showChangeReviewPanel() {
   const pending = pendingChanges.filter(c => c.status === 'pending');
-  
+
   if (pending.length === 0) {
     log('No pending changes to review', 'info');
     return;
   }
-  
+
   // Create modal
   let modal = document.getElementById('changeReviewModal');
   if (!modal) {
@@ -4913,7 +4913,7 @@ function showChangeReviewPanel() {
     modal.style.cssText = 'display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); padding: 20px; overflow: auto;';
     document.body.appendChild(modal);
   }
-  
+
   // Build content
   let html = `
     <div style="background: white; max-width: 800px; margin: 0 auto; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
@@ -4925,7 +4925,7 @@ function showChangeReviewPanel() {
       </div>
       <div id="changeList" style="max-height: 400px; overflow-y: auto;">
   `;
-  
+
   pending.forEach(change => {
     html += `
       <div class="change-item" data-id="${change.id}" style="border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; margin-bottom: 12px; background: #f8f9fa;">
@@ -4940,30 +4940,30 @@ function showChangeReviewPanel() {
       </div>
     `;
   });
-  
+
   html += `
       </div>
     </div>
   `;
-  
+
   modal.innerHTML = html;
   modal.style.display = 'block';
-  
+
   // Bind events
   document.getElementById('closeReviewBtn').addEventListener('click', () => {
     modal.style.display = 'none';
   });
-  
+
   document.getElementById('approveAllBtn').addEventListener('click', () => {
     pending.forEach(c => approveChange(c.id));
     modal.style.display = 'none';
   });
-  
+
   document.getElementById('rejectAllBtn').addEventListener('click', () => {
     pending.forEach(c => rejectChange(c.id));
     modal.style.display = 'none';
   });
-  
+
   document.querySelectorAll('.approve-change-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'), 10);
@@ -4971,7 +4971,7 @@ function showChangeReviewPanel() {
       e.target.closest('.change-item').style.opacity = '0.5';
     });
   });
-  
+
   document.querySelectorAll('.reject-change-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'), 10);
@@ -4984,15 +4984,15 @@ function showChangeReviewPanel() {
 function approveChange(changeId) {
   const change = pendingChanges.find(c => c.id === changeId);
   if (!change) return;
-  
+
   change.status = 'approved';
-  
+
   // Update marker for this section
   const marker = changeMarkers.get(change.sectionIndex);
   if (marker) {
     const allApproved = marker.changes.every(c => c.status === 'approved');
     const anyRejected = marker.changes.some(c => c.status === 'rejected');
-    
+
     if (allApproved) {
       marker.status = 'approved';
     } else if (anyRejected) {
@@ -5001,7 +5001,7 @@ function approveChange(changeId) {
       marker.status = 'pending';
     }
   }
-  
+
   updateNavigatorWithChanges();
   updatePendingChangesCounter();
   log(`Approved: ${change.description}`, 'success');
@@ -5010,15 +5010,15 @@ function approveChange(changeId) {
 function rejectChange(changeId) {
   const change = pendingChanges.find(c => c.id === changeId);
   if (!change) return;
-  
+
   change.status = 'rejected';
-  
+
   // Update marker for this section
   const marker = changeMarkers.get(change.sectionIndex);
   if (marker) {
     const allApproved = marker.changes.every(c => c.status === 'approved');
     const anyRejected = marker.changes.some(c => c.status === 'rejected');
-    
+
     if (allApproved) {
       marker.status = 'approved';
     } else if (anyRejected) {
@@ -5027,7 +5027,7 @@ function rejectChange(changeId) {
       marker.status = 'pending';
     }
   }
-  
+
   updateNavigatorWithChanges();
   updatePendingChangesCounter();
   log(`Rejected: ${change.description}`, 'info');
@@ -5078,24 +5078,24 @@ function parseLongLineOutputAndTrack(outputText, forcedSectionIdx = null, isSele
 
 async function applyApprovedChanges() {
   const approved = pendingChanges.filter(c => c.status === 'approved');
-  
+
   if (approved.length === 0) {
     log('No approved changes to apply', 'info');
     return;
   }
-  
+
   saveUndoState('apply approved changes');
-  
+
   // Apply changes to document content
   // This is a simplified version - real implementation would need to handle line-level edits
   approved.forEach(change => {
     // For now, just log the change
     log(`Would apply: ${change.description}`, 'info');
   });
-  
+
   // Clear applied changes
   pendingChanges = pendingChanges.filter(c => c.status !== 'approved');
-  
+
   // Clear markers for sections with all changes applied
   changeMarkers.forEach((marker, sectionIndex) => {
     marker.changes = marker.changes.filter(c => c.status !== 'approved');
@@ -5103,7 +5103,7 @@ async function applyApprovedChanges() {
       changeMarkers.delete(sectionIndex);
     }
   });
-  
+
   updateNavigatorWithChanges();
   updatePendingChangesCounter();
   log(`Applied ${approved.length} approved change(s)`, 'success');
@@ -5118,7 +5118,7 @@ document.getElementById('reanalyzeDocBtn')?.addEventListener('click', async () =
     log('No document loaded', 'error');
     return;
   }
-  
+
   log('Re-analyzing document...', 'info');
   await analyzeDocumentStatBlocks(currentContent);
   log('Analysis complete', 'success');
@@ -5129,7 +5129,7 @@ document.getElementById('exportCheckpointBtn')?.addEventListener('click', async 
     log('No stat blocks to export', 'error');
     return;
   }
-  
+
   const checkpoint = {
     document: {
       path: currentFilePath || 'unknown',
@@ -5155,7 +5155,7 @@ document.getElementById('exportCheckpointBtn')?.addEventListener('click', async 
       }))
     }
   };
-  
+
   const result = await window.electronAPI.exportCheckpoint(checkpoint);
   if (result.success) {
     log(`Checkpoint exported to ${result.path}`, 'success');
@@ -5166,18 +5166,18 @@ document.getElementById('exportCheckpointBtn')?.addEventListener('click', async 
 
 document.getElementById('importCheckpointBtn')?.addEventListener('click', async () => {
   const result = await window.electronAPI.importCheckpoint();
-  
+
   if (!result.success) {
     if (!result.cancelled) {
       log(`Import failed: ${result.message}`, 'error');
     }
     return;
   }
-  
+
   const checkpoint = result.checkpoint;
   log(`Loaded checkpoint from ${checkpoint.document.timestamp}`, 'info');
   log(`Checkpoint contains ${checkpoint.analysis.statBlocks.length} stat blocks`, 'info');
-  
+
   // Restore review state from checkpoint
   let restoredCount = 0;
   checkpoint.analysis.statBlocks.forEach(cb => {
@@ -5190,15 +5190,15 @@ document.getElementById('importCheckpointBtn')?.addEventListener('click', async 
       restoredCount++;
     }
   });
-  
+
   if (restoredCount > 0) {
     log(`Restored ${restoredCount} review checkmarks from checkpoint`, 'success');
     renderStatBlockList();
   }
-  
+
   // Compare with current analysis
   if (statBlocks.length > 0) {
-    const added = checkpoint.analysis.statBlocks.filter(cb => 
+    const added = checkpoint.analysis.statBlocks.filter(cb =>
       !statBlocks.some(sb => sb.name === cb.name && sb.lineStart === cb.lineStart)
     );
     const removed = statBlocks.filter(sb =>
@@ -5208,9 +5208,9 @@ document.getElementById('importCheckpointBtn')?.addEventListener('click', async 
       const current = statBlocks.find(sb => sb.name === cb.name && sb.lineStart === cb.lineStart);
       return current && (current.raw !== cb.raw || current.type !== cb.type);
     });
-    
+
     log(`Comparison: ${added.length} added, ${removed.length} removed, ${changed.length} changed`, 'info');
-    
+
     if (added.length > 0) {
       log(`Added blocks: ${added.map(b => b.name).join(', ')}`, 'info');
     }
@@ -5234,38 +5234,38 @@ document.getElementById('canonicalizeBtn')?.addEventListener('click', async () =
     log('No stat blocks to canonicalize', 'error');
     return;
   }
-  
+
   log('Canonicalizing stat blocks...', 'info');
-  
+
   try {
     const result = await window.electronAPI.canonicalizeStatBlocks(statBlocks);
-    
+
     if (!result.success) {
       log(`Canonicalization failed: ${result.message}`, 'error');
       return;
     }
-    
+
     canonicalizeResults = result.results;
-    
+
     // Filter to only valid stat blocks with changes (skip non-stat objects)
-    const withChanges = canonicalizeResults.filter(r => 
+    const withChanges = canonicalizeResults.filter(r =>
       r.confidence !== 'skipped' && r.changes && r.changes.length > 0
     );
-    
+
     const skipped = canonicalizeResults.filter(r => r.confidence === 'skipped');
-    
+
     if (skipped.length > 0) {
       log(`Skipped ${skipped.length} non-stat objects (places, items, traps, etc.)`, 'info');
     }
-    
+
     if (withChanges.length === 0) {
       log('All stat blocks are already canonical', 'success');
       return;
     }
-    
+
     // Show preview modal
     showCanonicalizePreview(withChanges);
-    
+
   } catch (error) {
     log(`Canonicalization error: ${error.message}`, 'error');
   }
@@ -5275,18 +5275,18 @@ function showCanonicalizePreview(results) {
   const modal = document.getElementById('canonicalizeModal');
   const status = document.getElementById('canonicalizeStatus');
   const preview = document.getElementById('canonicalizePreview');
-  
+
   if (!modal || !status || !preview) return;
-  
+
   // Update status
   status.innerHTML = `<strong>${results.length} stat blocks</strong> will be transformed to canonical format. Review changes below:`;
-  
+
   // Build preview HTML
   let html = '';
   results.forEach((result, idx) => {
     const confidence = result.confidence || 'medium';
     const confidenceColor = confidence === 'high' ? '#28a745' : confidence === 'medium' ? '#ffc107' : '#dc3545';
-    
+
     html += `
       <div style="margin-bottom: 24px; padding: 12px; border: 1px solid #dee2e6; border-radius: 6px; background: white;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -5311,7 +5311,7 @@ function showCanonicalizePreview(results) {
       </div>
     `;
   });
-  
+
   preview.innerHTML = html;
   modal.style.display = 'flex';
 }
@@ -5326,21 +5326,21 @@ document.getElementById('cancelCanonicalizeBtn')?.addEventListener('click', () =
 
 document.getElementById('applyCanonicalizeBtn')?.addEventListener('click', async () => {
   const autoReview = document.getElementById('autoReviewCanonical')?.checked;
-  
+
   if (canonicalizeResults.length === 0) {
     log('No canonicalization results to apply', 'error');
     return;
   }
-  
+
   // Apply transformations to document
   let newContent = currentContent;
   let appliedCount = 0;
-  
+
   // Sort by line number descending to avoid offset issues
   const sorted = [...canonicalizeResults]
     .filter(r => r.changes && r.changes.length > 0)
     .sort((a, b) => (b.lineNumber || 0) - (a.lineNumber || 0));
-  
+
   for (const result of sorted) {
     if (result.original && result.canonical) {
       // Replace first occurrence (should be unique due to line-specific matching)
@@ -5349,7 +5349,7 @@ document.getElementById('applyCanonicalizeBtn')?.addEventListener('click', async
       if (regex.test(newContent)) {
         newContent = newContent.replace(regex, result.canonical);
         appliedCount++;
-        
+
         // Mark as reviewed if option is checked
         if (autoReview) {
           const block = statBlocks.find(b => b.name === result.name && b.lineNumber === result.lineNumber);
@@ -5361,21 +5361,21 @@ document.getElementById('applyCanonicalizeBtn')?.addEventListener('click', async
       }
     }
   }
-  
+
   if (appliedCount > 0) {
     // Save undo state
     pushUndoState('Canonicalize Stat Blocks');
-    
+
     // Update content
     currentContent = newContent;
     updateEditorContent(newContent);
     setEditorUnsavedState();
-    
+
     log(`Applied ${appliedCount} canonical transformations`, 'success');
-    
+
     // Re-analyze to update navigator
     await analyzeDocumentStatBlocks();
-    
+
     // Close modal
     document.getElementById('canonicalizeModal').style.display = 'none';
   } else {
@@ -5400,15 +5400,15 @@ function hashString(str) {
 function showValidationDetails(block) {
   const panel = document.getElementById('statDetailsPanel');
   const content = document.getElementById('statDetailsContent');
-  
+
   if (!panel || !content) return;
-  
+
   // Show panel
   panel.style.display = 'flex';
-  
+
   // Build validation details HTML
   let html = '';
-  
+
   // Classification section
   if (block.classification) {
     const format = block.classification.format || 'unknown';
@@ -5420,10 +5420,10 @@ function showValidationDetails(block) {
       'D': 'Class D: Unit/Troop',
       'generic': 'Generic Format'
     }[format] || 'Unknown';
-    
+
     const confidence = block.classification.confidence || 'unknown';
     const confidenceClass = confidence.toLowerCase();
-    
+
     html += `
       <div class="validation-section">
         <div class="validation-section-title">Classification</div>
@@ -5435,19 +5435,19 @@ function showValidationDetails(block) {
       </div>
     `;
   }
-  
+
   // Warnings section
   const validation = block.validation || {};
   const warnings = validation.warnings || [];
   const errors = validation.errors || [];
-  
+
   if (errors.length > 0 || warnings.length > 0) {
     html += `
       <div class="validation-section">
         <div class="validation-section-title">Issues</div>
         <div class="validation-warnings">
     `;
-    
+
     errors.forEach(err => {
       html += `
         <div class="validation-warning-item" style="background-color:#f8d7da;border-left-color:#dc3545;">
@@ -5456,7 +5456,7 @@ function showValidationDetails(block) {
         </div>
       `;
     });
-    
+
     warnings.forEach(warn => {
       html += `
         <div class="validation-warning-item">
@@ -5465,7 +5465,7 @@ function showValidationDetails(block) {
         </div>
       `;
     });
-    
+
     html += `
         </div>
       </div>
@@ -5480,7 +5480,7 @@ function showValidationDetails(block) {
       </div>
     `;
   }
-  
+
   // Key attributes comparison
   if (block.classification) {
     html += `
@@ -5488,7 +5488,7 @@ function showValidationDetails(block) {
         <div class="validation-section-title">Key Attributes</div>
         <div class="validation-comparison">
     `;
-    
+
     // Format
     html += `
       <div class="validation-comparison-row">
@@ -5496,7 +5496,7 @@ function showValidationDetails(block) {
         <div class="validation-comparison-value match">${block.classification.format || 'Unknown'}</div>
       </div>
     `;
-    
+
     // Type
     if (block.type) {
       html += `
@@ -5506,7 +5506,7 @@ function showValidationDetails(block) {
         </div>
       `;
     }
-    
+
     // Step
     if (block.classification.step) {
       html += `
@@ -5516,7 +5516,7 @@ function showValidationDetails(block) {
         </div>
       `;
     }
-    
+
     // Subtype
     if (block.classification.subtype) {
       html += `
@@ -5526,18 +5526,18 @@ function showValidationDetails(block) {
         </div>
       `;
     }
-    
+
     html += `
         </div>
       </div>
     `;
   }
-  
+
   // Raw stat block preview
   if (block.fullText || block.raw) {
     const text = block.fullText || block.raw || '';
     const preview = text.length > 200 ? text.substring(0, 200) + '...' : text;
-    
+
     html += `
       <div class="validation-section">
         <div class="validation-section-title">Stat Block Text</div>
@@ -5550,7 +5550,7 @@ function showValidationDetails(block) {
       </div>
     `;
   }
-  
+
   content.innerHTML = html;
 }
 
@@ -5570,7 +5570,9 @@ let velocityData = {
   conversionsToday: 0,
   sessionConversions: [],
   developmentCommits: 0,
-  lastUpdate: Date.now()
+  lastUpdate: Date.now(),
+  aiBursts: [],
+  totalAILines: 0
 };
 
 // Open Velocity Dashboard
@@ -5592,23 +5594,23 @@ document.getElementById('closeVelocityDashboardBtn')?.addEventListener('click', 
 document.querySelectorAll('.velocity-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const targetTab = tab.getAttribute('data-tab');
-    
+
     // Hide all tab contents
     document.querySelectorAll('.velocity-tab-content').forEach(content => {
       content.classList.remove('active');
     });
-    
+
     // Remove active class from all tabs
     document.querySelectorAll('.velocity-tab').forEach(t => {
       t.classList.remove('active');
     });
-    
+
     // Show target tab content
     const targetContent = document.getElementById(`velocity${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`);
     if (targetContent) {
       targetContent.classList.add('active');
     }
-    
+
     // Add active class to clicked tab
     tab.classList.add('active');
   });
@@ -5620,11 +5622,11 @@ async function updateVelocityDashboard() {
   const sessionDuration = Date.now() - velocityData.sessionStart;
   const sessionHours = Math.floor(sessionDuration / (1000 * 60 * 60));
   const sessionMinutes = Math.floor((sessionDuration % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   // Update overview tab
   document.getElementById('sessionTime').textContent = `${sessionHours}h ${sessionMinutes}m`;
   document.getElementById('monstersToday').textContent = velocityData.conversionsToday;
-  
+
   // Calculate average time per monster
   const avgTime = velocityData.sessionConversions.length > 0
     ? sessionDuration / velocityData.sessionConversions.length / (1000 * 60)
@@ -5632,27 +5634,27 @@ async function updateVelocityDashboard() {
   document.getElementById('avgTimePerMonster').textContent = avgTime > 0
     ? `${avgTime.toFixed(1)} min`
     : '--';
-  
+
   // Update progress (using current stat blocks)
   if (statBlocks && statBlocks.length > 0) {
     const total = statBlocks.length;
-    const converted = statBlocks.filter(block => 
+    const converted = statBlocks.filter(block =>
       block.validation && block.validation.errorCount === 0 && block.validation.warningCount === 0
     ).length;
     const progress = Math.round((converted / total) * 100);
-    
+
     document.getElementById('totalMonsters').textContent = total;
     document.getElementById('convertedMonsters').textContent = converted;
     document.getElementById('progressPercent').textContent = `${progress}%`;
     document.getElementById('progressFill').style.width = `${progress}%`;
-    
+
     // Update forecast
     const remaining = total - converted;
     const rate = velocityData.conversionsToday > 0 ? velocityData.conversionsToday : 5; // fallback rate
     const daysRemaining = Math.ceil(remaining / rate);
     const estDate = new Date();
     estDate.setDate(estDate.getDate() + daysRemaining);
-    
+
     document.getElementById('estCompletion').textContent = estDate.toLocaleDateString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric'
     });
@@ -5660,33 +5662,63 @@ async function updateVelocityDashboard() {
     document.getElementById('requiredRate').textContent = `${(remaining / 21).toFixed(1)} monsters/day`;
     document.getElementById('currentRate').textContent = `${rate.toFixed(1)} monsters/day`;
   }
-  
-  // Update development metrics
-  document.getElementById('devCommits').textContent = velocityData.developmentCommits;
-  document.getElementById('conversionRate').textContent = `${velocityData.conversionsToday}/day`;
+
+  // Update development metrics (only if elements exist)
+  const devCommitsEl = document.getElementById('devCommits');
+  if (devCommitsEl) devCommitsEl.textContent = velocityData.developmentCommits;
+
+  const conversionRateEl = document.getElementById('conversionRate');
+  if (conversionRateEl) conversionRateEl.textContent = `${velocityData.conversionsToday}/day`;
+
 
   // Fetch real velocity data from log
   try {
     const result = await window.electronAPI.getVelocityData();
+    console.log('Velocity data result:', result);
+
+    // Handle Summary Data (Synergy & Code Survival)
+    if (result.success && result.summary) {
+      console.log('Processing summary data:', result.summary);
+      const s = result.summary;
+
+      // Synergy Metrics
+      if (s.synergy) {
+        const synEl = document.getElementById('synergyRatio');
+        if (synEl) synEl.textContent = s.synergy.synergy_ratio !== undefined ? s.synergy.synergy_ratio.toFixed(2) : '--';
+
+        const regEl = document.getElementById('regressionRate');
+        if (regEl) regEl.textContent = s.synergy.regression_rate !== undefined ? `${(s.synergy.regression_rate * 100).toFixed(1)}%` : '--%';
+
+        const netEl = document.getElementById('netSynergyVelocity');
+        if (netEl) netEl.textContent = s.synergy.net_synergy_velocity !== undefined ? s.synergy.net_synergy_velocity.toFixed(2) : '--';
+      }
+
+      // Code Survival
+      if (s.code_survival) {
+        const survEl = document.getElementById('codeSurvivalRate');
+        if (survEl) survEl.textContent = s.code_survival.survival_rate !== undefined ? `${(s.code_survival.survival_rate * 100).toFixed(1)}%` : '--%';
+      }
+    }
+
     if (result.success && result.data && result.data.length > 0) {
       // Get the most recent entry
       const latest = result.data[result.data.length - 1];
-      
-      // Code Survival Rate
-      if (latest.churn_metrics && latest.churn_metrics.survival_rate !== undefined) {
+
+      // Fallback: Code Survival Rate from log if not in summary
+      if ((!result.summary || !result.summary.code_survival) && latest.churn_metrics && latest.churn_metrics.survival_rate !== undefined) {
         const survivalRate = latest.churn_metrics.survival_rate;
         const survivalEl = document.getElementById('codeSurvivalRate');
         if (survivalEl) {
-            survivalEl.textContent = `${(survivalRate * 100).toFixed(1)}%`;
+          survivalEl.textContent = `${(survivalRate * 100).toFixed(1)}%`;
         }
       }
-      
+
       // AI Paste Count
       if (latest.ai_paste_count !== undefined) {
         const aiPasteCount = latest.ai_paste_count;
         const aiPasteEl = document.getElementById('aiPasteCount');
         if (aiPasteEl) {
-            aiPasteEl.textContent = aiPasteCount;
+          aiPasteEl.textContent = aiPasteCount;
         }
       }
 
@@ -5695,26 +5727,26 @@ async function updateVelocityDashboard() {
         const churn = latest.churn_metrics.churn_ratio;
         const churnEl = document.getElementById('codeChanges');
         if (churnEl) {
-             churnEl.textContent = `${(churn * 100).toFixed(1)}% Churn`;
+          churnEl.textContent = `${(churn * 100).toFixed(1)}% Churn`;
         }
       }
     }
   } catch (e) {
     console.error('Failed to load velocity log data', e);
   }
-  
+
   // Render mini chart
   renderMiniChart();
 }// Render mini conversion trend chart
 function renderMiniChart() {
   const chartContainer = document.getElementById('conversionTrendChart');
   if (!chartContainer) return;
-  
+
   // Generate mock data for the last 7 days
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const data = [3, 5, 2, 8, 4, 6, velocityData.conversionsToday];
   const maxValue = Math.max(...data, 10);
-  
+
   // Create simple bar chart
   const chartHTML = `
     <div style="display: flex; align-items: end; height: 100%; gap: 8px; padding: 10px;">
@@ -5727,7 +5759,7 @@ function renderMiniChart() {
       `).join('')}
     </div>
   `;
-  
+
   chartContainer.innerHTML = chartHTML;
 }
 
@@ -5740,7 +5772,7 @@ function trackConversion(blockName) {
   });
   velocityData.conversionsToday++;
   velocityData.lastUpdate = now;
-  
+
   // Update dashboard if it's open
   const modal = document.getElementById('velocityDashboardModal');
   if (modal && modal.style.display !== 'none') {
@@ -5763,7 +5795,7 @@ function initializeVelocityTracking() {
       // Check if it's the same day
       const today = new Date().toDateString();
       const lastDate = new Date(parsed.lastUpdate).toDateString();
-      
+
       if (today === lastDate) {
         velocityData = { ...parsed, sessionStart: Date.now() };
       } else {
@@ -5774,11 +5806,101 @@ function initializeVelocityTracking() {
       console.error('Failed to load velocity data:', e);
     }
   }
-  
+
   // Save data periodically
   setInterval(() => {
     localStorage.setItem('velocityData', JSON.stringify(velocityData));
   }, 30000); // every 30 seconds
+
+  // Start Session Timer
+  startSessionTimer();
+}
+
+// Session Timer Logic
+let sessionTimerInterval;
+let currentSessionState = 'planning'; // planning, coding, testing
+let sessionTimeBreakdown = {
+  planning: 0,
+  coding: 0,
+  testing: 0
+};
+
+function startSessionTimer() {
+  if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+
+  sessionTimerInterval = setInterval(() => {
+    // Increment current state time
+    sessionTimeBreakdown[currentSessionState] += 1000;
+
+    // Update UI
+    updateSessionTimerUI();
+  }, 1000);
+
+  // Initialize buttons
+  document.querySelectorAll('.session-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newState = btn.getAttribute('data-state');
+      setSessionState(newState);
+    });
+  });
+
+  // Set initial active state
+  setSessionState('planning');
+}
+
+function setSessionState(state) {
+  currentSessionState = state;
+
+  // Update buttons
+  document.querySelectorAll('.session-btn').forEach(btn => {
+    if (btn.getAttribute('data-state') === state) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function updateSessionTimerUI() {
+  const totalMs = sessionTimeBreakdown.planning + sessionTimeBreakdown.coding + sessionTimeBreakdown.testing;
+
+  // Update main timer display
+  const totalSecs = Math.floor(totalMs / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+  const timerDisplay = document.getElementById('sessionTimerDisplay');
+  if (timerDisplay) timerDisplay.textContent = timeStr;
+
+  // Update stats bar
+  if (totalMs > 0) {
+    const planPct = (sessionTimeBreakdown.planning / totalMs) * 100;
+    const codePct = (sessionTimeBreakdown.coding / totalMs) * 100;
+    const testPct = (sessionTimeBreakdown.testing / totalMs) * 100;
+
+    const barPlan = document.querySelector('.stat-segment.plan');
+    const barCode = document.querySelector('.stat-segment.code');
+    const barTest = document.querySelector('.stat-segment.test');
+
+    if (barPlan) barPlan.style.width = `${planPct}%`;
+    if (barCode) barCode.style.width = `${codePct}%`;
+    if (barTest) barTest.style.width = `${testPct}%`;
+
+    // Update legend text
+    const planM = Math.floor(sessionTimeBreakdown.planning / 60000);
+    const codeM = Math.floor(sessionTimeBreakdown.coding / 60000);
+    const testM = Math.floor(sessionTimeBreakdown.testing / 60000);
+
+    const elPlan = document.getElementById('timePlan');
+    const elCode = document.getElementById('timeCode');
+    const elTest = document.getElementById('timeTest');
+
+    if (elPlan) elPlan.textContent = `${planM}m`;
+    if (elCode) elCode.textContent = `${codeM}m`;
+    if (elTest) elTest.textContent = `${testM}m`;
+  }
 }
 
 initialize();
@@ -5790,8 +5912,46 @@ setTimeout(() => {
   const typeFilter = document.getElementById('statBlockTypeFilter');
   const alphabeticalBtn = document.getElementById('sortAlphabetical');
   const sectionBtn = document.getElementById('sortBySection');
-  
+
   if (typeFilter) typeFilter.value = 'monster';
   if (alphabeticalBtn) alphabeticalBtn.classList.add('active');
   if (sectionBtn) sectionBtn.classList.remove('active');
 }, 100);
+
+// ============================================================================
+// PASSIVE AI BURST DETECTION
+// ============================================================================
+
+// Listen for AI burst events from the file watcher
+if (window.electronAPI && window.electronAPI.onTelemetryUpdate) {
+  window.electronAPI.onTelemetryUpdate((event, data) => {
+    if (data.type === 'AI_BURST') {
+      // Track the burst
+      velocityData.aiBursts.push(data);
+      velocityData.totalAILines += data.lines_added;
+      
+      // Update dashboard if open
+      const modal = document.getElementById('velocityDashboardModal');
+      if (modal && modal.style.display !== 'none') {
+        updateAIBurstStats();
+      }
+      
+      // Optional: Show notification
+      console.log(`⚡ AI Burst: +${data.lines_added} lines in ${data.file}`);
+    }
+  });
+}
+
+function updateAIBurstStats() {
+  // Update AI Paste Count in Development tab
+  const aiPasteEl = document.getElementById('aiPasteCount');
+  if (aiPasteEl) {
+    aiPasteEl.textContent = velocityData.aiBursts.length;
+  }
+  
+  // Update Code Changes to show AI contribution
+  const codeChangesEl = document.getElementById('codeChanges');
+  if (codeChangesEl) {
+    codeChangesEl.textContent = `+${velocityData.totalAILines} lines (AI)`;
+  }
+}

@@ -3292,3 +3292,96 @@ body {
     padding: 15px;
   }
 }
+
+/* Session Controls */
+.session-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.session-timer-display {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  color: #2c3e50;
+  letter-spacing: -1px;
+}
+
+.session-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.session-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #495057;
+}
+
+.session-btn:hover {
+  background: #f8f9fa;
+  border-color: #ced4da;
+}
+
+.session-btn.active {
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.session-btn[data-state="planning"].active {
+  background: #6610f2; /* Indigo */
+}
+
+.session-btn[data-state="coding"].active {
+  background: #007bff; /* Blue */
+}
+
+.session-btn[data-state="testing"].active {
+  background: #28a745; /* Green */
+}
+
+.session-stats {
+  margin-top: 4px;
+}
+
+.stat-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #e9ecef;
+  margin-bottom: 6px;
+}
+
+.stat-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.stat-segment.plan { background: #6610f2; }
+.stat-segment.code { background: #007bff; }
+.stat-segment.test { background: #28a745; }
+
+.stat-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.stat-legend span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

@@ -34,13 +34,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   compareDocuments: (doc1Path, doc2Path, options) =>
     ipcRenderer.invoke('compare-documents', doc1Path, doc2Path, options),
 
-    // Table Tools
-    convertMdTableToTsv: (inputPath, options) =>
-      ipcRenderer.invoke('convert-md-table-to-tsv', inputPath, options),
-    convertNamesToColumns: (inputPath, options) =>
-      ipcRenderer.invoke('convert-names-to-columns', inputPath, options),
-    convertTableMultiFormat: (inputText, format) =>
-      ipcRenderer.invoke('convert-table-multi-format', inputText, format),
+  // Table Tools
+  convertMdTableToTsv: (inputPath, options) =>
+    ipcRenderer.invoke('convert-md-table-to-tsv', inputPath, options),
+  convertNamesToColumns: (inputPath, options) =>
+    ipcRenderer.invoke('convert-names-to-columns', inputPath, options),
+  convertTableMultiFormat: (inputText, format) =>
+    ipcRenderer.invoke('convert-table-multi-format', inputText, format),
 
   // Velocity Data
   getVelocityData: () => ipcRenderer.invoke('get-velocity-data'),
@@ -54,11 +54,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   validateStatBlock: (content) => ipcRenderer.invoke('validate-stat-block', content),
   fixStatBlock: (content) => ipcRenderer.invoke('fix-stat-block', content),
   canonicalizeStatBlocks: (blocks) => ipcRenderer.invoke('canonicalize-stat-blocks', blocks),
-  
+
   // Checkpoint Export/Import
   exportCheckpoint: (data) => ipcRenderer.invoke('export-checkpoint', data),
   importCheckpoint: () => ipcRenderer.invoke('import-checkpoint'),
-  
+
   // Reforged Name Conversion
   loadConversionCsvs: () => ipcRenderer.invoke('load-conversion-csvs'),
+
+  // Telemetry (Passive AI Burst Detection)
+  onTelemetryUpdate: (callback) => ipcRenderer.on('telemetry-update', callback),
 });

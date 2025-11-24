@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +8,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
+
 <body>
   <!-- Drag & Drop Overlay -->
   <div id="dropOverlay" class="drop-overlay">
@@ -41,12 +43,14 @@
         </div>
         <div class="mode-toggle" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
           <button id="buildHeadersBtn" class="btn secondary">🏗 Build Headers</button>
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;" title="Use when your source is plain text without Markdown headers. Infers headings from: ALL CAPS lines (H2), Title Case lines ending with a colon (H3), and Setext underlines (===/---).">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;"
+            title="Use when your source is plain text without Markdown headers. Infers headings from: ALL CAPS lines (H2), Title Case lines ending with a colon (H3), and Setext underlines (===/---).">
             <input type="checkbox" id="buildHeadersLooseCheck" />
             Infer headings (no Markdown)
           </label>
         </div>
-        <div class="mode-toggle system-indicator" style="display:flex;align-items:center;gap:4px;margin-right:8px;font-size:12px;color:#e9ecef;">
+        <div class="mode-toggle system-indicator"
+          style="display:flex;align-items:center;gap:4px;margin-right:8px;font-size:12px;color:#e9ecef;">
           <span id="systemIndicatorLabel">Castles &amp; Crusades — Reforged</span>
         </div>
         <button id="quickToolsBtn" class="btn secondary">⚡ Quick Tools</button>
@@ -87,7 +91,7 @@
         <div class="sidebar-section">
           <h3>Pipeline</h3>
           <button id="runPipelineBtn" class="btn primary full-width">🔄 Run Full Pipeline</button>
-          
+
           <!-- Format Text Submenu -->
           <div class="submenu-container">
             <button id="formatTextMenuBtn" class="btn secondary full-width submenu-toggle">
@@ -102,14 +106,15 @@
               <button id="fixAllFormattingBtn" class="btn tertiary full-width">✨ Fix All Formatting</button>
             </div>
           </div>
-          
+
           <button id="fixTOCBtn" class="btn secondary full-width">📑 Fix TOC</button>
-          
+
           <!-- Undo Section -->
           <div class="undo-container" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
             <button id="undoBtn" class="btn secondary full-width" disabled title="No action to undo">
               ↶ Undo
-              <span id="undoLabel" style="font-size: 11px; opacity: 0.7; display: block; margin-top: 2px; font-weight: normal;"></span>
+              <span id="undoLabel"
+                style="font-size: 11px; opacity: 0.7; display: block; margin-top: 2px; font-weight: normal;"></span>
             </button>
           </div>
         </div>
@@ -117,7 +122,8 @@
         <!-- Edmunds Tagging -->
         <div class="sidebar-section">
           <h3>Edmunds Tagging
-            <span class="info-icon" title="Edmunds Tags add numeric hierarchy markers to headings for InDesign import.&#10;&#10;Default format: `&lt;1&gt;` (backticked)&#10;• Safe for markdown renderers&#10;• Prevents &lt;1&gt; being interpreted as HTML&#10;• Visible in plain text&#10;&#10;Alternative formats available via CLI:&#10;• Raw: &lt;1&gt; (clean, may be hidden in HTML)&#10;• Comment: &lt;!--1--&gt; (invisible in rendered view)&#10;• Bracket: [1] (always visible)">ℹ️</span>
+            <span class="info-icon"
+              title="Edmunds Tags add numeric hierarchy markers to headings for InDesign import.&#10;&#10;Default format: `&lt;1&gt;` (backticked)&#10;• Safe for markdown renderers&#10;• Prevents &lt;1&gt; being interpreted as HTML&#10;• Visible in plain text&#10;&#10;Alternative formats available via CLI:&#10;• Raw: &lt;1&gt; (clean, may be hidden in HTML)&#10;• Comment: &lt;!--1--&gt; (invisible in rendered view)&#10;• Bracket: [1] (always visible)">ℹ️</span>
           </h3>
           <button id="injectTagsBtn" class="btn secondary full-width">🏷️ Inject Tags</button>
           <button id="stripTagsBtn" class="btn secondary full-width">✂️ Strip Tags</button>
@@ -128,20 +134,21 @@
           <h3>Document Comparator</h3>
           <button id="compareDocsBtn" class="btn secondary full-width">🔍 Compare Documents</button>
         </div>
-        
+
         <!-- Reforged Conversion -->
         <div class="sidebar-section">
           <h3>Reforged Conversion
-            <span class="info-icon" title="Convert old spell and magic item names to Reforged names.&#10;&#10;Uses CSV mappings from CnC Name Changes folder.&#10;• Preview changes before applying&#10;• Undo support&#10;• Preserves formatting">ℹ️</span>
+            <span class="info-icon"
+              title="Convert old spell and magic item names to Reforged names.&#10;&#10;Uses CSV mappings from CnC Name Changes folder.&#10;• Preview changes before applying&#10;• Undo support&#10;• Preserves formatting">ℹ️</span>
           </h3>
           <button id="convertReforgedBtn" class="btn secondary full-width">🔄 Convert to Reforged</button>
         </div>
 
-          <!-- Table Tools -->
-          <div class="sidebar-section">
-            <h3>Table Tools</h3>
-            <button id="tableToolsBtn" class="btn secondary full-width">📊 Table Converters</button>
-          </div>
+        <!-- Table Tools -->
+        <div class="sidebar-section">
+          <h3>Table Tools</h3>
+          <button id="tableToolsBtn" class="btn secondary full-width">📊 Table Converters</button>
+        </div>
 
         <!-- File Actions -->
         <div class="sidebar-section">
@@ -230,18 +237,18 @@
                     <em>I</em>
                   </button>
                 </div>
-                
+
                 <div class="toolbar-divider"></div>
-                
+
                 <!-- Headings Group -->
                 <div class="toolbar-group">
                   <button class="toolbar-btn" id="btnH1" title="Heading 1" data-action="h1">H1</button>
                   <button class="toolbar-btn" id="btnH2" title="Heading 2" data-action="h2">H2</button>
                   <button class="toolbar-btn" id="btnH3" title="Heading 3" data-action="h3">H3</button>
                 </div>
-                
+
                 <div class="toolbar-divider"></div>
-                
+
                 <!-- Area Header Dropdown -->
                 <div class="toolbar-group">
                   <div class="dropdown">
@@ -257,33 +264,36 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="toolbar-divider"></div>
-                
+
                 <!-- Block Elements Group -->
                 <div class="toolbar-group">
                   <button class="toolbar-btn" id="btnQuote" title="Blockquote" data-action="quote">❝</button>
-                  <button class="toolbar-btn trpg-specific" id="btnBoxedText" title="Insert Boxed Text" data-action="boxed">📦</button>
+                  <button class="toolbar-btn trpg-specific" id="btnBoxedText" title="Insert Boxed Text"
+                    data-action="boxed">📦</button>
                 </div>
-              
-              <div class="toolbar-divider"></div>
-              
-              <!-- GM Tools Group -->
-              <div class="toolbar-group trpg-specific">
-                <button class="toolbar-btn" id="btnGMNote" title="Insert GM Note" data-action="gm-note">GM</button>
-                <button class="toolbar-btn" id="btnStatBlock" title="Insert Stat Block Template" data-action="stat-block">⚔️</button>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- GM Tools Group -->
+                <div class="toolbar-group trpg-specific">
+                  <button class="toolbar-btn" id="btnGMNote" title="Insert GM Note" data-action="gm-note">GM</button>
+                  <button class="toolbar-btn" id="btnStatBlock" title="Insert Stat Block Template"
+                    data-action="stat-block">⚔️</button>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Label Tools -->
+                <div class="toolbar-group">
+                  <button class="toolbar-btn" id="btnBoldLabel" title="Bold Label (text before colon)"
+                    data-action="bold-label">
+                    <strong>Label:</strong>
+                  </button>
+                </div>
               </div>
-              
-              <div class="toolbar-divider"></div>
-              
-              <!-- Label Tools -->
-              <div class="toolbar-group">
-                <button class="toolbar-btn" id="btnBoldLabel" title="Bold Label (text before colon)" data-action="bold-label">
-                  <strong>Label:</strong>
-                </button>
-              </div>
-            </div>
-                        <div class="editor-shell">
+              <div class="editor-shell">
                 <div class="line-info-column">
                   <div class="line-info-row">
                     <div class="line-info-label">Cursor</div>
@@ -294,7 +304,8 @@
                     <div id="lineInfoBlock" class="line-info-value">—</div>
                   </div>
                 </div>
-                <textarea id="markdownEditor" class="markdown-editor" placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
+                <textarea id="markdownEditor" class="markdown-editor"
+                  placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
                 <div id="editorStatus" class="editor-status">Ready</div>
               </div>
             </div>
@@ -309,14 +320,15 @@
                     <button id="applyAllConversionsBtn" class="btn primary" disabled>✓ Apply All</button>
                   </div>
                 </div>
-                
+
                 <div class="conversion-stats">
                   <span id="conversionCount">0 conversions found</span>
                 </div>
-                
+
                 <div class="conversion-list-container">
                   <div id="conversionList" class="conversion-list">
-                    <p class="placeholder">Click "Scan Document" to find spell and magic item names that can be converted to Reforged format.</p>
+                    <p class="placeholder">Click "Scan Document" to find spell and magic item names that can be
+                      converted to Reforged format.</p>
                   </div>
                 </div>
               </div>
@@ -332,7 +344,8 @@
             <!-- Comparison Tab -->
             <div id="comparisonTab" class="tab-content">
               <div id="comparisonContent" class="comparison-content">
-                <p class="placeholder">No comparison yet. Use the Document Comparator to compare two document versions.</p>
+                <p class="placeholder">No comparison yet. Use the Document Comparator to compare two document versions.
+                </p>
               </div>
             </div>
 
@@ -340,131 +353,146 @@
             <div id="tableToolsTab" class="tab-content">
               <div class="table-tools-container">
                 <h2>📊 Table Conversion Tools</h2>
-                <p class="tab-description">Convert tables between formats for InDesign, Excel, and markdown workflows. These tools work independently—no main file needed.</p>                  <div class="tool-selector">
-                    <button class="tool-select-btn active" data-tool="mdTableToTsv">
-                      <strong>Markdown → TSV</strong>
-                      <span>Convert markdown pipe tables to tab-delimited</span>
-                    </button>
-                    <button class="tool-select-btn" data-tool="namesToColumns">
-                      <strong>Names → Columns</strong>
-                      <span>Convert comma lists to multi-column format</span>
-                    </button>
-                    <button class="tool-select-btn" data-tool="multiFormat">
-                      <strong>Multi-Format Converter</strong>
-                      <span>Convert TTRPG tables to TSV/CSV/Markdown</span>
-                    </button>
-                  </div>
+                <p class="tab-description">Convert tables between formats for InDesign, Excel, and markdown workflows.
+                  These tools work independently—no main file needed.</p>
+                <div class="tool-selector">
+                  <button class="tool-select-btn active" data-tool="mdTableToTsv">
+                    <strong>Markdown → TSV</strong>
+                    <span>Convert markdown pipe tables to tab-delimited</span>
+                  </button>
+                  <button class="tool-select-btn" data-tool="namesToColumns">
+                    <strong>Names → Columns</strong>
+                    <span>Convert comma lists to multi-column format</span>
+                  </button>
+                  <button class="tool-select-btn" data-tool="multiFormat">
+                    <strong>Multi-Format Converter</strong>
+                    <span>Convert TTRPG tables to TSV/CSV/Markdown</span>
+                  </button>
+                </div>
 
                 <!-- Tool 1: Markdown Table to TSV -->
                 <div id="mdTableToTsvTool" class="table-tool-panel active">
                   <h3>Markdown Table → TSV</h3>
                   <p>Extract markdown pipe tables and convert to tab-delimited format for InDesign.</p>
-                  <p class="tool-hint" style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">💡 <strong>How it works:</strong> Select a markdown file → extracts all pipe tables → outputs real tab characters for InDesign import.</p>                    <div class="form-group">
-                      <label for="mdTableInput">Input File:</label>
-                      <div class="file-input-group">
-                        <input type="text" id="mdTableInput" placeholder="Select markdown file..." readonly>
-                        <button id="browseMdTableBtn" class="btn-secondary">Browse...</button>
-                      </div>
-                    </div>
-                  
-                    <div class="form-group">
-                      <label for="mdTableOutput">Output File:</label>
-                      <div class="file-input-group">
-                        <input type="text" id="mdTableOutput" placeholder="Auto-generated (input name + .txt)">
-                        <button id="browseMdTableOutputBtn" class="btn-secondary">Browse...</button>
-                      </div>
-                    </div>
-                  
-                    <div class="form-group">
-                      <label>
-                        <input type="checkbox" id="mdTableNoHeaders">
-                        Skip header comments (no "# Part 1" lines)
-                      </label>
-                    </div>
-                  
-                    <div class="button-group">
-                      <button id="runMdTableConvertBtn" class="btn-primary" disabled>Convert to TSV</button>
-                      <button id="copyMdTableResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
-                    </div>
-                  
-                    <div id="mdTableResult" class="tool-result" style="display: none;">
-                      <h4>Conversion Result:</h4>
-                      <pre id="mdTableResultContent"></pre>
+                  <p class="tool-hint"
+                    style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">
+                    💡 <strong>How it works:</strong> Select a markdown file → extracts all pipe tables → outputs real
+                    tab characters for InDesign import.</p>
+                  <div class="form-group">
+                    <label for="mdTableInput">Input File:</label>
+                    <div class="file-input-group">
+                      <input type="text" id="mdTableInput" placeholder="Select markdown file..." readonly>
+                      <button id="browseMdTableBtn" class="btn-secondary">Browse...</button>
                     </div>
                   </div>
+
+                  <div class="form-group">
+                    <label for="mdTableOutput">Output File:</label>
+                    <div class="file-input-group">
+                      <input type="text" id="mdTableOutput" placeholder="Auto-generated (input name + .txt)">
+                      <button id="browseMdTableOutputBtn" class="btn-secondary">Browse...</button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="mdTableNoHeaders">
+                      Skip header comments (no "# Part 1" lines)
+                    </label>
+                  </div>
+
+                  <div class="button-group">
+                    <button id="runMdTableConvertBtn" class="btn-primary" disabled>Convert to TSV</button>
+                    <button id="copyMdTableResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
+                  </div>
+
+                  <div id="mdTableResult" class="tool-result" style="display: none;">
+                    <h4>Conversion Result:</h4>
+                    <pre id="mdTableResultContent"></pre>
+                  </div>
+                </div>
 
                 <!-- Tool 2: Names to Columns -->
                 <div id="namesToColumnsTool" class="table-tool-panel">
                   <h3>Names List → Columns</h3>
                   <p>Convert comma-separated name lists to multi-column tab-delimited format (Book of Names).</p>
-                  <p class="tool-hint" style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">💡 <strong>How it works:</strong> Select a text file with "Name1, Name2, Name3" → arranges into columns → outputs tab-delimited for multi-column layout.</p>                    <div class="form-group">
-                      <label for="namesInput">Input File:</label>
-                      <div class="file-input-group">
-                        <input type="text" id="namesInput" placeholder="Select text file..." readonly>
-                        <button id="browseNamesBtn" class="btn-secondary">Browse...</button>
-                      </div>
-                    </div>
-                  
-                    <div class="form-group">
-                      <label for="namesOutput">Output File:</label>
-                      <div class="file-input-group">
-                        <input type="text" id="namesOutput" placeholder="Auto-generated (input name + -Columns.txt)">
-                        <button id="browseNamesOutputBtn" class="btn-secondary">Browse...</button>
-                      </div>
-                    </div>
-                  
-                    <div class="form-group">
-                      <label for="namesColumns">Columns:</label>
-                      <input type="number" id="namesColumns" min="2" max="10" value="4" style="width: 80px;">
-                      <span class="help-text">Number of columns (2-10)</span>
-                    </div>
-                  
-                    <div class="button-group">
-                      <button id="runNamesConvertBtn" class="btn-primary" disabled>Convert to Columns</button>
-                      <button id="copyNamesResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
-                    </div>
-                  
-                    <div id="namesResult" class="tool-result" style="display: none;">
-                      <h4>Conversion Result:</h4>
-                      <pre id="namesResultContent"></pre>
+                  <p class="tool-hint"
+                    style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">
+                    💡 <strong>How it works:</strong> Select a text file with "Name1, Name2, Name3" → arranges into
+                    columns → outputs tab-delimited for multi-column layout.</p>
+                  <div class="form-group">
+                    <label for="namesInput">Input File:</label>
+                    <div class="file-input-group">
+                      <input type="text" id="namesInput" placeholder="Select text file..." readonly>
+                      <button id="browseNamesBtn" class="btn-secondary">Browse...</button>
                     </div>
                   </div>
+
+                  <div class="form-group">
+                    <label for="namesOutput">Output File:</label>
+                    <div class="file-input-group">
+                      <input type="text" id="namesOutput" placeholder="Auto-generated (input name + -Columns.txt)">
+                      <button id="browseNamesOutputBtn" class="btn-secondary">Browse...</button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="namesColumns">Columns:</label>
+                    <input type="number" id="namesColumns" min="2" max="10" value="4" style="width: 80px;">
+                    <span class="help-text">Number of columns (2-10)</span>
+                  </div>
+
+                  <div class="button-group">
+                    <button id="runNamesConvertBtn" class="btn-primary" disabled>Convert to Columns</button>
+                    <button id="copyNamesResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
+                  </div>
+
+                  <div id="namesResult" class="tool-result" style="display: none;">
+                    <h4>Conversion Result:</h4>
+                    <pre id="namesResultContent"></pre>
+                  </div>
+                </div>
 
                 <!-- Tool 3: Multi-Format Converter -->
                 <div id="multiFormatTool" class="table-tool-panel">
                   <h3>Multi-Format Table Converter</h3>
                   <p>Convert TTRPG multiplier tables (messy text) to TSV, CSV, or Markdown.</p>
-                  <p class="tool-hint" style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">💡 <strong>How it works:</strong> Paste messy table text → semantic parsing pairs descriptors with values → choose TSV/CSV/Markdown output. No file needed!</p>                    <div class="form-group">
-                      <label for="multiFormatInput">Input Text:</label>
-                      <textarea id="multiFormatInput" rows="10" placeholder="Paste messy table text here...&#10;Example:&#10;Population Density&#10;Multiplier&#10;Empty 0 to 10%&#10;x0.5&#10;Sparse 10 to 25%&#10;x0.75"></textarea>
-                    </div>
-                  
-                    <div class="form-group">
-                      <label for="multiFormatOutput">Output Format:</label>
-                      <select id="multiFormatOutput">
-                        <option value="tsv">TSV (Tab-Delimited)</option>
-                        <option value="csv">CSV (Comma-Delimited)</option>
-                        <option value="markdown">Markdown Tables</option>
-                      </select>
-                    </div>
-                  
-                    <div class="button-group">
-                      <button id="runMultiFormatBtn" class="btn-primary">Convert</button>
-                      <button id="copyMultiFormatResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
-                      <button id="clearMultiFormatBtn" class="btn-secondary">Clear</button>
-                    </div>
-                  
-                    <div id="multiFormatResult" class="tool-result" style="display: none;">
-                      <h4>Conversion Result:</h4>
-                      <pre id="multiFormatResultContent"></pre>
-                      <div id="multiFormatOrphans" class="orphan-warning" style="display: none;">
-                        <strong>⚠️ Orphaned Lines:</strong>
-                        <pre id="multiFormatOrphansList"></pre>
-                      </div>
+                  <p class="tool-hint"
+                    style="background-color: #cce5ff; border: 2px solid #0066cc; padding: 12px 16px; margin: 16px 0 20px 0; border-radius: 6px; font-size: 14px; color: #003d82; font-weight: 500;">
+                    💡 <strong>How it works:</strong> Paste messy table text → semantic parsing pairs descriptors with
+                    values → choose TSV/CSV/Markdown output. No file needed!</p>
+                  <div class="form-group">
+                    <label for="multiFormatInput">Input Text:</label>
+                    <textarea id="multiFormatInput" rows="10"
+                      placeholder="Paste messy table text here...&#10;Example:&#10;Population Density&#10;Multiplier&#10;Empty 0 to 10%&#10;x0.5&#10;Sparse 10 to 25%&#10;x0.75"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="multiFormatOutput">Output Format:</label>
+                    <select id="multiFormatOutput">
+                      <option value="tsv">TSV (Tab-Delimited)</option>
+                      <option value="csv">CSV (Comma-Delimited)</option>
+                      <option value="markdown">Markdown Tables</option>
+                    </select>
+                  </div>
+
+                  <div class="button-group">
+                    <button id="runMultiFormatBtn" class="btn-primary">Convert</button>
+                    <button id="copyMultiFormatResultBtn" class="btn-secondary" disabled>Copy to Clipboard</button>
+                    <button id="clearMultiFormatBtn" class="btn-secondary">Clear</button>
+                  </div>
+
+                  <div id="multiFormatResult" class="tool-result" style="display: none;">
+                    <h4>Conversion Result:</h4>
+                    <pre id="multiFormatResultContent"></pre>
+                    <div id="multiFormatOrphans" class="orphan-warning" style="display: none;">
+                      <strong>⚠️ Orphaned Lines:</strong>
+                      <pre id="multiFormatOrphansList"></pre>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
             <!-- Activity Tab -->
             <div id="logTab" class="tab-content">
@@ -491,18 +519,22 @@
           <div class="stat-nav-header">
             <h3>Stat Block Navigator</h3>
             <div style="display: flex; gap: 3px; align-items: center; flex-wrap: wrap;">
-              <button id="reanalyzeDocBtn" class="btn secondary" style="padding:2px 6px;font-size:10px;" title="Re-run full stat block analysis and validation">🔄 Re-analyze</button>
-              <button id="exportCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Export current analysis as JSON checkpoint">💾 Export Checkpoint</button>
-              <button id="importCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Load and compare checkpoint">📂 Import</button>
-              <button id="refreshStatBlocksBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;" title="Refresh display">↻</button>
+              <button id="reanalyzeDocBtn" class="btn secondary" style="padding:2px 6px;font-size:10px;"
+                title="Re-run full stat block analysis and validation">🔄 Re-analyze</button>
+              <button id="exportCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;"
+                title="Export current analysis as JSON checkpoint">💾 Export Checkpoint</button>
+              <button id="importCheckpointBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;"
+                title="Load and compare checkpoint">📂 Import</button>
+              <button id="refreshStatBlocksBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;"
+                title="Refresh display">↻</button>
               <span id="statBlockCount" class="stat-count">0</span>
             </div>
           </div>
-          
+
           <!-- Search and Filters -->
           <div class="stat-nav-controls">
             <input type="text" id="statBlockSearch" class="stat-search-input" placeholder="Search blocks..." />
-            
+
             <div class="stat-filters">
               <select id="statBlockTypeFilter" class="stat-filter-select">
                 <option value="all">All Types</option>
@@ -519,7 +551,7 @@
                 <option value="unreviewed">Unreviewed</option>
                 <option value="reviewed">Reviewed</option>
               </select>
-              
+
               <label class="stat-filter-checkbox">
                 <input type="checkbox" id="statBlockShowErrors" />
                 <span>Errors only</span>
@@ -529,15 +561,16 @@
             <div class="stat-nav-collapsers">
               <button id="expandStatGroupsBtn" class="btn tertiary stat-collapse-btn">Expand all</button>
               <button id="collapseStatGroupsBtn" class="btn tertiary stat-collapse-btn">Collapse all</button>
-              <button id="missingStatBlocksBtn" class="btn tertiary stat-collapse-btn" title="Find names referenced in document but missing stat blocks">Missing</button>
+              <button id="missingStatBlocksBtn" class="btn tertiary stat-collapse-btn"
+                title="Find names referenced in document but missing stat blocks">Missing</button>
             </div>
-            
+
             <div class="stat-sort-controls">
               <label class="stat-sort-label">Sort:</label>
               <button id="sortBySection" class="btn tertiary stat-sort-btn active">By Section</button>
               <button id="sortAlphabetical" class="btn tertiary stat-sort-btn">Alphabetical</button>
             </div>
-            
+
             <div class="stat-review-summary">
               <label class="stat-sort-label">Reviewed:</label>
               <div class="stat-review-body">
@@ -551,10 +584,11 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Navigator List -->
           <div id="statBlockNavigator" class="stat-block-navigator">
-            <p class="placeholder" style="padding: 12px;">No stat blocks detected. Load a document to see navigation.</p>
+            <p class="placeholder" style="padding: 12px;">No stat blocks detected. Load a document to see navigation.
+            </p>
           </div>
         </div>
 
@@ -600,11 +634,15 @@
         </div>
         <div class="modal-body">
           <p>Select a quick tool to run on the current file:</p>
-          <div style="margin-bottom: 16px; padding: 12px; background-color: #f0f7ff; border-left: 4px solid #0066cc; border-radius: 4px;">
-            <strong>💡 Tip:</strong> Want to process specific sections only? 
-            <button id="openSectionPickerBtn" class="btn-link" style="color: #0066cc; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: 600;">Select Sections...</button>
+          <div
+            style="margin-bottom: 16px; padding: 12px; background-color: #f0f7ff; border-left: 4px solid #0066cc; border-radius: 4px;">
+            <strong>💡 Tip:</strong> Want to process specific sections only?
+            <button id="openSectionPickerBtn" class="btn-link"
+              style="color: #0066cc; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: 600;">Select
+              Sections...</button>
           </div>
-          <div id="selectionModeIndicator" style="display: none; margin-bottom: 16px; padding: 12px; background-color: #e7f3ff; border-left: 4px solid #667eea; border-radius: 4px; font-size: 13px;">
+          <div id="selectionModeIndicator"
+            style="display: none; margin-bottom: 16px; padding: 12px; background-color: #e7f3ff; border-left: 4px solid #667eea; border-radius: 4px; font-size: 13px;">
             <strong>✂️ Selection Mode:</strong> Processing selection
           </div>
           <div class="quick-tools-grid">
@@ -708,17 +746,49 @@
                   <span class="card-badge">7 Days</span>
                 </div>
                 <div class="card-metrics">
-                  <div class="metric">
-                    <span class="metric-label">Conversion Rate</span>
-                    <span class="metric-value" id="conversionRate">5/day</span>
+                  <div class="metric" title="How much the AI helps vs. hurts (>1.0 is good)">
+                    <span class="metric-label">Cooperation Score</span>
+                    <span class="metric-value" id="synergyRatio">--</span>
+                  </div>
+                  <div class="metric" title="Percentage of AI code that is kept (>80% is good)">
+                    <span class="metric-label">AI Code Quality</span>
+                    <span class="metric-value" id="codeSurvivalRate">--%</span>
+                  </div>
+                  <div class="metric" title="Your actual speed after fixing AI mistakes">
+                    <span class="metric-label">Effective Speed</span>
+                    <span class="metric-value" id="netSynergyVelocity">--</span>
                   </div>
                   <div class="metric">
-                    <span class="metric-label">Dev Commits</span>
-                    <span class="metric-value" id="devCommits">9</span>
+                    <span class="metric-label">Regression Rate</span>
+                    <span class="metric-value" id="regressionRate">--%</span>
                   </div>
-                  <div class="metric">
-                    <span class="metric-label">Productivity</span>
-                    <span class="metric-value" id="productivity">85%</span>
+                </div>
+              </div>
+
+              <div class="velocity-card">
+                <div class="card-header">
+                  <h3>⏱️ Time Breakdown</h3>
+                  <span class="card-badge">Session</span>
+                </div>
+                <div class="session-controls">
+                  <div class="session-timer-display" id="sessionTimerDisplay">00:00:00</div>
+                  <div class="session-btn-group">
+                    <button class="session-btn" data-state="planning" title="Thinking, prompting, designing">🧠
+                      Plan</button>
+                    <button class="session-btn" data-state="coding" title="AI generating code">⚡ Code</button>
+                    <button class="session-btn" data-state="testing" title="Verifying, debugging">🧪 Test</button>
+                  </div>
+                  <div class="session-stats" id="sessionStats">
+                    <div class="stat-bar">
+                      <div class="stat-segment plan" style="width: 33%"></div>
+                      <div class="stat-segment code" style="width: 33%"></div>
+                      <div class="stat-segment test" style="width: 33%"></div>
+                    </div>
+                    <div class="stat-legend">
+                      <span>🧠 <span id="timePlan">0m</span></span>
+                      <span>⚡ <span id="timeCode">0m</span></span>
+                      <span>🧪 <span id="timeTest">0m</span></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -845,7 +915,9 @@
                 <input type="checkbox" id="settingSyncEnabled" />
                 Sync Rendered → Markdown Editor
               </label>
-              <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in Rendered pane jumps the editor cursor to the corresponding line. Default: OFF. Turn on only when you want mirrored scrolling.</p>
+              <p style="font-size: 12px; color: #6c757d; margin: 4px 0 0 24px;">When enabled, scrolling/clicking in
+                Rendered pane jumps the editor cursor to the corresponding line. Default: OFF. Turn on only when you
+                want mirrored scrolling.</p>
             </div>
             <div class="form-group">
               <label for="settingGameSystem">Game System:</label>
@@ -879,13 +951,14 @@
           <p class="modal-description">
             Compare two document versions to detect content loss, structural breaks, and sequence discontinuities.
           </p>
-          
+
           <div class="compare-form">
             <!-- Document 1 (Baseline) -->
             <div class="form-group">
               <label for="compareDoc1Path">Baseline Document (Original):</label>
               <div class="file-input-group">
-                <input type="text" id="compareDoc1Path" placeholder="Select baseline document..." readonly class="form-input" />
+                <input type="text" id="compareDoc1Path" placeholder="Select baseline document..." readonly
+                  class="form-input" />
                 <button id="browseDoc1Btn" class="btn secondary">Browse...</button>
               </div>
             </div>
@@ -894,7 +967,8 @@
             <div class="form-group">
               <label for="compareDoc2Path">Comparison Document (Revised):</label>
               <div class="file-input-group">
-                <input type="text" id="compareDoc2Path" placeholder="Select comparison document..." readonly class="form-input" />
+                <input type="text" id="compareDoc2Path" placeholder="Select comparison document..." readonly
+                  class="form-input" />
                 <button id="browseDoc2Btn" class="btn secondary">Browse...</button>
               </div>
             </div>
@@ -903,7 +977,8 @@
             <div class="form-group">
               <label for="compareThreshold">Volume Difference Threshold (%):</label>
               <div class="threshold-input-group">
-                <input type="number" id="compareThreshold" value="15" min="5" max="50" step="5" class="form-input small-input" />
+                <input type="number" id="compareThreshold" value="15" min="5" max="50" step="5"
+                  class="form-input small-input" />
                 <span class="input-suffix">%</span>
                 <span class="help-text">Default: 15% - Flags content differences exceeding this percentage</span>
               </div>
@@ -929,7 +1004,8 @@
           <div class="compare-info">
             <h4>What Gets Checked:</h4>
             <ul>
-              <li><strong>Symmetry & Sequence:</strong> Missing chapters, parts, tables (e.g., Part 1 without Part 2)</li>
+              <li><strong>Symmetry & Sequence:</strong> Missing chapters, parts, tables (e.g., Part 1 without Part 2)
+              </li>
               <li><strong>Structural Parity:</strong> Incomplete tables, unbalanced markup, missing headers</li>
               <li><strong>Content Volume:</strong> Significant content loss or additions (>threshold)</li>
               <li><strong>Cross-Reference:</strong> Missing continuations of multi-part content</li>
@@ -951,14 +1027,16 @@
           <button id="closeSectionPickerBtn" class="modal-close">&times;</button>
         </div>
         <div class="modal-body">
-          <p style="margin-bottom: 16px; color: #6c757d;">Choose which sections of your document to process. Works like Microsoft Word's Outline view.</p>
-          
+          <p style="margin-bottom: 16px; color: #6c757d;">Choose which sections of your document to process. Works like
+            Microsoft Word's Outline view.</p>
+
           <div style="margin-bottom: 16px; display: flex; gap: 8px;">
             <button id="selectAllSectionsBtn" class="btn secondary" style="flex: 1;">✓ Select All</button>
             <button id="deselectAllSectionsBtn" class="btn secondary" style="flex: 1;">✗ Deselect All</button>
           </div>
-          
-          <div id="sectionList" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; background-color: #f8f9fa;">
+
+          <div id="sectionList"
+            style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; background-color: #f8f9fa;">
             <p style="color: #6c757d; text-align: center; padding: 40px 20px;">
               No document loaded. Load a file to compare versions.
             </p>
@@ -980,8 +1058,10 @@
           <button id="closeSaveBeforeToolBtn" class="modal-close">&times;</button>
         </div>
         <div class="modal-body">
-          <p style="margin-bottom: 16px; font-size: 15px;">You have unsaved changes in the editor. Save your edits before running this tool?</p>
-          <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+          <p style="margin-bottom: 16px; font-size: 15px;">You have unsaved changes in the editor. Save your edits
+            before running this tool?</p>
+          <div
+            style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
             <strong>⚡ Warning:</strong> Running tools on unsaved content may lead to unexpected results.
           </div>
         </div>
@@ -1006,7 +1086,8 @@
             <button id="diffViewSideBySideBtn" class="btn tertiary active">Side-by-Side</button>
             <button id="diffViewUnifiedBtn" class="btn tertiary">Unified Diff</button>
           </div>
-          <div id="diffContainer" style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px;">
+          <div id="diffContainer"
+            style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px;">
             <!-- Diff content will be injected here -->
           </div>
         </div>
@@ -1028,7 +1109,8 @@
           <button class="modal-close" id="closeCanonicalizeModal">&times;</button>
         </div>
         <div class="modal-body">
-          <div id="canonicalizeStatus" style="margin-bottom: 16px; padding: 12px; background: #e7f3ff; border-radius: 6px; font-size: 13px;">
+          <div id="canonicalizeStatus"
+            style="margin-bottom: 16px; padding: 12px; background: #e7f3ff; border-radius: 6px; font-size: 13px;">
             <!-- Status message -->
           </div>
           <div style="margin-bottom: 16px;">
@@ -1037,7 +1119,8 @@
               <span>Automatically mark canonicalized blocks as reviewed</span>
             </label>
           </div>
-          <div id="canonicalizePreview" style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; padding: 12px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px;">
+          <div id="canonicalizePreview"
+            style="max-height: 500px; overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; background-color: #f8f9fa; padding: 12px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px;">
             <!-- Preview content will be injected here -->
           </div>
         </div>
@@ -1051,4 +1134,5 @@
 
   <script src="renderer.js"></script>
 </body>
+
 </html>

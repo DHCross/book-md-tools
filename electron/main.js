@@ -10,6 +10,9 @@ app.setName('TRPG MD Workbench');
 const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
 const { canonicalizeBatch } = require('./lib/cnc-canonicalizer-v2');
 
+// Passive AI Burst Detector
+const { startWatcher } = require('./lib/file-watcher');
+
 let mainWindow;
 
 // Get repo root (parent of electron folder)
@@ -47,10 +50,15 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-  
+
   // Disable cache for development
   mainWindow.webContents.session.clearCache();
   // mainWindow.webContents.openDevTools(); // Remove this in production
+
+  // Start Passive AI Burst Detector (Development Only)
+  if (process.env.NODE_ENV !== 'production') {
+    startWatcher(mainWindow);
+  }
 }
 
 app.on('ready', createWindow);
@@ -249,14 +257,14 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
     'paragraph-break': 'tools/fix_broken_paragraphs.py',
     'spell-check': 'tools/spell_check.py'
   };
-  
+
   const scriptPath = toolMap[tool];
   if (!scriptPath) {
     return { success: false, message: `Unknown tool: ${tool}` };
   }
-  
+
   let actualInputPath = inputPath;
-  
+
   // If filtered content provided (selected sections), write to temp file
   if (options.filteredContent) {
     const tempPath = inputPath.replace(/\.(md|markdown)$/i, `_temp_sections${outputSuffix}.$1`);
@@ -267,10 +275,10 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
       return { success: false, message: `Failed to create temp file: ${err.message}` };
     }
   }
-  
+
   // Build arguments based on tool
   const args = [actualInputPath];
-  
+
   if (tool === 'header-depth') {
     args.push('--max-depth', '4');
   } else if (tool === 'long-line') {
@@ -280,10 +288,10 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
     const outputPath = actualInputPath.replace(/\.(md|markdown)$/i, `${outputSuffix}.$1`);
     args.push(outputPath);
   }
-  
+
   // Run the tool
   const result = await runPythonScript(scriptPath, args);
-  
+
   // Clean up temp file if created
   if (options.filteredContent && actualInputPath !== inputPath) {
     try {
@@ -292,22 +300,22 @@ ipcMain.handle('run-quick-tool', async (event, tool, inputPath, outputSuffix, op
       // Ignore cleanup errors
     }
   }
-  
+
   return { success: result.success, message: result.message, output: result.output };
 });
 
 // IPC: Format Text Actions
 ipcMain.handle('run-format-action', async (event, options) => {
   const { filePath, action } = options;
-  
+
   if (!filePath || !action) {
     return { error: 'Missing filePath or action' };
   }
-  
+
   // For now, return placeholder - real implementation would call appropriate scripts
   // based on action type (smart-quotes, whitespace, line-breaks, headers, all)
-  return { 
-    success: true, 
+  return {
+    success: true,
     message: `Format action '${action}' would run here`,
     outputPath: filePath
   };
@@ -346,19 +354,19 @@ ipcMain.handle('build-headers', async (event, input, outputSuffix = '_headers', 
     if (loose) {
       args.push('--loose');
     }
-    
+
     const result = await runPythonScript('scripts/convert_to_markdown_hierarchy.py', args);
-    
+
     if (result.success) {
-      return { 
-        success: true, 
+      return {
+        success: true,
         message: `Headers built successfully`,
         outputPath: outputPath,
         output: result.output
       };
     } else {
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: result.message || 'Header building failed'
       };
     }
@@ -371,49 +379,49 @@ ipcMain.handle('build-headers', async (event, input, outputSuffix = '_headers', 
 // IPC: Document Comparator
 ipcMain.handle('compare-documents', async (event, doc1Path, doc2Path, options = {}) => {
   const args = [doc1Path, doc2Path];
-  
+
   // Add threshold if specified
   if (options.threshold !== undefined) {
     args.push('--threshold', options.threshold.toString());
   }
-  
+
   // Add format if specified
   if (options.format) {
     args.push('--format', options.format);
   }
-  
+
   // Add output path if specified
   if (options.outputPath) {
     args.push('--output', options.outputPath);
   }
-  
+
   // Add quiet flag for programmatic use
   args.push('--quiet');
-  
+
   const result = await runPythonScript('tools/document_comparator.py', args);
-  
+
   // If output file was specified, read it and return the content
   if (options.outputPath && result.success) {
     try {
       const reportContent = fs.readFileSync(options.outputPath, 'utf-8');
-      return { 
-        success: result.success, 
+      return {
+        success: result.success,
         message: result.message,
         output: result.output,
         reportContent,
         reportPath: options.outputPath
       };
     } catch (err) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: `Comparison completed but failed to read report: ${err.message}`,
         output: result.output
       };
     }
   }
-  
-  return { 
-    success: result.success, 
+
+  return {
+    success: result.success,
     message: result.message,
     output: result.output,
     stderr: result.stderr
@@ -427,19 +435,19 @@ ipcMain.handle('compare-documents', async (event, doc1Path, doc2Path, options = 
 // IPC: Convert Markdown Table to TSV
 ipcMain.handle('convert-md-table-to-tsv', async (event, inputPath, options = {}) => {
   const args = [inputPath];
-  
+
   // Add output path if specified
   if (options.outputPath) {
     args.push('-o', options.outputPath);
   }
-  
+
   // Add no-headers flag if specified
   if (options.noHeaders) {
     args.push('--no-headers');
   }
-  
+
   const result = await runPythonScript('tools/md_table_to_tsv.py', args);
-  
+
   // Read the output file if it was created
   if (options.outputPath && result.success) {
     try {
@@ -458,7 +466,7 @@ ipcMain.handle('convert-md-table-to-tsv', async (event, inputPath, options = {})
       };
     }
   }
-  
+
   return {
     success: result.success,
     message: result.message,
@@ -471,19 +479,19 @@ ipcMain.handle('convert-md-table-to-tsv', async (event, inputPath, options = {})
 // IPC: Convert Names to Columns
 ipcMain.handle('convert-names-to-columns', async (event, inputPath, options = {}) => {
   const args = [inputPath];
-  
+
   // Add output path if specified
   if (options.outputPath) {
     args.push('-o', options.outputPath);
   }
-  
+
   // Add columns if specified
   if (options.columns) {
     args.push('-c', options.columns.toString());
   }
-  
+
   const result = await runPythonScript('tools/convert_names_to_columns.py', args);
-  
+
   // Read the output file if it was created
   if (options.outputPath && result.success) {
     try {
@@ -502,7 +510,7 @@ ipcMain.handle('convert-names-to-columns', async (event, inputPath, options = {}
       };
     }
   }
-  
+
   return {
     success: result.success,
     message: result.message,
@@ -515,7 +523,7 @@ ipcMain.handle('convert-names-to-columns', async (event, inputPath, options = {}
 ipcMain.handle('convert-table-multi-format', async (event, inputText, format) => {
   // This is a JavaScript implementation of the HTML tool's logic
   // Parse the input text and convert to requested format
-  
+
   try {
     const lines = inputText
       .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '')
@@ -524,32 +532,32 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
       .split(/\r?\n/)
       .map(l => l.trim())
       .filter(Boolean);
-    
+
     if (lines.length === 0) {
       return { success: false, message: 'No input text provided' };
     }
-    
+
     // Pull category
     const category = lines.shift();
     const rows = [];
     const orphans = [];
     let section = '';
-    
+
     const valueRe = /^[+\d.]+(?:\s*to\s*[+\d.]+)?%?$/i;
     const multiplierRe = /^x\d+/i;
     const sectionHeaderRe = /multiplier/i;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const next = lines[i + 1] || '';
-      
+
       // Section header detection
       if (/^[A-Za-z ]+$/.test(line) && sectionHeaderRe.test(next)) {
         section = line;
         i++;
         continue;
       }
-      
+
       // Descriptor + multiplier pairing
       if (valueRe.test(next) || multiplierRe.test(next)) {
         rows.push([category, section, line, next]);
@@ -558,15 +566,15 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
         orphans.push(line);
       }
     }
-    
+
     // Prepend header row
     const data = [
       ['Category', 'Section', 'Descriptor', 'Multiplier'],
       ...rows
     ];
-    
+
     let output = '';
-    
+
     if (format === 'tsv') {
       output = data.map(row => row.join('\t')).join('\n');
     } else if (format === 'csv') {
@@ -579,19 +587,19 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
       if (data.length < 2) {
         return { success: false, message: 'Insufficient data for markdown table' };
       }
-      
+
       const headers = data[0];
       const dataRows = data.slice(1);
       const cat = dataRows.length > 0 ? dataRows[0][0] : '';
-      
+
       let markdown = `# ${cat}\n\n`;
       let currentSection = '';
-      
+
       for (const row of dataRows) {
         const sect = row[1];
         const descriptor = row[2];
         const value = row[3];
-        
+
         if (sect !== currentSection) {
           currentSection = sect;
           markdown += `### ${currentSection}\n\n`;
@@ -602,7 +610,7 @@ ipcMain.handle('convert-table-multi-format', async (event, inputText, format) =>
       }
       output = markdown;
     }
-    
+
     return {
       success: true,
       message: 'Conversion successful',
@@ -680,15 +688,15 @@ ipcMain.handle('export-checkpoint', async (event, checkpointData) => {
       .substring(0, 50); // Limit length
     const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const defaultFilename = `checkpoint-${docName}-${dateStr}.json`;
-    
+
     const { filePath } = await dialog.showSaveDialog({
       title: 'Export Analysis Checkpoint',
       defaultPath: defaultFilename,
       filters: [{ name: 'JSON', extensions: ['json'] }]
     });
-    
+
     if (!filePath) return { success: false, cancelled: true };
-    
+
     fs.writeFileSync(filePath, JSON.stringify(checkpointData, null, 2), 'utf-8');
     return { success: true, path: filePath };
   } catch (error) {
@@ -703,9 +711,9 @@ ipcMain.handle('import-checkpoint', async () => {
       filters: [{ name: 'JSON', extensions: ['json'] }],
       properties: ['openFile']
     });
-    
+
     if (!filePaths || filePaths.length === 0) return { success: false, cancelled: true };
-    
+
     const data = fs.readFileSync(filePaths[0], 'utf-8');
     const checkpoint = JSON.parse(data);
     return { success: true, checkpoint, path: filePaths[0] };
@@ -724,14 +732,14 @@ ipcMain.handle('load-conversion-csvs', async () => {
   try {
     const spellCsvPath = path.join(CSV_DIR, 'spell_conversion_guide_full_dataframe.csv');
     const itemCsvPath = path.join(CSV_DIR, 'master_magic item.conversion.csv');
-    
+
     const spellCsv = fs.existsSync(spellCsvPath) ? fs.readFileSync(spellCsvPath, 'utf-8') : null;
     const itemCsv = fs.existsSync(itemCsvPath) ? fs.readFileSync(itemCsvPath, 'utf-8') : null;
-    
-    return { 
-      success: true, 
-      spells: spellCsv, 
-      items: itemCsv 
+
+    return {
+      success: true,
+      spells: spellCsv,
+      items: itemCsv
     };
   } catch (error) {
     return { success: false, message: error.message };
@@ -823,22 +831,33 @@ ipcMain.handle('save-file', async (event, filePath, content) => {
 // IPC: Get Velocity Data
 ipcMain.handle('get-velocity-data', async () => {
   const logPath = path.join(REPO_ROOT, 'velocity-log.jsonl');
+  const summaryPath = path.join(REPO_ROOT, 'velocity-tracker-template', 'velocity-artifacts', 'velocity-summary.json');
+
   try {
+    let entries = [];
     if (fs.existsSync(logPath)) {
       const content = fs.readFileSync(logPath, 'utf-8');
       // Parse JSONL
       const lines = content.split('\n').filter(line => line.trim());
-      const entries = lines.map(line => {
+      entries = lines.map(line => {
         try {
           return JSON.parse(line);
         } catch (e) {
           return null;
         }
       }).filter(e => e !== null);
-      
-      return { success: true, data: entries };
     }
-    return { success: false, message: 'Velocity log not found' };
+
+    let summary = null;
+    if (fs.existsSync(summaryPath)) {
+      try {
+        summary = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
+      } catch (e) {
+        console.error('Failed to parse velocity summary:', e);
+      }
+    }
+
+    return { success: true, data: entries, summary };
   } catch (err) {
     return { success: false, message: err.message };
   }
@@ -880,11 +899,11 @@ ipcMain.handle('save-config', async (event, config) => {
     if (fs.existsSync(configPath)) {
       content = fs.readFileSync(configPath, 'utf-8');
     }
-    
+
     // Update or add settings in the TOML file
     const lines = content.split('\n');
     let updated = false;
-    
+
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].includes('default_output_suffix')) {
         lines[i] = `default_output_suffix = "${config.defaultOutputSuffix || '_cleaned'}"`;
@@ -895,7 +914,7 @@ ipcMain.handle('save-config', async (event, config) => {
         updated = true;
       }
     }
-    
+
     // If not found, append to [tool.book_md] section or create it
     if (!updated) {
       if (!content.includes('[tool.book_md]')) {
@@ -905,7 +924,7 @@ ipcMain.handle('save-config', async (event, config) => {
       lines.push(`default_output_suffix = "${config.defaultOutputSuffix || '_cleaned'}"`);
       lines.push(`tables_inline = ${config.tablesInline ? 'true' : 'false'}`);
     }
-    
+
     fs.writeFileSync(configPath, lines.join('\n'), 'utf-8');
     return { success: true, message: 'Config saved successfully' };
   } catch (err) {
