@@ -5865,8 +5865,31 @@ function initializeVelocityTracking() {
       if (today === lastDate) {
         velocityData = { ...parsed, sessionStart: Date.now() };
       } else {
-        // New day, reset daily counters
-        velocityData.conversionsToday = 0;
+        // New day, keep long-term stats but reset daily counters
+        velocityData = { 
+          ...parsed,
+          sessionStart: Date.now(),
+          conversionsToday: 0,
+          sessionConversions: []
+        };
+      }
+      
+      // Ensure focusSession exists (migration for existing data)
+      if (!velocityData.focusSession) {
+        velocityData.focusSession = {
+          active: false,
+          startTime: null,
+          totalFocusMinutes: 0,
+          sessionsToday: 0,
+          focusWindows: []
+        };
+      } else if (today !== lastDate) {
+        // Reset focus session stats for new day
+        velocityData.focusSession.totalFocusMinutes = 0;
+        velocityData.focusSession.sessionsToday = 0;
+        velocityData.focusSession.focusWindows = [];
+        velocityData.focusSession.active = false;
+        velocityData.focusSession.startTime = null;
       }
     } catch (e) {
       console.error('Failed to load velocity data:', e);
