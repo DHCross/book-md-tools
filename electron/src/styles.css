@@ -2296,12 +2296,31 @@ body {
   gap: 8px;
   box-sizing: border-box;
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
+  position: relative; /* For absolute positioning of indicator */
+  overflow: hidden; /* Clip the indicator */
 }
 
 .line-info-column.active-stat {
-  /* Subtle background tint and outline */
-  background: linear-gradient(180deg, #e9f9ef 0%, #f1f7f3 100%);
-  box-shadow: 0 0 0 1px #c3e6cb;
+  /* Removed full background tint */
+  /* background: linear-gradient(180deg, #e9f9ef 0%, #f1f7f3 100%); */
+  /* box-shadow: 0 0 0 1px #c3e6cb; */
+}
+
+.stat-block-indicator {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: rgba(40, 167, 69, 0.15);
+  border-left: 4px solid #28a745;
+  pointer-events: none;
+  z-index: 0; /* Behind text if possible, but text is in other div */
+  transition: top 0.05s linear; /* Smooth scroll */
+}
+
+/* Ensure text is above indicator */
+.line-info-row {
+  position: relative;
+  z-index: 1;
 }
 
 .line-info-row {

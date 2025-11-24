@@ -121,6 +121,9 @@ let statBlockSortMode = 'alphabetical'; // 'section' or 'alphabetical' - default
 let statFilters = { type: 'all', status: 'all', onlyErrors: false, search: '' }; // default to all
 let statContextCollapsed = {};
 let activeStatStartLine = null; // first line of selected stat block (for UI)
+let activeStatEndLine = null;
+let activeBlockTop = 0;
+let activeBlockHeight = 0;
 let reviewState = {}; // reviewed flags keyed by block id
 
 // Unified navigation context for Next/Prev
@@ -691,11 +694,20 @@ function runSearch() {
   try {
     const flags = caseSensitive ? 'gm' : 'gmi';
     if (useRegex) {
-      const pattern = wholeWord ? `\\b(?:${query})\\b` : query;
+      // For regex mode, user controls boundaries manually
+      const pattern = query;
       regex = new RegExp(pattern, flags);
     } else {
       const escaped = query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
-      const pattern = wholeWord ? `\\b${escaped}\\b` : escaped;
+      let pattern = escaped;
+      
+      if (wholeWord) {
+        // Smart boundaries: only add \b if the edge is a word character
+        const startBoundary = /^\w/.test(query) ? '\\b' : '';
+        const endBoundary = /\w$/.test(query) ? '\\b' : '';
+        pattern = `${startBoundary}${escaped}${endBoundary}`;
+      }
+      
       regex = new RegExp(pattern, flags);
     }
   } catch (e) {
@@ -741,11 +753,13 @@ function findNext(forward = true) {
 
   const m = matches[findState.currentIndex];
   editor.focus();
-  editor.setSelectionRange(m.start, m.end);
-
+  
   const before = (editor.value || '').slice(0, m.start);
   const lineNumber = before ? before.split('\n').length : 1;
-  jumpEditorToLine(lineNumber, true);
+  
+  // Jump to line AND select the match (passing range ensures it persists after scroll)
+  jumpEditorToLine(lineNumber, true, { start: m.start, end: m.end });
+  
   updateFindStatus(`Match ${findState.currentIndex + 1} of ${matches.length}`);
 }
 
@@ -1423,7 +1437,7 @@ function updateLineInfoDisplay() {
   }
 }
 
-function jumpEditorToLine(lineNumber, focusEditor = true) {
+function jumpEditorToLine(lineNumber, focusEditor = true, selectRange = null) {
   const editor = document.getElementById('markdownEditor');
   if (!editor) return;
 
@@ -1437,7 +1451,11 @@ function jumpEditorToLine(lineNumber, focusEditor = true) {
   }
 
   const applyCaret = () => {
-    editor.setSelectionRange(charOffset, charOffset);
+    if (selectRange) {
+      editor.setSelectionRange(selectRange.start, selectRange.end);
+    } else {
+      editor.setSelectionRange(charOffset, charOffset);
+    }
   };
 
   // Set cursor position
@@ -3016,7 +3034,9 @@ function navigateToSection(index) {
   navContext.index = index;
   updateNavButtonsForContext();
   activeStatStartLine = null;
+  activeStatEndLine = null;
   updateLineInfoDisplay();
+  updateStatBlockHighlight();
 
 
   // Jump editor to the section start (keeps caret aligned with navigation)
@@ -3197,7 +3217,9 @@ function updateStatBlockNavigator(blocks) {
     container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks detected in this document.</p>';
     if (countEl) countEl.textContent = '0';
     activeStatStartLine = null;
+    activeStatEndLine = null;
     updateLineInfoDisplay();
+    updateStatBlockHighlight();
     return;
   }
 
@@ -3291,7 +3313,7 @@ function classifyStatBlock(block) {
   }
 
   // Hazard keywords (environmental dangers)
-  if (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetles|sunset|mushrooms)/i.test(combined) ||
+  if (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetle)/i.test(combined) ||
     /hazard|environmental|danger|save vs/i.test(text)) {
     return 'hazard';
   }
@@ -3473,7 +3495,7 @@ function detectNamedNPC(name) {
   if (/["']/.test(name)) return true;
 
   // Check for proper capitalized names (not just generic titles)
-  // Names like "Grimlock Manface", "Fekk", "King Griggle-gruk"
+  // Names like "Grimlock Manface", "Fekk", "King
   const words = name.split(/\s+/);
   const hasProperName = words.some(word => {
     // Must start with capital and not be a generic title alone
@@ -3878,7 +3900,6 @@ document.getElementById('sortBySection')?.addEventListener('click', () => {
   document.getElementById('sortAlphabetical')?.classList.remove('active');
   renderStatBlockList();
 });
-
 document.getElementById('sortAlphabetical')?.addEventListener('click', () => {
   const typeFilter = document.getElementById('statBlockTypeFilter');
   const selectedType = typeFilter ? typeFilter.value : 'all';
@@ -3988,7 +4009,17 @@ function navigateToStatBlock(block) {
     navContext.index = idx;
     updateNavButtonsForContext();
     activeStatStartLine = block.lineNumber || block.lineStart || null;
+    
+    // Calculate end line
+    if (block.fullText) {
+      const lineCount = block.fullText.split('\n').length;
+      activeStatEndLine = (activeStatStartLine || 1) + lineCount - 1;
+    } else {
+      activeStatEndLine = activeStatStartLine;
+    }
+
     updateLineInfoDisplay();
+    updateStatBlockHighlight();
     // If there's a matching header context, highlight it in the right-hand navigator
     if (allSections && allSections.length > 0) {
       const matchIdx = allSections.findIndex(
@@ -4286,1318 +4317,6 @@ async function showStatDetails(block) {
   }
 }
 
-// ============================================================================
-// INITIALIZATION
-// ============================================================================
-
-async function initialize() {
-  log('TRPG MD Workbench ready', 'info');
-  updateStatus('Ready', 'success');
-
-  // Initialize drag and drop
-  initializeDragAndDrop();
-  // Initialize Find/Replace strip (Ctrl/Cmd+F or Find button)
-  initFindReplace();
-
-  // Load config
-  const loadedConfig = await window.electronAPI.loadConfig();
-  if (loadedConfig) {
-    config = { ...config, ...loadedConfig };
-
-    // Apply config to UI
-    const outputSuffixInput = document.getElementById('outputSuffix');
-    if (outputSuffixInput) outputSuffixInput.value = config.defaultOutputSuffix || '_cleaned';
-
-    const tablesInlineCheck = document.getElementById('tablesInlineCheck');
-    if (tablesInlineCheck) tablesInlineCheck.checked = config.tablesInline ?? true;
-
-    // Restore sync preference (simple ON/OFF; default false)
-    if ('syncScrollEnabled' in config) {
-      syncScrollEnabled = !!config.syncScrollEnabled;
-    }
-  }
-  // Ensure filters start at default "all"
-  const typeSelect = document.getElementById('statBlockTypeFilter');
-  if (typeSelect) typeSelect.value = statFilters.type || 'all';
-  const statusSelect = document.getElementById('statBlockReviewFilter');
-  if (statusSelect) statusSelect.value = statFilters.status || 'all';
-
-  // Wire sidebar collapse toggle
-  const sidebar = document.querySelector('.sidebar');
-  const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-  if (sidebar && sidebarToggleBtn) {
-    const updateSidebarToggleLabel = () => {
-      const collapsed = sidebar.classList.contains('collapsed');
-      sidebarToggleBtn.textContent = collapsed ? '▶ Tools' : '◀ Tools';
-    };
-
-    sidebarToggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');
-      updateSidebarToggleLabel();
-    });
-
-    updateSidebarToggleLabel();
-  }
-
-  // Wire scroll sync header toggle
-  const scrollSyncToggle = document.getElementById('scrollSyncToggle');
-  if (scrollSyncToggle) {
-    scrollSyncToggle.checked = true;
-    syncScrollEnabled = true;
-    scrollSyncToggle.addEventListener('change', () => {
-      syncScrollEnabled = !!scrollSyncToggle.checked;
-      const label = scrollSyncToggle.closest('.scroll-sync-toggle');
-      if (label) {
-        label.classList.toggle('active', !!scrollSyncToggle.checked);
-      }
-    });
-    // ensure visual state on load
-    const label = scrollSyncToggle.closest('.scroll-sync-toggle');
-    if (label) {
-      label.classList.toggle('active', true);
-    }
-  }
-
-  // Find/Replace strip
-  initFindReplace();
-
-  // Bind core header actions
-  document.getElementById('saveBtn')?.addEventListener('click', () => saveCurrentFile());
-  document.getElementById('saveAsBtn')?.addEventListener('click', () => saveCurrentFileAs());
-
-  // Bind Next/Prev navigation buttons (context-aware)
-  document.getElementById('nextStatBtn')?.addEventListener('click', () => navigateNextByContext());
-  document.getElementById('prevStatBtn')?.addEventListener('click', () => navigatePrevByContext());
-
-  // Header navigator controls
-  document.getElementById('refreshNavigatorBtn')?.addEventListener('click', () => {
-    // Sync currentContent from editor before refreshing
-    const editor = document.getElementById('markdownEditor');
-    if (editor) {
-      currentContent = editor.value;
-    }
-    updateHeaderNavigator();
-  });
-  document.getElementById('expandHeadersBtn')?.addEventListener('click', () => setHeaderCollapse(false));
-  document.getElementById('collapseHeadersBtn')?.addEventListener('click', () => setHeaderCollapse(true));
-
-  // Keyboard shortcuts: Ctrl/Cmd + Alt + ArrowUp/ArrowDown for previous/next
-  document.addEventListener('keydown', (e) => {
-    // Save shortcut: Ctrl/Cmd + S
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      e.preventDefault();
-      saveCurrentFile();
-      return;
-    }
-
-    // Navigation: Ctrl/Cmd + Alt + ArrowUp/ArrowDown
-    if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      navigateNextByContext();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      navigatePrevByContext();
-    }
-  });
-
-  // ============================================================================
-  // MARKDOWN TOOLBAR
-  // ============================================================================
-
-  // Toolbar button actions
-  const toolbarActions = {
-    bold: () => wrapSelection('**', '**'),
-    italic: () => wrapSelection('*', '*'),
-    h1: () => insertAtLineStart('# '),
-    h2: () => insertAtLineStart('## '),
-    h3: () => insertAtLineStart('### '),
-    'area-h1': () => insertAreaHeader(1),
-    'area-h2': () => insertAreaHeader(2),
-    'area-h3': () => insertAreaHeader(3),
-    'area-h4': () => insertAreaHeader(4),
-    'area-bold': () => insertAreaBoldLabel(),
-    quote: () => insertAtLineStart('> '),
-    boxed: () => insertBoxedText(),
-    'gm-note': () => insertAtCursor('**GM:** '),
-    'stat-block': () => insertStatBlockTemplate(),
-    'bold-label': () => boldLabel()
-  };
-
-  // Wire toolbar buttons
-  document.querySelectorAll('.toolbar-btn[data-action]').forEach(btn => {
-    const action = btn.dataset.action;
-    btn.addEventListener('click', () => {
-      const handler = toolbarActions[action];
-      if (handler) handler();
-    });
-  });
-
-  // Area dropdown menu
-  const areaDropdown = document.getElementById('btnAreaDropdown');
-  const areaMenu = document.getElementById('areaDropdownMenu');
-
-  if (areaDropdown && areaMenu) {
-    areaDropdown.addEventListener('click', (e) => {
-      e.stopPropagation();
-      areaMenu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', () => {
-      areaMenu.classList.remove('show');
-    });
-
-    areaMenu.querySelectorAll('.dropdown-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const action = item.dataset.action;
-        const handler = toolbarActions[action];
-        if (handler) handler();
-        areaMenu.classList.remove('show');
-      });
-    });
-  }
-
-
-  // ============================================================================
-  // TOOLBAR HELPER FUNCTIONS
-  // ============================================================================
-
-  function wrapSelection(before, after) {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const selectedText = editor.value.substring(start, end);
-
-    if (selectedText) {
-      const wrapped = before + selectedText + after;
-      editor.setRangeText(wrapped, start, end, 'end');
-      currentContent = editor.value;
-      setEditorUnsavedState();
-      updateRenderedTab(currentContent);
-    } else {
-      // No selection - insert markers and place cursor between them
-      editor.setRangeText(before + after, start, start, 'end');
-      editor.selectionStart = editor.selectionEnd = start + before.length;
-      editor.focus();
-    }
-  }
-
-  function insertAtLineStart(prefix) {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    const value = editor.value;
-
-    // Find start of current line
-    let lineStart = value.lastIndexOf('\n', start - 1) + 1;
-
-    // Insert prefix at line start
-    editor.setRangeText(prefix, lineStart, lineStart, 'end');
-    editor.selectionStart = editor.selectionEnd = lineStart + prefix.length;
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function insertAtCursor(text) {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    editor.setRangeText(text, start, start, 'end');
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function insertAreaHeader(level) {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const prefix = '#'.repeat(level) + ' ';
-    const placeholder = level === 4 ? 'Area Name' :
-      level === 1 ? 'Section Title' :
-        level === 2 ? 'Section Title' : 'Subsection';
-
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const selectedRaw = editor.value.substring(start, end);
-    const hasSelection = selectedRaw && selectedRaw.trim().length > 0;
-    const title = hasSelection
-      ? selectedRaw.trim().replace(/\s+/g, ' ')
-      : placeholder;
-
-    if (hasSelection) {
-      // Replace selection with header using the selected text
-      editor.setRangeText(`${prefix}${title}\n`, start, end, 'end');
-      editor.selectionStart = start + prefix.length;
-      editor.selectionEnd = start + prefix.length + title.length;
-    } else {
-      // Insert at current line start with placeholder
-      const value = editor.value;
-      let lineStart = value.lastIndexOf('\n', start - 1) + 1;
-      editor.setRangeText(prefix + title + '\n', lineStart, lineStart, 'end');
-      editor.selectionStart = lineStart + prefix.length;
-      editor.selectionEnd = lineStart + prefix.length + title.length;
-    }
-
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function insertAreaBoldLabel() {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const selectedRaw = editor.value.substring(start, end);
-    const hasSelection = selectedRaw && selectedRaw.trim().length > 0;
-    const label = hasSelection
-      ? selectedRaw.trim().replace(/\s+/g, ' ')
-      : 'AREA NAME';
-    const text = `**${label}**:\n`;
-
-    editor.setRangeText(text, start, end, 'end');
-    // Select label text
-    editor.selectionStart = start + 2;
-    editor.selectionEnd = start + 2 + label.length;
-
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function insertBoxedText() {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    const text = '>>[begin boxed text]<<\n\n>>[end boxed text]<<\n';
-
-    editor.setRangeText(text, start, start, 'end');
-    // Place cursor in middle
-    editor.selectionStart = editor.selectionEnd = start + 24; // After first line
-
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function insertStatBlockTemplate() {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const template = `**Creature Name** (AC 15, HD 4, HP 22, MV 120', #AT 2, D 1d6/1d6)
-
-**Description:** Brief description of the creature.
-
-**Tactics:** Combat behavior and strategies.
-
-**Treasure:** Loot and items.
-
-`;
-
-    const start = editor.selectionStart;
-    editor.setRangeText(template, start, start, 'end');
-    // Select creature name
-    editor.selectionStart = start + 2;
-    editor.selectionEnd = start + 2 + 13; // "Creature Name"
-
-    currentContent = editor.value;
-    setEditorUnsavedState();
-    updateRenderedTab(currentContent);
-    editor.focus();
-  }
-
-  function boldLabel() {
-    const editor = document.getElementById('markdownEditor');
-    if (!editor) return;
-
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const selectedText = editor.value.substring(start, end);
-
-    if (selectedText && selectedText.trim()) {
-      // User has selection - check for colon
-      const colonIndex = selectedText.indexOf(':');
-      if (colonIndex > 0) {
-        const label = selectedText.substring(0, colonIndex);
-        const rest = selectedText.substring(colonIndex);
-        const bolded = '**' + label + '**' + rest;
-
-        editor.setRangeText(bolded, start, end, 'end');
-        currentContent = editor.value;
-        setEditorUnsavedState();
-        updateRenderedTab(currentContent);
-        return;
-      }
-
-      // No colon in selection: turn selection into "**Label:** "
-      const trimmed = selectedText.trim();
-      const trailingSpace = selectedText.endsWith(' ') ? ' ' : '';
-      const bolded = `**${trimmed}**:${trailingSpace}`;
-      editor.setRangeText(bolded, start, end, 'end');
-      currentContent = editor.value;
-      setEditorUnsavedState();
-      updateRenderedTab(currentContent);
-      return;
-    }
-
-    // No selection or no colon - bold labels on current line
-    const value = editor.value;
-    let lineStart = value.lastIndexOf('\n', start - 1) + 1;
-    let lineEnd = value.indexOf('\n', start);
-    if (lineEnd === -1) lineEnd = value.length;
-
-    const line = value.substring(lineStart, lineEnd);
-    const boldedLine = boldLabelsInLine(line);
-
-    if (boldedLine !== line) {
-      editor.setRangeText(boldedLine, lineStart, lineEnd, 'end');
-      currentContent = editor.value;
-      setEditorUnsavedState();
-      updateRenderedTab(currentContent);
-    }
-  }
-
-  function boldLabelsInLine(line) {
-    // Match "Capitalized Words:" pattern (avoiding times like 8:00)
-    return line.replace(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*:/g, (match, label, offset, str) => {
-      // Avoid bolding if it looks like a time or ratio
-      const charBefore = offset > 0 ? str[offset - 1] : '';
-      const charAfter = str[offset + match.length] || '';
-
-      if (/\d/.test(charBefore) || /\d/.test(charAfter)) {
-        return match; // Skip times/ratios
-      }
-
-      // Already bolded?
-      if (str.substring(offset - 2, offset) === '**') {
-        return match;
-      }
-
-      return `**${label}**:`;
-    });
-  }
-
-  // Wire up markdown editor for real-time editing
-  const markdownEditor = document.getElementById('markdownEditor');
-  if (markdownEditor) {
-    // Preserve scroll position on paste
-    markdownEditor.addEventListener('paste', (e) => {
-      const scrollTop = markdownEditor.scrollTop;
-      // Restore scroll position after paste completes
-      setTimeout(() => {
-        markdownEditor.scrollTop = scrollTop;
-      }, 0);
-    });
-
-    // Update content on input
-    markdownEditor.addEventListener('input', () => {
-      // Skip if we just set this from code - prevents cascading updates
-      if (isInternalEditorUpdate) return;
-
-      if (markdownEditor.value !== currentContent) {
-        currentContent = markdownEditor.value;
-
-        // Mark as unsaved (even for blank documents)
-        setEditorUnsavedState();
-
-        // Always update rendered tab and summary in real-time
-        updateRenderedTab(currentContent);
-        updateSummaryTab(currentContent);
-        updateHeaderNavigator();
-        updateLineInfoDisplay();
-
-        // Re-run stat-block analysis automatically (read-only, debounced)
-        analyzeDocumentStatBlocks();
-      }
-    });
-
-    // Track selection for Quick Tools
-    markdownEditor.addEventListener('mouseup', captureSelection);
-    markdownEditor.addEventListener('keyup', captureSelection);
-
-    // Open Find/Replace via header button
-    document.getElementById('openFindBtn')?.addEventListener('click', () => toggleFindStrip());
-
-    // Track when user manually clicks into editor
-    markdownEditor.addEventListener('mousedown', () => {
-      userHasClickedEditor = true;
-      updateLineInfoDisplay();
-    });
-    markdownEditor.addEventListener('focus', (e) => {
-      // Only set flag if focus came from user interaction (not programmatic)
-      if (e.relatedTarget || document.activeElement === markdownEditor) {
-        // Check if this was triggered by a click or tab key
-        if (e.sourceCapabilities || e.isTrusted) {
-          userHasClickedEditor = true;
-          updateLineInfoDisplay();
-        }
-      }
-    });
-
-    // No sync needed - Edit/Preview toggle handles this
-  }
-
-  // Initialize navigation button labels based on default context
-  updateNavButtonsForContext();
-}
-
-// ============================================================================
-// FORMAT TEXT SUBMENU (MODERN IN-MEMORY IMPLEMENTATION)
-// ============================================================================
-
-// Toggle submenu visibility
-const formatTextMenuBtn = document.getElementById('formatTextMenuBtn');
-const formatTextSubmenu = document.getElementById('formatTextSubmenu');
-
-if (formatTextMenuBtn && formatTextSubmenu) {
-  formatTextMenuBtn.addEventListener('click', () => {
-    const isOpen = formatTextSubmenu.style.display === 'block';
-    formatTextSubmenu.style.display = isOpen ? 'none' : 'block';
-    formatTextMenuBtn.classList.toggle('open', !isOpen);
-  });
-}
-
-// Legacy runFormatAction function removed - all format buttons now use runSafeTool
-// which operates in-memory on currentContent (never writes to disk until user saves)
-
-// Format button definitions
-const formatButtons = {
-  'fixSmartQuotesBtn': { action: 'smart-quotes', label: 'Fix Smart Quotes' },
-  'fixWhitespaceBtn': { action: 'whitespace', label: 'Fix Whitespace' },
-  'fixLineBreaksBtn': { action: 'line-breaks', label: 'Fix Line Breaks' },
-  'normalizeHeadersBtn': { action: 'headers', label: 'Normalize Headers' },
-  'fixAllFormattingBtn': { action: 'all', label: 'Fix All Formatting' }
-};
-
-Object.entries(formatButtons).forEach(([btnId, { action, label }]) => {
-  const btn = document.getElementById(btnId);
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      if (!currentContent) {
-        log('No content loaded', 'error');
-        return;
-      }
-
-      // Use safety wrapper for all format operations
-      await runSafeTool(label, async (content) => {
-        switch (action) {
-          case 'smart-quotes':
-            return applySmartQuotes(content);
-          case 'whitespace':
-            return fixWhitespace(content);
-          case 'line-breaks':
-            return fixLineBreaks(content);
-          case 'headers':
-            return normalizeHeaders(content);
-          case 'all':
-            let result = content;
-            result = applySmartQuotes(result);
-            result = fixWhitespace(result);
-            result = fixLineBreaks(result);
-            result = normalizeHeaders(result);
-            return result;
-          default:
-            return content;
-        }
-      });
-    });
-  }
-});
-
-// Simple in-memory selection transforms
-function applySmartQuotes(text) {
-  // Basic toggling idea — not perfect but useful for selection preview
-  let open = true;
-  text = text.replace(/"/g, () => (open = !open, open ? '“' : '”'));
-  // Apostrophes: avoid touching common contractions by limiting single-quote replacements when surrounded by spaces
-  let sOpen = true;
-  text = text.replace(/\'/g, () => (sOpen = !sOpen, sOpen ? '‘' : '’'));
-  return text;
-}
-
-function fixWhitespace(text) {
-  return text.split('\n').map(line => line.replace(/[\t ]{2,}/g, ' ').trimRight()).join('\n');
-}
-
-function fixLineBreaks(text) {
-  // Normalize CRLF
-  let t = text.replace(/\r\n?/g, '\n');
-  // Collapse 3+ blank lines into exactly 2
-  t = t.replace(/\n{3,}/g, '\n\n');
-  // Remove trailing spaces
-  return t.replace(/[ \t]+$/gm, '');
-}
-
-function normalizeHeaders(text) {
-  return text.split('\n').map(line => {
-    const m = line.match(/^(#{1,6})\s*(.*)$/);
-    if (m) {
-      return `${m[1]} ${m[2].trim()}`;
-    }
-    return line;
-  }).join('\n');
-}
-
-// ============================================================================
-// CHANGE TRACKING
-// ============================================================================
-
-let pendingChanges = [];
-let changeMarkers = new Map(); // sectionIndex -> { status: 'pending'|'approved'|'rejected', changes: [...] }
-let nextChangeId = 1;
-
-function trackChange(sectionIndex, changeType, description, oldContent, newContent) {
-  const changeId = nextChangeId++;
-  const change = {
-    id: changeId,
-    sectionIndex: sectionIndex,
-    type: changeType,
-    description: description,
-    oldContent: oldContent,
-    newContent: newContent,
-    status: 'pending',
-    timestamp: Date.now()
-  };
-
-  pendingChanges.push(change);
-
-  // Update markers
-  if (!changeMarkers.has(sectionIndex)) {
-    changeMarkers.set(sectionIndex, { status: 'pending', changes: [] });
-  }
-  changeMarkers.get(sectionIndex).changes.push(change);
-
-  updateNavigatorWithChanges();
-  updatePendingChangesCounter();
-
-  return changeId;
-}
-
-function updateNavigatorWithChanges() {
-  const container = document.getElementById('navigatorList');
-  if (!container) return;
-
-  // Add change indicators to nav items
-  changeMarkers.forEach((marker, sectionIndex) => {
-    const navItem = container.querySelector(`.nav-item[data-index="${sectionIndex}"]`);
-    if (!navItem) return;
-
-    // Remove existing indicator
-    const existing = navItem.querySelector('.change-indicator');
-    if (existing) existing.remove();
-
-    // Add new indicator based on status
-    const indicator = document.createElement('span');
-    indicator.className = `change-indicator change-${marker.status}`;
-
-    if (marker.status === 'pending') {
-      indicator.textContent = '●';
-      indicator.title = `${marker.changes.length} pending change(s)`;
-    } else if (marker.status === 'approved') {
-      indicator.textContent = '✓';
-      indicator.title = 'Changes approved';
-    } else if (marker.status === 'rejected') {
-      indicator.textContent = '✗';
-      indicator.title = 'Changes rejected';
-    }
-
-    navItem.insertBefore(indicator, navItem.firstChild);
-  });
-}
-
-function updatePendingChangesCounter() {
-  const pendingCount = pendingChanges.filter(c => c.status === 'pending').length;
-
-  let counter = document.getElementById('pendingChangesCounter');
-
-  if (pendingCount === 0) {
-    if (counter) counter.remove();
-    return;
-  }
-
-  if (!counter) {
-    counter = document.createElement('div');
-    counter.id = 'pendingChangesCounter';
-    counter.addEventListener('click', showChangeReviewPanel);
-    const navigator = document.querySelector('.navigator');
-    if (navigator) navigator.appendChild(counter);
-  }
-
-  counter.textContent = `${pendingCount} change${pendingCount === 1 ? '' : 's'}`;
-}
-
-function showChangeReviewPanel() {
-  const pending = pendingChanges.filter(c => c.status === 'pending');
-
-  if (pending.length === 0) {
-    log('No pending changes to review', 'info');
-    return;
-  }
-
-  // Create modal
-  let modal = document.getElementById('changeReviewModal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'changeReviewModal';
-    modal.className = 'modal';
-    modal.style.cssText = 'display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); padding: 20px; overflow: auto;';
-    document.body.appendChild(modal);
-  }
-
-  // Build content
-  let html = `
-    <div style="background: white; max-width: 800px; margin: 0 auto; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-      <h2 style="margin-top: 0;">Review Pending Changes (${pending.length})</h2>
-      <div style="margin-bottom: 16px;">
-        <button id="approveAllBtn" class="btn primary" style="margin-right: 8px;">Approve All</button>
-        <button id="rejectAllBtn" class="btn secondary" style="margin-right: 8px;">Reject All</button>
-        <button id="closeReviewBtn" class="btn secondary">Close</button>
-      </div>
-      <div id="changeList" style="max-height: 400px; overflow-y: auto;">
-  `;
-
-  pending.forEach(change => {
-    html += `
-      <div class="change-item" data-id="${change.id}" style="border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; margin-bottom: 12px; background: #f8f9fa;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <strong>${change.type}: ${change.description}</strong>
-          <div>
-            <button class="approve-change-btn btn tertiary" data-id="${change.id}" style="margin-right: 4px; padding: 4px 8px; font-size: 11px;">Approve</button>
-            <button class="reject-change-btn btn tertiary" data-id="${change.id}" style="padding: 4px 8px; font-size: 11px;">Reject</button>
-          </div>
-        </div>
-        <div style="font-size: 12px; color: #6c757d;">Section ${change.sectionIndex + 1} • ${new Date(change.timestamp).toLocaleTimeString()}</div>
-      </div>
-    `;
-  });
-
-  html += `
-      </div>
-    </div>
-  `;
-
-  modal.innerHTML = html;
-  modal.style.display = 'block';
-
-  // Bind events
-  document.getElementById('closeReviewBtn').addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-
-  document.getElementById('approveAllBtn').addEventListener('click', () => {
-    pending.forEach(c => approveChange(c.id));
-    modal.style.display = 'none';
-  });
-
-  document.getElementById('rejectAllBtn').addEventListener('click', () => {
-    pending.forEach(c => rejectChange(c.id));
-    modal.style.display = 'none';
-  });
-
-  document.querySelectorAll('.approve-change-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(e.target.getAttribute('data-id'), 10);
-      approveChange(id);
-      e.target.closest('.change-item').style.opacity = '0.5';
-    });
-  });
-
-  document.querySelectorAll('.reject-change-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(e.target.getAttribute('data-id'), 10);
-      rejectChange(id);
-      e.target.closest('.change-item').style.opacity = '0.5';
-    });
-  });
-}
-
-function approveChange(changeId) {
-  const change = pendingChanges.find(c => c.id === changeId);
-  if (!change) return;
-
-  change.status = 'approved';
-
-  // Update marker for this section
-  const marker = changeMarkers.get(change.sectionIndex);
-  if (marker) {
-    const allApproved = marker.changes.every(c => c.status === 'approved');
-    const anyRejected = marker.changes.some(c => c.status === 'rejected');
-
-    if (allApproved) {
-      marker.status = 'approved';
-    } else if (anyRejected) {
-      marker.status = 'rejected';
-    } else {
-      marker.status = 'pending';
-    }
-  }
-
-  updateNavigatorWithChanges();
-  updatePendingChangesCounter();
-  log(`Approved: ${change.description}`, 'success');
-}
-
-function rejectChange(changeId) {
-  const change = pendingChanges.find(c => c.id === changeId);
-  if (!change) return;
-
-  change.status = 'rejected';
-
-  // Update marker for this section
-  const marker = changeMarkers.get(change.sectionIndex);
-  if (marker) {
-    const allApproved = marker.changes.every(c => c.status === 'approved');
-    const anyRejected = marker.changes.some(c => c.status === 'rejected');
-
-    if (allApproved) {
-      marker.status = 'approved';
-    } else if (anyRejected) {
-      marker.status = 'rejected';
-    } else {
-      marker.status = 'pending';
-    }
-  }
-
-  updateNavigatorWithChanges();
-  updatePendingChangesCounter();
-  log(`Rejected: ${change.description}`, 'info');
-}
-
-function parseLongLineOutputAndTrack(outputText, forcedSectionIdx = null, isSelection = false) {
-  if (!outputText || outputText.trim().length === 0) return;
-
-  // Regex matches lines like: Line 123: MODERATE (160 characters)
-  const regex = /Line\s+(\d+):\s+([A-Za-z]+)\s+\((\d+)\s+characters\)/g;
-  let m;
-  while ((m = regex.exec(outputText)) !== null) {
-    const lineNum = parseInt(m[1], 10);
-    const severity = m[2].toLowerCase();
-    const length = parseInt(m[3], 10);
-
-    // Map line number back into full document if needed
-    let mappedLine = lineNum;
-    if (forcedSectionIdx !== null) {
-      const s = (allSections || [])[forcedSectionIdx];
-      if (s) mappedLine = s.startLine + lineNum - 1;
-    }
-
-    // Find which section this belongs to in the full document
-    const sections = allSections || [];
-    let sectionIndex = null;
-    for (let i = 0; i < sections.length; i++) {
-      const sec = sections[i];
-      if (mappedLine >= sec.startLine && mappedLine <= sec.endLine) {
-        sectionIndex = i;
-        break;
-      }
-    }
-
-    // Compose description
-    const description = `${severity} long line (${length} chars) at line ${mappedLine}`;
-    const lines = (currentContent || '').split('\n');
-    const oldLine = lines[mappedLine - 1] || '';
-
-    if (sectionIndex !== null) {
-      trackChange(sectionIndex, 'Long Line', description, oldLine, '');
-    } else {
-      // If no section found, append a pending change for document root (index 0)
-      trackChange(0, 'Long Line', description, oldLine, '');
-    }
-  }
-}
-
-async function applyApprovedChanges() {
-  const approved = pendingChanges.filter(c => c.status === 'approved');
-
-  if (approved.length === 0) {
-    log('No approved changes to apply', 'info');
-    return;
-  }
-
-  saveUndoState('apply approved changes');
-
-  // Apply changes to document content
-  // This is a simplified version - real implementation would need to handle line-level edits
-  approved.forEach(change => {
-    // For now, just log the change
-    log(`Would apply: ${change.description}`, 'info');
-  });
-
-  // Clear applied changes
-  pendingChanges = pendingChanges.filter(c => c.status !== 'approved');
-
-  // Clear markers for sections with all changes applied
-  changeMarkers.forEach((marker, sectionIndex) => {
-    marker.changes = marker.changes.filter(c => c.status !== 'approved');
-    if (marker.changes.length === 0) {
-      changeMarkers.delete(sectionIndex);
-    }
-  });
-
-  updateNavigatorWithChanges();
-  updatePendingChangesCounter();
-  log(`Applied ${approved.length} approved change(s)`, 'success');
-}
-
-// ============================================================================
-// CHECKPOINT EXPORT/IMPORT
-// ============================================================================
-
-document.getElementById('reanalyzeDocBtn')?.addEventListener('click', async () => {
-  if (!currentContent) {
-    log('No document loaded', 'error');
-    return;
-  }
-
-  log('Re-analyzing document...', 'info');
-  await analyzeDocumentStatBlocks(currentContent);
-  log('Analysis complete', 'success');
-});
-
-document.getElementById('exportCheckpointBtn')?.addEventListener('click', async () => {
-  if (!statBlocks || statBlocks.length === 0) {
-    log('No stat blocks to export', 'error');
-    return;
-  }
-
-  const checkpoint = {
-    document: {
-      path: currentFilePath || 'unknown',
-      timestamp: new Date().toISOString(),
-      hash: hashString(currentContent || ''),
-      appVersion: '1.0.0'
-    },
-    analysis: {
-      filters: statFilters,
-      sortMode: statBlockSortMode,
-      statBlocks: statBlocks.map(block => ({
-        id: `${block.name}@${block.lineStart}`,
-        name: block.name,
-        type: block.type,
-        context: block.context,
-        lineStart: block.lineStart,
-        lineEnd: block.lineEnd,
-        raw: block.raw || block.fullText,
-        validation: {
-          ...(block.validation || { errors: [], warnings: [] }),
-          reviewed: block.reviewed || false
-        }
-      }))
-    }
-  };
-
-  const result = await window.electronAPI.exportCheckpoint(checkpoint);
-  if (result.success) {
-    log(`Checkpoint exported to ${result.path}`, 'success');
-  } else if (!result.cancelled) {
-    log(`Export failed: ${result.message}`, 'error');
-  }
-});
-
-document.getElementById('importCheckpointBtn')?.addEventListener('click', async () => {
-  const result = await window.electronAPI.importCheckpoint();
-
-  if (!result.success) {
-    if (!result.cancelled) {
-      log(`Import failed: ${result.message}`, 'error');
-    }
-    return;
-  }
-
-  const checkpoint = result.checkpoint;
-  log(`Loaded checkpoint from ${checkpoint.document.timestamp}`, 'info');
-  log(`Checkpoint contains ${checkpoint.analysis.statBlocks.length} stat blocks`, 'info');
-
-  // Restore review state from checkpoint
-  let restoredCount = 0;
-  checkpoint.analysis.statBlocks.forEach(cb => {
-    // Match by name and line number
-    const match = statBlocks.find(sb => sb.name === cb.name && sb.lineStart === cb.lineStart);
-    if (match && cb.validation && cb.validation.reviewed) {
-      const key = match._reviewKey || buildReviewKey(match);
-      setReviewFlag(key, true);
-      match.reviewed = true;
-      restoredCount++;
-    }
-  });
-
-  if (restoredCount > 0) {
-    log(`Restored ${restoredCount} review checkmarks from checkpoint`, 'success');
-    renderStatBlockList();
-  }
-
-  // Compare with current analysis
-  if (statBlocks.length > 0) {
-    const added = checkpoint.analysis.statBlocks.filter(cb =>
-      !statBlocks.some(sb => sb.name === cb.name && sb.lineStart === cb.lineStart)
-    );
-    const removed = statBlocks.filter(sb =>
-      !checkpoint.analysis.statBlocks.some(cb => cb.name === sb.name && cb.lineStart === sb.lineStart)
-    );
-    const changed = checkpoint.analysis.statBlocks.filter(cb => {
-      const current = statBlocks.find(sb => sb.name === cb.name && sb.lineStart === cb.lineStart);
-      return current && (current.raw !== cb.raw || current.type !== cb.type);
-    });
-
-    log(`Comparison: ${added.length} added, ${removed.length} removed, ${changed.length} changed`, 'info');
-
-    if (added.length > 0) {
-      log(`Added blocks: ${added.map(b => b.name).join(', ')}`, 'info');
-    }
-    if (removed.length > 0) {
-      log(`Removed blocks: ${removed.map(b => b.name).join(', ')}`, 'info');
-    }
-    if (changed.length > 0) {
-      log(`Changed blocks: ${changed.map(b => b.name).join(', ')}`, 'info');
-    }
-  }
-});
-
-// ============================================================================
-// CANONICALIZATION
-// ============================================================================
-
-let canonicalizeResults = [];
-
-document.getElementById('canonicalizeBtn')?.addEventListener('click', async () => {
-  if (!statBlocks || statBlocks.length === 0) {
-    log('No stat blocks to canonicalize', 'error');
-    return;
-  }
-
-  log('Canonicalizing stat blocks...', 'info');
-
-  try {
-    const result = await window.electronAPI.canonicalizeStatBlocks(statBlocks);
-
-    if (!result.success) {
-      log(`Canonicalization failed: ${result.message}`, 'error');
-      return;
-    }
-
-    canonicalizeResults = result.results;
-
-    // Filter to only valid stat blocks with changes (skip non-stat objects)
-    const withChanges = canonicalizeResults.filter(r =>
-      r.confidence !== 'skipped' && r.changes && r.changes.length > 0
-    );
-
-    const skipped = canonicalizeResults.filter(r => r.confidence === 'skipped');
-
-    if (skipped.length > 0) {
-      log(`Skipped ${skipped.length} non-stat objects (places, items, traps, etc.)`, 'info');
-    }
-
-    if (withChanges.length === 0) {
-      log('All stat blocks are already canonical', 'success');
-      return;
-    }
-
-    // Show preview modal
-    showCanonicalizePreview(withChanges);
-
-  } catch (error) {
-    log(`Canonicalization error: ${error.message}`, 'error');
-  }
-});
-
-function showCanonicalizePreview(results) {
-  const modal = document.getElementById('canonicalizeModal');
-  const status = document.getElementById('canonicalizeStatus');
-  const preview = document.getElementById('canonicalizePreview');
-
-  if (!modal || !status || !preview) return;
-
-  // Update status
-  status.innerHTML = `<strong>${results.length} stat blocks</strong> will be transformed to canonical format. Review changes below:`;
-
-  // Build preview HTML
-  let html = '';
-  results.forEach((result, idx) => {
-    const confidence = result.confidence || 'medium';
-    const confidenceColor = confidence === 'high' ? '#28a745' : confidence === 'medium' ? '#ffc107' : '#dc3545';
-
-    html += `
-      <div style="margin-bottom: 24px; padding: 12px; border: 1px solid #dee2e6; border-radius: 6px; background: white;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="font-size: 13px;">${escapeHtml(result.name || 'Unknown')}</strong>
-          <span style="font-size: 11px; padding: 2px 6px; border-radius: 3px; background: ${confidenceColor}; color: white;">
-            ${confidence} confidence
-          </span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <div style="font-size: 11px; color: #6c757d; margin-bottom: 4px;">BEFORE:</div>
-          <pre style="margin: 0; padding: 8px; background: #fff3cd; border-radius: 4px; font-size: 11px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(result.original || '')}</pre>
-        </div>
-        <div>
-          <div style="font-size: 11px; color: #6c757d; margin-bottom: 4px;">AFTER:</div>
-          <pre style="margin: 0; padding: 8px; background: #d4edda; border-radius: 4px; font-size: 11px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(result.canonical || '')}</pre>
-        </div>
-        ${result.changes && result.changes.length > 0 ? `
-          <div style="margin-top: 8px; font-size: 11px; color: #6c757d;">
-            <strong>Changes:</strong> ${result.changes.map(c => c.description).join(', ')}
-          </div>
-        ` : ''}
-      </div>
-    `;
-  });
-
-  preview.innerHTML = html;
-  modal.style.display = 'flex';
-}
-
-document.getElementById('closeCanonicalizeModal')?.addEventListener('click', () => {
-  document.getElementById('canonicalizeModal').style.display = 'none';
-});
-
-document.getElementById('cancelCanonicalizeBtn')?.addEventListener('click', () => {
-  document.getElementById('canonicalizeModal').style.display = 'none';
-});
-
-document.getElementById('applyCanonicalizeBtn')?.addEventListener('click', async () => {
-  const autoReview = document.getElementById('autoReviewCanonical')?.checked;
-
-  if (canonicalizeResults.length === 0) {
-    log('No canonicalization results to apply', 'error');
-    return;
-  }
-
-  // Apply transformations to document
-  let newContent = currentContent;
-  let appliedCount = 0;
-
-  // Sort by line number descending to avoid offset issues
-  const sorted = [...canonicalizeResults]
-    .filter(r => r.changes && r.changes.length > 0)
-    .sort((a, b) => (b.lineNumber || 0) - (a.lineNumber || 0));
-
-  for (const result of sorted) {
-    if (result.original && result.canonical) {
-      // Replace first occurrence (should be unique due to line-specific matching)
-      const escaped = result.original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(escaped);
-      if (regex.test(newContent)) {
-        newContent = newContent.replace(regex, result.canonical);
-        appliedCount++;
-
-        // Mark as reviewed if option is checked
-        if (autoReview) {
-          const block = statBlocks.find(b => b.name === result.name && b.lineNumber === result.lineNumber);
-          if (block) {
-            const key = block._reviewKey || buildReviewKey(block);
-            setReviewFlag(key, true);
-          }
-        }
-      }
-    }
-  }
-
-  if (appliedCount > 0) {
-    // Save undo state
-    pushUndoState('Canonicalize Stat Blocks');
-
-    // Update content
-    currentContent = newContent;
-    updateEditorContent(newContent);
-    setEditorUnsavedState();
-
-    log(`Applied ${appliedCount} canonical transformations`, 'success');
-
-    // Re-analyze to update navigator
-    await analyzeDocumentStatBlocks();
-
-    // Close modal
-    document.getElementById('canonicalizeModal').style.display = 'none';
-  } else {
-    log('No transformations could be applied', 'error');
-  }
-});
-
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString(16);
-}
-
-// Start app
-/**
- * Show validation details for selected stat block
- */
-function showValidationDetails(block) {
-  const panel = document.getElementById('statDetailsPanel');
-  const content = document.getElementById('statDetailsContent');
-
-  if (!panel || !content) return;
-
-  // Show panel
-  panel.style.display = 'flex';
-
-  // Build validation details HTML
-  let html = '';
-
-  // Classification section
-  if (block.classification) {
-    const format = block.classification.format || 'unknown';
-    const formatClass = `class-${format.toLowerCase()}`;
-    const formatLabel = {
-      'A': 'Class A: Classed NPC',
-      'B': 'Class B: Humanoid Monster',
-      'C': 'Class C: True Monster',
-      'D': 'Class D: Unit/Troop',
-      'generic': 'Generic Format'
-    }[format] || 'Unknown';
-
-    const confidence = block.classification.confidence || 'unknown';
-    const confidenceClass = confidence.toLowerCase();
-
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Classification</div>
-        <div class="validation-classification">
-          <span class="validation-class-badge ${formatClass}">${formatLabel}</span>
-          <span class="validation-confidence ${confidenceClass}">${confidence} confidence</span>
-          <div class="validation-reasoning">${block.classification.reasoning || 'No reasoning provided'}</div>
-        </div>
-      </div>
-    `;
-  }
-
-  // Warnings section
-  const validation = block.validation || {};
-  const warnings = validation.warnings || [];
-  const errors = validation.errors || [];
-
-  if (errors.length > 0 || warnings.length > 0) {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Issues</div>
-        <div class="validation-warnings">
-    `;
-
-    errors.forEach(err => {
-      html += `
-        <div class="validation-warning-item" style="background-color:#f8d7da;border-left-color:#dc3545;">
-          <span class="validation-warning-icon" style="color:#721c24;">⚠</span>
-          <span>${escapeHtml(err)}</span>
-        </div>
-      `;
-    });
-
-    warnings.forEach(warn => {
-      html += `
-        <div class="validation-warning-item">
-          <span class="validation-warning-icon">⚠</span>
-          <span>${escapeHtml(warn)}</span>
-        </div>
-      `;
-    });
-
-    html += `
-        </div>
-      </div>
-    `;
-  } else {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Issues</div>
-        <div class="validation-warnings">
-          <div class="validation-no-warnings">No validation issues detected</div>
-        </div>
-      </div>
-    `;
-  }
-
-  // Key attributes comparison
-  if (block.classification) {
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Key Attributes</div>
-        <div class="validation-comparison">
-    `;
-
-    // Format
-    html += `
-      <div class="validation-comparison-row">
-        <div class="validation-comparison-label">Format</div>
-        <div class="validation-comparison-value match">${block.classification.format || 'Unknown'}</div>
-      </div>
-    `;
-
-    // Type
-    if (block.type) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Type</div>
-          <div class="validation-comparison-value">${escapeHtml(block.type)}</div>
-        </div>
-      `;
-    }
-
-    // Step
-    if (block.classification.step) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Rule Step</div>
-          <div class="validation-comparison-value">${block.classification.step}</div>
-        </div>
-      `;
-    }
-
-    // Subtype
-    if (block.classification.subtype) {
-      html += `
-        <div class="validation-comparison-row">
-          <div class="validation-comparison-label">Subtype</div>
-          <div class="validation-comparison-value">${escapeHtml(block.classification.subtype)}</div>
-        </div>
-      `;
-    }
-
-    html += `
-        </div>
-      </div>
-    `;
-  }
-
-  // Raw stat block preview
-  if (block.fullText || block.raw) {
-    const text = block.fullText || block.raw || '';
-    const preview = text.length > 200 ? text.substring(0, 200) + '...' : text;
-
-    html += `
-      <div class="validation-section">
-        <div class="validation-section-title">Stat Block Text</div>
-        <div class="validation-comparison">
-          <div class="validation-comparison-row">
-            <div class="validation-comparison-label">Content</div>
-            <div class="validation-comparison-value" style="font-size:10px;line-height:1.3;">${escapeHtml(preview)}</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  content.innerHTML = html;
-}
-
 // Close validation panel button
 document.getElementById('closeValidationBtn')?.addEventListener('click', () => {
   const panel = document.getElementById('statDetailsPanel');
@@ -5891,6 +4610,15 @@ function initializeVelocityTracking() {
         velocityData.focusSession.active = false;
         velocityData.focusSession.startTime = null;
       }
+
+      // Restore UI state if session is active
+      if (velocityData.focusSession.active) {
+        const toggleBtn = document.getElementById('focusToggle');
+        const label = document.getElementById('focusLabel');
+        if (toggleBtn) toggleBtn.classList.add('active');
+        if (label) label.textContent = 'End Focus';
+        console.log('Resuming active focus session from storage');
+      }
     } catch (e) {
       console.error('Failed to load velocity data:', e);
     }
@@ -5974,8 +4702,8 @@ function updateSessionTimerUI() {
     const barTest = document.querySelector('.stat-segment.test');
 
     if (barPlan) barPlan.style.width = `${planPct}%`;
-    if (barCode) barCode.style.width = `${codePct}%`;
-    if (barTest) barTest.style.width = `${testPct}%`;
+    if (barCode) codeBar.style.width = `${codePct}%`;
+    if (testBar) testBar.style.width = `${testPct}%`;
 
     // Update legend text
     const planM = Math.floor(sessionTimeBreakdown.planning / 60000);
@@ -6182,3 +4910,87 @@ document.getElementById('refreshMetricsBtn')?.addEventListener('click', async ()
     btn.disabled = false;
   }
 });
+
+// ============================================================================
+// STAT BLOCK HIGHLIGHTING
+// ============================================================================
+
+function updateStatBlockHighlight() {
+  const editor = document.getElementById('markdownEditor');
+  const column = document.querySelector('.line-info-column');
+  if (!editor || !column) return;
+
+  let indicator = column.querySelector('.stat-block-indicator');
+  if (!indicator) {
+    indicator = document.createElement('div');
+    indicator.className = 'stat-block-indicator';
+    column.appendChild(indicator);
+  }
+
+  if (!activeStatStartLine || !activeStatEndLine) {
+    indicator.style.display = 'none';
+    return;
+  }
+
+  indicator.style.display = 'block';
+
+  let mirror = document.getElementById('editor-mirror-div');
+  if (!mirror) {
+    mirror = document.createElement('div');
+    mirror.id = 'editor-mirror-div';
+    mirror.style.visibility = 'hidden';
+    mirror.style.position = 'absolute';
+    mirror.style.top = '0';
+    mirror.style.left = '-9999px';
+    mirror.style.whiteSpace = 'pre-wrap';
+    mirror.style.wordWrap = 'break-word';
+    mirror.style.overflow = 'hidden';
+    document.body.appendChild(mirror);
+  }
+
+  const style = window.getComputedStyle(editor);
+  mirror.style.width = style.width;
+  mirror.style.fontFamily = style.fontFamily;
+  mirror.style.fontSize = style.fontSize;
+  mirror.style.lineHeight = style.lineHeight;
+  mirror.style.padding = style.padding;
+  mirror.style.boxSizing = style.boxSizing;
+  mirror.style.border = style.border;
+
+  const content = editor.value || currentContent || '';
+  const lines = content.split('\n');
+
+  const startLineIdx = Math.max(0, activeStatStartLine - 1);
+  const textBeforeStart = lines.slice(0, startLineIdx).join('\n');
+  
+  if (textBeforeStart.length > 0) {
+     mirror.textContent = textBeforeStart + '\u200B';
+  } else {
+     mirror.textContent = '';
+  }
+  
+  const paddingBottom = parseFloat(style.paddingBottom) || 0;
+  const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+  
+  const startTop = mirror.offsetHeight - paddingBottom - borderBottom;
+
+  const endLineIdx = Math.min(lines.length, activeStatEndLine);
+  const textUntilEnd = lines.slice(0, endLineIdx).join('\n');
+  mirror.textContent = textUntilEnd + '\u200B';
+  
+  const endTop = mirror.offsetHeight - paddingBottom - borderBottom;
+
+  const blockHeight = endTop - startTop;
+  const top = startTop - editor.scrollTop;
+  
+  indicator.style.top = `${top}px`;
+  indicator.style.height = `${blockHeight}px`;
+}
+
+document.getElementById('markdownEditor')?.addEventListener('scroll', () => {
+  if (activeStatStartLine) {
+    requestAnimationFrame(updateStatBlockHighlight);
+  }
+});
+
+// ============================================================================
