@@ -270,8 +270,11 @@ function scanForInlineHpStatBlocks(markdownDocument) {
 
     if (!nameRaw || nameRaw.length > 80) continue;
 
-    const beforeText = markdownDocument.substring(0, match.index);
-    const lineNumber = (beforeText.match(/\n/g) || []).length + 1;
+    // Calculate line number based on the position of the name, not the start of the match
+    // (match may include leading newlines due to (?:^|\s))
+    const nameOffset = match[0].indexOf(match[1]);
+    const beforeName = markdownDocument.substring(0, match.index + nameOffset);
+    const lineNumber = (beforeName.match(/\n/g) || []).length + 1;
 
     inlineBlocks.push({
       name: nameRaw,
