@@ -10,8 +10,8 @@ app.setName('TRPG MD Workbench');
 const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
 const { canonicalizeBatch } = require('./lib/cnc-canonicalizer-v2');
 
-// Passive AI Burst Detector
-const { startWatcher } = require('./lib/file-watcher');
+// Passive AI Burst Detector - DISABLED
+// const { startWatcher } = require('./lib/file-watcher');
 
 let mainWindow;
 
@@ -55,11 +55,15 @@ function createWindow() {
   mainWindow.webContents.session.clearCache();
   // mainWindow.webContents.openDevTools(); // Remove this in production
 
-  // Start Passive AI Burst Detector (Development Only)
-  // Disabled by default to prevent locking up the editor
+  // PASSIVE AI BURST DETECTOR - COMPLETELY DISABLED
+  // This was causing file dialog and other UI issues
+  // The watcher interferes with normal file operations
+  // To re-enable: Set ENABLE_PASSIVE_WATCHER=true environment variable
+  /*
   if (process.env.ENABLE_PASSIVE_WATCHER === 'true') {
     startWatcher(mainWindow);
   }
+  */
 }
 
 app.on('ready', createWindow);

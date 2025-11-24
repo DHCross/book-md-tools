@@ -1217,6 +1217,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ============================================================================
 
 async function handleOpenFileClick() {
+  if (!window.electronAPI) {
+    console.error('electronAPI not available - preload script may not be loaded');
+    updateStatus('Error: electronAPI not available', 'error');
+    return;
+  }
+  
   const filePath = await window.electronAPI.selectFile();
   if (filePath) {
     currentFilePath = filePath;
@@ -1236,6 +1242,12 @@ document.getElementById('browseBtn')?.addEventListener('click', handleOpenFileCl
 document.getElementById('openFileBtn')?.addEventListener('click', handleOpenFileClick);
 
 async function loadFile(filePath) {
+  if (!window.electronAPI) {
+    console.error('electronAPI not available - preload script may not be loaded');
+    updateStatus('Error: electronAPI not available', 'error');
+    return;
+  }
+  
   showProgress(true);
   const content = await window.electronAPI.readFile(filePath);
   showProgress(false);
