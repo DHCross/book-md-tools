@@ -100,7 +100,8 @@ function analyzeStatBlock(markdownText, options = {}) {
   };
   
   // Parse stat block structure: **Name** (parenthetical data)
-  const statBlockPattern = /\*\*([^*]+)\*\*\s*\(([^)]+)\)/;
+  // Updated to support optional italics (* or _) around parentheses
+  const statBlockPattern = /\*\*([^*]+)\*\*\s*(?:_|\*)?\(([\s\S]+)\)(?:_|\*)?/;
   const match = statBlockPattern.exec(markdownText);
   
   if (!match) {
@@ -301,9 +302,9 @@ function scanForGlossaryStatBlocks(markdownDocument) {
   const glossaryBlocks = [];
   if (!markdownDocument) return glossaryBlocks;
 
-  // Allow optional underscores before/after parentheses to prevent flicker during editing
+  // Allow optional underscores OR asterisks before/after parentheses
   // Use [\s\S] to match across line breaks
-  const pattern = /\*\*([^*]+?)\*\*\s*_?\(([\s\S]*?\bHP\b[\s\S]*?)\)_?/g;
+  const pattern = /\*\*([^*]+?)\*\*\s*(?:_|\*)?\(([\s\S]*?\bHP\b[\s\S]*?)\)(?:_|\*)?/g;
 
   let match;
   while ((match = pattern.exec(markdownDocument)) !== null) {
@@ -352,9 +353,9 @@ function scanForGlossaryStatBlocks(markdownDocument) {
  */
 function analyzeBatch(markdownDocument, options = {}) {
   const results = [];
-  // Allow optional underscores before/after parentheses to prevent flicker during editing
+  // Allow optional underscores OR asterisks before/after parentheses
   // Use [\s\S] instead of . to match across line breaks
-  const statBlockPattern = /\*\*([^*]+)\*\*\s*_?\(([\s\S]*?)\)_?/g;
+  const statBlockPattern = /\*\*([^*]+)\*\*\s*(?:_|\*)?\(([\s\S]*?)\)(?:_|\*)?/g;
   
   // Track ranges covered by strict parser to avoid duplicates
   const coveredRanges = []; // {start, end}
@@ -405,13 +406,27 @@ function analyzeBatch(markdownDocument, options = {}) {
   // For now, let's just append them. The UI usually handles list display.
   // To prevent obvious duplicates, check if the "name" was already found on the same line.
 
+  // Snapshot of strict blocks for aggressive deduplication
+  const strictResults = [...results];
+
   for (const gb of allGenericBlocks) {
-      const isDuplicate = results.some(r =>
+      // 1. Check against strict blocks (aggressive: same or adjacent line)
+      // This prevents double-counting if a block is detected by both strict and generic scanners
+      const isStrictDuplicate = strictResults.some(r =>
           r.lineNumber === gb.lineNumber ||
           (r.name === gb.name && Math.abs(r.lineNumber - gb.lineNumber) <= 1)
       );
 
-      if (!isDuplicate) {
+      if (isStrictDuplicate) continue;
+
+      // 2. Check against other generic blocks (conservative: same line only)
+      // This allows lists of same-named creatures on adjacent lines (e.g. "Goblin (HP 5)" on next line)
+      // We check against 'results' which accumulates accepted blocks
+      const isGenericDuplicate = results.some(r => 
+          r.lineNumber === gb.lineNumber && r.name === gb.name
+      );
+
+      if (!isGenericDuplicate) {
           results.push(gb);
       }
   }
