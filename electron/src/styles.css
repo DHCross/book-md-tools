@@ -379,9 +379,23 @@ body {
 }
 
 .nav-column {
-  flex: 1;
   min-width: 0;
   background: white;
+}
+
+/* Header nav takes up to 50% of available space */
+.header-nav-column {
+  flex: 1;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+/* Content tree takes remaining space */
+.content-tree-column {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 .stat-nav-column .stat-block-navigator {
@@ -3510,13 +3524,6 @@ body {
 /* ============================================================================
    RIGHT-HAND CONTENT TREE
    ============================================================================ */
-
-.content-tree-column {
-  flex: 1;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-}
 
 .right-navigator {
   flex: 1;
