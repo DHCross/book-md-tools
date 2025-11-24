@@ -56,7 +56,8 @@ function createWindow() {
   // mainWindow.webContents.openDevTools(); // Remove this in production
 
   // Start Passive AI Burst Detector (Development Only)
-  if (process.env.NODE_ENV !== 'production') {
+  // Disabled by default to prevent locking up the editor
+  if (process.env.ENABLE_PASSIVE_WATCHER === 'true') {
     startWatcher(mainWindow);
   }
 }
