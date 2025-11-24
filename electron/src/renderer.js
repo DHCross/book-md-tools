@@ -2,6 +2,26 @@
 // STATE & CONFIGURATION
 // ============================================================================
 
+// Velocity Context Calculator (Human Baseline Comparison)
+const HUMAN_COMMITS_PER_HOUR = 0.5; // ~1 commit every 2 hours (sustainable pace)
+
+function getVelocityContext(speed, metricType = 'commits') {
+  const baseline = HUMAN_COMMITS_PER_HOUR;
+  const ratio = speed / baseline;
+
+  if (ratio > 50) {
+    return { label: "🤖 AI BURST", color: "#a855f7", icon: "⚡", description: "Pure AI generation" };
+  }
+  if (ratio > 5) {
+    return { label: `${ratio.toFixed(1)}x Human`, color: "#22c55e", icon: "🚀", description: "AI-accelerated pace" };
+  }
+  if (ratio >= 0.8) {
+    return { label: "Human Pace", color: "#60a5fa", icon: "👤", description: "Sustainable professional pace" };
+  }
+  return { label: "Thinking...", color: "#9ca3af", icon: "🐢", description: "Planning/debugging phase" };
+}
+
+
 let currentFilePath = null;
 let currentContent = '';
 let savedContent = ''; // Last version written to disk
@@ -581,6 +601,18 @@ function updateFindStatus(msg) {
   const input = document.getElementById('findInput');
   if (input && msg) {
     input.setAttribute('title', msg);
+  }
+
+  // Update match counter
+  const counter = document.getElementById('matchCounter');
+  if (counter) {
+    counter.textContent = msg || '--';
+    counter.className = 'match-counter';
+    if (msg && msg.includes('of')) {
+      counter.classList.add('has-matches');
+    } else if (msg && msg.includes('No matches')) {
+      counter.classList.add('no-matches');
+    }
   }
 }
 
@@ -5572,7 +5604,14 @@ let velocityData = {
   developmentCommits: 0,
   lastUpdate: Date.now(),
   aiBursts: [],
-  totalAILines: 0
+  totalAILines: 0,
+  focusSession: {
+    active: false,
+    startTime: null,
+    totalFocusMinutes: 0,
+    sessionsToday: 0,
+    focusWindows: []
+  }
 };
 
 // Open Velocity Dashboard
@@ -5690,7 +5729,22 @@ async function updateVelocityDashboard() {
         if (regEl) regEl.textContent = s.synergy.regression_rate !== undefined ? `${(s.synergy.regression_rate * 100).toFixed(1)}%` : '--%';
 
         const netEl = document.getElementById('netSynergyVelocity');
-        if (netEl) netEl.textContent = s.synergy.net_synergy_velocity !== undefined ? s.synergy.net_synergy_velocity.toFixed(2) : '--';
+        const badgeEl = document.getElementById('velocityBadge');
+        if (s.synergy.net_synergy_velocity !== undefined) {
+          const speed = s.synergy.net_synergy_velocity;
+          if (netEl) netEl.textContent = speed.toFixed(2);
+
+          // Add multiplier badge
+          if (badgeEl) {
+            const context = getVelocityContext(speed, 'commits');
+            badgeEl.textContent = `${context.icon} ${context.label}`;
+            badgeEl.style.color = context.color;
+            badgeEl.title = context.description;
+          }
+        } else {
+          if (netEl) netEl.textContent = '--';
+          if (badgeEl) badgeEl.textContent = '';
+        }
       }
 
       // Code Survival
@@ -5929,13 +5983,13 @@ if (window.electronAPI && window.electronAPI.onTelemetryUpdate) {
       // Track the burst
       velocityData.aiBursts.push(data);
       velocityData.totalAILines += data.lines_added;
-      
+
       // Update dashboard if open
       const modal = document.getElementById('velocityDashboardModal');
       if (modal && modal.style.display !== 'none') {
         updateAIBurstStats();
       }
-      
+
       // Optional: Show notification
       console.log(`⚡ AI Burst: +${data.lines_added} lines in ${data.file}`);
     }
@@ -5948,10 +6002,148 @@ function updateAIBurstStats() {
   if (aiPasteEl) {
     aiPasteEl.textContent = velocityData.aiBursts.length;
   }
-  
+
   // Update Code Changes to show AI contribution
   const codeChangesEl = document.getElementById('codeChanges');
   if (codeChangesEl) {
     codeChangesEl.textContent = `+${velocityData.totalAILines} lines (AI)`;
   }
 }
+
+// ============================================================================
+// FOCUS SESSION TRACKING (Sniper Mode)
+// ============================================================================
+
+function toggleFocusSession() {
+  const fs = velocityData.focusSession;
+  const toggleBtn = document.getElementById('focusToggle');
+  const label = document.getElementById('focusLabel');
+
+  if (!fs.active) {
+    // START FOCUS
+    fs.active = true;
+    fs.startTime = Date.now();
+    fs.currentActivity = currentSessionState || 'planning'; // Track what type of work
+
+    if (toggleBtn) toggleBtn.classList.add('active');
+    if (label) label.textContent = 'End Focus';
+
+    console.log(`🎯 Focus Session Started (${fs.currentActivity})`);
+
+    // Log to session log
+    logFocusEvent({
+      type: 'FOCUS_START',
+      context: fs.currentActivity
+    });
+  } else {
+    // END FOCUS
+    const duration = (Date.now() - fs.startTime) / 60000; // minutes
+    fs.totalFocusMinutes += duration;
+    fs.sessionsToday++;
+
+    // Track time by activity type
+    const activity = fs.currentActivity || 'planning';
+    if (!fs.timeByActivity) fs.timeByActivity = {};
+    fs.timeByActivity[activity] = (fs.timeByActivity[activity] || 0) + duration;
+
+    fs.focusWindows.push({
+      start: fs.startTime,
+      end: Date.now(),
+      duration: duration,
+      activity: activity
+    });
+    fs.active = false;
+    fs.startTime = null;
+    fs.currentActivity = null;
+
+    if (toggleBtn) toggleBtn.classList.remove('active');
+    if (label) label.textContent = 'Start Focus';
+
+    console.log(`🎯 Focus Session Ended: ${duration.toFixed(1)} minutes (${activity})`);
+    console.log(`📊 Total Focus Today: ${fs.totalFocusMinutes.toFixed(1)} minutes (${fs.sessionsToday} sessions)`);
+    console.log(`📊 By Activity:`, fs.timeByActivity);
+
+    // Log to session log
+    logFocusEvent({
+      type: 'FOCUS_END',
+      duration: duration,
+      activity: activity,
+      timeByActivity: fs.timeByActivity
+    });
+
+    // Update the session progress bars
+    updateSessionProgressBars();
+
+    // Save to localStorage
+    localStorage.setItem('velocityData', JSON.stringify(velocityData));
+  }
+}
+
+function logFocusEvent(event) {
+  // This would ideally write to session-log.jsonl via IPC
+  // For now, just log to console
+  console.log('Focus Event:', {
+    timestamp: new Date().toISOString(),
+    ...event
+  });
+}
+
+// Wire up the focus toggle button
+document.getElementById('focusToggle')?.addEventListener('click', toggleFocusSession);
+
+function updateSessionProgressBars() {
+  const fs = velocityData.focusSession;
+  if (!fs.timeByActivity) return;
+  
+  const total = fs.totalFocusMinutes || 1; // Avoid division by zero
+  const planning = fs.timeByActivity.planning || 0;
+  const coding = fs.timeByActivity.coding || 0;
+  const testing = fs.timeByActivity.testing || 0;
+  
+  // Update progress bar widths
+  const planBar = document.querySelector('.stat-segment.plan');
+  const codeBar = document.querySelector('.stat-segment.code');
+  const testBar = document.querySelector('.stat-segment.test');
+  
+  if (planBar) planBar.style.width = `${(planning / total * 100).toFixed(1)}%`;
+  if (codeBar) codeBar.style.width = `${(coding / total * 100).toFixed(1)}%`;
+  if (testBar) testBar.style.width = `${(testing / total * 100).toFixed(1)}%`;
+  
+  // Update legend
+  const legend = document.querySelector('.session-legend');
+  if (legend) {
+    legend.innerHTML = `
+      <div><span class="legend-dot plan"></span> Plan: ${planning.toFixed(0)}m</div>
+      <div><span class="legend-dot code"></span> Code: ${coding.toFixed(0)}m</div>
+      <div><span class="legend-dot test"></span> Test: ${testing.toFixed(0)}m</div>
+    `;
+  }
+}
+
+// Refresh Velocity Metrics Button
+document.getElementById('refreshMetricsBtn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('refreshMetricsBtn');
+  if (!btn) return;
+  
+  btn.classList.add('loading');
+  btn.disabled = true;
+  
+  try {
+    const result = await window.electronAPI.refreshVelocityMetrics();
+    
+    if (result.success) {
+      console.log('✅ Metrics refreshed successfully');
+      // Reload the dashboard
+      updateVelocityDashboard();
+    } else {
+      console.error('❌ Failed to refresh metrics:', result.error);
+      alert('Failed to refresh metrics. Check console for details.');
+    }
+  } catch (e) {
+    console.error('Error refreshing metrics:', e);
+    alert('Error refreshing metrics. Make sure the velocity scripts are available.');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+});

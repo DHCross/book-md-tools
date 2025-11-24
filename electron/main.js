@@ -931,3 +931,40 @@ ipcMain.handle('save-config', async (event, config) => {
     return { success: false, message: err.message };
   }
 });
+
+// IPC: Refresh Velocity Metrics
+ipcMain.handle('refresh-velocity-metrics', async () => {
+  const scriptsDir = path.join(REPO_ROOT, 'velocity-tracker-template', 'scripts');
+  
+  return new Promise((resolve, reject) => {
+    console.log('🔄 Running velocity scripts...');
+    
+    // Run the scripts in sequence
+    const command = `cd "${scriptsDir}" && node code-survival.js && node velocity-tracker.js --analyze && node velocity-artifacts.js`;
+    
+    const child = spawn(command, [], { shell: true, cwd: scriptsDir });
+    
+    let output = '';
+    let error = '';
+    
+    child.stdout.on('data', (data) => {
+      output += data.toString();
+      console.log(data.toString());
+    });
+    
+    child.stderr.on('data', (data) => {
+      error += data.toString();
+      console.error(data.toString());
+    });
+    
+    child.on('close', (code) => {
+      if (code === 0) {
+        console.log('✅ Velocity metrics updated');
+        resolve({ success: true, output });
+      } else {
+        console.error('❌ Velocity scripts failed:', error);
+        resolve({ success: false, error });
+      }
+    });
+  });
+});

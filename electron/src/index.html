@@ -190,6 +190,9 @@
               <span class="fr-toggle-label">W</span>
             </label>
           </div>
+          <div class="fr-group">
+            <span id="matchCounter" class="match-counter">--</span>
+          </div>
           <div class="fr-divider"></div>
           <div class="fr-group">
             <button id="findPrevBtn" class="fr-btn" title="Previous Match">&lt;</button>
@@ -743,7 +746,9 @@
               <div class="velocity-card">
                 <div class="card-header">
                   <h3>🎯 Velocity Metrics</h3>
-                  <span class="card-badge">7 Days</span>
+                  <button id="refreshMetricsBtn" class="refresh-btn" title="Run velocity scripts to update metrics">
+                    <span>🔄</span> Refresh
+                  </button>
                 </div>
                 <div class="card-metrics">
                   <div class="metric" title="How much the AI helps vs. hurts (>1.0 is good)">
@@ -757,6 +762,7 @@
                   <div class="metric" title="Your actual speed after fixing AI mistakes">
                     <span class="metric-label">Effective Speed</span>
                     <span class="metric-value" id="netSynergyVelocity">--</span>
+                    <span class="velocity-badge" id="velocityBadge"></span>
                   </div>
                   <div class="metric">
                     <span class="metric-label">Regression Rate</span>
@@ -768,7 +774,10 @@
               <div class="velocity-card">
                 <div class="card-header">
                   <h3>⏱️ Time Breakdown</h3>
-                  <span class="card-badge">Session</span>
+                  <button id="focusToggle" class="focus-toggle">
+                    <span class="focus-icon">🎯</span>
+                    <span id="focusLabel">Start Focus</span>
+                  </button>
                 </div>
                 <div class="session-controls">
                   <div class="session-timer-display" id="sessionTimerDisplay">00:00:00</div>

@@ -65,3 +65,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Telemetry (Passive AI Burst Detection)
   onTelemetryUpdate: (callback) => ipcRenderer.on('telemetry-update', callback),
 });
+  
+  // Velocity Metrics Refresh
+  refreshVelocityMetrics: () => ipcRenderer.invoke('refresh-velocity-metrics'),

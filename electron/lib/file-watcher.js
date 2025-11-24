@@ -23,6 +23,8 @@ const IGNORED = [
 // STATE
 let fileCache = new Map(); // Stores { lineCount, lastModified }
 let isReady = false;
+let lastActivityTime = null;
+let implicitFocusActive = false;
 
 function countLines(content) {
     return content.split('\n').length;
@@ -76,6 +78,25 @@ function handleFileChange(filePath, type, mainWindow) {
 
         // UPDATE CACHE
         fileCache.set(filePath, { lineCount: currentLines, lastModified: now });
+
+        // 0. PASSIVE FLOW DETECTION (Sniper Mode)
+        // Detect sustained activity (bursts within 5 minutes = implicit focus)
+        if (lastActivityTime && (now - lastActivityTime) < 300000) {
+            // Activity within 5 minutes = sustained flow
+            if (!implicitFocusActive) {
+                implicitFocusActive = true;
+                console.log('🎯 Implicit Focus Session Started (sustained activity detected)');
+                appendLog({ type: 'IMPLICIT_FOCUS_START' });
+            }
+        } else if (lastActivityTime && (now - lastActivityTime) > 900000) {
+            // 15+ minute gap = session break
+            if (implicitFocusActive) {
+                implicitFocusActive = false;
+                console.log('🎯 Implicit Focus Session Ended (15+ min gap)');
+                appendLog({ type: 'IMPLICIT_FOCUS_END' });
+            }
+        }
+        lastActivityTime = now;
 
         // 1. BURST DETECTION LOGIC
         // Threshold: Adding > 5 lines in under 2 seconds (Human max is ~1-2 lines/sec)
