@@ -10,8 +10,9 @@ app.setName('TRPG MD Workbench');
 const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
 const { canonicalizeBatch } = require('./lib/cnc-canonicalizer-v2');
 
-// Passive AI Burst Detector - DISABLED
-// const { startWatcher } = require('./lib/file-watcher');
+// Passive AI Burst Detector - RE-ENABLED WITH STRICTER FILTERING
+// Use with caution when Windsurf is active - may cause file access conflicts
+const { startWatcher } = require('./lib/file-watcher');
 
 let mainWindow;
 
@@ -55,15 +56,15 @@ function createWindow() {
   mainWindow.webContents.session.clearCache();
   // mainWindow.webContents.openDevTools(); // Remove this in production
 
-  // PASSIVE AI BURST DETECTOR - COMPLETELY DISABLED
-  // This was causing file dialog and other UI issues
-  // The watcher interferes with normal file operations
-  // To re-enable: Set ENABLE_PASSIVE_WATCHER=true environment variable
-  /*
+  // PASSIVE AI BURST DETECTOR - RE-ENABLED WITH STRICTER FILTERING
+  // WARNING: May conflict with Windsurf file operations
+  // Monitor for performance issues and file dialog conflicts
   if (process.env.ENABLE_PASSIVE_WATCHER === 'true') {
+    console.log('⚠️  Enabling Passive AI Watcher - may conflict with Windsurf');
     startWatcher(mainWindow);
+  } else {
+    console.log('📊 Passive AI Watcher disabled (set ENABLE_PASSIVE_WATCHER=true to enable)');
   }
-  */
 }
 
 app.on('ready', createWindow);
@@ -944,10 +945,25 @@ ipcMain.handle('refresh-velocity-metrics', async () => {
   return new Promise((resolve, reject) => {
     console.log('🔄 Running velocity scripts...');
     
-    // Run the scripts in sequence
-    const command = `cd "${scriptsDir}" && node code-survival.js && node velocity-tracker.js --analyze && node velocity-artifacts.js`;
+    // Run the scripts in sequence (skipping missing code-survival.js)
+    // We run from REPO_ROOT to ensure paths align with electron expectations
+    const trackerScript = path.join(scriptsDir, 'velocity-tracker.js');
+    const artifactsScript = path.join(scriptsDir, 'velocity-artifacts.js');
     
-    const child = spawn(command, [], { shell: true, cwd: scriptsDir });
+    // Command:
+    // 1. Set VELOCITY_LOG_PATH to root velocity-log.jsonl
+    // 2. Run velocity-tracker.js --analyze --force-local
+    // 3. Run velocity-artifacts.js
+    // 4. Move artifacts to template folder (where app might look for them too)
+    const command = `
+      export VELOCITY_LOG_PATH="velocity-log.jsonl" && 
+      node "${trackerScript}" --analyze --force-local && 
+      node "${artifactsScript}" &&
+      mkdir -p velocity-tracker-template/velocity-artifacts &&
+      mv velocity-artifacts/velocity-summary.json velocity-tracker-template/velocity-artifacts/velocity-summary.json || true
+    `.replace(/\n/g, ' ');
+
+    const child = spawn(command, [], { shell: true, cwd: REPO_ROOT });
     
     let output = '';
     let error = '';
