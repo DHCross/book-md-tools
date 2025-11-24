@@ -110,9 +110,9 @@ let findState = {
 
 // Guard flags to prevent circular updates
 let isInternalEditorUpdate = false; // Set to true when we modify editor from code
-let isSyncingScroll = false; // Set to true during scroll sync to prevent re-entry
 let suppressStatAnalysis = false; // Set to true when doing bulk updates
 let userHasClickedEditor = false; // Track if user has manually clicked into editor
+let editorLineTrackingInitialized = false;
 
 // Stat block navigation state
 let statBlocks = [];
@@ -120,8 +120,6 @@ let activeStatIndex = null; // index within statBlocks
 let statBlockSortMode = 'alphabetical'; // 'section' or 'alphabetical' - default to alphabetical
 let statFilters = { type: 'all', status: 'all', onlyErrors: false, search: '' }; // default to all
 let statContextCollapsed = {};
-let activeStatStartLine = null; // first line of selected stat block (for UI)
-let activeStatEndLine = null;
 let reviewState = {}; // reviewed flags keyed by block id
 
 // Unified navigation context for Next/Prev
@@ -172,6 +170,33 @@ function updateReviewSummary() {
   } else {
     statusEl.textContent = `Reviewed ${stats.total.reviewed} of ${stats.total.total}`;
   }
+}
+
+function initializeEditorLineTracking() {
+  if (editorLineTrackingInitialized) return;
+  const editor = document.getElementById('markdownEditor');
+  if (!editor) return;
+
+  const markUserInteraction = () => {
+    if (!userHasClickedEditor) {
+      userHasClickedEditor = true;
+    }
+    requestAnimationFrame(updateLineInfoDisplay);
+  };
+
+  const handleCursorMotion = () => {
+    requestAnimationFrame(updateLineInfoDisplay);
+  };
+
+  ['focus', 'mousedown', 'click'].forEach(evt => {
+    editor.addEventListener(evt, markUserInteraction);
+  });
+
+  ['keydown', 'keyup', 'mouseup', 'input', 'select'].forEach(evt => {
+    editor.addEventListener(evt, handleCursorMotion);
+  });
+
+  editorLineTrackingInitialized = true;
 }
 
 // ============================================================================
@@ -1291,6 +1316,7 @@ function updateMarkdownEditor(content) {
     isInternalEditorUpdate = false; // Reset flag
     clearEditorUnsavedState();
     updateLineInfoDisplay();
+    initializeEditorLineTracking();
   }
 }
 
@@ -1353,55 +1379,12 @@ function updateRenderedTab(content) {
       .replace(/\n/g, '<br>');
   }
 
-  // Add data-line attributes to rendered elements
-  addLineAttributesToRendered(rendered, content);
 
   // Track selection changes in Rendered
   rendered.addEventListener('mouseup', captureSelection);
   rendered.addEventListener('keyup', captureSelection);
 }
 
-function addLineAttributesToRendered(rendered, content) {
-  const htmlLength = rendered?.innerHTML?.length || 0;
-  const childCount = rendered?.children ? rendered.children.length : 0;
-  console.log('addLineAttributesToRendered: rendered.innerHTML length =', htmlLength, 'children =', childCount);
-
-  let topLevelElements = rendered.querySelectorAll('h1, h2, h3, h4, h5, h6, p, pre, blockquote, ul, ol, table');
-  console.log('addLineAttributesToRendered: found', topLevelElements.length, 'elements');
-  if (!topLevelElements.length) {
-    // Fallback: try all elements to see if markup is wrapped differently
-    topLevelElements = rendered.querySelectorAll('*');
-    console.warn('addLineAttributesToRendered: primary selector matched 0, fallback matched', topLevelElements.length, '; html head:', (rendered.innerHTML || '').slice(0, 200));
-    if (!topLevelElements.length) {
-      return;
-    }
-  }
-
-  // Use full-text search to find each element's position and line number
-  let searchIndex = 0;
-  let mappedCount = 0;
-  let maxLineSeen = 0;
-  topLevelElements.forEach(el => {
-    const text = (el.textContent || '').trim();
-    if (!text) return;
-
-    // Find the element's text in the source starting from the last match
-    let idx = content.indexOf(text, searchIndex);
-    if (idx === -1) {
-      // Fallback: approximate using current search index
-      idx = searchIndex;
-    }
-
-    const lineNumber = (content.substring(0, idx).match(/\n/g) || []).length + 1;
-    el.setAttribute('data-line', lineNumber);
-    mappedCount++;
-    if (lineNumber > maxLineSeen) maxLineSeen = lineNumber;
-
-    // Advance search index conservatively
-    searchIndex = Math.max(idx + text.length, searchIndex + text.length);
-  });
-  console.log('addLineAttributesToRendered: mapped', mappedCount, 'elements to line numbers; maxLine =', maxLineSeen);
-}
 
 // Removed old sync code - no longer needed with Edit/Preview toggle
 
@@ -1423,110 +1406,30 @@ function updateLineInfoDisplay() {
     if (currentLineEl) currentLineEl.textContent = '—';
   }
 
-  if (blockLineEl) blockLineEl.textContent = activeStatStartLine ? activeStatStartLine : '—';
-
-  // Toggle visual indicator for active stat block
-  if (gutterColumn) {
-    if (activeStatStartLine) {
-      gutterColumn.classList.add('active-stat');
-    } else {
-      gutterColumn.classList.remove('active-stat');
-    }
-  }
+  if (blockLineEl) blockLineEl.textContent = '—';
 }
 
-function jumpEditorToLine(lineNumber, focusEditor = true, selectRange = null) {
+function jumpEditorToLine(lineNumber, focusEditor = true) {
   const editor = document.getElementById('markdownEditor');
   if (!editor) return;
 
-  const content = editor.value || currentContent || '';
-  const contentLines = content.split('\n');
-  const targetLine = Math.max(1, Math.min(lineNumber, contentLines.length || 1));
-  // Calculate character offset for the line start once (used for caret)
-  let charOffset = 0;
-  for (let i = 0; i < targetLine - 1 && i < contentLines.length; i++) {
-    charOffset += contentLines[i].length + 1; // +1 for newline
-  }
+  const lines = editor.value.split('\n');
 
-  const applyCaret = () => {
-    if (selectRange) {
-      editor.setSelectionRange(selectRange.start, selectRange.end);
-    } else {
-      editor.setSelectionRange(charOffset, charOffset);
-    }
-  };
-
-  // Set cursor position
-  if (focusEditor) {
-    editor.focus();
-  }
-  applyCaret();
-
-  // --- ROBUST SCROLL SYNC via Mirror Div ---
-  // Create or get hidden mirror to measure true pixel height of text up to target line
-  let mirror = document.getElementById('editor-mirror-div');
-  if (!mirror) {
-    mirror = document.createElement('div');
-    mirror.id = 'editor-mirror-div';
-    mirror.style.visibility = 'hidden';
-    mirror.style.position = 'absolute';
-    mirror.style.top = '0';
-    mirror.style.left = '-9999px';
-    mirror.style.whiteSpace = 'pre-wrap';
-    mirror.style.wordWrap = 'break-word';
-    mirror.style.overflow = 'hidden';
-    document.body.appendChild(mirror);
-  }
-
-  // Sync styles from real editor to mirror
-  const style = window.getComputedStyle(editor);
-  mirror.style.width = style.width;
-  mirror.style.fontFamily = style.fontFamily;
-  mirror.style.fontSize = style.fontSize;
-  mirror.style.lineHeight = style.lineHeight;
-  mirror.style.padding = style.padding;
-  mirror.style.boxSizing = style.boxSizing;
-  mirror.style.border = style.border;
-
-  // Content up to target line (excluding the line itself to jump TO it)
-  // We add a zero-width space to ensure the last newline counts if it exists
-  const textBefore = contentLines.slice(0, targetLine - 1).join('\n');
-  mirror.textContent = textBefore + '\u200B';
-
-  // Measure height
-  const targetHeight = mirror.scrollHeight;
-
-  // Apply scroll with some headroom (e.g. 15% down from top)
-  // But clamp it so we don't scroll past end
-  const editorHeight = editor.clientHeight;
-  const headroom = Math.floor(editorHeight * 0.15);
-  const maxScroll = editor.scrollHeight - editorHeight;
-
-  const desiredScroll = Math.max(0, Math.min(maxScroll, targetHeight - headroom));
-
-  editor.scrollTop = desiredScroll;
-
-  // Re-apply caret on the next frame to guard against focus timing quirks
-  requestAnimationFrame(() => {
-    applyCaret();
-    updateLineInfoDisplay();
-    updateStatBlockHighlight();
-  });
-
-  return { charOffset, targetLine };
-}
-
-function getCharOffsetForLine(lineNumber) {
-  const editor = document.getElementById('markdownEditor');
-  const content = editor ? editor.value : currentContent || '';
-  const lines = (content || '').split('\n');
-  const safeLine = Math.max(1, Math.min(lineNumber, lines.length || 1));
+  // Compute character offset for the start of the target line
   let offset = 0;
-  for (let i = 0; i < safeLine - 1 && i < lines.length; i++) {
-    offset += lines[i].length + 1;
+  for (let i = 0; i < lineNumber - 1; i++) {
+    offset += (lines[i]?.length || 0) + 1;
   }
-  return offset;
+
+  if (focusEditor) editor.focus();
+  editor.setSelectionRange(offset, offset);
+
+  // Simple consistent scroll positioning
+  editor.scrollTop = editor.scrollHeight * (lineNumber / lines.length);
+
+  updateLineInfoDisplay();
 }
+
 
 function captureSelection() {
   const editor = document.getElementById('markdownEditor');
@@ -1540,7 +1443,6 @@ function captureSelection() {
 
   // Update Quick Tools modal hint if open
   updateSelectionModeIndicator();
-  updateLineInfoDisplay();
 }
 
 function flashNameInEditor(name, anchorOffset = 0) {
@@ -1569,7 +1471,6 @@ function flashNameInEditor(name, anchorOffset = 0) {
 
   setTimeout(() => {
     editor.setSelectionRange(originalStart, originalEnd);
-    updateLineInfoDisplay();
   }, 250);
 }
 
@@ -3021,6 +2922,9 @@ function updateHeaderNavigator() {
   });
 
   applyHeaderCollapseState();
+
+  // Update right-hand content tree when sections change
+  renderRightNavigator(buildRightNavModel());
 }
 
 function navigateToSection(index) {
@@ -3032,10 +2936,7 @@ function navigateToSection(index) {
   navContext.mode = 'header';
   navContext.index = index;
   updateNavButtonsForContext();
-  activeStatStartLine = null;
-  activeStatEndLine = null;
   updateLineInfoDisplay();
-  updateStatBlockHighlight();
 
 
   // Jump editor to the section start (keeps caret aligned with navigation)
@@ -3077,6 +2978,148 @@ function navigateToSection(index) {
       setTimeout(() => match.classList.remove('highlight-flash'), 2000);
     }
   }
+}
+
+// ============================================================================
+// RIGHT-HAND CONTENT TREE (Sections + Stat Blocks with Icons)
+// ============================================================================
+
+// Icons for the right-hand content tree ONLY (left panel stays text-only)
+const CONTENT_TREE_ICONS = {
+  'monster': '👹',
+  'npc': '🧍',
+  'npc-named': '🧍',
+  'boxed': '📦',
+  'table': '📊',
+  'trap': '🗺️',
+  'hazard': '⚠️',
+  'feature': '✨'
+};
+
+/**
+ * Build a model of sections with their contained stat blocks for the right navigator
+ */
+function buildRightNavModel() {
+  const tree = [];
+  const sections = allSections || [];
+  const blocks = statBlocks || [];
+
+  if (!sections.length) {
+    // No sections - just list all stat blocks flat
+    if (blocks.length > 0) {
+      tree.push({
+        type: 'section',
+        title: 'Document',
+        level: 1,
+        startLine: 1,
+        endLine: Infinity,
+        children: blocks.map(b => ({
+          type: b.type || 'feature',
+          name: b.name || 'Unknown',
+          line: b.lineStart || b.lineNumber || 1,
+          subtitle: null,
+          warnings: (b.validation?.errors?.length || 0) + (b.validation?.warnings?.length || 0)
+        }))
+      });
+    }
+    return tree;
+  }
+
+  // Build section tree with stat blocks nested under each section
+  sections.forEach((section, idx) => {
+    const nextSection = sections[idx + 1];
+    const sectionEndLine = nextSection ? nextSection.startLine - 1 : Infinity;
+
+    const node = {
+      type: 'section',
+      title: section.header || `Section ${idx + 1}`,
+      level: section.level || 1,
+      startLine: section.startLine || 1,
+      endLine: sectionEndLine,
+      children: []
+    };
+
+    // Find stat blocks within this section's line range
+    const sectionBlocks = blocks.filter(b => {
+      const blockLine = b.lineStart || b.lineNumber || 0;
+      return blockLine >= node.startLine && blockLine <= sectionEndLine;
+    });
+
+    node.children = sectionBlocks.map(b => ({
+      type: b.type || 'feature',
+      name: b.name || 'Unknown',
+      line: b.lineStart || b.lineNumber || 1,
+      subtitle: null,
+      warnings: (b.validation?.errors?.length || 0) + (b.validation?.warnings?.length || 0)
+    }));
+
+    tree.push(node);
+  });
+
+  return tree;
+}
+
+/**
+ * Render the right-hand content tree navigator with icons
+ */
+function renderRightNavigator(model) {
+  const nav = document.getElementById('rightNavigator');
+  if (!nav) return;
+
+  if (!model || model.length === 0) {
+    nav.innerHTML = '<p class="placeholder" style="padding: 12px;">Load a document to see sections with stat blocks.</p>';
+    return;
+  }
+
+  const htmlParts = model.map(section => {
+    const indent = Math.max(0, (section.level - 1)) * 14;
+
+    let html = `
+      <div class="nav-node section-node"
+           data-line="${section.startLine}"
+           style="margin-left:${indent}px">
+        📘 ${escapeHtml(section.title)}
+      </div>
+    `;
+
+    if (section.children && section.children.length > 0) {
+      section.children.forEach(child => {
+        const icon = CONTENT_TREE_ICONS[child.type] || '•';
+        const warn = child.warnings > 0
+          ? `<span class="block-warning">⚠️ ${child.warnings}</span>`
+          : '';
+
+        html += `
+          <div class="nav-node block-node"
+               data-line="${child.line}"
+               style="margin-left:${indent + 18}px">
+            <span class="block-icon">${icon}</span>
+            <span class="block-name">${escapeHtml(child.name)}</span>
+            ${child.subtitle ? `<span class="block-subtitle">${escapeHtml(child.subtitle)}</span>` : ''}
+            ${warn}
+          </div>
+        `;
+      });
+    }
+
+    return html;
+  });
+
+  nav.innerHTML = htmlParts.join('');
+
+  // Bind click handlers for navigation
+  nav.querySelectorAll('.nav-node').forEach(el => {
+    el.addEventListener('click', () => {
+      const line = Number(el.dataset.line);
+      if (line > 0) {
+        jumpEditorToLine(line, true);
+
+        // Update active state
+        nav.querySelectorAll('.nav-node').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+      }
+    });
+  });
 }
 
 function highlightHeaderForLine(lineNumber) {
@@ -3215,10 +3258,7 @@ function updateStatBlockNavigator(blocks) {
   if (!statBlocks || statBlocks.length === 0) {
     container.innerHTML = '<p class="placeholder" style="padding: 12px;">No stat blocks detected in this document.</p>';
     if (countEl) countEl.textContent = '0';
-    activeStatStartLine = null;
-    activeStatEndLine = null;
     updateLineInfoDisplay();
-    updateStatBlockHighlight();
     return;
   }
 
@@ -3239,6 +3279,9 @@ function updateStatBlockNavigator(blocks) {
 
   renderStatBlockList();
   updateReviewSummary();
+
+  // Update the right-hand content tree
+  renderRightNavigator(buildRightNavModel());
 }
 
 // Classify stat block by type
@@ -4008,25 +4051,13 @@ function navigateToStatBlock(block) {
     navContext.index = idx;
     updateNavButtonsForContext();
 
-    const startLineCandidate = block.lineStart || block.lineNumber || block.lineBegin;
-    const startLine = typeof startLineCandidate === 'number' && startLineCandidate > 0 ? startLineCandidate : 1;
-
-    let endLine = block.lineEnd || block.lineFinish || null;
-    if (!endLine && block.fullText) {
-      const lineCount = block.fullText.split('\n').length || 1;
-      endLine = startLine + lineCount - 1;
-    }
-    if (!endLine) endLine = startLine;
-
-    activeStatStartLine = startLine;
-    activeStatEndLine = endLine;
-
     updateLineInfoDisplay();
-    updateStatBlockHighlight();
     // If there's a matching header context, highlight it in the right-hand navigator
     if (allSections && allSections.length > 0) {
+      const startLineCandidate = block.lineStart || block.lineNumber || block.lineBegin;
+      const startLine = typeof startLineCandidate === 'number' && startLineCandidate > 0 ? startLineCandidate : 1;
       const matchIdx = allSections.findIndex(
-        (s) => (s.startLine && activeStatStartLine && Math.abs(s.startLine - activeStatStartLine) <= 2) ||
+        (s) => (s.startLine && Math.abs(s.startLine - startLine) <= 2) ||
           (block.context && s.header && s.header.trim().toLowerCase() === block.context.trim().toLowerCase())
       );
       if (matchIdx >= 0) {
@@ -4126,11 +4157,11 @@ function navigateToStatBlock(block) {
     }
   }
 
-  const jumpResult = jumpEditorToLine(line, true);
+  jumpEditorToLine(line, true);
 
   // Flash the block name in the editor briefly to aid visual tracking
   if (block.name) {
-    flashNameInEditor(block.name, jumpResult?.charOffset || getCharOffsetForLine(line));
+    flashNameInEditor(block.name);
   }
 
   // Sync header navigator highlight & scroll to matching section
@@ -4918,98 +4949,5 @@ document.getElementById('refreshMetricsBtn')?.addEventListener('click', async ()
 // STAT BLOCK HIGHLIGHTING
 // ============================================================================
 
-function updateStatBlockHighlight() {
-  const editor = document.getElementById('markdownEditor');
-  const column = document.querySelector('.line-info-column');
-  if (!editor || !column) return;
-
-  let indicator = column.querySelector('.stat-block-indicator');
-  if (!indicator) {
-    indicator = document.createElement('div');
-    indicator.className = 'stat-block-indicator';
-    column.appendChild(indicator);
-  }
-
-  if (!activeStatStartLine || !activeStatEndLine) {
-    indicator.style.display = 'none';
-    return;
-  }
-
-  indicator.style.display = 'block';
-
-  let mirror = document.getElementById('editor-mirror-div');
-  if (!mirror) {
-    mirror = document.createElement('div');
-    mirror.id = 'editor-mirror-div';
-    mirror.style.visibility = 'hidden';
-    mirror.style.position = 'absolute';
-    mirror.style.top = '0';
-    mirror.style.left = '-9999px';
-    mirror.style.whiteSpace = 'pre-wrap';
-    mirror.style.wordWrap = 'break-word';
-    mirror.style.overflow = 'hidden';
-    document.body.appendChild(mirror);
-  }
-
-  const style = window.getComputedStyle(editor);
-  mirror.style.width = style.width;
-  mirror.style.fontFamily = style.fontFamily;
-  mirror.style.fontSize = style.fontSize;
-  mirror.style.lineHeight = style.lineHeight;
-  mirror.style.padding = style.padding;
-  mirror.style.boxSizing = style.boxSizing;
-  mirror.style.border = style.border;
-
-  const content = editor.value || currentContent || '';
-  const lines = content.split('\n');
-
-  const startLineIdx = Math.max(0, activeStatStartLine - 1);
-  const textBeforeStart = lines.slice(0, startLineIdx).join('\n');
-  
-  if (textBeforeStart.length > 0) {
-    mirror.textContent = textBeforeStart + '\u200B';
-  } else {
-    mirror.textContent = '\u200B';
-  }
-  
-  const paddingTop = parseFloat(style.paddingTop) || 0;
-  const paddingBottom = parseFloat(style.paddingBottom) || 0;
-  const borderTop = parseFloat(style.borderTopWidth) || 0;
-  const borderBottom = parseFloat(style.borderBottomWidth) || 0;
-
-  const startTop = mirror.offsetHeight - paddingBottom - borderBottom;
-
-  const endLineIdx = Math.min(lines.length, activeStatEndLine);
-  const textUntilEnd = lines.slice(0, endLineIdx).join('\n');
-  mirror.textContent = textUntilEnd + '\u200B';
-  
-  const endTop = mirror.offsetHeight - paddingBottom - borderBottom;
-
-  const columnStyle = window.getComputedStyle(column);
-  const columnPaddingTop = parseFloat(columnStyle.paddingTop) || 0;
-  const columnPaddingBottom = parseFloat(columnStyle.paddingBottom) || 0;
-  const usableHeight = Math.max(0, column.clientHeight - columnPaddingTop - columnPaddingBottom);
-
-  let blockHeight = Math.max(0, endTop - startTop);
-  let top = startTop - editor.scrollTop - paddingTop - borderTop + columnPaddingTop;
-
-  if (usableHeight > 0) {
-    blockHeight = Math.max(Math.min(blockHeight, usableHeight), 6);
-    const maxTop = columnPaddingTop + usableHeight - blockHeight;
-    top = Math.max(columnPaddingTop, Math.min(maxTop, top));
-  } else {
-    blockHeight = Math.max(blockHeight, 6);
-    top = columnPaddingTop;
-  }
-
-  indicator.style.top = `${top}px`;
-  indicator.style.height = `${blockHeight}px`;
-}
-
-document.getElementById('markdownEditor')?.addEventListener('scroll', () => {
-  if (activeStatStartLine) {
-    requestAnimationFrame(updateStatBlockHighlight);
-  }
-});
 
 // ============================================================================
