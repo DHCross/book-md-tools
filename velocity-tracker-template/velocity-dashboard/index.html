@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocity Tracker Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>Velocity Tracker Dashboard</h1>
+            <button id="export-btn" class="btn-primary">Export Report</button>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <!-- Synergy Ratio -->
+            <div class="card card-blue">
+                <h3 class="card-title">Synergy Ratio</h3>
+                <div class="card-value-container">
+                    <span id="synergy-ratio" class="card-value">--%</span>
+                </div>
+                <p class="card-desc">AI-assisted fixes vs regressions</p>
+            </div>
+
+            <!-- Regression Rate -->
+            <div class="card card-green">
+                <h3 class="card-title">Regression Rate</h3>
+                <div class="card-value-container">
+                    <span id="regression-rate" class="card-value">--%</span>
+                </div>
+                <p class="card-desc">Commits introducing failures</p>
+            </div>
+
+            <!-- Net Synergy Velocity -->
+            <div class="card card-yellow">
+                <h3 class="card-title">Net Synergy Velocity</h3>
+                <div class="card-value-container">
+                    <span id="net-velocity" class="card-value">--</span>
+                    <span class="unit">commits/hr</span>
+                </div>
+                <p class="card-desc">True development speed</p>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics Table -->
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Detailed Metrics</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="metric-name">Code Survival Rate</td>
+                            <td id="code-survival-rate" class="metric-value">--%</td>
+                            <td class="metric-desc">Percentage of AI-generated code still in use</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-name">Churn Ratio</td>
+                            <td id="churn-ratio" class="metric-value">--%</td>
+                            <td class="metric-desc">Lines deleted vs lines added (Coming Soon)</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-name">Frustration Index</td>
+                            <td id="frustration-index" class="metric-value">Low</td>
+                            <td class="metric-desc">Sentiment analysis of commit messages (Coming Soon)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Visual Insights -->
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Visual Insights</h2>
+            </div>
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+                <p class="chart-placeholder-text">
+                    [Placeholder for more advanced visualizations]
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Velocity Tracker. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

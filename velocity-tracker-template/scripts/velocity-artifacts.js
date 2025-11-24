@@ -37,46 +37,46 @@ const SUCCESS_TYPE = 'ai_fix_success';
 const FAILURE_TYPE = 'ai_fix_failure_regression';
 
 const { execSync } = require('child_process');
-function parseArgs(argv){
+function parseArgs(argv) {
   const args = { out: 'docs/velocity-forecast.md', limit: 10 };
-  for (let i=2;i<argv.length;i++){
+  for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
-    if (a === '--out' && argv[i+1]) { args.out = argv[++i]; continue; }
-    if (a === '--limit' && argv[i+1]) { args.limit = Math.max(1, parseInt(argv[++i],10)||10); continue; }
+    if (a === '--out' && argv[i + 1]) { args.out = argv[++i]; continue; }
+    if (a === '--limit' && argv[i + 1]) { args.limit = Math.max(1, parseInt(argv[++i], 10) || 10); continue; }
     if (a === '--help') { args.help = true; }
   }
   return args;
 }
 
-function formatDuration(seconds){
+function formatDuration(seconds) {
   if (!Number.isFinite(seconds) || seconds <= 0) return '0h00m';
-  const h = Math.floor(seconds/3600);
-  const m = Math.floor((seconds%3600)/60);
-  const s = Math.floor(seconds%60);
-  return `${h}h${String(m).padStart(2,'0')}m${s>0?`${String(s).padStart(2,'0')}s`:''}`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${h}h${String(m).padStart(2, '0')}m${s > 0 ? `${String(s).padStart(2, '0')}s` : ''}`;
 }
 
-function pct(n){
-  return (Math.round(n*1000)/10).toFixed(1)+'%';
+function pct(n) {
+  return (Math.round(n * 1000) / 10).toFixed(1) + '%';
 }
 
-function humanList(arr){
+function humanList(arr) {
   if (!arr.length) return 'None';
   if (arr.length === 1) return arr[0];
   if (arr.length === 2) return arr.join(' & ');
-  return arr.slice(0,-1).join(', ') + ' & ' + arr[arr.length-1];
+  return arr.slice(0, -1).join(', ') + ' & ' + arr[arr.length - 1];
 }
 
-function computeRolling(entries, limit){
+function computeRolling(entries, limit) {
   const slice = entries.slice(-limit);
   if (!slice.length) return null;
-  const totalCommits = slice.reduce((a,e)=>a+(e.commitCount||0),0);
-  const totalSeconds = slice.reduce((a,e)=>a+(e.totalDurationSeconds||0),0);
+  const totalCommits = slice.reduce((a, e) => a + (e.commitCount || 0), 0);
+  const totalSeconds = slice.reduce((a, e) => a + (e.totalDurationSeconds || 0), 0);
   return {
     sampleSize: slice.length,
     commitCount: totalCommits,
     totalDurationSeconds: totalSeconds,
-    commitsPerHour: totalSeconds>0 ? (totalCommits / (totalSeconds/3600)) : 0
+    commitsPerHour: totalSeconds > 0 ? (totalCommits / (totalSeconds / 3600)) : 0
   };
 }
 
@@ -85,8 +85,8 @@ function computeRolling(entries, limit){
  * between `sinceIso` and `untilIso`.
  * Returns counts and sample messages.
  */
-function scanGitForSignals(sinceIso, untilIso){
-  try{
+function scanGitForSignals(sinceIso, untilIso) {
+  try {
     const sinceArg = sinceIso ? `--since="${sinceIso}"` : '';
     const untilArg = untilIso ? `--until="${untilIso}"` : '';
     const format = '%H||%an||%ad||%s';
@@ -103,7 +103,7 @@ function scanGitForSignals(sinceIso, untilIso){
     const revertRegex = /\brevert\b|\brollback\b/i;
     const modelTagRegex = /\[AI:([^\]]+)\]/i;
 
-    for (const l of lines){
+    for (const l of lines) {
       const parts = l.split('||');
       if (parts.length < 4) continue;
       const subject = parts[3] || '';
@@ -136,13 +136,13 @@ function scanGitForSignals(sinceIso, untilIso){
 
     return { found: lines.length, fixes, failures, reverts, samples, model_counts: modelCounts };
   }
-  catch(err){
+  catch (err) {
     // If git not available or error, return empty
     return { found: 0, fixes: 0, failures: 0, reverts: 0, samples: [], model_counts: {} };
   }
 }
 
-function normalizeEntry(entry){
+function normalizeEntry(entry) {
   const commitCount = Number.isFinite(entry.commitCount)
     ? entry.commitCount
     : Number.isFinite(entry.total_commits)
@@ -174,7 +174,7 @@ function normalizeEntry(entry){
   };
 }
 
-function pickLogPath(){
+function pickLogPath() {
   const preferred = path.join(process.cwd(), '.logs', VELOCITY_LOG_FILENAME);
   const fallback = path.join(process.cwd(), VELOCITY_LOG_FILENAME);
   if (fs.existsSync(preferred)) return preferred;
@@ -182,7 +182,7 @@ function pickLogPath(){
   return preferred;
 }
 
-function pickDebugLogPath(){
+function pickDebugLogPath() {
   const preferred = path.join(process.cwd(), '.logs', DEBUG_LOG_FILENAME);
   const fallback = path.join(process.cwd(), DEBUG_LOG_FILENAME);
   if (fs.existsSync(preferred)) return preferred;
@@ -190,7 +190,7 @@ function pickDebugLogPath(){
   return null;
 }
 
-function readDebugSignals(){
+function readDebugSignals() {
   const file = pickDebugLogPath();
   if (!file) return [];
   const raw = fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean);
@@ -213,7 +213,7 @@ function readDebugSignals(){
   return entries;
 }
 
-function deriveWindow(entry){
+function deriveWindow(entry) {
   if (!entry) return null;
   const end = entry.end ? new Date(entry.end) : (entry.timestamp ? new Date(entry.timestamp) : new Date());
   if (Number.isNaN(end.getTime())) return null;
@@ -239,7 +239,7 @@ function deriveWindow(entry){
   };
 }
 
-function summarizeSynergy(signals, latestEntry, gitSignals){
+function summarizeSynergy(signals, latestEntry, gitSignals) {
   if (!latestEntry) {
     return { window_hours: 0, successful_ai_fixes: 0, ai_induced_failures: 0, signals_considered: 0 };
   }
@@ -279,36 +279,36 @@ function summarizeSynergy(signals, latestEntry, gitSignals){
     regression_rate: regressionRate,
     failures_per_hour: failuresPerHour,
     net_synergy_velocity: commitsPerHour - failuresPerHour,
-    git_signals: gitSignals || { found:0, fixes:0, failures:0, reverts:0, samples:[], model_counts:{} }
+    git_signals: gitSignals || { found: 0, fixes: 0, failures: 0, reverts: 0, samples: [], model_counts: {} }
   };
 }
 
-function ensureDir(filePath){
+function ensureDir(filePath) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
-function writeSummaryJson(summary){
+function writeSummaryJson(summary) {
   const outPath = path.join(process.cwd(), 'velocity-artifacts', 'velocity-summary.json');
   ensureDir(outPath);
   fs.writeFileSync(outPath, JSON.stringify(summary, null, 2), 'utf8');
 }
 
-function phaseSummary(phasesObj){
+function phaseSummary(phasesObj) {
   if (!phasesObj || typeof phasesObj !== 'object') return { done: [], pending: [] };
   const done = [], pending = [];
-  for (const [k,v] of Object.entries(phasesObj)){
+  for (const [k, v] of Object.entries(phasesObj)) {
     const status = (v && v.status) || v || '';
-    if (['done','complete','completed','ok','finished'].includes(String(status).toLowerCase())) done.push(k);
+    if (['done', 'complete', 'completed', 'ok', 'finished'].includes(String(status).toLowerCase())) done.push(k);
     else pending.push(k);
   }
   return { done, pending };
 }
 
-function renderMarkdown({ nowISO, latest, rolling, parseErrors, args, synergy }){
-  if (!latest){
+function renderMarkdown({ nowISO, latest, rolling, parseErrors, args, synergy }) {
+  if (!latest) {
     return `# Velocity Forecast Summary\n\n**Generated:** ${nowISO}\n\n_No velocity log entries found._\n\nAdd telemetry by appending structured JSON lines to \`.logs/velocity-log.jsonl\` (mirrored to \`velocity-log.jsonl\` for CI). Example:\n\n\`\`\`json\n{\n  \"timestamp\": \"2025-11-11T00:12:33Z\",\n  \"commitCount\": 42,\n  \"totalDurationSeconds\": 28800,\n  \"phases\": { \"api_client\": \"done\", \"relational_logic\": \"in_progress\" }\n}\n\`\`\`\n\nThen re-run: \`npm run velocity:report\`.\n`;
   }
 
@@ -368,12 +368,12 @@ function renderMarkdown({ nowISO, latest, rolling, parseErrors, args, synergy })
     }
   }
 
-  return `# Velocity Forecast Summary\n\n**Generated:** ${nowISO}  \n**Snapshot Timestamp:** ${latest.timestamp}${branchInfo}${commitInfo}  \n**Subject:** Math Brain refactor velocity\n\n## What the data says\n\n- Latest run: **${latest.commitCount} commits** over **${formatDuration(latest.totalDurationSeconds)}** (${latestRate.toFixed(2)} commits/hour).\n- Rolling window (${args.limit}): ${rollingLine}.\n- Phases DONE: ${humanList(phase.done)}.  \n- Phases Pending: ${humanList(phase.pending)}.${estBlock}\n\n## Plain-English Outlook\n\n1. Current cadence suggests ~${narrativeRate.toFixed(2)} commits/hour is sustainable short‑term.  \n2. All done phases indicate remaining focus should shift to documentation, CI hardening, and post‑refactor cleanup.  \n3. Feed more runs via \`velocity-tracker.js --analyze\` to refine rolling accuracy and detect acceleration or decay.\n\n## Synergy Analysis (Speed + Quality)\n\n${synergyBlock}\n\n## Suggested pipeline hook\n\nAdd an npm script: \`velocity:report\` → \`node scripts/velocity-artifacts.js\` and invoke it in CI after merge to main. Commit the updated \`docs/velocity-forecast.md\` so stakeholders always see a fresh forecast.\n\n---\n_Parsed lines: ${(latest._index||0)+1}/${(latest._total||0)}. Parse errors: ${parseErrors}. Generated by velocity-artifacts.js v1.0.0._\n`;
+  return `# Velocity Forecast Summary\n\n**Generated:** ${nowISO}  \n**Snapshot Timestamp:** ${latest.timestamp}${branchInfo}${commitInfo}  \n**Subject:** Math Brain refactor velocity\n\n## What the data says\n\n- Latest run: **${latest.commitCount} commits** over **${formatDuration(latest.totalDurationSeconds)}** (${latestRate.toFixed(2)} commits/hour).\n- Rolling window (${args.limit}): ${rollingLine}.\n- Phases DONE: ${humanList(phase.done)}.  \n- Phases Pending: ${humanList(phase.pending)}.${estBlock}\n\n## Plain-English Outlook\n\n1. Current cadence suggests ~${narrativeRate.toFixed(2)} commits/hour is sustainable short‑term.  \n2. All done phases indicate remaining focus should shift to documentation, CI hardening, and post‑refactor cleanup.  \n3. Feed more runs via \`velocity-tracker.js --analyze\` to refine rolling accuracy and detect acceleration or decay.\n\n## Synergy Analysis (Speed + Quality)\n\n${synergyBlock}\n\n## Suggested pipeline hook\n\nAdd an npm script: \`velocity:report\` → \`node scripts/velocity-artifacts.js\` and invoke it in CI after merge to main. Commit the updated \`docs/velocity-forecast.md\` so stakeholders always see a fresh forecast.\n\n---\n_Parsed lines: ${(latest._index || 0) + 1}/${(latest._total || 0)}. Parse errors: ${parseErrors}. Generated by velocity-artifacts.js v1.0.0._\n`;
 }
 
-function main(){
+function main() {
   const args = parseArgs(process.argv);
-  if (args.help){
+  if (args.help) {
     console.log('Usage: node scripts/velocity-artifacts.js [--out docs/velocity-forecast.md] [--limit 10]');
     process.exit(0);
   }
@@ -381,8 +381,8 @@ function main(){
   let entries = [];
   let parseErrors = 0;
   if (fs.existsSync(logPath)) {
-    const raw = fs.readFileSync(logPath,'utf8').split(/\r?\n/).filter(Boolean);
-    raw.forEach((line,i)=>{
+    const raw = fs.readFileSync(logPath, 'utf8').split(/\r?\n/).filter(Boolean);
+    raw.forEach((line, i) => {
       try {
         const obj = JSON.parse(line);
         obj._index = i;
@@ -391,20 +391,20 @@ function main(){
       }
       catch { parseErrors++; }
     });
-    entries.sort((a,b)=> new Date(a.timestamp) - new Date(b.timestamp));
+    entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
   }
-  const latest = entries.length ? entries[entries.length-1] : null;
+  const latest = entries.length ? entries[entries.length - 1] : null;
   const rolling = entries.length ? computeRolling(entries, args.limit) : null;
   const debugSignals = readDebugSignals();
   // also scan git commits in the analysis window (derive from latest entry)
-  let gitSignals = { found:0, fixes:0, failures:0, reverts:0, samples:[] };
+  let gitSignals = { found: 0, fixes: 0, failures: 0, reverts: 0, samples: [] };
   try {
     const win = deriveWindow(latest);
     if (win && win.start && win.end) {
       gitSignals = scanGitForSignals(win.start.toISOString(), win.end.toISOString());
     }
   } catch (e) {
-    gitSignals = { found:0, fixes:0, failures:0, reverts:0, samples:[] };
+    gitSignals = { found: 0, fixes: 0, failures: 0, reverts: 0, samples: [] };
   }
   const synergy = summarizeSynergy(debugSignals, latest, gitSignals);
   const nowISO = new Date().toISOString();
@@ -412,6 +412,16 @@ function main(){
   const outPath = path.isAbsolute(args.out) ? args.out : path.join(process.cwd(), args.out);
   ensureDir(outPath);
   fs.writeFileSync(outPath, md, 'utf8');
+
+  let codeSurvival = null;
+  try {
+    const survivalPath = path.join(process.cwd(), 'velocity-artifacts', 'code-survival.json');
+    if (fs.existsSync(survivalPath)) {
+      codeSurvival = JSON.parse(fs.readFileSync(survivalPath, 'utf8'));
+    }
+  } catch (e) {
+    // ignore
+  }
 
   const summaryPayload = {
     generated_at: nowISO,
@@ -423,6 +433,7 @@ function main(){
     } : null,
     rolling_window_limit: args.limit,
     synergy,
+    code_survival: codeSurvival,
     parse_errors: parseErrors,
   };
   writeSummaryJson(summaryPayload);
