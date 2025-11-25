@@ -52,7 +52,7 @@ function augmentStatBlocksFromAlphabeticalList(blocks, content) {
     'table', 'block', 'section', 'appendix', 'part', 'chapter',
     'track', 'trail', 'road', 'path', 'river', 'stream', 'lake', 'forest',
     'wood', 'hill', 'mountain', 'ravine', 'bluff', 'pier', 'bridge', 'cave',
-    'lair', 'den'
+    'lair', 'den', 'silver mine', 'mine', 'orc lair', 'lair'
   ];
   const extra = [];
   const entryPattern = /^\s*(\d+)\.\s*(.+)$/; // Allow optional space after period
@@ -76,6 +76,10 @@ function augmentStatBlocksFromAlphabeticalList(blocks, content) {
     // Clean formatting and trailing commas
     name = name.replace(/[_*]+/g, '').replace(/,\s*$/, '').trim();
     if (!name || name.length < 2) continue;
+
+    // Skip entries that look like location descriptions
+    // Examples: "Silver Mine, c. 3,900 sq. ft.", "36. Treasure Room, 20x30 ft.", etc.
+    if (/\b(?:\d+[,.])*\d+\s*(?:sq|square)\.?\s*(?:ft|feet)|^\d+\.\s+\w+.*\d+\s*x\s*\d+/i.test(name)) continue;
 
     const firstWord = name.split(/\s+/)[0].toLowerCase();
     if (skipPrefixes.includes(firstWord)) continue;
@@ -3787,11 +3791,14 @@ function updateStatBlockNavigator(blocks) {
     block._reviewKey = buildReviewKey(block);
     block.reviewed = getReviewFlag(block._reviewKey);
     // Mark whether this entry has an actual stat block
-    // True if: has fullText with stat block format, OR has raw text with HP/HD/AC stats
-    const hasStatFormat = !!(block.fullText && block.fullText.match(/\*\*[^*]+\*\*\s*\(/));
-    const hasStatData = !!(block.raw && block.raw.match(/\b(HD|HP|AC|XP)\s+\d+/i));
+    // True if: has comprehensive stat data (at least 2+ major properties) or validation
+    // This filters out narrative mentions with incidental HP data like "**3 females** (4 HP each)"
+    const raw = block.raw || block.fullText || '';
+    const statProperties = (raw.match(/\b(HD|HP|AC|XP|MV|Move|Saves|Attack|Special|Ability|Skills)\s+[\d\w\-]+/gi) || []).length;
     const hasValidation = !!(block.validation && (block.validation.errors || block.validation.warnings));
-    block.hasStatBlock = hasStatFormat || hasStatData || hasValidation;
+    // Real stat blocks have 2+ major properties, or validation data, or explicit HD/HP/AC in sequence
+    const hasComprehensiveStats = statProperties >= 2 || /\b(HD|XP)\s+[\d\+\-]+\b/.test(raw);
+    block.hasStatBlock = hasComprehensiveStats || hasValidation;
     return block;
   });
 
@@ -3865,15 +3872,19 @@ function classifyStatBlock(block) {
   // Detect if this is a named NPC (proper name, not generic)
   const isNamedNPC = detectNamedNPC(originalName);
 
+  // Check for character levels - strong indicator of humanoid NPC
+  const hasCharacterLevel = /(\d+(?:st|nd|rd|th)[-–]\d+(?:st|nd|rd|th)?\s+level|level\s+\d+|level\s+(fighter|cleric|magic-user|thief|ranger|druid|bard|paladin|monk))/i.test(combined);
+
   // NPC keywords (explicit people/roles)
   if (isNamedNPC ||
     /(\\bnpc\\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer)/i.test(combined) ||
-    /personality|attitude|demeanor/i.test(text)) {
+    /personality|attitude|demeanor/i.test(text) ||
+    hasCharacterLevel) {
     return isNamedNPC ? 'npc-named' : 'npc';
   }
 
   // Monster keywords (expanded) - check this AFTER room patterns
-  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|wood elf|wood elves|serjeant|lieutenant|fekk|yeexuul)/i.test(combined) ||
+  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|wood elf|wood elves|serjeant|lieutenant|fekk|yeexuul|lizardfolk)/i.test(combined) ||
     /monster|creature|spawn/i.test(text) ||
     hasStatSignals;
 
@@ -4253,7 +4264,13 @@ function getFilteredStatBlocks() {
     }));
   } else {
     // For non-missing views, only show entries that have actual stat blocks
-    blocksToFilter = statBlocks.filter(b => b.hasStatBlock !== false);
+    // Also filter out entries from alphabetical lists (which are typically location references)
+    blocksToFilter = statBlocks.filter(b => {
+      if (b.hasStatBlock === false) return false;
+      // Filter out entries with context "Alphabetical Listing" that don't have stat data
+      if (b.context === 'Alphabetical Listing' && !b.raw.match(/\b(HD|HP|AC|XP)\s+\d+/i)) return false;
+      return true;
+    });
   }
 
   return blocksToFilter.filter(block => {
