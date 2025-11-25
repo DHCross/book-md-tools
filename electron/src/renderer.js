@@ -797,6 +797,10 @@ document.getElementById('openFindBtn')?.addEventListener('click', () => {
   toggleFindStrip();
 });
 
+document.getElementById('prevLineBtn')?.addEventListener('click', () => {
+  navigateToPrevLine();
+});
+
 function updateFindStatus(msg) {
   const input = document.getElementById('findInput');
   if (input && msg) {
@@ -3354,6 +3358,37 @@ function detectTablesInRange(startLine, endLine) {
         tableType: 'encounter'
       });
     }
+    
+    // Bold-range table format (e.g., **01-05** entry, **06-08** entry, etc.)
+    // This is a common TRPG table format with lines like: **01-05** Description text
+    if (/^\*\*\d+[-–]\d+\*\*\s/.test(line)) {
+      // Look back up to 15 lines for a table header/title (heading, "D100", "Table", etc.)
+      let tableName = 'Range Table';
+      
+      for (let j = i - 1; j >= Math.max(0, i - 15); j--) {
+        const prevLine = lines[j] || '';
+        
+        // Check for "### D100 ...", "Table ...", or "### ..."
+        if (/^#+\s*(?:D\d+|Table|###)/i.test(prevLine)) {
+          tableName = prevLine.replace(/^#+\s*/, '').replace(/\*\*/g, '').trim().substring(0, 40);
+          break;
+        }
+        
+        // Stop if we hit another section/header that's clearly a different context
+        if (/^#{1,2}\s/.test(prevLine)) {
+          break;
+        }
+      }
+      
+      tables.push({
+        type: 'table',
+        name: tableName,
+        line: lineNum,
+        tableType: 'range-table'
+      });
+      // Skip ahead to avoid duplicate detections in the same table
+      i += 5;
+    }
   }
   
   // Deduplicate tables that are close together (within 3 lines)
@@ -4719,41 +4754,55 @@ function navigateToStatBlock(block) {
   log(`Navigated to stat block: ${block.name || 'Unknown'}`, 'info');
 }
 
-function nextStatBlock() {
-  if (!statBlocks || statBlocks.length === 0) return;
-  let nextIndex = 0;
-  if (activeStatIndex == null) nextIndex = 0;
-  else nextIndex = Math.min(statBlocks.length - 1, activeStatIndex + 1);
-  const block = statBlocks[nextIndex];
-  if (block) navigateToStatBlock(block);
+// Track last position for "jump back" functionality
+let lastEditorPosition = { line: 0, ch: 0 };
+let currentEditorPosition = { line: 0, ch: 0 };
+
+function recordCurrentPosition() {
+  const editor = getEditorAdapter();
+  if (editor && editor.getCursor) {
+    currentEditorPosition = { ...editor.getCursor() };
+  }
 }
 
-function prevStatBlock() {
-  if (!statBlocks || statBlocks.length === 0) return;
-  let prevIndex = 0;
-  if (activeStatIndex == null) prevIndex = 0;
-  else prevIndex = Math.max(0, activeStatIndex - 1);
-  const block = statBlocks[prevIndex];
-  if (block) navigateToStatBlock(block);
+function jumpToLastPosition() {
+  const editor = getEditorAdapter();
+  if (!editor) return;
+  
+  // Save current position before jumping
+  recordCurrentPosition();
+  
+  // Jump to last position
+  if (lastEditorPosition) {
+    if (editor.setCursor) {
+      editor.setCursor(lastEditorPosition);
+      editor.focus();
+      // Scroll position into view
+      if (editor.scrollIntoView) {
+        editor.scrollIntoView(lastEditorPosition, 100);
+      }
+    }
+  }
+}
+
+function updateLastPosition() {
+  if (currentEditorPosition.line !== lastEditorPosition.line || 
+      currentEditorPosition.ch !== lastEditorPosition.ch) {
+    lastEditorPosition = { ...currentEditorPosition };
+  }
 }
 
 function updateNavButtonsForContext() {
-  const prevBtn = document.getElementById('prevStatBtn');
-  const nextBtn = document.getElementById('nextStatBtn');
-  if (!prevBtn || !nextBtn) return;
+  const prevBtn = document.getElementById('prevLineBtn');
+  if (!prevBtn) return;
 
-  prevBtn.textContent = '◀ Prev Stat';
-  nextBtn.textContent = 'Next Stat ▶';
-  prevBtn.title = 'Previous Stat Block (Ctrl+Alt+↑)';
-  nextBtn.title = 'Next Stat Block (Ctrl+Alt+↓)';
+  prevBtn.textContent = '◀ Prev Line';
+  prevBtn.title = 'Jump to last position (Ctrl+Alt+←)';
 }
 
-function navigateNextByContext() {
-  nextStatBlock();
-}
-
-function navigatePrevByContext() {
-  prevStatBlock();
+function navigateToPrevLine() {
+  updateLastPosition();
+  jumpToLastPosition();
 }
 
 // Show Validation Details Panel for a selected stat block

@@ -34,7 +34,8 @@ const MONSTER_TYPE_DICTIONARY = {
     'crocodile', 'dog', 'dolphin', 'eagle', 'hawk', 'horse', 'lion', 'mammoth',
     'mule', 'otter', 'ox', 'panther', 'porpoise', 'ram', 'rat', 'seal', 'snake',
     'tiger', 'wolf', 'wolverine', 'turtle', 'lizard', 'bat', 'weasel',
-    'serpent', 'viper', 'cobra', 'python', 'tortoise', 'alligator'
+    'serpent', 'viper', 'cobra', 'python', 'tortoise', 'alligator',
+    'bison', 'herd', 'mastiff', 'hound'
   ],
 
   beasts: [
@@ -58,6 +59,11 @@ const MONSTER_TYPE_DICTIONARY = {
     'vampire', 'lich', 'ghost', 'shadow', 'banshee', 'revenant'
   ],
 
+  common_generics: [
+    'bugbear', 'ghoul', 'gnoll', 'griffon', 'hobgoblin', 'kobold',
+    'lizardfolk', 'nixies', 'nixie', 'sprite', 'orc', 'stirges', 'stirge', 'mastiff'
+  ],
+
   extraplanar: [
     'demon', 'devil', 'angel', 'elemental', 'djinni', 'efreeti', 'dao', 'marid'
   ]
@@ -75,6 +81,14 @@ const RANK_TITLES = new Set([
 // PC-like humanoid races
 const HUMANOID_RACES = new Set([
   'human', 'elf', 'dwarf', 'halfling', 'gnome', 'half-elf', 'half-orc'
+]);
+
+// Location/Feature keywords that should NOT be classified as creatures
+const LOCATION_KEYWORDS = new Set([
+  'inn', 'tavern', 'bar', 'pub', 'hall', 'house', 'cave', 'tower',
+  'temple', 'shrine', 'castle', 'fort', 'fortress', 'keep', 'dungeon',
+  'ruins', 'grove', 'forest', 'mountain', 'hill', 'river', 'lake', 'bridge',
+  'gate', 'wall', 'road', 'path', 'lair', 'den', 'nest'
 ]);
 
 // Class keywords
@@ -165,22 +179,43 @@ function extractSignals(creatureName, canonicalData, context = {}) {
 
 /**
  * Detect if a creature name contains a proper noun.
+ * Enhanced to better distinguish between:
+ * - Named unique creatures (Ember Raventree, Wily Wil, Yeexuul)
+ * - Generic creature types (bugbear, ghoul, kobold)
+ * - Locations (The Green Dragon Inn, Tower of Khell)
  */
 function detectProperNoun(creatureName) {
   if (creatureName.includes(',')) return false;
   if (isMonsterType(creatureName)) return false;
   
+  // Check if it looks like a location
+  const lowerName = creatureName.toLowerCase();
+  for (const loc of LOCATION_KEYWORDS) {
+    if (lowerName.includes(loc)) {
+      return false; // Locations are not proper nouns for creature classification
+    }
+  }
+  
   const words = creatureName.split(/\s+/);
   let capitalizedWords = 0;
+  let nonArticles = 0;
   
   for (const word of words) {
     const clean = word.replace(/[^a-zA-Z]/g, '');
+    
+    // Skip articles and common words
+    if (/^(the|a|an|of|and)$/i.test(clean)) continue;
+    
+    nonArticles++;
+    
+    // Check if word is capitalized (first letter upper, rest lower)
     if (clean && clean[0] === clean[0].toUpperCase() && clean.slice(1) === clean.slice(1).toLowerCase()) {
       capitalizedWords++;
     }
   }
   
-  return capitalizedWords >= 2;
+  // Need at least 2 non-article words with 2+ capitalized to be a proper noun
+  return capitalizedWords >= 2 || (nonArticles >= 1 && capitalizedWords >= 1);
 }
 
 /**
@@ -193,6 +228,32 @@ function isMonsterType(name) {
       return true;
     }
   }
+  return false;
+}
+
+/**
+ * Check if name is a generic creature type (no proper noun, just the species/type)
+ */
+function isGenericCreatureType(creatureName) {
+  const lower = creatureName.toLowerCase();
+  
+  // Check all categories in MONSTER_TYPE_DICTIONARY
+  for (const category of Object.values(MONSTER_TYPE_DICTIONARY)) {
+    for (const monsterType of category) {
+      // Exact match after stripping whitespace and punctuation
+      const cleanName = lower.replace(/[^a-z0-9]/g, '');
+      const cleanType = monsterType.replace(/[^a-z0-9]/g, '');
+      
+      if (cleanName === cleanType || cleanName.includes(cleanType)) {
+        // Don't treat it as generic if it has rank/title indicators
+        if (/\b(?:chieftain|captain|leader|chief|shaman|witch|doctor|priest)\b/i.test(creatureName)) {
+          return false;
+        }
+        return true;
+      }
+    }
+  }
+  
   return false;
 }
 
@@ -232,6 +293,25 @@ function classifyEntityV3(creatureName, canonicalData, context = {}) {
   
   const lowerName = creatureName.toLowerCase();
   const preCheck = extractPreCheckData(creatureName, canonicalData);
+  
+  // PRE-CHECK: Generic creature types (Bugbear, Ghoul, Kobold, etc.) → Monster
+  if (isGenericCreatureType(creatureName) && !signals.HasClassKeyword && !signals.HasRankTitle) {
+    format = 'B';
+    step = 5;
+    reasoning = 'Monster (generic creature type: ' + creatureName + ')';
+    legacyType = 'monster';
+    subtype = 'monster';
+    return {
+      format,
+      signals,
+      reasoning,
+      step,
+      type: legacyType,
+      subtype,
+      confidence,
+      warnings
+    };
+  }
   
   // STEP 1: HasSpells (Highest Priority)
   if (signals.HasSpells) {
@@ -341,8 +421,12 @@ function classifyEntityV3(creatureName, canonicalData, context = {}) {
 module.exports = {
   extractSignals,
   classifyEntityV3,
+  isGenericCreatureType,
+  isMonsterType,
+  detectProperNoun,
   MONSTER_TYPE_DICTIONARY,
   CLASS_KEYWORDS,
   RANK_TITLES,
-  HUMANOID_RACES
+  HUMANOID_RACES,
+  LOCATION_KEYWORDS
 };

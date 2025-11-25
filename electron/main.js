@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, clipboard } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -67,6 +67,38 @@ function createWindow() {
   } else {
     console.log('📊 Passive AI Watcher disabled by default.');
   }
+
+  // Provide a plain text copy/paste context menu across the renderer
+  mainWindow.webContents.on('context-menu', (event, params) => {
+    if (!mainWindow) return;
+
+    const template = [];
+
+    if (params.selectionText && params.selectionText.length > 0) {
+      template.push({
+        label: 'Copy Plain Text',
+        click: () => clipboard.writeText(params.selectionText),
+      });
+    }
+
+    if (params.isEditable) {
+      template.push({
+        label: 'Paste Plain Text',
+        click: () => {
+          const text = clipboard.readText();
+          if (text) {
+            mainWindow.webContents.insertText(text);
+          }
+        },
+      });
+    }
+
+    if (template.length === 0) {
+      return;
+    }
+
+    Menu.buildFromTemplate(template).popup({ window: mainWindow });
+  });
 }
 
 app.on('ready', createWindow);

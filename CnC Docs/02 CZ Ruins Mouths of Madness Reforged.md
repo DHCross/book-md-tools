@@ -712,9 +712,9 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Elf, Wood, bowmen:** *(These chaos/neutral 1st level wood elf fighters’ vital stats are HD 1d10, HP 8 each, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silently, pass without trace, and longbow training. They wear padded armor and carry longbows (specialized; +4 to hit; 1d6 + 1 damage) with twelve arrows each, short swords +1, and 3–18 silver pieces in coin each. XP: 13 + 1.)*
 
-**Elf, Wood, spearman:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 13, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longsword training. They have leather armor, spear [specialized; +3 "to hit"; 1d6+1 damage], longsword [+2 "to hit"; 1d8 damage], and 2-12 sp. XP: 13+1)_
+**Elf, Wood, spearman:** *(These 1st level chaotic neutral fighters’ vital statistics are HD 1d10, HP 8 each, AC 13, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. They wear leather armor. They carry a spear (specialized; +3 to hit; 1d6+1 damage), a longsword (+2 to hit; 1d8 damage), and 2–12 silver in coin each. Their special abilities include hide, move silent, and pass without trace. XP: 13+1.)*
 
-**Elf, Wood, swordsman:** _(They are 1st - 3rd level, chaotic neutral fighters whose vital stats are HD 1d10, HP 5 per level, AC 14, MV 30 ft. Their primary attributes are physical. Their significant attribute is strength 15. Their special abilities include hide, move silent, pass without trace, longsword training. They have leather armor, shield, longsword [specialized; +4 to +6 "to hit"; 1d8+2 damage], dagger, and 2-12 gp. XP: 13+1; 16+2; 26+3)_
+**Elf, Wood, swordsman:** _(They are 1st–3rd level, chaotic neutral fighters whose vital stats are HD 1d10, HP 5 per level, AC 14, MV 30 ft. Their primary attributes are physical. Their significant attribute is strength 15. Their special abilities include hide, move silent, pass without trace, longsword training. They wear leather armor and a shield. They carry a longsword [specialized; +4 to +6 to hit; 1d8+2 damage], dagger, and 2–12 gp. XP: 13+1; 16+2; 26+3.)_
 
 **Ghoul:** _(These chaotic evil undeads' vital stats are HD 2d8, HP 10, AC 14, MV 30 ft. Their saves are physical._ _They attacks with 2 claws for 1d4+2 damage and 1 bite for 1d4+1 damage. Any living creature, other than an elf [they are immune], that is clawed or bitten by these monsters must make a save versus paralysis or become rigid [paralyzed]. This paralysis lasts 20-50 minutes [1d4+1 x 10], unless a remove curse or remove paralysis is cast. These creatures are immune to sleep and charm spells. Their killed victims will become ghouls unless a bless spell is cast. These monsters will not enter the magic circle of a protection from evil spell._ _XP: 30+2)_
 
@@ -1035,7 +1035,7 @@ There are **12 wood elves** stationed here. Every day they send out a team of 4 
 
 **Wood Elf Scouts x 11:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longbow training. They are equipped with padded armor, longbow [specialized; +4 "to hit"; 1d6+1 damage], arrows x12, short sword, and 3-18 sp. XP: 13+1)_ 
 
-**Ember Raventree (wood elf leader):** _(He is a 4th level, chaotic neutral fighter whose vital stats are HD 4d10, HP 22, AC 16, MV 30 ft. His primary attributes are physical. His significant attributes are strength 17 and dexterity 17. His special abilities include hide, move silent, pass without trace, longsword training. He is equipped with an elven cloak, +1 leather armor, shield, longsword [specialized, +8 "to hit"; 1d8+3 damage], dagger, composite longbow [built for strength; +6 "to hit"; 1d8+2 damage], 12 arrows, 35 sp, and a golden armlet with agate worth 100 gp. XP: 166)_
+**Ember Raventree (wood elf leader)** (4th level, chaotic neutral fighter; HP 22, AC 16, MV 30 ft.; primary attributes strength, dexterity, constitution; significant attributes strength 17 and dexterity 17; special abilities hide, move silent, pass without trace, longsword training; leather armor +1, elven cloak; shield, longsword [specialized; +8 to hit; 1d8+3 damage], dagger, composite longbow [built for strength; +6 to hit; 1d8+2 damage] with 12 arrows, 35 silver in coin, golden armlet with agate worth 100 gold; XP: 166.)
 
 Ember is a pale-skinned wood elf with coppery-hair, hazel eyes, and corded muscles. He has a quiet resolve about him and is equally capable of kindness as he is brutality. His function is two-fold: 1.) to scout the perimeter of the wood elf domain, confronting hostiles/intruders when the odds are favorable (using "hit-and-run" tactics). 2.) to defend this stand of tamaracks, as the wood is valuable to the main wood elf tribe further east. (Its inner bark is used as a poultice [effects +1 healing per application, per day when applied by a proficient healer] to treat cuts, infected wounds, frostbite, and boils.)
 
@@ -1360,7 +1360,7 @@ _Kobold Jail, 10' x 10' x 8'_ _(CL 3 to bend bars, CL 3 to pick lock)_: The bars
 
 The **goblin prisoner** is a spy from #D who was captured when he snuck in between a shift change and fell in the pit trap. He is being ransomed for 10 gp but the goblins have not paid the price. Soon he is likely to become dinner for the kobolds.
 
-**Goblin prisoner:** _(This lawful evil humanoid's vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Its saves are physical. Its special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It wears a loin cloth. XP: 5+1)_
+**Goblin prisoner:** _(This goblin prisoner’s vital statistics are HD 1d6. HP 4. AC 14. MV 20 ft. disposition law/evil. Its saves are physical. Its special abilities include darkvision 60 ft. and light sensitivity, imposing a –1 penalty to attack rolls in bright light. It wears a loincloth. XP 5+1.)_
 
 If any of the PCs are captured, their possessions, after the chieftain takes his pick, will be brought to the armory #6. The goblin spy will attempt to bribe the PCs with false promises should they free him. He has observed the **secret door** but will only allude to it unless the PC(s) help him escape.
 
@@ -1422,7 +1422,7 @@ The Kree-Gubs are not averse to taking prisoners, and if combat occurs in which 
 
 **Goblin Patrol:** The halls of this lair are patrolled by units of **5 goblin warriors**, these goblins also functioning as conveyors of various goods. It takes this patrol 10 minutes to do a complete circuit of the lair, so the Castle Keeper should roll a 1d6 for every 20 feet traveled in this lair, a 6 indicating an encounter with the patrol. These humanoids, if encountered, will attack any intruders, letting loose their battle cry, _“KREE-AHK!”_  
 
-**Goblin patrol warriors x 5:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelin, dagger, and 3d6 cp. XP: 5+1)_
+**Goblin patrol warriors x 5:** _(These goblin patrol warriors’ vital statistics are HD 1d6. HP 4 each. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor and carry a javelin, a dagger, and 3d6 copper in coin each. Their special abilities include darkvision 60 ft. and light sensitivity, imposing a –1 penalty to attack rolls in bright light. XP 5+1.)_
 
 12. Intersection, 20' x 20':
 
@@ -1432,7 +1432,7 @@ The goblins observe the cave entrance for intruders. They will step forth to con
 
 There is a 3-in-4 chance the goblins from #13 will respond to the hue and cry of these guards. As 1d4 of the goblins at #13 will be sleeping, the CK should stagger their arrival. 
 
-**Goblin guards x 4:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, throwing axe, short sword, and 3d6 cp. XP: 5+1)_
+**Goblin guards x 4:** _(These goblin guards’ vital statistics are HD 1d6. HP 4 each. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor and carry a throwing axe, a short sword, and 3d6 copper in coin each. Their special abilities include darkvision 60 ft. and light sensitivity, imposing a –1 penalty to attack rolls in bright light. XP 5+1.)_
 
 ### >>[begin boxed text]<<
 
@@ -1454,7 +1454,7 @@ There are six goblins in this 35 by 20-foot room, which is centered by a rectang
 
 The goblins will be gathered around a table, eating fish and talking, on break from patrolling. 1d4 of them will be sleeping on one of the six pallets of straw that line the east wall. These goblins will relieve patrol group (above) every four hours.
 
-**Goblin patrol warriors x 6:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, javelin, dagger and 3d6 cp. XP: 5+1)_
+**Goblin patrol warriors x 6:** _(These goblin patrol warriors’ vital statistics are HD 1d6. HP 4 each. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor and carry a javelin, a dagger, and 3d6 copper in coin each. Their special abilities include darkvision 60 ft. and light sensitivity, imposing a –1 penalty to attack rolls in bright light. XP 5+1.)_
 
 - _Open barrel_: holds 18 javelins 
 - _20-gallon keg_: half-filled with sour, watered down red wine.
@@ -1489,9 +1489,9 @@ This is where the goblins work -- preparing food, mending things, carving, sharp
 
 **_CK's Note:_** for more on the double doors of the west side, see #14. 
 
-**Goblin males x 8:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 3, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, clubs, daggers and 2d6 cp. One male wears a gold chain worth 50 gp. XP: 5+1)_
+**Goblin males x 8:** _(These goblin males’ vital statistics are HD 1d6. HP 3 each. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor and carry clubs, daggers, and 2d6 copper in coin each. One male wears a gold chain worth 50 gold. Their special abilities include darkvision 60 ft. and light sensitivity, imposing a –1 penalty to attack rolls in bright light. XP 5+1.)_
 
-**Goblin females x 13:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 2, AC 12. Their saves are physical. They have 6-inch knives. XP: 3+1)_
+**Goblin females x 13:** _(These goblin females’ vital statistics are HD 1d6. HP 2 each. AC 12. MV 20 ft. disposition law/evil. Their primary attributes are physical. They carry 6-inch knives and 1–4 copper in coin each. Their special abilities include darkvision 60 ft. XP 3+1.)_
 
 - _Tool Rack:_ holds an assemblage of crude hammers, hand saws, pliers, pincers, tongs, carving knives, some earthenware mugs
 - _5-gallon cask_: holds watery beer
@@ -1554,7 +1554,7 @@ The goblins of this tribe are aware that their neighbors, the orcs of #H, have t
 
 **Goblin warriors x 3:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They are equipped with leather armor, belt axe, shortsword, light crossbow, 6 bolts, and 1d6 sp. XP: 5+1)_
 
-**Goblin serjeant:** _(This lawful evil humanoid's vital stats are HD 2d6, HP 11, AC 16, MV 20 ft. His saves are physical. His special ability is darkvision 60 ft., light sensitivity [-1 to attacks in bright light], and +1 damage on attacks due to high strength. He wears a breastplate and is equipped with a shield, morning star, shortsword, whip, a brass belt ring with keys to #18 and #20. He also wears a silver armlet [worth 5 gp] and has 3d6 sp. XP: 32)_
+**Goblin serjeant:** _(This goblin serjeant’s vital statistics are HD 2d6. HP 11. AC 16. MV 20 ft. disposition law/evil. His saves are physical. His special abilities include darkvision 60 ft., light sensitivity, imposing a –1 penalty to attack rolls in bright light, and a +1 bonus to damage rolls due to strength. He wears a breastplate and carries a medium wooden shield, a morning star, a short sword, and a whip. He also carries a brass belt ring with keys to areas 18 and 20, wears a silver armlet worth 5 gold, and has 3d6 silver in coin. XP 32.)_
 
 20. Prison and Torture Chamber, 25' diameter:
 
@@ -2442,7 +2442,7 @@ You see a narrow cave opening, 3 feet wide by 7 feet high. Within, you see a 50-
 
 **Area #g**: There are **2 gnoll sentries** posted here, both of which hide themselves in the nooks and alcoves near to where the natural part of this cave terminates. When a creature approaches the mouth of the cave, they begin to yip, bark, and howl terribly. This is usually enough to drive most potential intruders away, particularly their kobold neighbors (cave #B). It also keeps the wolves (cave #A) at bay, and frightens the hobgoblins (cave #R) as well, the latter having recently suffered terrible losses at the hands of these gnolls. 30 feet south of their position is a **stuck** _(CL 2 to force open)_ oaken door, iron-bound.
 
-**Gnoll sentries x 2:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 12, AC 15, MV 30 ft. Their saves are physical._ _They attack_ _by weapon at +2 damage due to strength. Their special ability is darkvision 60 ft. They each have patchwork leather armor, shield, throwing club x 2, morning star, and 2d4 gp. XP: 12+2)_
+**Gnoll sentries x 2:** _(These gnoll sentries’ vital statistics are HD 2d10. HP 12 each. AC 15. MV 30 ft. disposition evil/chaos. Their primary attributes are physical. They wear patchwork leather armor and a medium wooden shield. They carry two throwing clubs each, a morning star, and 2d4 gold in coin each. Their special abilities include darkvision 60 ft., and they receive a +2 bonus to damage rolls due to strength. XP 12+2.)_
 
 **_CK's Note:_** There is one distinct type of howl these humanoids will let loose should a threat prove tangible. This will alert the **male gnolls** of #58 and the **chieftain** (with his guards) of #59 to come forth in 1d4 rounds.
 
@@ -2467,9 +2467,10 @@ This 30 by 50-foot-long room is occupied by several humanoids: gnolls. In the ce
 
 ### >>[end boxed text]<<
 
-**Gnoll males x 4:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 12, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They each have patchwork leather armor, shield, throwing club x 2, morning star, and 2d4 gp. XP: 12+2)_
+**Gnoll males x 4:** _(These gnoll males’ vital statistics are HD 2d10. HP 12 each. AC 15. MV 30 ft. Disposition evil/chaos. Their primary attributes are physical. They wear patchwork leather armor and a medium wooden shield. They carry two throwing clubs each, a morning star, and 2d4 gold in coin each. Their special abilities include darkvision 60 ft., and they receive a +1 bonus to damage rolls due to strength. XP 12+2.)_
 
-**Gnoll females x 5:** _(These chaotic evil humanoids' vital stats are HD 1d10, HP 5, AC 12, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They have clubs, heavy knives, and 2d4 sp. XP: 5+1)_
+**Gnoll females x 5:** *(These chaos/evil gnoll females’ vital statistics are HD 1d10. HP 5 each. AC 12. MV 30 ft. disposition chaos/evil. Their primary attributes are physical. They carry clubs, heavy knives, and 2d4 silver in coin each. Their special ability is darkvision 60 ft. XP: 5+1.)*
+
 
 There is nothing of value to be found here.
 
@@ -2481,7 +2482,7 @@ This room is accessed via an oaken door. When the chieftain is present, the door
 
 Yeexuul is a terrible warrior with plans for expansion, beginning with the hobgoblins (cave #R) and eventually the bugbears (cave #Q). Once he has secured this significant portion of the _Mouths of Madness_, he intends to take on the more tactically-minded **kobolds** (#B). He will be here only if taken by surprise; otherwise he will have joined his tribesman to meet intruders. He has two guards that stand vigilant in the 20' passage that leads to his chamber. 
 
-**Gnoll guards x 2:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 14, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft._ _They attack_ _by weapon at +1 damage due to strength. They have chain hauberk armor, halberd, morning star, and 2d4 gp. XP: 10+2)_
+**Gnoll guards x 2:** _(These gnoll guards’ vital statistics are HD 2d10. HP 14 each. AC 15. MV 30 ft. disposition chaos/evil. Their primary attributes are physical. They wear chain hauberk armor and carry a halberd, a morning star, and 2d4 gold in coin each. Their special abilities include dark vision 60 ft., and they receive a +1 bonus to damage rolls due to strength. XP 10+2.)_
 
 **Yeexuul (Gnoll Chieftain):** _(This chaotic evil humanoid's vital stats are HD 3d10, HP 20, AC 17, MV 30 ft. His saves are physical. They attack by weapon at +1 damage due to strength. His special ability is darkvision 60 ft. He wears plate mail armor, and wields a throwing club, morning star, and 10-inch knife. In a pouch he holds 2 keys [to rooms #57 + #59] and 24 gp. XP: 100)_
 
