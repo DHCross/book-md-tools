@@ -22,16 +22,22 @@ FIELD_ALIASES = [
 
 _MULTILINE_FIELDS = {cfg["field"] for cfg in FIELD_ALIASES if cfg.get("multiline")}
 
+# Expanded inline pattern to catch various stat block formats:
+# - Standard: (Level/HD ... HP ... AC ...)
+# - Creature syntax: (This creature's vital stats are ...)
+# - Level-first: (He is a 3rd level ...) or (4th level, chaotic neutral ...)
+# - Direct HP: (HP 20, AC 18, MV ...)
 _INLINE_PAREN_PATTERN = re.compile(
-    r"\(([^)]*?(?:Level|HD)[^)]*?(?:HP|AC)[^)]*?)\)"
+    r"\(([^)]*?(?:Level|HD|vital stats are|\d+(?:st|nd|rd|th)\s+level|He is a|She is a|It is a)[^)]*?(?:HP|AC)[^)]*?)\)",
+    re.IGNORECASE
 )
 
 _INLINE_FIELD_PATTERNS = {
-    "Level": re.compile(r"\bLevel\s+([^,]+)"),
+    "Level": re.compile(r"\b(?:Level|He is a|She is a|It is a)\s+(\d+(?:st|nd|rd|th)\s+level|\d+)"),
     "HD": re.compile(r"\bHD\s+([^,]+)"),
     "HP": re.compile(r"\b(?:HP|Hit Points)\s+(\d+)"),
     "AC": re.compile(r"\bAC\s+(\d+)"),
-    "Move": re.compile(r"\bMove\s+([^,]+)"),
+    "Move": re.compile(r"\b(?:Move|MV)\s+([^,]+)"),
     "XP": re.compile(r"\bXP\s+(\d+)"),
 }
 

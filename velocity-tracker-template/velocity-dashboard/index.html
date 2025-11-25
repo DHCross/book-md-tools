@@ -22,6 +22,36 @@
 
         <!-- Summary Cards -->
         <div class="summary-cards">
+            <!-- Hours Clocked -->
+            <div class="card card-purple">
+                <h3 class="card-title">Hours Clocked</h3>
+                <div class="card-value-container">
+                    <span id="hours-clocked" class="card-value">--</span>
+                    <span class="unit">hrs</span>
+                </div>
+                <p class="card-desc">Actual time tracked</p>
+            </div>
+
+            <!-- Estimated Hours (Solo) -->
+            <div class="card card-orange">
+                <h3 class="card-title">Est. Solo Time</h3>
+                <div class="card-value-container">
+                    <span id="estimated-hours" class="card-value">--</span>
+                    <span class="unit">hrs</span>
+                </div>
+                <p class="card-desc">Traditional dev estimate</p>
+            </div>
+
+            <!-- Velocity Multiplier -->
+            <div class="card card-gold">
+                <h3 class="card-title">Velocity Multiplier</h3>
+                <div class="card-value-container">
+                    <span id="velocity-multiplier" class="card-value">--</span>
+                    <span class="unit">×</span>
+                </div>
+                <p class="card-desc">AI-assisted speedup</p>
+            </div>
+
             <!-- Synergy Ratio -->
             <div class="card card-blue">
                 <h3 class="card-title">Synergy Ratio</h3>
@@ -66,6 +96,21 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td class="metric-name">Commits Per Hour (Active)</td>
+                            <td id="active-commit-rate" class="metric-value">--</td>
+                            <td class="metric-desc">Commit rate during actual work sessions</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-name">Time Saved</td>
+                            <td id="time-saved" class="metric-value">-- hrs</td>
+                            <td class="metric-desc">Hours saved vs traditional development</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-name">Efficiency Gain</td>
+                            <td id="efficiency-gain" class="metric-value">--%</td>
+                            <td class="metric-desc">Reduction in development time</td>
+                        </tr>
                         <tr>
                             <td class="metric-name">Code Survival Rate</td>
                             <td id="code-survival-rate" class="metric-value">--%</td>

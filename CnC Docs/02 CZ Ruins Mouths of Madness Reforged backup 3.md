@@ -688,7 +688,7 @@ The following men and monsters are among those randomly encountered. Most monste
 
 The Castle Keeper is encouraged to bolster or reduce monster stats and numbers to appropriately challenge the player characters. Hit Point totals are suggested values open to CK modification.
 
-**Ape, carnivorous** (This creature's vital stats are Level 4(d10), HP 23, AC 15, MV 30 ft., 30 ft. climb, disposition neutrality. Its saves are physical. It attacks with two fist smashes that deliver 1d4 damage each, and it can also deliver an overbearing attack at the same time. If both fist attacks are successful, a grappling attack is allowed that, if successful, causes an additional 2d4 damage. Once an opponent is grappled, hugging damage continues until the character makes a successful strength save. This creature has a natural ability to hide, thus +5 to all hide checks, and receives a +3 to all surprise checks. XP: 80+4)
+**Ape, carnivorous** (This creature's vital stats are Level 4(d10), HP 23, AC 15, MV 30 ft., 30 ft. climb, disposition neutral. Its saves are physical. It attacks with two fist smashes that deliver 1d4 damage each, and it can also deliver an overbearing attack at the same time. If both fist attacks are successful, a grappling attack is allowed that, if successful, causes an additional 2d4 damage. Once an opponent is grappled, hugging damage continues until the character makes a successful strength save. This creature has a natural ability to hide, thus +5 to all hide checks, and receives a +3 to all surprise checks. XP: 80+4)
 
 **Bandit:** (This creature’s vital stats are Level 1(d8), HP 4, AC 13, MV 30 ft., disposition neutral/evil. It wears studded leather armor and carries a battle axe, a short bow with six arrows, and 1d6 sp. XP: 5+1.)
 
@@ -698,7 +698,7 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Batrachianoid*:** _(These chaotic evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 20 ft., 30 ft. hop, 40 ft. swim. Their saves are physical. They attack by weapon type. Their special abilities include a hopping attack for double damage [though -4 to their AC], and a chameleon ability that gives them +5 to hide checks and +10 to surprise checks. They have leather armor, spear, and 1d6 cp. XP: 11+1)_ 
 
-**Bear, black:** _(This creature’s vital stats are Level 3(d8), HP 15, AC 13, MV 40 ft., disposition neutrality. It attacks with two paws that deal 1d4 + 1 damage each and a bite that deals 1d6 + 1 damage. If both paws hit in the same round, the foe must make a strength save or become caught in its crushing hug for 2d4 + 1 damage. XP: 40 + 3.)
+**Bear, black:** _(This creature’s vital stats are Level 3(d8), HP 15, AC 13, MV 40 ft., disposition neutral. It attacks with two paws that deal 1d4 + 1 damage each and a bite that deals 1d6 + 1 damage. If both paws hit in the same round, the foe must make a strength save or become caught in its crushing hug for 2d4 + 1 damage. XP: 40 + 3.)
 
 **Boar, wild:** (This creature’s vital stats are Level 2(d8), HP 8, AC 16, MV 40 ft., disposition neutral. Its saves are physical. It attacks with a gore that deals 2d6 damage. It possesses twilight vision and fights as though it were a 5 HD creature. XP: 15 + 2.)_
 
@@ -712,9 +712,9 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Elf, Wood, bowmen:** *(These chaos/neutral 1st level wood elf fighters’ vital stats are HD 1d10, HP 8 each, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silently, pass without trace, and longbow training. They wear padded armor and carry longbows (specialized; +4 to hit; 1d6 + 1 damage) with twelve arrows each, short swords +1, and 3–18 silver pieces in coin each. XP: 13 + 1.)*
 
-**Elf, Wood, spearman:** *(These 1st level chaotic neutral fighters’ vital statistics are HD 1d10, HP 8 each, AC 13, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. They wear leather armor. They carry a spear (specialized; +3 to hit; 1d6+1 damage), a longsword (+2 to hit; 1d8 damage), and 2–12 silver in coin each. Their special abilities include hide, move silent, and pass without trace. XP: 13+1.)*
+**Elf, Wood, spearman:** *(These 1ˢᵗ level wood elf fighters’ vital statistics are Level 1(d10), HP 8 each, AC 13, MV 30 ft., disposition chaos/neutral. Their primary attributes are physical. Their significant attribute is dexterity 15. They attack with a specialized spear [+3 to hit; 1d6+1 damage] or a longsword [+2 to hit; 1d8 damage]. They wear leather armor and carry 2–12 silver in coin each. Their special abilities include hide, move silent, and pass without trace. XP: 13+1.)*
 
-**Elf, Wood, swordsman:** _(They are 1st–3rd level, chaotic neutral fighters whose vital stats are HD 1d10, HP 5 per level, AC 14, MV 30 ft. Their primary attributes are physical. Their significant attribute is strength 15. Their special abilities include hide, move silent, pass without trace, longsword training. They wear leather armor and a shield. They carry a longsword [specialized; +4 to +6 to hit; 1d8+2 damage], dagger, and 2–12 gp. XP: 13+1; 16+2; 26+3.)_
+**Elf, Wood**, swordsman: _(These 1ˢᵗ–3ʳᵈ level wood elf fighters’ vital statistics are Level 1–3(d10), HP 5 each per level, AC 14, MV 30 ft., disposition chaos/neutral. Their primary attributes are physical. Their significant attribute is strength 15. Their special abilities include hide, move silent, pass without trace, and longsword training. They wear leather armor and a shield. They attack with a specialized longsword [+4 to +6 to hit; 1d8+2 damage] and carry a dagger and 2–12 gold in coin. XP: 13+1; 16+2; 26+3.)_
 
 **Ghoul:** _(These creatures’ vital stats are Level 2(d8), HP 10 each, AC 14, MV 30 ft., disposition chaos/evil. Their primary attributes are physical. They attack with 2 claws for 1d4+2 damage and 1 bite for 1d4+1 damage. Their special abilities include paralysis (requiring a save versus paralysis upon being clawed or bitten by non-elves, lasting 20-50 minutes [1d4+1 x 10]), immunity to sleep and charm spells, and conversion of killed victims into ghouls (unless a  spell is cast). These monsters will not enter the magic circle of a  spell. XP: 30+2)_
 
@@ -964,8 +964,7 @@ Under the moss-gripped mound is a maze of muddy burrows (tunnels of c. two feet 
 
 In the larger of the two lairs there are **2 more boggiwog warriors** (as above), **3 females** (equal to the males, except of 4 HP each), **8 young** (non-combatant, 1 HP each), and **1 chieftain, Blook-glook**. The two warriors and chieftain win initiative versus any opponent that crawls into the fen mound of these batrachianoids.
 
-Blook-glook (Batrachianoid Chieftain)
-(This creature’s vital stats are HD 3(d10)+4, HP 20, AC 14, MV 20 ft., 30 ft. hop, 40 ft. swim, disposition chaos/evil. Its saves are physical. It attacks by weapon type and gains +2 damage from strength. Its special abilities include a hopping attack that deals double damage while imposing a –4 penalty to its AC during the leap, and a chameleon ability that grants a +5 bonus to hide checks and a +10 bonus to surprise checks. It carries a spear +1 (+4 to hit, 1d6+3 damage) and wears a diamond-studded gold necklace worth 1,000 gp. XP: 95.)
+**Blook-glook** (Batrachianoid Chieftain)_(This Batrachianoid’s vital stats are Level 3(d10)+4, HP 20, AC 14, MV 20 ft., 30 ft. hop, 40 ft. swim, disposition chaos/evil. Its primary attributes are physical. It attacks by weapon type and gains +2 damage from strength. The weapon it attacks with is a  (+4 to hit, 1d6+3 damage). Its special abilities include a hopping attack that deals double damage while imposing a –4 penalty to its AC during the leap, and a chameleon ability that grants a +5 bonus to hide checks and a +10 bonus to surprise checks. It wears a diamond-studded gold necklace worth 1,000 gold in coin. XP: 95)_
 
 Treasure Cache: Hidden beneath a stone slab is a wooden barrel containing 111 cp, 185 sp, a gold ingot worth 100 gp, a potion of cure critical wounds, a potion of cure poison, and a ring of water walking.
 
@@ -979,7 +978,7 @@ The trees of this area are strung with thick layers of cobwebs. Perhaps these ar
 
 **2 giant spiders** have spun a nest of webs between the trees and underbrush here, occupying an area of 120 square feet. On the ground, under dead leaves and conifer needles, lies a pile of parched bones and scraps of metal. Among these is a **+1 warhammer of lesser undead detection**. This _intelligent weapon_ glows with an indigo-blue light in the presence (50-ft. radius) of lesser undead (zombies, skeletons, ghouls -- anything HD 2 or less). The hammer will urge its wielder to destroy such foul vermin, "...in the name of Thor!" Other items include a rusted suit of chain mail, a cracked kite shield emblazoned with a green dragon, and the buckles and clasps of garments long since rotted.
 
-**Spider, Giant (medium-sized) x 2:** _(These neutral creatures' vital stats are HD 3d8, HP 13, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 1d6 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim suffers an additional 1d4 damage and paralyzation for 1d6 hours. These spiders also can throw a web 8 times per day as per the web spell*. XP: 52+3)_
+**Spider, Giant (medium-sized) x 2:** _(These neutral creatures’ vital stats are Level 3(d8), HP 13 each, AC 15, MV 30 ft., climb 20 ft., disposition neutral. Their primary attributes are physical. They attack with a bite for 1d6 damage, and their bite injects venom that deals 1d6 additional damage on a failed save; a second save is required one round later, and failure inflicts 1d4 damage and paralyzation for 1d6 hours. They can also throw a web 8 times per day as per the web spell. XP: 52+3.)_
 
 * see PHB for more information.
 
@@ -1009,7 +1008,7 @@ Here dappled sunlight illuminates a tree-lined stream of clear and gentle flow. 
 
 Hidden in the alders is a nest of three giant ticks of 2.5-foot length. These mega-insects will bide their time, crawling under leaves, between stones, preying on creatures that drink of the sparkling water.
 
-**Tick, Giant x 3:** (_These neutral creatures' vital stats are HD 2d8, HP 11, AC 15, MV 10 ft. They attack with a bite for 1d4 points of damage. Their saves are physical. Their special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half speed with a -3 AC penalty. XP: 20+2)_
+**Tick, Giant x 3:** _(These neutral creatures' vital stats are HD 2d8, HP 11, AC 15, MV 10 ft. They attack with a bite for 1d4 points of damage. Their saves are physical. Their special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half speed with a -3 AC penalty. XP: 20+2)_
 
 A careful search of the area will reveal a pair of goblin skeletons under the leaves of the alder trees. One wears a waterproof leather backpack containing a corked bottle of weapon oil, 13 gp, a moonstone (worth 20 gp), a fine set of thieves' tools, and a **potion of healing** (2d4+2).
 
@@ -1035,7 +1034,7 @@ There are **12 wood elves** stationed here. Every day they send out a team of 4 
 
 **Wood Elf Scouts x 11:** _(These 1st level Wood Elf fighters’ vital stats are Level 1(d10), HP 8 each, AC 12, MV 30 ft., disposition chaos/neutral. Their primary attributes are strength, dexterity, and constitution. Their significant attributes are dexterity 15. They wear padded armor, a longbow (deals 1d6+1 damage), a short sword, and 3-18 silver in coin. Their special abilities include hide, move silent, pass without trace, and longbow training. XP: 13+1)_ 
 
-**Ember Raventree (wood elf leader)** (4th level, chaotic neutral fighter; HP 22, AC 16, MV 30 ft.; primary attributes strength, dexterity, constitution; significant attributes strength 17 and dexterity 17; special abilities hide, move silent, pass without trace, longsword training; leather armor +1, elven cloak; shield, longsword [specialized; +8 to hit; 1d8+3 damage], dagger, composite longbow [built for strength; +6 to hit; 1d8+2 damage] with 12 arrows, 35 silver in coin, golden armlet with agate worth 100 gold; XP: 166.)
+**Ember Raventree (wood elf leader)** _(This **4ᵗʰ level** wood elf fighter’s vital stats are **HP 22**, **AC 16**, **MV 30 ft.**, disposition **chaos/neutral**. His **primary attributes** are strength, dexterity, and constitution. His **significant attributes** are strength 17 and dexterity 17. He attacks with his specialized longsword [+8 to hit; 1d8+3 damage] or his composite longbow [built for strength; +6 to hit; 1d8+2 damage] with 12 arrows. He wears ***leather armor +1***, an elven cloak, and carries a shield, a dagger, **35 silver in coin**, and a golden armlet with agate worth **100 gold**. His special abilities include hide, move silent, pass without trace, and longsword training. **XP: 166**.)_
 
 Ember is a pale-skinned wood elf with coppery-hair, hazel eyes, and corded muscles. He has a quiet resolve about him and is equally capable of kindness as he is brutality. His function is two-fold: 1.) to scout the perimeter of the wood elf domain, confronting hostiles/intruders when the odds are favorable (using "hit-and-run" tactics). 2.) to defend this stand of tamaracks, as the wood is valuable to the main wood elf tribe further east. (Its inner bark is used as a poultice [effects +1 healing per application, per day when applied by a proficient healer] to treat cuts, infected wounds, frostbite, and boils.)
 
@@ -1175,7 +1174,7 @@ The following creatures are among those randomly encountered inside the _Mouths 
 
 **Spider, Giant (medium-sized):** _(These neutral creatures' vital stats are HD 3d8, HP 13, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 1d6 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim suffers an additional 1d4 damage and paralyzation for 1d6 hours. These spiders also can throw a web 8 times per day as per the web spell [as found in the PHB]. XP: 52+3)_
 
-**Tick, Giant:** _(This creature’s vital stats are Level 2(d8), HP 11, AC 15, MV 10 ft., disposition neutrality. It attacks with a bite for 1d4 points of damage. Its special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half-speed with a -3 AC penalty. XP: 20+2)_
+**Tick, Giant:** _(This creature’s vital stats are Level 2(d8), HP 11, AC 15, MV 10 ft., disposition neutral. It attacks with a bite for 1d4 points of damage. Its special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half-speed with a -3 AC penalty. XP: 20+2)_
 
 * see **Appendix C**.
 
@@ -1247,7 +1246,7 @@ There are **3 kobolds** here. They have a hole drilled into the wall, and throug
 
 **Tactics**: Any intrusion will result in the kobold youngster running to alert the kobolds of rooms #7, 8, and 9. First it will traverse a board that spans the **pit** **[X]**, then pull the board with him, thus effecting the trap. Meantime, the two kobold guards will use blowguns to attack intruders, then javelins. These darts are laced with a _sleep_ toxin. If an intruder gets by, the kobolds will unleash the guard dog on them. The kobolds will attempt to take prisoners whom they will then ransom for 10 gp each, such prisoners being sequestered in the chieftain's chamber (#9). 
 
-**Kobold Guards x 2:** _(These lawful evil humanoids' vital stats are HD 1d4, HP 3, AC 15, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. and light sensitivity[-1 to attacks in bright light]. They have leather armor, javelins x3, dagger, blowguns, 2 needles, and 1d6 sp. The blowgun needles hold a sleep toxin, save versus poison [CL 3] or fall into a slumber for 4d4 rounds. XP: 9+1)_
+**Kobold Guards x 2:** _(These creatures’ vital stats are Level 1(d4), HP 3 each, AC 15, MV 30 ft., disposition law/evil. Their primary attributes are physical. They have leather armor, javelins x3, dagger, blowguns, and 1d6 silver in coin. Their special abilities include Dark vision 60 ft., light sensitivity [-1 to attacks in bright light], and the blowgun needles hold a sleep toxin, save versus poison [CL 3] or fall into a slumber for 4d4 rounds. XP: 9+1)_
 
 **Mastiff:** _(This creature’s vital stats are Level 3(d8), HP 15, AC 14, MV 35 ft., disposition neutral. It attacks with a bite for 2-8 points of damage. XP: 75)_
 
@@ -1868,7 +1867,7 @@ Amongst the heaps of fur and cloth littered about this 40 by 60-foot chamber, th
 
 The males will rise to arms upon intrusion, issuing their hue and cry, and possibly (1-in-4 chance) summoning forth the chieftain, **King Krusher** (#35).
 
-**Orcs x 6:** _(These creatures’ vital stats are Level 1(d8), HP 5 each, AC 14, MV 30 ft., disposition law/evil. Their primary attributes are physical. They have piecemeal armor, shield, spear, mace, and 1d8 electrum in coin. Their special abilities are Dark vision 60 ft. and light sensitivity [-1 to attacks in bright light]. XP: 5+1)_
+**Orcs x 6:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, spear, mace, and 1d8 ep. XP: 5+1)_
 
 33. Common Hall, c. 1,350 sq. ft.:
 
@@ -2124,9 +2123,9 @@ The dark tunnel slopes up about 7 feet and opens to a cave of 4.5 feet high, and
 
 A large female **black bear** and her **2 cubs** dwell in this cave. There is a 70% chance the bears are out foraging by the river, as the cubs are a year old and learning how to hunt for food—squirrels, beaver, fish, tender grass, pine nuts, honey, etc. The mother bear has learned her lesson with her neighbors, the **rats** of cave **#M**, and no longer hunts them, unless particularly desperate.
 
-**Black Bear** (This creature’s vital stats are Level 3(d8), HP 15, AC 13, MV 40 ft., disposition neutrality. Its saves are physical. It attacks with two paws that deal 1d4 + 1 damage each and a bite that deals 1d6 + 1 damage. If both paws hit in the same round, the victim must make a strength save or become caught in its crushing hug for 2d4 + 1 damage. Because she is defending her young she is exceptionally aggressive and gains a +2 bonus to hit. XP: 95.)
+**Black Bear** (This creature’s vital stats are Level 3(d8), HP 15, AC 13, MV 40 ft., disposition neutral. Its saves are physical. It attacks with two paws that deal 1d4 + 1 damage each and a bite that deals 1d6 + 1 damage. If both paws hit in the same round, the victim must make a strength save or become caught in its crushing hug for 2d4 + 1 damage. Because she is defending her young she is exceptionally aggressive and gains a +2 bonus to hit. XP: 95.)
 
-**Black Bear Cubs, 2** (These young bears’ vital stats are Level 1(d8), HP 6 each, AC 12, MV 30 ft., disposition neutrality. Their primary attributes are physical. Their saves are physical. They attack with a bite that deals 1d4 damage. XP: 5 + 1.)
+**Black Bear Cubs, 2** (These creatures’ vital stats are Level 1(d8), HP 6 each, AC 12, MV 30 ft., disposition neutral. Their primary attributes are physical. They attack with a bite that deals 1d4 damage. XP: 5 + 1)
 
 The bears sleep in a spot of the Castle Keeper's determination, a cool earthy place where they may curl up together. If it is deep winter, a period of only about a month, the bears may be hibernating; thus, they will be present here 100% of the time as opposed to 30%. 
 

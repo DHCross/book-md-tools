@@ -24,6 +24,21 @@
     --yellow-800: #854d0e;
     --yellow-900: #713f12;
     
+    --purple-50: #faf5ff;
+    --purple-500: #a855f7;
+    --purple-800: #6b21a8;
+    --purple-900: #581c87;
+    
+    --orange-50: #fff7ed;
+    --orange-500: #f97316;
+    --orange-800: #9a3412;
+    --orange-900: #7c2d12;
+    
+    --gold-50: #fffbeb;
+    --gold-500: #f59e0b;
+    --gold-800: #92400e;
+    --gold-900: #78350f;
+    
     --font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -152,6 +167,33 @@ body {
 .card-yellow .card-value { color: var(--yellow-900); }
 .card-yellow .unit { color: var(--yellow-800); }
 .card-yellow .card-desc { color: var(--yellow-800); }
+
+.card-purple {
+    background-color: var(--purple-50);
+    border-left-color: var(--purple-500);
+}
+.card-purple .card-title { color: var(--purple-800); }
+.card-purple .card-value { color: var(--purple-900); }
+.card-purple .unit { color: var(--purple-800); }
+.card-purple .card-desc { color: var(--purple-800); }
+
+.card-orange {
+    background-color: var(--orange-50);
+    border-left-color: var(--orange-500);
+}
+.card-orange .card-title { color: var(--orange-800); }
+.card-orange .card-value { color: var(--orange-900); }
+.card-orange .unit { color: var(--orange-800); }
+.card-orange .card-desc { color: var(--orange-800); }
+
+.card-gold {
+    background-color: var(--gold-50);
+    border-left-color: var(--gold-500);
+}
+.card-gold .card-title { color: var(--gold-800); }
+.card-gold .card-value { color: var(--gold-900); }
+.card-gold .unit { color: var(--gold-800); }
+.card-gold .card-desc { color: var(--gold-800); }
 
 /* Section Containers */
 .section-container {

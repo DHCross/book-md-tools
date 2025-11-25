@@ -32,6 +32,33 @@ async function fetchData() {
 function updateDashboard(data) {
     // 1. Update Summary Cards
     const synergy = data.synergy || {};
+    const latest = data.latest_run || {};
+    const timeTracking = data.time_tracking || {};
+
+    // Hours Clocked (from manual time tracking)
+    const hoursClockedValue = timeTracking.actual_hours || 0;
+    const hoursClocked = hoursClockedValue > 0 
+        ? hoursClockedValue.toFixed(1)
+        : '--';
+    document.getElementById('hours-clocked').textContent = hoursClocked;
+
+    // Estimated Solo Hours (3-4x multiplier baseline)
+    const estimatedSoloHours = timeTracking.estimated_solo_hours || 
+        (hoursClockedValue > 0 ? hoursClockedValue * 3.5 : 0);
+    const estimatedHours = estimatedSoloHours > 0
+        ? estimatedSoloHours.toFixed(1)
+        : '--';
+    document.getElementById('estimated-hours').textContent = estimatedHours;
+
+    // Velocity Multiplier
+    const velocityMultiplier = timeTracking.velocity_multiplier || 
+        (estimatedSoloHours > 0 && hoursClockedValue > 0 
+            ? estimatedSoloHours / hoursClockedValue 
+            : 0);
+    const multiplier = velocityMultiplier > 0
+        ? velocityMultiplier.toFixed(1)
+        : '--';
+    document.getElementById('velocity-multiplier').textContent = multiplier;
 
     // Synergy Ratio
     const synergyRatio = synergy.synergy_ratio !== undefined
@@ -53,6 +80,25 @@ function updateDashboard(data) {
 
     // 2. Update Detailed Metrics
 
+    // Active Commit Rate (commits per actual work hour)
+    const totalCommits = latest.total_commits || 0;
+    const activeCommitRate = hoursClockedValue > 0
+        ? (totalCommits / hoursClockedValue).toFixed(2)
+        : '--';
+    document.getElementById('active-commit-rate').textContent = activeCommitRate;
+
+    // Time Saved
+    const timeSaved = estimatedSoloHours > 0 && hoursClockedValue > 0
+        ? (estimatedSoloHours - hoursClockedValue).toFixed(1) + ' hrs'
+        : '-- hrs';
+    document.getElementById('time-saved').textContent = timeSaved;
+
+    // Efficiency Gain
+    const efficiencyGain = estimatedSoloHours > 0 && hoursClockedValue > 0
+        ? (((estimatedSoloHours - hoursClockedValue) / estimatedSoloHours) * 100).toFixed(1) + '%'
+        : '--%';
+    document.getElementById('efficiency-gain').textContent = efficiencyGain;
+
     // Code Survival Rate
     const codeSurvival = data.code_survival || {};
     const survivalRate = codeSurvival.survival_rate !== undefined
@@ -67,36 +113,39 @@ function updateDashboard(data) {
 function renderChart(data) {
     const ctx = document.getElementById('velocityChart').getContext('2d');
 
-    // If we had historical data in the JSON, we would map it here.
-    // The current velocity-summary.json mainly has the "latest" run and "rolling" stats.
-    // Ideally, the JSON should include an array of recent runs for the chart.
-    // Let's assume we might want to visualize the Rolling Average vs Latest.
-
-    // For this MVP, let's create a simple bar chart comparing "Commits/Hour" vs "Net Synergy Velocity"
-
     const latest = data.latest_run || {};
     const synergy = data.synergy || {};
+    const timeTracking = data.time_tracking || {};
 
+    // Get key metrics for visualization
+    const hoursClockedValue = timeTracking.actual_hours || 0;
+    const estimatedSoloHours = timeTracking.estimated_solo_hours || (hoursClockedValue * 3.5);
     const rawVelocity = latest.commits_per_hour || 0;
     const netVelocity = synergy.net_synergy_velocity || 0;
+    const totalCommits = latest.total_commits || 0;
+    const activeCommitRate = hoursClockedValue > 0 ? (totalCommits / hoursClockedValue) : 0;
 
+    // Create a comparison chart: Actual vs Estimated Time
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Raw Velocity', 'Net Synergy Velocity'],
-            datasets: [{
-                label: 'Commits per Hour',
-                data: [rawVelocity, netVelocity],
-                backgroundColor: [
-                    'rgba(59, 130, 246, 0.5)', // Blue
-                    'rgba(234, 179, 8, 0.5)'   // Yellow
-                ],
-                borderColor: [
-                    'rgb(59, 130, 246)',
-                    'rgb(234, 179, 8)'
-                ],
-                borderWidth: 1
-            }]
+            labels: ['Hours Worked', 'Active Commit Rate', 'Calendar Commit Rate'],
+            datasets: [
+                {
+                    label: 'AI-Assisted (Actual)',
+                    data: [hoursClockedValue, activeCommitRate, rawVelocity],
+                    backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                    borderColor: 'rgb(34, 197, 94)',
+                    borderWidth: 2
+                },
+                {
+                    label: 'Traditional Solo Est.',
+                    data: [estimatedSoloHours, activeCommitRate / 3.5, rawVelocity / 3.5],
+                    backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                    borderColor: 'rgb(239, 68, 68)',
+                    borderWidth: 2
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -106,17 +155,36 @@ function renderChart(data) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Commits / Hour'
+                        text: 'Value'
                     }
                 }
             },
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'top'
                 },
                 title: {
                     display: true,
-                    text: 'Velocity Impact Analysis'
+                    text: 'AI-Assisted vs Traditional Development Comparison',
+                    font: {
+                        size: 16
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y.toFixed(2);
+                            const dataIndex = context.dataIndex;
+                            
+                            if (dataIndex === 0) {
+                                return `${label}: ${value} hours`;
+                            } else {
+                                return `${label}: ${value} commits/hr`;
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -1448,6 +1448,8 @@ async function handleOpenFileClick() {
   const filePath = await window.electronAPI.selectFile();
   if (filePath) {
     currentFilePath = filePath;
+    // Migrate old review keys to new format (removes line numbers from keys)
+    migrateReviewKeys();
     const inputPath = document.getElementById('inputPath');
     if (inputPath) inputPath.value = filePath;
     await loadFile(filePath);
@@ -3655,7 +3657,11 @@ function detectInlineStatBlocks(content) {
 
   const lines = content.split('\n');
   const blocks = [];
-  const statSignal = /(hp\s*\d+|hd\s*\d+|ac\s*\d+|mv\s*\d+)/i;
+  // Expanded stat signal to catch various formats:
+  // - Standard: HP, HD, AC, MV
+  // - Level-first: "3rd level", "4th level"
+  // - Creature/humanoid syntax: "creature's vital stats", "humanoid's vital stats"
+  const statSignal = /(hp\s*\d+|hd\s*\d+|ac\s*\d+|mv\s*\d+|\d+(?:st|nd|rd|th)\s+level|vital stats are|creature's vital|humanoid's vital)/i;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -3666,8 +3672,9 @@ function detectInlineStatBlocks(content) {
     if (!nameMatch) continue;
 
     let name = nameMatch[1].trim();
-    name = name.replace(/[:.]+$/, '').trim();
-    if (!name) continue;
+    // Clean up markdown artifacts
+    name = name.replace(/^[\s\*:]+|[\s\*:]+$/g, '').trim();
+    if (!name || name.length <= 1) continue;
 
     // Skip single-word creature references in narrative text (e.g., "ally of the **ogre**")
     // These are just inline references, not stat block entries
@@ -3860,12 +3867,34 @@ function classifyStatBlock(block) {
     return 'feature';
   }
 
-  // Object/location cues that should override creature words
-  if (/\b(statue|altar|compartment|lock|locked|stuck|padlocked|barred|secret\s+compartment|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle)\b/i.test(combined)) {
+  // Monster keywords (expanded, normalized) - CHECK THIS FIRST before room/location checks
+  // This ensures creatures like "Rats, River" and "Snake, poisonous" are caught as monsters
+  // Normalize plural forms and descriptors
+  const normalize = w => w.toLowerCase().replace(/(es|s)$/, '');
+  const monsterTypes = [
+    'dragon','goblin','orc','troll','kobold','bugbear','hobgoblin','skeleton','zombie','ghoul','ghast','wraith','specter','lich','mummy','vampire','demon','devil','fiend','ogre','giant','beast','slime','ooze','gelatinous','fungus','mold','worm','centipede','spider','rat','bat','wolf','bear','boar','lion','griffon','wyvern','basilisk','naga','losel','lizardfolk','bandit','brigand','ape','turtle','snapping','snake','otter','nixie','stirge','mastiff','animal','herd','bison','cattle','deer','elk','wolverine'
+  ];
+  const words = (combined.match(/\w+/g) || []).map(normalize);
+  const hasMonsterType = words.some(w => monsterTypes.includes(w));
+  const isMonster = hasMonsterType ||
+    /monster|creature|spawn/i.test(text) ||
+    /(guards?|warriors?|males?|females?|young|cubs?|raiders?|patrol|sentries)\s+x\s*\d+/i.test(combined) ||
+    /(cave\s+bats?|river\s+rats?|giant\s+rats?|black\s+bear|wood\s+elf|poisonous\s+snake|deadly\s+snake|wolverine|rats?,\s+river)/i.test(combined) ||
+    hasStatSignals;
+
+  if (isMonster) {
+    // Check if also a hazard (dual categorization) - only for specific hazard creatures
+    const isHazardToo = /(green\s+slime|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
+    return isHazardToo ? 'hazard' : 'monster'; // Prioritize hazard for dual-category entities
+  }
+
+  // Object/location cues that should override creature words (only after monster check)
+  if (/\b(statue|altar|compartment|lock|locked|stuck|padlocked|barred|secret\s+compartment|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle)\b/i.test(combined) &&
+      !hasMonsterType) {
     return 'feature';
   }
 
-  // Room/Architectural patterns - check BEFORE NPC detection for location names
+  // Room/Architectural patterns - check AFTER monster detection
   // Use word boundaries to avoid matching creature names like "Cave bats"
   if (hasLocationWord ||
     (/\b(cave|cavern|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined)) ||
@@ -3880,8 +3909,9 @@ function classifyStatBlock(block) {
   // Detect if this is a named NPC (proper name, not generic)
   const isNamedNPC = detectNamedNPC(originalName);
 
-  // Check for character levels - strong indicator of humanoid NPC
+  // Check for character levels - may indicate humanoid NPC; only treat as NPC if there are humanoid indicators
   const hasCharacterLevel = /(\d+(?:st|nd|rd|th)[-–]\d+(?:st|nd|rd|th)?\s+level|level\s+(fighter|cleric|magic-user|thief|ranger|druid|bard|paladin|monk))/i.test(combined);
+  const hasHumanoidIndicator = /\b(humanoid|human|elf|dwarf|gnoll|goblin|orc|kobold|losel|man|woman|commoner|merchant|brigand|bandit|thief|npc)\b/i.test(combined);
 
   // Special unique NPCs - specific named bosses, leaders, or unique roles
   // Only treat generic role words (shaman, chieftain, leader, mate, lieutenant)
@@ -3896,22 +3926,8 @@ function classifyStatBlock(block) {
   if (isNamedNPC || isUniqueNPC ||
     /\bnpc\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer|prisoner|captive/i.test(combined) ||
     /personality|attitude|demeanor/i.test(text) ||
-    hasCharacterLevel) {
+    (hasCharacterLevel && hasHumanoidIndicator)) {
     return (isNamedNPC || isUniqueNPC) ? 'npc-named' : 'npc';
-  }
-
-  // Monster keywords (expanded) - check this AFTER room patterns
-  // Include generic creature types, animals, and quantity-based groups
-  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|lizardfolk|bandit|brigand|ape|turtle|snapping|snake|poisonous|deadly|otter|nixie|stirge|stirges|mastiff|animal|herd|bison|cattle|deer|elk)/i.test(combined) ||
-    /monster|creature|spawn/i.test(text) ||
-    /(guards?|warriors?|males?|females?|young|cubs?|raiders?|patrol|sentries)\s+x\s*\d+/i.test(combined) ||
-    /(cave\s+bats?|river\s+rats?|giant\s+rats?|black\s+bear|wood\s+elf|poisonous\s+snake)/i.test(combined) ||
-    hasStatSignals;
-
-  if (isMonster) {
-    // Check if also a hazard (dual categorization) - only for specific hazard creatures
-    const isHazardToo = /(green\s+slime|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
-    return isHazardToo ? 'hazard' : 'monster'; // Prioritize hazard for dual-category entities
   }
 
   // Trap detection - check for explicit trap indicators
@@ -3927,21 +3943,27 @@ function classifyStatBlock(block) {
     return 'trap';
   }
 
-  // Hazard keywords (environmental dangers)
-  if (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetle)/i.test(combined) ||
-    /hazard|environmental|danger|save vs/i.test(text)) {
+  // Hazard keywords (environmental dangers) - exclude if it has NPC/creature indicators
+  const hasNPCIndicator = /(shaman|chieftain|leader|mate|lieutenant|warrior|fighter|cleric|thief|ranger)/i.test(combined);
+  if (!hasNPCIndicator && !hasMonsterType &&
+      (/(poison|acid|fire|lava|spikes|chasm|hazard|danger|aversion|ammonia|curse|sleeping|exploding|flesh|beetle|slime)/i.test(combined) ||
+       /hazard|environmental|danger|save vs/i.test(text))) {
     return 'hazard';
   }
 
+  // Event/Encounter detection (mobile groups)
+  if (/(patrol|raiders?|sentries|guards?|warriors?|mob|encounter|event)/i.test(combined)) {
+    return 'event';
+  }
+
   // Feature (only for specific environmental elements)
-  if (/(fountain|altar|statue|door|chest|room)/i.test(combined)) {
+  if (/(fountain|altar|statue|door|chest|room|handout|player handout)/i.test(combined)) {
     return 'feature';
   }
 
   // Default to monster if it has creature-like words but didn't match above
   // But exclude location-specific patterns and organization names
-  if (/(elf|elves|gnoll|gnolls|kobold|kobolds|goblin|goblins|orc|orcs|human|humans|man|men|woman|women|child|children|male|female|guards?|warriors?|raiders?|patrol)/i.test(combined) &&
-      !/(college|library|school|guild|company|krushers?|faction|organization)/i.test(combined)) {
+  if (hasMonsterType && !/(college|library|school|guild|company|krushers?|faction|organization)/i.test(combined)) {
     return 'monster';
   }
 
@@ -3992,14 +4014,20 @@ function resolveBlockLine(block) {
 function extractStatBlockNames(content) {
   if (!content) return [];
 
-  // Match Python pattern: **Name:** _(This.*?vital stats are|HP|He is a|She is a|It is a).*?HP
-  const statBlockPattern = /\*\*([^\*]+)\*\*[:\s]*_?\((?:This.*?vital stats are|HP|He is a|She is a|It is a).*?HP/gi;
+  // Expanded pattern to catch all stat block variations:
+  // - Standard: (This ... vital stats are ... HP)
+  // - Creature syntax: (This creature's vital stats are ... HP)
+  // - Level-first: (He is a 3rd level ... HP) or (4th level ... HP)
+  // - Direct HP: (HP ... AC ... MV ...)
+  const statBlockPattern = /\*\*([^\*]+)\*\*[:\s]*_?\((?:This.*?vital stats are|He is a|She is a|It is a|\d+(?:st|nd|rd|th)?\s+level|HP\s*\d+).*?(?:HP|XP)/gi;
   const statBlockNames = new Set();
 
   let match;
   while ((match = statBlockPattern.exec(content)) !== null) {
-    const name = match[1].trim();
-    if (name) {
+    let name = match[1].trim();
+    // Clean up markdown artifacts (*, **, :, etc.)
+    name = name.replace(/^[\s\*:]+|[\s\*:]+$/g, '');
+    if (name && name.length > 1) {
       statBlockNames.add(name);
     }
   }
@@ -4109,42 +4137,33 @@ function detectNamedNPC(name) {
     return false;
   }
 
-  // Generic monster types = not a named NPC
+
+  // Generic monster types = not a named NPC (match singular/plural, any capitalization)
   const genericMonsters = [
     'ape', 'bandit', 'bear', 'bat', 'boar', 'bugbear', 'centipede', 'beetle',
     'elf', 'gnoll', 'goblin', 'griffon', 'hobgoblin', 'kobold', 'lion',
     'lizardfolk', 'losel', 'commoner', 'naga', 'nixie', 'orc', 'otter',
-    'owlbear', 'rat', 'riverman', 'snake', 'spider', 'stirge', 'stirges', 'thief',
+    'owlbear', 'rat', 'riverman', 'snake', 'spider', 'stirge', 'thief',
     'turtle', 'wolf', 'wolverine', 'ogre', 'children', 'batrachianoid',
     'harpy', 'tick', 'mastiff', 'animal', 'herd', 'brigand', 'giant',
     'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
     'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivous', 'carnivorous',
-    'slime', 'ooze', 'ghoul', 'ghouls', 'wraith', 'lich', 'mummy', 'vampire',
-    'dragon', 'fungus', 'mold', 'naga', 'stirges', 'rats', 'snakes',
-    'griffon', 'hobgoblin', 'lizardfolk', 'orc', 'stirge', 'nixie', 'mastiff',
-    'gnoll', 'green', 'slime', 'snapping', 'normal', 'huge', 'dire'
+    'slime', 'ooze', 'ghoul', 'wraith', 'lich', 'mummy', 'vampire',
+    'dragon', 'fungus', 'mold', 'green', 'snapping', 'normal', 'dire'
   ];
 
-  // Check first word and also check for "Type, descriptor" pattern (e.g., "Bear, black")
+  // Normalize name to lower, singular (strip trailing s/es)
+  const normalize = w => w.toLowerCase().replace(/(es|s)$/, '');
   const nameLower = name.toLowerCase();
-  const firstWord = name.split(/[\s,]+/)[0].toLowerCase();
-
-  if (genericMonsters.includes(firstWord)) {
-    return false;
-  }
+  const firstWord = normalize(name.split(/[,\s]+/)[0]);
+  if (genericMonsters.includes(firstWord)) return false;
 
   // Check for generic patterns like "Black Bear", "Giant rats", "Cave bats"
   const nameParts = name.split(/\s+/);
   if (nameParts.length >= 2) {
-    const secondWord = nameParts[1].toLowerCase().replace(/[,()]/g, '');
-    // If first word is descriptor and second is monster type
-    if (genericMonsters.includes(firstWord) && genericMonsters.includes(secondWord)) {
-      return false;
-    }
-    // If second word is monster type (e.g., "Black Bear", "Giant rats")
-    if (genericMonsters.includes(secondWord)) {
-      return false;
-    }
+    const secondWord = normalize(nameParts[1].replace(/[,()]/g, ''));
+    if (genericMonsters.includes(firstWord) && genericMonsters.includes(secondWord)) return false;
+    if (genericMonsters.includes(secondWord)) return false;
   }
 
   // Check for role-based names (Brigand, crossbowman)
@@ -4205,8 +4224,47 @@ function detectLegacyFormat(block) {
 function buildReviewKey(block) {
   const fileKey = currentFilePath || 'global';
   const name = block.name || `block-${block.index || block._originalIndex || block.lineNumber || '0'}`;
-  const line = block.lineNumber || block.lineStart || 0;
-  return `review:${fileKey}::${name}::${line}`;
+  // Don't include line number - it can shift when document is edited or blocks are re-parsed
+  // Use name as the primary stable identifier for review state
+  return `review:${fileKey}::${name}`;
+}
+
+// Migrate old review keys (with line numbers) to new format (without line numbers)
+function migrateReviewKeys() {
+  if (!currentFilePath) return;
+  
+  try {
+    const fileKey = currentFilePath;
+    const oldPrefix = `review:${fileKey}::`;
+    const migratedCount = 0;
+    
+    // Scan localStorage for old-format keys
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key || !key.startsWith(oldPrefix)) continue;
+      
+      // Check if this is an old-format key (has line number at end)
+      // Format: review:file::name::lineNumber
+      const parts = key.split('::');
+      if (parts.length === 3 && /^\d+$/.test(parts[2])) {
+        // This is an old key with line number
+        const name = parts[1];
+        const newKey = `review:${fileKey}::${name}`;
+        const value = window.localStorage.getItem(key);
+        
+        // Migrate to new format
+        if (value === '1' && !window.localStorage.getItem(newKey)) {
+          window.localStorage.setItem(newKey, '1');
+          reviewState[newKey] = true;
+        }
+        
+        // Remove old key
+        window.localStorage.removeItem(key);
+      }
+    }
+  } catch (e) {
+    console.warn('Review key migration failed:', e);
+  }
 }
 
 function getReviewFlag(key) {

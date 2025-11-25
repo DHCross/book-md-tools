@@ -59,8 +59,10 @@ function classify(name, combined = name, text = '') {
   const named = detectNamedNPC(name, combined, text);
   const monster = isMonster(combined, text);
   const level = hasCharacterLevel(combined);
+  // Only treat 'level' as NPC indicator if this block also has humanoid indicators
+  const humanoidLike = /\b(humanoid|human|elf|dwarf|gnoll|goblin|orc|kobold|losel|man|woman|commoner|merchant|brigand|bandit|thief|npc)\b/i.test(combined);
 
-  if (named || level || /\bnpc\b/i.test(combined)) {
+  if (named || (level && humanoidLike) || /\bnpc\b/i.test(combined)) {
     return { name, category: named ? 'npc-named' : 'npc', named, monster, level };
   }
 
@@ -69,14 +71,52 @@ function classify(name, combined = name, text = '') {
   return { name, category: 'feature', named: false, monster: false, level };
 }
 
-const samples = [
-  'Bugbear', 'Ghoul', 'Gnoll', 'Griffon', 'Hobgoblin', 'Kobold', 'Lizardfolk', 'Nixies (sprite)', 'Orc', 'Stirges',
-  'Goblin, leader (corporal)', 'Goblin shaman', 'Grimlock Manface (Losel Chieftain)', 'Wood Elf Scouts x 11', 'Mastiff'
-];
+const fs = require('fs');
+const path = require('path');
 
-for (const s of samples) {
-  const res = classify(s, s);
-  console.log(`${s}: ${res.category}   (named=${res.named} monster=${res.monster} level=${res.level})`);
+const argv = process.argv.slice(2);
+const filename = argv[0] || '';
+if (!filename) {
+  console.error('Usage: node verify_classification.js <markdown-file>');
+  process.exit(1);
 }
 
+function extractStatBlockNames(content) {
+  const names = new Set();
+  // Find bolded stat block names where bold is followed by parentheses containing HP/Level or 'vital stats are'
+  // Capture group 1: name, group 2: inner parentheses content for context
+  const statBlockPattern = /\*\*([^*]+)\*\*[:\s]*_?\(([^)]*?(?:This.*?vital stats are|HP|He is a|She is a|It is a|\d+(?:st|nd|rd|th)?\s+level).*?(?:HP|AC|MV|XP)[^)]*)\)/gi;
+  let match;
+  while ((match = statBlockPattern.exec(content)) !== null) {
+    const name = match[1].trim();
+    const inner = (match[2] || '').trim();
+    if (name && name.length > 1) {
+      names.add({ name, inner });
+    }
+  }
+  return Array.from(names);
+}
+
+const fullpath = path.resolve(filename);
+let content = '';
+try {
+  content = fs.readFileSync(fullpath, 'utf8');
+} catch (e) {
+  console.error('Failed to read file:', fullpath, e.message);
+  process.exit(1);
+}
+
+const names = extractStatBlockNames(content);
+console.log(`Found ${names.length} bolded names in ${filename}`);
+let counts = { 'npc-named': 0, npc: 0, monster: 0, feature: 0, trap: 0, hazard: 0, event: 0 };
+for (const n of names) {
+  const res = classify(n.name, n.inner, n.inner);
+  console.log(`${n.name}: ${res.category}   (named=${res.named} monster=${res.monster} level=${res.level})`);
+  counts[res.category] = (counts[res.category] || 0) + 1;
+}
+
+console.log('\nSummary:');
+for (const cat of Object.keys(counts)) {
+  console.log(`${cat}: ${counts[cat]}`);
+}
 process.exit(0);
