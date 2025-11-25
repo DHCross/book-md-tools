@@ -720,9 +720,9 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Gnoll:** _(These chaotic evil humanoids' vital stats are HD 2d10, HP 13, AC 15, MV 30 ft. Their saves are physical. They attack by weapon at +2 damage due to strength. Their special ability is darkvision 60 ft. They have patchwork leather armor, shield, throwing club, morning star, and 2d4 gp. XP: 12+2)_ 
 
-**Goblin, raider:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have leather armor, belt axe, shortsword, and 3d6 sp. XP 5+1)_ 
+**Goblin, raider:** _(These law/evil humanoids’ vital statistics are HD 1d6. HP 4. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. Their special abilities include darkvision 60 ft. and light sensitivity (imposing a –1 penalty to attack rolls in bright light). They wear leather armor. They carry a belt axe, a shortsword, and 3d6 silver in coin. XP 5+1.)_ 
 
-**Goblin, leader (corporal):** _(These lawful evil humanoids' vital stats are HD 3d6+2, HP 15, AC 16, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft., and light sensitivity [-1 to attacks in bright light], and high strength for an additional +1 "to hit" and +1 damage. They have breastplate, shield, belt axe, morning star, and 2d4 gp. XP: 20+3)_
+**Goblin, leader (corporal):** _(These law/evil humanoids’ vital statistics are HD 3d6+2. HP 15. AC 16. MV 20 ft. disposition law/evil. Their primary attributes are physical. Their special abilities include darkvision 60 ft. and light sensitivity (imposing a –1 penalty to attack rolls in bright light), and they receive a +1 bonus to hit and damage due to high strength. They wear a breastplate and a medium wooden shield. They carry a belt axe, a morning star, and 2d4 gold in coin. XP 20+3.)_
 
 **Griffon:** _(This neutral creature's vital stats are HD 7d10, HP 45, AC 17, MV 30 ft., or fly 80 ft. Its saves are physical. It attacks with two claws for 1d4 damage each and one bite for 2d8 damage. It has dark vision and twilight vision that allows it to see in the dark. XP: 270+7)_
 
@@ -1552,7 +1552,7 @@ The goblins of this tribe are aware that their neighbors, the orcs of #H, have t
 
 **Area #g:** There are **3 goblin warriors** that keep watch on the prison (#20) and the storage room #18. If trouble presents they will shout their battle cry (“KREE-AHK!”) thus alerting the **shaman** (#21) and possibly a **goblin patrol** _(see introductory material of this lair, #D)_. Their serjeant holds both the key to the prison and the key to the storage room (#18) on a brass belt ring.
 
-**Goblin warriors x 3:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They are equipped with leather armor, belt axe, shortsword, light crossbow, 6 bolts, and 1d6 sp. XP: 5+1)_
+**Goblin warriors x 3:** _(These goblin warriors’ vital statistics are HD 1d6. HP 4 each. AC 14. MV 20 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor and carry a belt axe, a shortsword, a light crossbow with 6 bolts, and 1d6 silver in coin each. Their special abilities include darkvision 60 ft. and light sensitivity (-1 to attack rolls in bright light). XP 5+1.)_
 
 **Goblin serjeant:** _(This goblin serjeant’s vital statistics are HD 2d6. HP 11. AC 16. MV 20 ft. disposition law/evil. His saves are physical. His special abilities include darkvision 60 ft., light sensitivity, imposing a –1 penalty to attack rolls in bright light, and a +1 bonus to damage rolls due to strength. He wears a breastplate and carries a medium wooden shield, a morning star, a short sword, and a whip. He also carries a brass belt ring with keys to areas 18 and 20, wears a silver armlet worth 5 gold, and has 3d6 silver in coin. XP 32.)_
 
@@ -1609,9 +1609,9 @@ This 30 by 30-foot room is somewhat posh in appearance as compared to the other 
 
 If the PCs enter the room, the **4 goblin skeletons** emerge from shallow alcoves (2 in each alcove) on either side of the door, dry bones springing to animated state, grabbing their spears and attacking. The skeletons will surprise the unwary_._ If the shaman is here when intruders present, he will cast _protection from good_, then burst out from the silk beddings and cry “KREE-AHK!” thus summoning any surrounding goblins to assist.
 
-**Goblin shaman:** _(This lawful evil humanoid's vital stats are HD 4d6, HP 15, AC 10, MV 20 ft. Its saves are mental and physical. Its significant attribute is wisdom 18. It has darkvision 60' and light sensitivity [-1 to attacks in bright light]. It carries a bronze-hilted +1 poniard, potion of extra healing [3d8+3], a dragonhide spell book with each of the below spells contained therein, a scroll of cause paralysis, a pouch with 30 gp, a gold ring with ruby worth 250 gp, and a key to door #21. The shaman typically has the following spells prepared: detect good x 2, detect magic x 2, protection from good x 2, cause fear, cause paralysis, hold person. XP: 200)_
+**Goblin shaman:** _(This 4th level goblin shaman’s vital statistics are HD 4d6. HP 15. AC 10. MV 20 ft. disposition law/evil. Its saves are mental and physical. Its significant attribute is wisdom 18. It wears no armor. It carries a bronze-hilted poniard +1, a potion of extra healing (heals 3d8+3 HP), a dragonhide spell book, a scroll of cause paralysis, 30 gold in coin, a gold ring with ruby worth 250 gold, and a key to door #21. Its special abilities include darkvision 60 ft., and light sensitivity (imposing a –1 penalty to attack rolls in bright light). It typically has the following spells prepared: detect good ×2, detect magic ×2, protection from good ×2, cause fear, cause paralysis, and hold humanoid. XP 200.)_
 
-**Goblin Skeletons x 4:** _(These neutral undeads' vital stats are HD 1d12, HP 8, AC 13, MV 30 ft. Their saves are physical. They attack with spears for 1d6 damage. Their special ability is they take half damage when attacked with slashing or piercing weapons, while blunt weapons do normal damage. XP: 10+1)_ 
+**Goblin Skeletons x 4:** _(These Level 1 goblin skeletons’ vital statistics are Level 1(d12). HP 8 each. AC 13. MV 30 ft. disposition neutral. Their primary attributes are physical. They carry spears. Their special abilities include darkvision 60 ft. and resistance to piercing and slashing weapons (half damage). They attack with spears for 1d6 damage. XP 10+1.)_ 
 
 **Tactics:** The shaman will cast his second _protection_ spell on the chieftain if that one arrives or is otherwise with him. 
 
@@ -2424,7 +2424,7 @@ These are the quarters of the hobgoblin leader. His two finest (surviving) warri
 
 **Hub-Gub the Bloody (Hobgoblin Chieftain):** _(This lawful evil humanoid's vital stats are HD 3d10, HP 18, AC 16, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. Due to its strength and brutality, all melee damage is at +2. It wears full chain mail armor and wields a +1 halberd [+4 "to hit"; 1d10+3 damage], broadsword [+3 "to hit"; 2d4+2 damage], composite short bow, and 12 arrows. In a pouch it carries 12 gp and an iron key to #55. XP: 84)_
 
-**Hobgoblin females x 3:** _(These lawful evil humanoids' vital stats are HD 1d6, HP 3, AC 12, MV 30 ft. Their saves are physical. Their special ability is darkvision 60 ft. They carry daggers. Each wears an engraved silver armband worth 2 gp. XP: 5+1)_
+**Hobgoblin females x 3:** _(These hobgoblin females’ vital statistics are HD 1d6. HP 3 each. AC 12. MV 30 ft. disposition law/evil. Their primary attributes are physical. They carry daggers and 2 gold in engraved silver armbands each. Their special abilities include darkvision 60 ft. XP 5+1.)_
 
 The furniture collection is the pride of the chieftain, believing it marks him as a wealthy and powerful ruler. The females are the chieftain's favorite mates. 
 

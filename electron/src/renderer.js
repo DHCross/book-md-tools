@@ -1633,7 +1633,6 @@ function updateLineInfoDisplay() {
   const editor = getEditorAdapter();
   const currentLineEl = document.getElementById('lineInfoCurrent');
   const blockLineEl = document.getElementById('lineInfoBlock');
-  const visibleEl = document.getElementById('lineInfoVisible');
 
   if (!editor) return;
 
@@ -1649,50 +1648,6 @@ function updateLineInfoDisplay() {
   }
 
   if (blockLineEl) blockLineEl.textContent = activeStatStartLine ? activeStatStartLine : '—';
-
-  // Calculate visible line range using scroll ratio
-  const content = cmEditor ? cmEditor.getValue() : (editor.value || '');
-  if (visibleEl && content) {
-    if (cmEditor) {
-      const info = cmEditor.getScrollInfo();
-      const charPosTop = cmEditor.coordsChar({ left: 0, top: info.top });
-      const charPosBottom = cmEditor.coordsChar({ left: 0, top: info.top + info.clientHeight });
-
-      const topLine = Math.max(1, charPosTop.line + 1);
-      const bottomLine = Math.min(cmEditor.lineCount(), charPosBottom.line + 1);
-
-      visibleEl.textContent = `${topLine}-${bottomLine}`;
-      return;
-    }
-
-    const totalLines = content.split('\n').length;
-    const lineHeight = parseFloat(window.getComputedStyle(editor).lineHeight) || 20;
-    const scrollTop = editor.scrollTop;
-    const clientHeight = editor.clientHeight;
-
-    if (totalLines > 0 && editor.scrollHeight > clientHeight) {
-      const visibleLineCount = Math.max(1, Math.floor(clientHeight / lineHeight));
-      const topLine = Math.max(1, Math.floor(scrollTop / lineHeight) + 1);
-      let bottomLine = Math.min(totalLines, topLine + visibleLineCount);
-
-      if (userHasClickedEditor) {
-        const posSel = editor.selectionStart || 0;
-        const beforeSel = content.slice(0, posSel);
-        const cursorLine = beforeSel ? beforeSel.split('\n').length : 1;
-        if (cursorLine < topLine || cursorLine > bottomLine) {
-          const half = Math.floor(visibleLineCount / 2);
-          const newTop = Math.max(1, cursorLine - half);
-          const newBottom = Math.min(totalLines, newTop + visibleLineCount);
-          visibleEl.textContent = `${newTop}-${newBottom}`;
-          return;
-        }
-      }
-
-      visibleEl.textContent = `${topLine}-${bottomLine}`;
-    } else {
-      visibleEl.textContent = `1-${totalLines}`;
-    }
-  }
 }
 
 function jumpEditorToLine(lineNumber, focusEditor = true, selectionRange = null) {
@@ -3831,6 +3786,12 @@ function updateStatBlockNavigator(blocks) {
     block.isLegacy = detectLegacyFormat(block);
     block._reviewKey = buildReviewKey(block);
     block.reviewed = getReviewFlag(block._reviewKey);
+    // Mark whether this entry has an actual stat block
+    // True if: has fullText with stat block format, OR has raw text with HP/HD/AC stats
+    const hasStatFormat = !!(block.fullText && block.fullText.match(/\*\*[^*]+\*\*\s*\(/));
+    const hasStatData = !!(block.raw && block.raw.match(/\b(HD|HP|AC|XP)\s+\d+/i));
+    const hasValidation = !!(block.validation && (block.validation.errors || block.validation.warnings));
+    block.hasStatBlock = hasStatFormat || hasStatData || hasValidation;
     return block;
   });
 
@@ -4290,6 +4251,9 @@ function getFilteredStatBlocks() {
       fullText: '',
       isSynthetic: true
     }));
+  } else {
+    // For non-missing views, only show entries that have actual stat blocks
+    blocksToFilter = statBlocks.filter(b => b.hasStatBlock !== false);
   }
 
   return blocksToFilter.filter(block => {
