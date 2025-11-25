@@ -3881,10 +3881,15 @@ function classifyStatBlock(block) {
   const isNamedNPC = detectNamedNPC(originalName);
 
   // Check for character levels - strong indicator of humanoid NPC
-  const hasCharacterLevel = /(\d+(?:st|nd|rd|th)[-–]\d+(?:st|nd|rd|th)?\s+level|level\s+\d+|level\s+(fighter|cleric|magic-user|thief|ranger|druid|bard|paladin|monk))/i.test(combined);
+  const hasCharacterLevel = /(\d+(?:st|nd|rd|th)[-–]\d+(?:st|nd|rd|th)?\s+level|level\s+(fighter|cleric|magic-user|thief|ranger|druid|bard|paladin|monk))/i.test(combined);
 
   // Special unique NPCs - specific named bosses, leaders, or unique roles
-  const isUniqueNPC = /(\b(charlie|pinky|wily wil|yeexuul|gruzz kree|king krusher|hub-gub|griggle-gruk|fekk|ember raventree|grimlock|ji'gun-tima|iggy the mad|blook-glook|ug-muk'tik|grug-much|robert cooper|oni blackbeard|wilbur hornblower)\b|shaman(?!s)|chieftain(?!s)|leader\b|mate\b|lieutenant\b)/i.test(combined) &&
+  // Only treat generic role words (shaman, chieftain, leader, mate, lieutenant)
+  // as unique NPCs when they appear after a proper-capitalized name in the
+  // block name, or when the block explicitly matches a known unique name.
+  const explicitUniqueNames = /\b(charlie|pinky|wily wil|yeexuul|gruzz kree|king krusher|hub-gub|griggle-gruk|fekk|ember raventree|grimlock|ji'gun-tima|iggy the mad|blook-glook|ug-muk'tik|grug-much|robert cooper|oni blackbeard|wilbur hornblower)\b/i;
+  const titleWithProperName = /\b[A-Z][a-z0-9'`-]*(?:\s+[A-Z][a-z0-9'`-]*)*\s+(shaman|chieftain|leader|mate|lieutenant)\b/;
+  const isUniqueNPC = (explicitUniqueNames.test(combined) || titleWithProperName.test(name || combined)) &&
     !/(patrol|guards?|warriors?|raiders?|males?|females?)\s+x\s*\d+/i.test(combined);
 
   // NPC keywords (explicit people/roles)
@@ -3897,7 +3902,7 @@ function classifyStatBlock(block) {
 
   // Monster keywords (expanded) - check this AFTER room patterns
   // Include generic creature types, animals, and quantity-based groups
-  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|lizardfolk|bandit|brigand|ape|turtle|snapping|snake|poisonous|deadly|otter|nixie|stirge|mastiff|animal|herd|bison|cattle|deer|elk)/i.test(combined) ||
+  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|lizardfolk|bandit|brigand|ape|turtle|snapping|snake|poisonous|deadly|otter|nixie|stirge|stirges|mastiff|animal|herd|bison|cattle|deer|elk)/i.test(combined) ||
     /monster|creature|spawn/i.test(text) ||
     /(guards?|warriors?|males?|females?|young|cubs?|raiders?|patrol|sentries)\s+x\s*\d+/i.test(combined) ||
     /(cave\s+bats?|river\s+rats?|giant\s+rats?|black\s+bear|wood\s+elf|poisonous\s+snake)/i.test(combined) ||
@@ -4109,7 +4114,7 @@ function detectNamedNPC(name) {
     'ape', 'bandit', 'bear', 'bat', 'boar', 'bugbear', 'centipede', 'beetle',
     'elf', 'gnoll', 'goblin', 'griffon', 'hobgoblin', 'kobold', 'lion',
     'lizardfolk', 'losel', 'commoner', 'naga', 'nixie', 'orc', 'otter',
-    'owlbear', 'rat', 'riverman', 'snake', 'spider', 'stirge', 'thief',
+    'owlbear', 'rat', 'riverman', 'snake', 'spider', 'stirge', 'stirges', 'thief',
     'turtle', 'wolf', 'wolverine', 'ogre', 'children', 'batrachianoid',
     'harpy', 'tick', 'mastiff', 'animal', 'herd', 'brigand', 'giant',
     'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
@@ -4156,10 +4161,12 @@ function detectNamedNPC(name) {
   const hasProperName = words.some(word => {
     // Must start with capital and not be a generic title alone
     if (!/^[A-Z]/.test(word)) return false;
-    const lower = word.toLowerCase();
+    const lower = word.toLowerCase().replace(/[,()]/g, ''); // Remove punctuation for checking
     // Exclude generic titles when standalone
     const genericTitles = ['the', 'king', 'queen', 'chief', 'chieftain', 'leader', 'lord', 'lady', 'sir', 'captain', 'lieutenant', 'serjeant', 'shaman', 'priest'];
-    return !genericTitles.includes(lower);
+    // Also exclude known monster types and descriptors
+    if (genericTitles.includes(lower) || genericMonsters.includes(lower)) return false;
+    return true;
   });
 
   return hasProperName;

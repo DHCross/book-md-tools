@@ -764,7 +764,7 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Turtle, Huge Snapping:** _(These Level 5(d8) huge snapping turtles’ vital statistics are HP 20 each. AC 12/19. MV 30 ft., swim 60 ft. disposition neutral. Their primary attributes are physical. They attack with a bite for 2d4+10 damage. Their special abilities include Crushing Grasp: once a successful bite is made, the victim suffers 2d4 damage per round thereafter, and the turtle may drag the victim underwater where they can drown. To escape, the turtle must be killed, suffer the loss of 50% of its hit points, or the victim must make a successful strength save to break free. XP 100+5.)_
 
-**Wolf, Grey:** _(These neutral animals' vital stats are HD 2d8, HP 9, AC 13, MV 50 ft. Their saves are physical. They attack with a bite for 1d4+3 damage. Their special abilities include a trip attack, superior sense of smell, and twilight vision. XP: 10+2)_
+**Wolf, Grey:** _(These creatures’ vital stats are Level 2(d8), HP 9, AC 13, MV 50 ft., disposition neutral. Their primary attributes are physical. They attack with a bite for 1d4+3 damage. Their special abilities include trip attack, superior sense of smell, and twilight vision. XP: 10+2)_
 
 **Wolverine (small, normal):** _(This neutral creature's vital stats are HD 3d8, HP 16, AC 15, MV 20 ft. Its saves are physical, and all attacks are made as though it were 3HD higher than it is. It attacks with two claws for 1d4 points of damage and one bite for 1d4+1 damage._ _It can release a musk spray 10' wide by 30' long, saving throw versus breath weapon or victim is blinded for 1-2 hours; regardless of save, any creature in the spray's area of effect is sickened and suffers -2 strength, dexterity, and constitution for 2-8 turns. XP: 50+3)_
 
@@ -1033,7 +1033,7 @@ There are 7 traps _(CL 5 each)_ laid about the area of the log cabin. None are d
 
 There are **12 wood elves** stationed here. Every day they send out a team of 4 to patrol the east bank of the False Urt River, and wear armor laced with leaves and twigs, their faces painted green and brown, whilst doing so. So, if it is daytime, there is a 75% chance only 8 of the 12 elves will be present here. Of those present, 4 will be spread about the verge of the tamarack stand. By night, all are here. The wood elves are led by one **Ember Raventree**, who answers directly to **Aldion Ashgrove** _(CZY environs #26)_. 
 
-**Wood Elf Scouts x 11:** _(They are 1st level, chaotic neutral fighters whose vital stats are HD 1d10, HP 8, AC 12, MV 30 ft. Their primary attributes are physical. Their significant attribute is dexterity 15. Their special abilities include hide, move silent, pass without trace, longbow training. They are equipped with padded armor, longbow [specialized; +4 "to hit"; 1d6+1 damage], arrows x12, short sword, and 3-18 sp. XP: 13+1)_ 
+**Wood Elf Scouts x 11:** _(These 1st level Wood Elf fighters’ vital stats are Level 1(d10), HP 8 each, AC 12, MV 30 ft., disposition chaos/neutral. Their primary attributes are strength, dexterity, and constitution. Their significant attributes are dexterity 15. They wear padded armor, a longbow (deals 1d6+1 damage), a short sword, and 3-18 silver in coin. Their special abilities include hide, move silent, pass without trace, and longbow training. XP: 13+1)_ 
 
 **Ember Raventree (wood elf leader)** (4th level, chaotic neutral fighter; HP 22, AC 16, MV 30 ft.; primary attributes strength, dexterity, constitution; significant attributes strength 17 and dexterity 17; special abilities hide, move silent, pass without trace, longsword training; leather armor +1, elven cloak; shield, longsword [specialized; +8 to hit; 1d8+3 damage], dagger, composite longbow [built for strength; +6 to hit; 1d8+2 damage] with 12 arrows, 35 silver in coin, golden armlet with agate worth 100 gold; XP: 166.)
 
@@ -1171,11 +1171,11 @@ The following creatures are among those randomly encountered inside the _Mouths 
 
 **Rats, Giant:** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 1+1)_
 
-**Snake, Poisonous:** _(These neutral animals' vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Their saves are physical. They attack with a bite for 1 point of damage. Their bite delivers poison for 2d3 points of additional damage, save vs. poison reduces damage to one-half [1d3]. XP: 9+1)_
+**Snake, Poisonous:** _(These Level 1(d6) poisonous snakes’ vital statistics are HP 4 each. AC 14. MV 20 ft. disposition neutral. Their primary attributes are physical. They attack with a bite for 1 damage. Their bite delivers venom for 2d3 additional damage (constitution save reduces damage to 1d3). XP 9+1.)_
 
 **Spider, Giant (medium-sized):** _(These neutral creatures' vital stats are HD 3d8, HP 13, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 1d6 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim suffers an additional 1d4 damage and paralyzation for 1d6 hours. These spiders also can throw a web 8 times per day as per the web spell [as found in the PHB]. XP: 52+3)_
 
-**Tick, Giant:** _(These neutral creatures' vital stats are HD 2d8, HP 11, AC 15, MV 10 ft. They attack with a bite for 1d4 points of damage. Their saves are physical. Their special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half-speed with a -3 AC penalty. XP: 20+2)_
+**Tick, Giant:** _(This creature’s vital stats are Level 2(d8), HP 11, AC 15, MV 10 ft., disposition neutrality. It attacks with a bite for 1d4 points of damage. Its special ability is blood drain for 1d4 damage per round, each point of blood drain also healing the creature if it is damaged. Once the tick drains the victim of hit points equal to its own hit point total, it will release the victim and crawl away, bloated and moving half-speed with a -3 AC penalty. XP: 20+2)_
 
 * see **Appendix C**.
 
@@ -1926,7 +1926,7 @@ The door to this cave is **locked** _(CL 8 to break down, CL 2 to pick)._ The **
 
 Recently, the orcs' only skilled engineer mysteriously disappeared (see #20), so the orcs have doubled their guards here. Thus there are **4 orc warriors** and **1 lieutenant** here at all times. 
 
-**Orcs x 4:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, short bow, arrows x 6, war hammer, and 1d8 ep. XP: 5+1)_
+**Orcs x 4** *(These lawful evil humanoids’ vital statistics are HD 1d8. HP 5 each. AC 14. MV 30 ft. disposition evil/law. Their primary attributes are physical. They wear piecemeal armor and carry a medium wooden shield, a short bow with 6 arrows, a war hammer, and 1d8 electrum in coin each. Their special abilities include darkvision 60 ft. and light sensitivity (imposing a –1 penalty to attack rolls in bright light). XP 5+1.)*
 
 **Orc lieutenant:** _(This HD 2(d8) orc lieutenant’s vital statistics are HP 12. AC 14. MV 30 ft. disposition evil/law. It wears piecemeal armor and a medium wooden shield. It carries a war hammer, a whip, a dagger, a key to room #36, and 30 gold in coin. Its special abilities include darkvision 60 ft., light sensitivity (imposing a –1 penalty to attack rolls in bright light), and it gains a +1 bonus to damage rolls due to strength. XP 34.)_
 
@@ -1974,7 +1974,7 @@ If the characters bypass this cave and continue north, the zombies will still re
 
 See **Player Handout #6** _(Upper Works Map & Illustration Booklet)_ for an illustration of these **zombies**.
 
-**Zombies x 6:** _(These neutral evil undeads' vital stats are HD 2d12, HP 12, AC 12, MV 20 ft. Their saves are physical. They attack with a slam for 1d8 damage. These undead never gain initiative and always act last in any given round. XP: 15+1)_ 
+**Zombies x 6:** _(These creatures’ vital stats are Level 2(d12), HP 12 each, AC 12, MV 20 ft., disposition evil/neutral. Their primary attributes are physical. They attack with a slam for 1d8 damage. Their special abilities include they never gain initiative and always act last in any given round. XP: 15+1)_ 
 
 Each torque is worth 35 gp.
 
@@ -2254,7 +2254,7 @@ You have entered a limestone cavern of approximately 350 square feet (roughly 10
 
 A stirge nest lay within. In mere seconds, warm-blooded creatures will be attacked by the swarm, these small monsters driven to a frenzy by the sweet smell of mammal sweat and blood. 
 
-**Stirges x 8:** _(These neutral creatures' vital stats are HD 1d6, HP 3, AC 16 Move 10 ft., 40 ft. fly. Their saves are physical. They attack with a sting for 1d3 points of damage. Their special abilities include attach and blood drain for 1d4 points of damage per round. XP: 15+1)_
+**Stirges x 8** *(These Level 1(d6) creatures’ vital statistics are HP 3 each. AC 16. MV 10 ft., fly 40 ft. disposition neutral. Their primary attributes are physical. They attack with a sting for 1d3 damage. Their special abilities include attach and blood drain for 1d4 damage per round. XP 15+1.)*
 
 Recently a pair of thieves (a human and a halfling) sought to make this place their hideout. Having appropriated a few pints of whiskey, they drank themselves to a stupor and fell asleep in the back of the cave. When the stirges returned to their nest, they proceeded to suck the two dry of their lifeblood. Now, their dried corpses sit rolled in the very wool blankets they brought with them.
 
