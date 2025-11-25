@@ -121,6 +121,18 @@ let suppressUserFocusMark = false;
 let cmEditor = null; // CodeMirror instance
 let cmAdapter = null; // Adapter exposing textarea-like API
 
+function safeUpdateHeaderNavigator() {
+  if (typeof updateHeaderNavigator === 'function') {
+    try { updateHeaderNavigator(); } catch (e) { console.error('updateHeaderNavigator failed', e); }
+  }
+}
+
+function safeUpdateStatBlockNavigator(blocks = []) {
+  if (typeof updateStatBlockNavigator === 'function') {
+    try { updateStatBlockNavigator(blocks); } catch (e) { console.error('updateStatBlockNavigator failed', e); }
+  }
+}
+
 function getEditorAdapter() {
   if (cmAdapter) return cmAdapter;
   return document.getElementById('markdownEditor');
@@ -206,7 +218,7 @@ function initializeCodeMirror() {
   cmEditor = CodeMirror.fromTextArea(textarea, {
     mode: 'markdown',
     lineNumbers: true,
-    lineWrapping: false,
+    lineWrapping: true,
     viewportMargin: Infinity
   });
   cmAdapter = buildCodeMirrorAdapter();
@@ -1242,7 +1254,7 @@ function applyToolOutput(toolOutput, toolName) {
   updateMarkdownEditor(toolOutput);
   updateRenderedTab(toolOutput);
   updateSummaryTab(toolOutput);
-  updateHeaderNavigator();
+  safeUpdateHeaderNavigator();
   analyzeDocumentStatBlocks();
 
   addChangeLogEntry('Tool Applied', `Applied: ${toolName}`);
@@ -1280,7 +1292,7 @@ async function runSafeTool(toolName, runToolFunction) {
       updateMarkdownEditor(savedContent);
       updateRenderedTab(savedContent);
       updateSummaryTab(savedContent);
-      updateHeaderNavigator();
+      safeUpdateHeaderNavigator();
       analyzeDocumentStatBlocks();
       log('Discarded unsaved changes (reverted to last save)', 'warning');
     }
@@ -1380,7 +1392,7 @@ function undo() {
   updateMarkdownEditor(state.content);
   updateRenderedTab(state.content);
   updateSummaryTab(state.content);
-  updateHeaderNavigator();
+  safeUpdateHeaderNavigator();
   analyzeDocumentStatBlocks();
 
   log(`Undone: ${state.description}`, 'success');
@@ -1448,6 +1460,12 @@ document.getElementById('saveBtn')?.addEventListener('click', () => {
 document.getElementById('saveAsBtn')?.addEventListener('click', () => {
   saveCurrentFileAs();
 });
+document.getElementById('toggleReviewSummaryBtn')?.addEventListener('click', () => {
+  const container = document.getElementById('reviewSummaryContainer');
+  if (!container) return;
+  const isHidden = container.style.display === 'none' || container.style.display === '';
+  container.style.display = isHidden ? 'block' : 'none';
+});
 
 // Save shortcuts: Ctrl/Cmd+S (save), Shift+Ctrl/Cmd+S (Save As)
 document.addEventListener('keydown', (e) => {
@@ -1511,9 +1529,9 @@ async function loadFile(filePath) {
     updateMarkdownEditor(content);
     updateRenderedTab(content);
     updateSummaryTab(content);
-    updateHeaderNavigator();
+    safeUpdateHeaderNavigator();
     // Reset stat navigator immediately, then run full analysis
-    updateStatBlockNavigator([]);
+    safeUpdateStatBlockNavigator([]);
     analyzeDocumentStatBlocks();
 
     addChangeLogEntry('File Loaded', `Opened: ${filePath}`);
@@ -1535,6 +1553,7 @@ function updateMarkdownEditor(content) {
     updateLineInfoDisplay();
     initializeEditorLineTracking();
     initializeEditorContentSync();
+    safeUpdateHeaderNavigator();
   }
 }
 
@@ -1630,17 +1649,28 @@ function updateLineInfoDisplay() {
   // Calculate visible line range using scroll ratio
   const content = cmEditor ? cmEditor.getValue() : (editor.value || '');
   if (visibleEl && content) {
-    const totalLines = cmEditor ? cmEditor.lineCount() : content.split('\n').length;
-    const lineHeight = cmEditor ? cmEditor.defaultTextHeight() : (parseFloat(window.getComputedStyle(editor).lineHeight) || 20);
-    const scrollTop = cmEditor ? cmEditor.getScrollInfo().top : editor.scrollTop;
-    const clientHeight = cmEditor ? cmEditor.getScrollInfo().clientHeight : editor.clientHeight;
+    if (cmEditor) {
+      const info = cmEditor.getScrollInfo();
+      const charPosTop = cmEditor.coordsChar({ left: 0, top: info.top });
+      const charPosBottom = cmEditor.coordsChar({ left: 0, top: info.top + info.clientHeight });
 
-    if (totalLines > 0 && (cmEditor ? true : editor.scrollHeight > clientHeight)) {
+      const topLine = Math.max(1, charPosTop.line + 1);
+      const bottomLine = Math.min(cmEditor.lineCount(), charPosBottom.line + 1);
+
+      visibleEl.textContent = `${topLine}-${bottomLine}`;
+      return;
+    }
+
+    const totalLines = content.split('\n').length;
+    const lineHeight = parseFloat(window.getComputedStyle(editor).lineHeight) || 20;
+    const scrollTop = editor.scrollTop;
+    const clientHeight = editor.clientHeight;
+
+    if (totalLines > 0 && editor.scrollHeight > clientHeight) {
       const visibleLineCount = Math.max(1, Math.floor(clientHeight / lineHeight));
       const topLine = Math.max(1, Math.floor(scrollTop / lineHeight) + 1);
       let bottomLine = Math.min(totalLines, topLine + visibleLineCount);
 
-      // If the cursor line sits outside the estimated range, recenter around it
       if (userHasClickedEditor) {
         const posSel = editor.selectionStart || 0;
         const beforeSel = content.slice(0, posSel);
@@ -1816,22 +1846,6 @@ function flashNameInEditor(name, anchorOffset = null) {
     editor.setSelectionRange(originalStart, originalEnd);
   }, 250);
 }
-
-        const cursorLine = before ? before.split('\n').length : 1;
-        if (cursorLine < topLine || cursorLine > bottomLine) {
-          const half = Math.floor(visibleLineCount / 2);
-          const newTop = Math.max(1, cursorLine - half);
-          const newBottom = Math.min(totalLines, newTop + visibleLineCount);
-          visibleEl.textContent = `${newTop}-${newBottom}`;
-          return;
-        }
-      }
-
-      visibleEl.textContent = `${topLine}-${bottomLine}`;
-    } else {
-      visibleEl.textContent = `1-${totalLines}`;
-    }
-  }
 function updateSummaryTab(content) {
   const summary = document.getElementById('summaryContent');
   if (!summary) return;
@@ -2264,7 +2278,7 @@ document.getElementById('buildHeadersBtn')?.addEventListener('click', async () =
     updateMarkdownEditor(currentContent);
     updateRenderedTab(currentContent);
     updateSummaryTab(currentContent);
-    updateHeaderNavigator();
+    safeUpdateHeaderNavigator();
     analyzeDocumentStatBlocks();
     setEditorUnsavedState();
     updateStatus('Headers built (unsaved)', 'success');
@@ -3802,8 +3816,8 @@ function classifyStatBlock(block) {
   const combined = `${name} ${text}`;
 
   const hasCreatureWord = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|serjeant|lieutenant|yeexuul|stirge|mastiff|nixie|naga)/i.test(combined);
-  const hasLocationWord = /\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage|area|quarters|closet|chapel|shrine|temple|statue|altar|fountain|handout|compartment|lock|locked|barred|stuck|padlocked|door|gate|panel|lever|block\b|block\s*\d+|player\s+handout|cave|cavern|lair|den|well|reservoir)\b/i.test(combined);
-  const isAttributeOnly = /\b(locked|padlocked|barred|stuck|save\s+versus\s+poison|poison\s+save)\b/i.test(combined);
+  const hasLocationWord = /\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage|area|quarters|closet|chapel|shrine|temple|statue|altar|fountain|handout|compartment|lock|locked|barred|stuck|padlocked|door|gate|panel|lever|block\b|block\s*\d+|player\s+handout|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle|manor|inn\b|gatehouse\b|tower\b)\b/i.test(combined);
+  const isAttributeOnly = /\b(locked|padlocked|barred|stuck|save\s+versus\s+poison|poison\s+save|save\s+vs\s+poison)\b/i.test(combined);
 
   // If this was extracted as a trap/hazard, classify it appropriately
   if (block.context === 'Trap/Hazard') {
@@ -3836,7 +3850,7 @@ function classifyStatBlock(block) {
   }
 
   // Object/location cues that should override creature words
-  if (/\b(statue|altar|compartment|lock|locked|stuck|padlocked|barred|secret\s+compartment|cave|cavern|lair|den|well|reservoir)\b/i.test(combined)) {
+  if (/\b(statue|altar|compartment|lock|locked|stuck|padlocked|barred|secret\s+compartment|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle)\b/i.test(combined)) {
     return 'feature';
   }
 
@@ -3846,8 +3860,8 @@ function classifyStatBlock(block) {
     (/\b(cave|cavern|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined)) ||
     /\b(sq\.?\s*ft|square\s*feet|feet\s*x\s*\d+|\d+\s*x\s*\d+|\d+\s*ft\s*x\s*\d+|dimensions?\b)/i.test(combined)) {
     // If it clearly names a creature but is also a location, keep feature only when it's an area/object label
-    const areaLike = /\b(area|quarters|room|chamber|hall|chapel|shrine|statue|altar|block|handout|compartment|lock|locked|stuck|padlocked|barred|cave|cavern|lair|den|well|reservoir)\b/i.test(combined);
-    if (!hasCreatureWord || areaLike) {
+    const areaLike = /\b(area|quarters|room|chamber|hall|chapel|shrine|statue|altar|block|handout|compartment|lock|locked|stuck|padlocked|barred|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle|manor)\b/i.test(combined);
+    if (!hasCreatureWord || (areaLike && !hasStatSignals)) {
       return 'feature';
     }
   }
@@ -3869,7 +3883,7 @@ function classifyStatBlock(block) {
 
   if (isMonster) {
     // Check if also a hazard (dual categorization) - only for specific hazard creatures
-    const isHazardToo = /(green\s+slime|gray\s+ooze|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
+    const isHazardToo = /(green\s+slime|slime\s+colony|ooze\s+colony|exploding\s+fungus|sunset\s+mushrooms|sleeping\s+gas|aversion|ammonia\s+gas|curse)/i.test(combined);
     return isHazardToo ? 'hazard' : 'monster'; // Prioritize hazard for dual-category entities
   }
 
@@ -4047,7 +4061,7 @@ function detectNamedNPC(name) {
   }
 
   // Exclude location/area names (not NPCs)
-  if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|cavern|lair|den|handout|reservoir|well)/i.test(name)) {
+  if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|cavern|lair|den|handout|reservoir|well|inn|tavern|gatehouse|castle|keep)/i.test(name)) {
     return false;
   }
 

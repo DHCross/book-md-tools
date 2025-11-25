@@ -2264,7 +2264,7 @@ Recently a pair of thieves (a human and a halfling) sought to make this place th
 
 **3 bugbears** dwell here. They are in their lair 35% of the time. If a noisy party arrives, they will lie in wait. Should the party discover the rope ladder (see below) the bugbears will cut the rope once they are about 20 feet up.
 
-**Bugbears x 3:** _(These bugbears’ vital stats are HD 3(d10), HP 17 each, AC 16, MV 30 ft., disposition chaos/evil. Their primary attributes are physical. Their special ability is darkvision 60 ft. They attack by weapon and gain +2 damage from strength. They wear patchwork ring mail and carry bucklers, bastard swords, and two light throwing hammers each. They also carry 3d6 gold in coin each. XP: 20 + 3.)_
+**Bugbears x 3:** *(These chaos/evil bugbears’ vital stats are HD 3(d10), HP 17 each, AC 16, MV 30 ft., disposition chaos/evil. Their primary attributes are physical. Their special ability is dark vision 60 ft. They attack with weapons and gain +2 damage from strength. They wear patchwork ring mail and carry bucklers, bastard swords, and two light throwing hammers each. They also carry 3d6 gold pieces in coin each. XP: 20 + 3.)*
 
 ### >>[begin boxed text]<<
 

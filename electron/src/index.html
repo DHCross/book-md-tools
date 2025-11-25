@@ -162,7 +162,7 @@
       </aside>
 
       <!-- Main Panel: Tabs & Content -->
-      <section class="content">
+      <section class="content flex-column" id="centerPanel">
         <!-- Heads-Up Find/Replace Strip -->
         <div id="findReplaceStrip" class="find-replace-strip" style="display: none;">
           <div class="fr-group">
@@ -590,8 +590,11 @@
             </div>
 
             <div class="stat-review-summary">
-              <label class="stat-sort-label">Reviewed:</label>
-              <div class="stat-review-body">
+              <div class="stat-review-header">
+                <label class="stat-sort-label">Reviewed:</label>
+                <button id="toggleReviewSummaryBtn" class="btn tertiary" style="padding:2px 6px;font-size:10px;">Toggle</button>
+              </div>
+              <div class="stat-review-body" id="reviewSummaryContainer" style="display:none;">
                 <div id="reviewedSummaryStatus" class="stat-review-status">No blocks reviewed yet</div>
                 <div id="reviewedSummaryList" class="stat-review-list">
                   <div id="reviewSummaryTotal">Total: 0 / 0</div>
