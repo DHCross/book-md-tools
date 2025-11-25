@@ -129,32 +129,26 @@
 			},
 			"problemMatcher": []
 		},
-		{
-			"label": "DOCX → Markdown (preserve tags)",
-			"type": "shell",
-			"command": "/bin/zsh",
-			"args": [
-				"-lc",
-				"chmod +x \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" && PANDOC_MEDIA=media/${fileBasenameNoExtension} \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" '${file}'"
-			],
-			"options": {
-				"env": {
-					"PANDOC_MEDIA": "media/${fileBasenameNoExtension}"
-				}
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Start Electron app",
-			"type": "shell",
-			"command": "cd electron && npm start",
-			"isBackground": true
-		}
-	],
+                {
+                        "label": "DOCX → Markdown (preserve tags)",
+                        "type": "shell",
+                        "command": "/bin/zsh",
+                        "args": [
+                                "-lc",
+                                "chmod +x \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" && PANDOC_MEDIA=media/${fileBasenameNoExtension} \"${workspaceFolder}/scripts/docx_to_md_tagged.sh\" '${file}'"
+                        ],
+                        "options": {
+                                "env": {
+                                        "PANDOC_MEDIA": "media/${fileBasenameNoExtension}"
+                                }
+                        },
+                        "presentation": {
+                                "reveal": "always",
+                                "panel": "shared"
+                        },
+                        "problemMatcher": []
+                }
+        ],
 	"inputs": [
 		{
 			"id": "ocrMode",
