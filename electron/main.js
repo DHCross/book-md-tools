@@ -10,9 +10,11 @@ app.setName('TRPG MD Workbench');
 const { analyzeStatBlock, analyzeBatch, getSummaryStats } = require('./lib/cnc-stat-block-parser');
 const { canonicalizeBatch } = require('./lib/cnc-canonicalizer-v2');
 
-// Passive AI Burst Detector - RE-ENABLED WITH STRICTER FILTERING
-// Use with caution when Windsurf is active - may cause file access conflicts
-const { startWatcher } = require('./lib/file-watcher');
+// Passive AI Burst Detector (intentionally disabled)
+// The watcher previously measured file-save velocity but conflicted with
+// AI assistants (VS Code / Windsurf freezes). Keep the module for future
+// opt-in diagnostics, but do not auto-start it.
+// const { startWatcher } = require('./lib/file-watcher');
 
 let mainWindow;
 
@@ -56,14 +58,14 @@ function createWindow() {
   mainWindow.webContents.session.clearCache();
   // mainWindow.webContents.openDevTools(); // Remove this in production
 
-  // PASSIVE AI BURST DETECTOR - RE-ENABLED WITH STRICTER FILTERING
-  // WARNING: May conflict with Windsurf file operations
-  // Monitor for performance issues and file dialog conflicts
+  // PASSIVE AI BURST DETECTOR - DISABLED DUE TO EDITOR FREEZES
+  // Even if ENABLE_PASSIVE_WATCHER is set, we now keep the watcher off by
+  // default to avoid locking up AI chat tools. Future re-enablement should
+  // be done manually in a dedicated branch or experiment.
   if (process.env.ENABLE_PASSIVE_WATCHER === 'true') {
-    console.log('⚠️  Enabling Passive AI Watcher - may conflict with Windsurf');
-    startWatcher(mainWindow);
+    console.log('⛔ Passive AI Watcher remains disabled to avoid editor freezes.');
   } else {
-    console.log('📊 Passive AI Watcher disabled (set ENABLE_PASSIVE_WATCHER=true to enable)');
+    console.log('📊 Passive AI Watcher disabled by default.');
   }
 }
 
