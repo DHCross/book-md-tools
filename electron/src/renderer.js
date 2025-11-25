@@ -3669,6 +3669,14 @@ function detectInlineStatBlocks(content) {
     name = name.replace(/[:.]+$/, '').trim();
     if (!name) continue;
 
+    // Skip single-word creature references in narrative text (e.g., "ally of the **ogre**")
+    // These are just inline references, not stat block entries
+    if (!/[:,]|^\*\*/.test(line) && name.split(/\s+/).length <= 2) {
+      // If the line doesn't start with ** and doesn't have colons/commas after the name,
+      // and the name is 1-2 words, it's likely just a narrative reference
+      continue;
+    }
+
     const rawLine = line.trim();
     blocks.push({
       name,
@@ -3818,8 +3826,8 @@ function classifyStatBlock(block) {
   const text = (block.raw || block.fullText || '').toLowerCase();
   const combined = `${name} ${text}`;
 
-  const hasCreatureWord = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|serjeant|lieutenant|yeexuul|stirge|mastiff|nixie|naga)/i.test(combined);
-  const hasLocationWord = /\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage|area|quarters|closet|chapel|shrine|temple|statue|altar|fountain|handout|compartment|lock|locked|barred|stuck|padlocked|door|gate|panel|lever|block\b|block\s*\d+|player\s+handout|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle|manor|inn\b|gatehouse\b|tower\b)\b/i.test(combined);
+  const hasCreatureWord = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|serjeant|lieutenant|yeexuul|stirge|mastiff|nixie|animal|herd|bandit|brigand|turtle|snapping|snake|poisonous|guards?|males?|females?|young|cubs?)/i.test(combined);
+  const hasLocationWord = /\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage|area|quarters|closet|chapel|shrine|temple|statue|altar|fountain|handout|compartment|lock|locked|barred|stuck|padlocked|door|gate|panel|lever|block\b|block\s*\d+|player\s+handout|cave|cavern|lair|den|well|reservoir|inn|tavern|gatehouse|keep|castle|manor|inn\b|gatehouse\b|tower\b|college|library|school|krushers?|faction|tribe|clan|group)\b/i.test(combined);
   const isAttributeOnly = /\b(locked|padlocked|barred|stuck|save\s+versus\s+poison|poison\s+save|save\s+vs\s+poison)\b/i.test(combined);
 
   // If this was extracted as a trap/hazard, classify it appropriately
@@ -3875,17 +3883,24 @@ function classifyStatBlock(block) {
   // Check for character levels - strong indicator of humanoid NPC
   const hasCharacterLevel = /(\d+(?:st|nd|rd|th)[-–]\d+(?:st|nd|rd|th)?\s+level|level\s+\d+|level\s+(fighter|cleric|magic-user|thief|ranger|druid|bard|paladin|monk))/i.test(combined);
 
+  // Special unique NPCs - specific named bosses, leaders, or unique roles
+  const isUniqueNPC = /(\b(charlie|pinky|wily wil|yeexuul|gruzz kree|king krusher|hub-gub|griggle-gruk|fekk|ember raventree|grimlock|ji'gun-tima|iggy the mad|blook-glook|ug-muk'tik|grug-much|robert cooper|oni blackbeard|wilbur hornblower)\b|shaman(?!s)|chieftain(?!s)|leader\b|mate\b|lieutenant\b)/i.test(combined) &&
+    !/(patrol|guards?|warriors?|raiders?|males?|females?)\s+x\s*\d+/i.test(combined);
+
   // NPC keywords (explicit people/roles)
-  if (isNamedNPC ||
-    /(\\bnpc\\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer)/i.test(combined) ||
+  if (isNamedNPC || isUniqueNPC ||
+    /\bnpc\b|hireling|commoner|merchant|innkeeper|barkeep|sage|scholar|clerk|noble|acolyte|priest|vicar|chaplain|courtier|peasant|farmer|villager|townsfolk|citizen|servant|porter|retainer|prisoner|captive/i.test(combined) ||
     /personality|attitude|demeanor/i.test(text) ||
     hasCharacterLevel) {
-    return isNamedNPC ? 'npc-named' : 'npc';
+    return (isNamedNPC || isUniqueNPC) ? 'npc-named' : 'npc';
   }
 
   // Monster keywords (expanded) - check this AFTER room patterns
-  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|wood elf|wood elves|serjeant|lieutenant|fekk|yeexuul|lizardfolk)/i.test(combined) ||
+  // Include generic creature types, animals, and quantity-based groups
+  const isMonster = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|gelatinous|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|lizardfolk|bandit|brigand|ape|turtle|snapping|snake|poisonous|deadly|otter|nixie|stirge|mastiff|animal|herd|bison|cattle|deer|elk)/i.test(combined) ||
     /monster|creature|spawn/i.test(text) ||
+    /(guards?|warriors?|males?|females?|young|cubs?|raiders?|patrol|sentries)\s+x\s*\d+/i.test(combined) ||
+    /(cave\s+bats?|river\s+rats?|giant\s+rats?|black\s+bear|wood\s+elf|poisonous\s+snake)/i.test(combined) ||
     hasStatSignals;
 
   if (isMonster) {
@@ -3919,8 +3934,15 @@ function classifyStatBlock(block) {
   }
 
   // Default to monster if it has creature-like words but didn't match above
-  if (/(elf|elves|gnoll|gnolls|kobold|kobolds|goblin|goblins|orc|orcs|human|humans|man|men|woman|women|child|children|male|female)/i.test(combined)) {
+  // But exclude location-specific patterns and organization names
+  if (/(elf|elves|gnoll|gnolls|kobold|kobolds|goblin|goblins|orc|orcs|human|humans|man|men|woman|women|child|children|male|female|guards?|warriors?|raiders?|patrol)/i.test(combined) &&
+      !/(college|library|school|guild|company|krushers?|faction|organization)/i.test(combined)) {
     return 'monster';
+  }
+
+  // Location/organization names should be features
+  if (/(college|library|school|guild|company|krushers?|faction|clan|tribe|band|organization)/i.test(combined)) {
+    return 'feature';
   }
 
   return 'feature'; // Final fallback
@@ -4091,11 +4113,11 @@ function detectNamedNPC(name) {
     'turtle', 'wolf', 'wolverine', 'ogre', 'children', 'batrachianoid',
     'harpy', 'tick', 'mastiff', 'animal', 'herd', 'brigand', 'giant',
     'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
-    'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivorous',
+    'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivous', 'carnivorous',
     'slime', 'ooze', 'ghoul', 'ghouls', 'wraith', 'lich', 'mummy', 'vampire',
-    'dragon', 'fungus', 'mold', 'naga', 'stirges', 'rats', 'rat', 'snakes',
+    'dragon', 'fungus', 'mold', 'naga', 'stirges', 'rats', 'snakes',
     'griffon', 'hobgoblin', 'lizardfolk', 'orc', 'stirge', 'nixie', 'mastiff',
-    'gnoll', 'green', 'slime'
+    'gnoll', 'green', 'slime', 'snapping', 'normal', 'huge', 'dire'
   ];
 
   // Check first word and also check for "Type, descriptor" pattern (e.g., "Bear, black")
@@ -4269,6 +4291,9 @@ function getFilteredStatBlocks() {
       if (b.hasStatBlock === false) return false;
       // Filter out entries with context "Alphabetical Listing" that don't have stat data
       if (b.context === 'Alphabetical Listing' && !b.raw.match(/\b(HD|HP|AC|XP)\s+\d+/i)) return false;
+      // Additional check: if raw content is very short (under 50 chars) and has no stat keywords, it's likely a narrative mention
+      const raw = b.raw || b.fullText || '';
+      if (raw.length < 50 && !/\b(HD|HP|AC|XP|MV|Attack|Special|Saves)\s*[:=]?\s*\d+/i.test(raw)) return false;
       return true;
     });
   }

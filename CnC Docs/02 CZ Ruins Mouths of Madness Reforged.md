@@ -750,19 +750,19 @@ The Castle Keeper is encouraged to bolster or reduce monster stats and numbers t
 
 **Rats, River (giant):** _(These neutral animals' vital stats are HD 1d4, HP 2, AC 13, MV 30 ft., 15 ft. climb. Their saves are physical. They attack with a bite for 1d2 points of damage, a shield's AC bonus not applicable. They have twilight vision, and 10% will be diseased, the effects of which the Castle Keeper may determine. XP: 1+1)_
 
-**Rivermen:** _(They are 0th level, chaotic neutral, human fighters whose vital stats are HD 1d8, HP 5, AC 11. Their primary attributes are physical. Their secondary skill is Nautical Ability, which is described in the CZY Appendix. They have waterproofed leather coats, spears [+0 "to hit"; 1d6 damage], and 12-inch knives._ _XP: 5+1)_
+**Rivermen:** _(These 0th level human fighters’ vital statistics are HP 5 each. AC 11. MV 30 ft. disposition chaos/neutral. Their primary attributes are physical. Their secondary skill is nautical ability as described in the CZY appendix. They wear waterproofed leather coats and carry spears (+0 to hit, 1d6 damage) and 12-inch knives. XP 5+1.)_
 
 **Snake, poisonous:** _(This neutral animal's vital stats are HD 1d6, HP 4, AC 14, MV 20 ft. Its saves are physical. It attacks with a bite for 1 point of damage. Its bite delivers poison for 2d4 points of additional damage, save versus poison negates. XP: 9+1)_
 
 **Snake, poisonous (deadly):** _(This neutral animal's vital stats are HD 2d6, HP 7, AC 14, MV 20 ft. Its saves are physical. It attacks with a bite for 1 point of damage. Its bite delivers poison for 1d4 points of additional damage for 10 rounds, save versus poison reduces damage to 1 point per round. XP: 20+2)_
 
-**Spider, Giant (medium-sized):** _(These neutral creatures' vital stats are HD 3d8, HP 15, AC 15, Move 30 ft., 20 ft. climb. Their saves are physical. They attack with a bite for 1d6 points of damage. Their bite injects venom for 3d4 additional damage, save negates. If the first save fails, an additional save is required one round later. If the second save also fails, the victim also suffers paralyzation for 1d6 hours. XP: 52+3)_
+**Spider, Giant (medium-sized):** _(These Level 3(d8) giant spiders’ vital statistics are HP 15 each. AC 15. MV 30 ft., climb 20 ft. disposition neutral. Their primary attributes are physical. They attack with a bite for 1d6 damage. Their bite injects venom for 3d4 additional damage (constitution save negates). If the first save fails, a second constitution save is required one round later, and if that save fails the victim is paralyzed for 1d6 hours. XP 52+3.)_
 
 **Stirges:** _(These neutral creatures' vital stats are HD 1d6, HP 3, AC 16 Move 10 ft., 40 ft. fly. Their saves are physical. They attack with a sting for 1d3 points of damage. Their special abilities include attach and blood drain for 1d4 points of damage per round. XP: 15+1)_
 
 **Thieves**:** _(They are 3rd-4th level, alignment variable, race variable_ —_human, dwarf, elf, half-elf, halfling— thieves whose vital stats are HP 4 per level, AC 14. Their primary attributes are physical. Their significant attribute is dexterity 16. They have leather armor, longsword [+1 "to hit"; 1d8 damage], and throwing daggers [+3 "to hit"; 1d4 damage]. They also carry thieves' tools, 50' rope, grappling hook, 6-inch iron spikes x4, and 3d6 gp in mixed coin. XP: 50+3; 120+4.)_ 
 
-**Turtle, Huge Snapping:** _(These neutral creatures' vital stats are HD 5d8, HP 20 AC 19 shell, 12 head, limbs, and tail, MV 3 ft. land, 6 ft. swimming. Their primary attributes are physical. They attack with a bite for 2d4+10 points of damage. Once the huge snapping turtle has successfully bitten a victim it does not have to strike again. Each round thereafter the turtle inflicts 2d4 points of damage per round. Also, the turtle may attempt to drag creatures into the water where they can drown. To escape, the turtle must be killed or suffer the loss of 50% of its hit points, or the victim must make a successful strength save to break free. XP: 100+5)_
+**Turtle, Huge Snapping:** _(These Level 5(d8) huge snapping turtles’ vital statistics are HP 20 each. AC 12/19. MV 30 ft., swim 60 ft. disposition neutral. Their primary attributes are physical. They attack with a bite for 2d4+10 damage. Their special abilities include Crushing Grasp: once a successful bite is made, the victim suffers 2d4 damage per round thereafter, and the turtle may drag the victim underwater where they can drown. To escape, the turtle must be killed, suffer the loss of 50% of its hit points, or the victim must make a successful strength save to break free. XP 100+5.)_
 
 **Wolf, Grey:** _(These neutral animals' vital stats are HD 2d8, HP 9, AC 13, MV 50 ft. Their saves are physical. They attack with a bite for 1d4+3 damage. Their special abilities include a trip attack, superior sense of smell, and twilight vision. XP: 10+2)_
 
@@ -1312,7 +1312,7 @@ This 15 by 30-foot room is populated by several kobolds and littered with torn s
 
 **Kobold warrior x 6:** _(These kobold warriors’ vital statistics are HD 1d4. HP 3 each. AC 15. MV 30 ft. disposition law/evil. Their primary attributes are physical. They wear leather armor. They carry three javelins each, a dagger, and 1d6 silver in coin each. Their special abilities include darkvision 60 ft. and light sensitivity (imposing a –1 penalty to attack rolls in bright light). XP 5+1.)_
 
-**Kobold serjeant x 1:** _(This lawful evil humanoid's vital stats are HD 2d4, HP 6, AC 15, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It has chain hauberk armor, javelins x 3, shortsword, keys to room #5 and #6, and 1d6 sp. XP: 22)_
+**Kobold serjeant x 1:** _(This HD 2(d4) kobold serjeant’s vital statistics are HP 6. AC 15. MV 30 ft. disposition evil/law. Its saves are physical. Its special abilities include darkvision 60 ft. and light sensitivity (-1 to attack rolls in bright light). It wears a chain hauberk and carries three javelins, a shortsword, keys to rooms #5 and #6, and 1d6 silver in coin. XP 22.)_
 
 The room is infested with fleas. If a party of four sifts through the litter for 30 minutes, a small leather sack will be found. It belongs to the serjeant and contains 12 gp, 18 ep, 22 sp, a jade statuette of a squat, toad-like man (25 gp), and an engraved silver ring (15 gp).  
 
@@ -1874,7 +1874,7 @@ The males will rise to arms upon intrusion, issuing their hue and cry, and possi
 
 This is where general meetings are held and gatherings prior to a religious ceremony. There are **2 orc guards** stationed here. They stand in the 10-foot-long passage at the north side, thus protecting the door to the chieftain's chamber (#35). They will not be immediately observed if the PCs enter this chamber, potentially surprising the party. Unless silenced before they are aware of the PCs, they will have let loose their battle cries and thus alert the chieftain of intrusion
 
-**Orc Guards x 2:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 7, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, short bow, arrows x 6, war hammer, and 1d8 ep. XP: 5+1)_
+**Orc Guards x 2:** _(These HD 1(d8) orc guards’ vital statistics are HP 7 each. AC 14. MV 30 ft. disposition evil/law. Their primary attributes are physical. They wear piecemeal armor and a shield. They carry a short bow with 6 arrows, a war hammer, and 1d8 electrum in coin each. Their special abilities include darkvision 60 ft. and light sensitivity (–1 to attack rolls in bright light). XP 5+1.)_
 
 ### >>[begin boxed text]<<
 
@@ -1912,7 +1912,7 @@ This flagstone-floored room of 30 feet by 30 feet is filled with the spoils of m
 
 The **chieftain's mate** is usually lying under the sheets of the four-poster. She is a round, voluptuous creature with a protruding lower jaw from which large fangs jut. She wears an obscene white silk dress, torn and stained. She cowers in the face of danger, begging for mercy.
 
-**Orc chieftain's mate:** _(This lawful evil humanoid's vital stats are HD 1d8, HP 4, AC 12, MV 30 ft. Its saves are physical. Its special ability is darkvision 60 ft. It carries a 4-inch knife, and 100 gp worth of gold jewelry. XP: 9)_
+**Orc chieftain's mate:** _(This HD 1(d8) orc’s vital statistics are HP 4. AC 12. MV 30 ft. disposition evil/law. Its saves are physical. Its special abilities include darkvision 60 ft. It carries a 4-inch knife and 100 gold in jewelry. XP 9.)_
 
 - _10-gallon kegs, x 12:_ These 10-gallon kegs each contain white wine of fine quality, valued at 50 gp each. An iron pry bar is nestled between the kegs (see below).
 - _Pallet_: There are 13 undressed pelts lain atop this pallet: 4 beaver (12 gp each), 4 ermine (5 gp each), 2 fox (25 gp each), and 3 giant otter (18 gp each). 
@@ -1928,7 +1928,7 @@ Recently, the orcs' only skilled engineer mysteriously disappeared (see #20), so
 
 **Orcs x 4:** _(These lawful evil humanoids' vital stats are HD 1d8, HP 5, AC 14, MV 30 ft. Their saves are physical. Their special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. They have piecemeal armor, shield, short bow, arrows x 6, war hammer, and 1d8 ep. XP: 5+1)_
 
-**Orc lieutenant:** _(This lawful evil humanoid's vital stats are HD 2d8, HP 12, AC 14, MV 30 ft. Its saves are physical. It does +1 damage due to strength. Its special abilities are darkvision 60 ft. and light sensitivity [-1 to attacks in bright light]. It has piecemeal armor, shield, war hammer, whip. dagger, key to #36, and 30 gp. XP: 34)_
+**Orc lieutenant:** _(This HD 2(d8) orc lieutenant’s vital statistics are HP 12. AC 14. MV 30 ft. disposition evil/law. It wears piecemeal armor and a medium wooden shield. It carries a war hammer, a whip, a dagger, a key to room #36, and 30 gold in coin. Its special abilities include darkvision 60 ft., light sensitivity (imposing a –1 penalty to attack rolls in bright light), and it gains a +1 bonus to damage rolls due to strength. XP 34.)_
 
 ### >>[begin boxed text]<<
 
