@@ -113,10 +113,111 @@ let isInternalEditorUpdate = false; // Set to true when we modify editor from co
 let suppressStatAnalysis = false; // Set to true when doing bulk updates
 let userHasClickedEditor = false; // Track if user has manually clicked into editor
 let editorLineTrackingInitialized = false;
+let editorContentSyncInitialized = false;
+let editorSyncTimeout = null;
+const EDITOR_SYNC_DEBOUNCE = 300;
+let findReplaceInitialized = false;
+let suppressUserFocusMark = false;
+let cmEditor = null; // CodeMirror instance
+let cmAdapter = null; // Adapter exposing textarea-like API
+
+function getEditorAdapter() {
+  if (cmAdapter) return cmAdapter;
+  return document.getElementById('markdownEditor');
+}
+
+function buildCodeMirrorAdapter() {
+  if (!cmEditor) return null;
+  return {
+    get value() {
+      return cmEditor.getValue();
+    },
+    set value(v) {
+      cmEditor.setValue(v || '');
+    },
+    get selectionStart() {
+      const sel = cmEditor.listSelections()[0];
+      const anchor = cmEditor.indexFromPos(sel.anchor);
+      const head = cmEditor.indexFromPos(sel.head);
+      return Math.min(anchor, head);
+    },
+    get selectionEnd() {
+      const sel = cmEditor.listSelections()[0];
+      const anchor = cmEditor.indexFromPos(sel.anchor);
+      const head = cmEditor.indexFromPos(sel.head);
+      return Math.max(anchor, head);
+    },
+    set selectionStart(pos) {
+      this.setSelectionRange(pos, pos);
+    },
+    set selectionEnd(pos) {
+      this.setSelectionRange(pos, pos);
+    },
+    setSelectionRange(start, end) {
+      const anchor = cmEditor.posFromIndex(start);
+      const head = cmEditor.posFromIndex(end);
+      cmEditor.setSelection(anchor, head);
+    },
+    get scrollTop() {
+      return cmEditor.getScrollInfo().top;
+    },
+    set scrollTop(val) {
+      cmEditor.scrollTo(null, val || 0);
+    },
+    get clientHeight() {
+      return cmEditor.getScrollInfo().clientHeight;
+    },
+    get scrollHeight() {
+      return cmEditor.getScrollInfo().height;
+    },
+    focus(opts) {
+      cmEditor.focus();
+      // preventScroll unsupported; ignore opts
+    },
+    blur() {
+      cmEditor.getInputField().blur();
+    },
+    addEventListener(type, handler) {
+      if (!handler) return;
+      const wrapper = cmEditor.getWrapperElement();
+      const map = {
+        focus: 'focus',
+        blur: 'blur',
+        scroll: 'scroll',
+        change: 'change',
+        input: 'change',
+        select: 'cursorActivity',
+        cursorActivity: 'cursorActivity'
+      };
+      const cmEvent = map[type];
+      if (cmEvent) {
+        cmEditor.on(cmEvent, () => handler({}));
+        return;
+      }
+      // Fallback to DOM event on wrapper for mouse/keyboard
+      wrapper.addEventListener(type, handler);
+    }
+  };
+}
+
+function initializeCodeMirror() {
+  const textarea = document.getElementById('markdownEditor');
+  if (!textarea || !window.CodeMirror || cmEditor) return;
+  cmEditor = CodeMirror.fromTextArea(textarea, {
+    mode: 'markdown',
+    lineNumbers: true,
+    lineWrapping: false,
+    viewportMargin: Infinity
+  });
+  cmAdapter = buildCodeMirrorAdapter();
+}
+
+document.addEventListener('DOMContentLoaded', initializeCodeMirror);
 
 // Stat block navigation state
 let statBlocks = [];
 let activeStatIndex = null; // index within statBlocks
+let activeStatStartLine = null; // Line number of currently selected stat block
 let statBlockSortMode = 'alphabetical'; // 'section' or 'alphabetical' - default to alphabetical
 let statFilters = { type: 'all', status: 'all', onlyErrors: false, search: '' }; // default to all
 let statContextCollapsed = {};
@@ -124,7 +225,7 @@ let reviewState = {}; // reviewed flags keyed by block id
 
 // Unified navigation context for Next/Prev
 let navContext = {
-  mode: 'header', // 'header' or 'stat-block'
+  mode: 'stat-block', // 'header' or 'stat-block'
   index: 0
 };
 
@@ -174,10 +275,11 @@ function updateReviewSummary() {
 
 function initializeEditorLineTracking() {
   if (editorLineTrackingInitialized) return;
-  const editor = document.getElementById('markdownEditor');
+  const editor = getEditorAdapter();
   if (!editor) return;
 
   const markUserInteraction = () => {
+    if (suppressUserFocusMark) return;
     if (!userHasClickedEditor) {
       userHasClickedEditor = true;
     }
@@ -192,11 +294,40 @@ function initializeEditorLineTracking() {
     editor.addEventListener(evt, markUserInteraction);
   });
 
-  ['keydown', 'keyup', 'mouseup', 'input', 'select'].forEach(evt => {
+  ['keydown', 'keyup', 'mouseup', 'input', 'select', 'change', 'cursorActivity'].forEach(evt => {
     editor.addEventListener(evt, handleCursorMotion);
   });
 
+  // Update visible range on scroll
+  editor.addEventListener('scroll', () => {
+    requestAnimationFrame(updateLineInfoDisplay);
+  });
+
   editorLineTrackingInitialized = true;
+}
+
+function initializeEditorContentSync() {
+  if (editorContentSyncInitialized) return;
+  const editor = getEditorAdapter();
+  if (!editor) return;
+
+  const handleInput = () => {
+    if (isInternalEditorUpdate) return; // Skip programmatic updates
+    currentContent = editor.value;
+    setEditorUnsavedState();
+
+    clearTimeout(editorSyncTimeout);
+    editorSyncTimeout = setTimeout(() => {
+      updateRenderedTab(currentContent);
+      updateSummaryTab(currentContent);
+      analyzeDocumentStatBlocks();
+    }, EDITOR_SYNC_DEBOUNCE);
+  };
+
+  editor.addEventListener('input', handleInput);
+  editor.addEventListener('change', handleInput);
+
+  editorContentSyncInitialized = true;
 }
 
 // ============================================================================
@@ -559,8 +690,14 @@ function updateSystemIndicator() {
 // =========================================================================
 
 function initFindReplace() {
+  if (findReplaceInitialized) return;
   const strip = document.getElementById('findReplaceStrip');
-  if (!strip) return;
+  if (!strip) {
+    // If DOM isn't ready yet, retry once when loaded
+    document.addEventListener('DOMContentLoaded', initFindReplace, { once: true });
+    return;
+  }
+  findReplaceInitialized = true;
 
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
@@ -576,6 +713,8 @@ function initFindReplace() {
   const findInput = document.getElementById('findInput');
   const replaceInput = document.getElementById('replaceInput');
   const wholeWordToggle = document.getElementById('wholeWordCheck');
+  const replaceControls = document.getElementById('replaceControls');
+  const toggleReplaceBtn = document.getElementById('toggleReplaceBtn');
 
   // Default to whole-word matching for simpler exact hits
   if (wholeWordToggle) wholeWordToggle.checked = true;
@@ -584,6 +723,10 @@ function initFindReplace() {
     findState.matches = [];
     findState.currentIndex = -1;
     updateFindStatus('');
+    const term = findInput.value.trim();
+    if (term.length > 0) {
+      findNext(true, false);
+    }
   });
 
   // Enter triggers next match
@@ -591,21 +734,31 @@ function initFindReplace() {
     if (e.key === 'Enter') {
       e.preventDefault();
       findState.currentIndex = -1;
-      findNext(true);
+      findNext(true, false);
     }
   });
   replaceInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       findState.currentIndex = -1;
-      findNext(true);
+      findNext(true, true); // keep focus in editor when replacing
     }
   });
 
-  document.getElementById('findNextBtn')?.addEventListener('click', () => findNext(true));
-  document.getElementById('findPrevBtn')?.addEventListener('click', () => findNext(false));
+  document.getElementById('findNextBtn')?.addEventListener('click', () => findNext(true, false));
+  document.getElementById('findPrevBtn')?.addEventListener('click', () => findNext(false, false));
   document.getElementById('replaceBtn')?.addEventListener('click', replaceCurrent);
   document.getElementById('replaceAllBtn')?.addEventListener('click', executeReplaceAll);
+
+  if (toggleReplaceBtn && replaceControls) {
+    toggleReplaceBtn.addEventListener('click', () => {
+      const isHidden = replaceControls.style.display === 'none';
+      replaceControls.style.display = isHidden ? 'flex' : 'none';
+      toggleReplaceBtn.textContent = isHidden ? 'Replace ▲' : 'Replace ▼';
+    });
+    // Hide replace controls by default
+    replaceControls.style.display = 'none';
+  }
 }
 
 function toggleFindStrip() {
@@ -622,6 +775,15 @@ function toggleFindStrip() {
     }
   }
 }
+
+// Initialize find/replace immediately (guarded for single run)
+initFindReplace();
+
+// Wire Find button to open the strip
+document.getElementById('openFindBtn')?.addEventListener('click', () => {
+  initFindReplace();
+  toggleFindStrip();
+});
 
 function updateFindStatus(msg) {
   const input = document.getElementById('findInput');
@@ -652,7 +814,7 @@ function getSearchRanges(scope) {
   }
 
   if (scope === 'selection') {
-    const editor = document.getElementById('markdownEditor');
+    const editor = getEditorAdapter();
     if (editor && editor.selectionStart !== editor.selectionEnd) {
       return [{ start: editor.selectionStart, end: editor.selectionEnd }];
     }
@@ -757,7 +919,7 @@ function runSearch() {
   return matches;
 }
 
-function findNext(forward = true) {
+function findNext(forward = true, focusEditor = false) {
   const matches = runSearch();
   if (!matches.length) {
     updateFindStatus('No matches');
@@ -771,28 +933,30 @@ function findNext(forward = true) {
     findState.currentIndex = (findState.currentIndex + (forward ? 1 : -1) + matches.length) % matches.length;
   }
 
-  const editor = document.getElementById('markdownEditor');
+  const m = matches[findState.currentIndex];
+  const editor = getEditorAdapter();
   if (!editor) return;
 
-  const m = matches[findState.currentIndex];
-  editor.focus();
-  
+  if (focusEditor) {
+    editor.focus();
+  }
+
   const before = (editor.value || '').slice(0, m.start);
   const lineNumber = before ? before.split('\n').length : 1;
   
   // Jump to line AND select the match (passing range ensures it persists after scroll)
-  jumpEditorToLine(lineNumber, true, { start: m.start, end: m.end });
+  jumpEditorToLine(lineNumber, focusEditor, { start: m.start, end: m.end });
   
   updateFindStatus(`Match ${findState.currentIndex + 1} of ${matches.length}`);
 }
 
 function replaceCurrent() {
-  const editor = document.getElementById('markdownEditor');
+  const editor = getEditorAdapter();
   const replaceInput = document.getElementById('replaceInput');
   if (!editor || !replaceInput) return;
 
   if (editor.selectionStart === editor.selectionEnd) {
-    findNext(true);
+    findNext(true, true);
     return;
   }
 
@@ -807,7 +971,7 @@ function replaceCurrent() {
   updateRenderedTab(currentContent);
   updateSummaryTab(currentContent);
   updateStatus('Replaced current match', 'success');
-  findNext(true);
+  findNext(true, true);
 }
 
 function executeReplaceAll() {
@@ -817,7 +981,7 @@ function executeReplaceAll() {
     return;
   }
   const replaceInput = document.getElementById('replaceInput');
-  const editor = document.getElementById('markdownEditor');
+  const editor = getEditorAdapter();
   if (!replaceInput || !editor) return;
 
   const replacement = replaceInput.value || '';
@@ -834,6 +998,7 @@ function executeReplaceAll() {
   updateSummaryTab(currentContent);
   analyzeDocumentStatBlocks();
   updateStatus(`Replaced ${matches.length} occurrence(s)`, 'success');
+  findNext(true, true);
 }
 
 // ============================================================================
@@ -1277,8 +1442,58 @@ async function handleOpenFileClick() {
 
 document.getElementById('browseBtn')?.addEventListener('click', handleOpenFileClick);
 document.getElementById('openFileBtn')?.addEventListener('click', handleOpenFileClick);
+document.getElementById('saveBtn')?.addEventListener('click', () => {
+  saveCurrentFile();
+});
+document.getElementById('saveAsBtn')?.addEventListener('click', () => {
+  saveCurrentFileAs();
+});
+
+// Save shortcuts: Ctrl/Cmd+S (save), Shift+Ctrl/Cmd+S (Save As)
+document.addEventListener('keydown', (e) => {
+  const isSave = (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey);
+  if (!isSave) return;
+  e.preventDefault();
+  if (e.shiftKey) {
+    saveCurrentFileAs();
+  } else {
+    saveCurrentFile();
+  }
+});
+
+// Go To Line controls
+const goToLineInput = document.getElementById('goToLineInput');
+const goToLineBtn = document.getElementById('goToLineBtn');
+
+const goToLine = () => {
+  if (!goToLineInput) return;
+  const val = parseInt(goToLineInput.value, 10);
+  if (!Number.isFinite(val) || val < 1) return;
+  userHasClickedEditor = true;
+  jumpEditorToLine(val, true);
+};
+
+goToLineBtn?.addEventListener('click', goToLine);
+goToLineInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    goToLine();
+  }
+});
+
+// Keyboard shortcut: Ctrl/Cmd+L to focus Go To input
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'l' || e.key === 'L')) {
+    e.preventDefault();
+    if (goToLineInput) {
+      goToLineInput.focus();
+      goToLineInput.select();
+    }
+  }
+});
 
 async function loadFile(filePath) {
+  initializeCodeMirror();
   if (!window.electronAPI) {
     console.error('electronAPI not available - preload script may not be loaded');
     updateStatus('Error: electronAPI not available', 'error');
@@ -1308,15 +1523,18 @@ async function loadFile(filePath) {
 }
 
 function updateMarkdownEditor(content) {
-  const editor = document.getElementById('markdownEditor');
+  initializeCodeMirror();
+  const editor = getEditorAdapter();
   if (editor && content !== editor.value) {
     isInternalEditorUpdate = true; // Signal that we're updating from code
     editor.value = content;
+    currentContent = content; // Ensure global state is in sync
     editor.scrollTop = 0;
     isInternalEditorUpdate = false; // Reset flag
     clearEditorUnsavedState();
     updateLineInfoDisplay();
     initializeEditorLineTracking();
+    initializeEditorContentSync();
   }
 }
 
@@ -1389,51 +1607,163 @@ function updateRenderedTab(content) {
 // Removed old sync code - no longer needed with Edit/Preview toggle
 
 function updateLineInfoDisplay() {
-  const editor = document.getElementById('markdownEditor');
+  const editor = getEditorAdapter();
   const currentLineEl = document.getElementById('lineInfoCurrent');
   const blockLineEl = document.getElementById('lineInfoBlock');
-  const gutterColumn = document.querySelector('.line-info-column');
+  const visibleEl = document.getElementById('lineInfoVisible');
 
   if (!editor) return;
 
   // Only show current line if user has manually clicked into the editor
   if (userHasClickedEditor) {
     const pos = editor.selectionStart || 0;
-    const before = (editor.value || '').slice(0, pos);
+    const content = cmEditor ? cmEditor.getValue() : (editor.value || '');
+    const before = content.slice(0, pos);
     const lineNumber = before ? before.split('\n').length : 1;
     if (currentLineEl) currentLineEl.textContent = lineNumber;
   } else {
     if (currentLineEl) currentLineEl.textContent = '—';
   }
 
-  if (blockLineEl) blockLineEl.textContent = '—';
+  if (blockLineEl) blockLineEl.textContent = activeStatStartLine ? activeStatStartLine : '—';
+
+  // Calculate visible line range using scroll ratio
+  const content = cmEditor ? cmEditor.getValue() : (editor.value || '');
+  if (visibleEl && content) {
+    const totalLines = cmEditor ? cmEditor.lineCount() : content.split('\n').length;
+    const lineHeight = cmEditor ? cmEditor.defaultTextHeight() : (parseFloat(window.getComputedStyle(editor).lineHeight) || 20);
+    const scrollTop = cmEditor ? cmEditor.getScrollInfo().top : editor.scrollTop;
+    const clientHeight = cmEditor ? cmEditor.getScrollInfo().clientHeight : editor.clientHeight;
+
+    if (totalLines > 0 && (cmEditor ? true : editor.scrollHeight > clientHeight)) {
+      const visibleLineCount = Math.max(1, Math.floor(clientHeight / lineHeight));
+      const topLine = Math.max(1, Math.floor(scrollTop / lineHeight) + 1);
+      let bottomLine = Math.min(totalLines, topLine + visibleLineCount);
+
+      // If the cursor line sits outside the estimated range, recenter around it
+      if (userHasClickedEditor) {
+        const posSel = editor.selectionStart || 0;
+        const beforeSel = content.slice(0, posSel);
+        const cursorLine = beforeSel ? beforeSel.split('\n').length : 1;
+        if (cursorLine < topLine || cursorLine > bottomLine) {
+          const half = Math.floor(visibleLineCount / 2);
+          const newTop = Math.max(1, cursorLine - half);
+          const newBottom = Math.min(totalLines, newTop + visibleLineCount);
+          visibleEl.textContent = `${newTop}-${newBottom}`;
+          return;
+        }
+      }
+
+      visibleEl.textContent = `${topLine}-${bottomLine}`;
+    } else {
+      visibleEl.textContent = `1-${totalLines}`;
+    }
+  }
 }
 
-function jumpEditorToLine(lineNumber, focusEditor = true) {
-  const editor = document.getElementById('markdownEditor');
+function jumpEditorToLine(lineNumber, focusEditor = true, selectionRange = null) {
+  const editor = getEditorAdapter();
   if (!editor) return;
 
-  const lines = editor.value.split('\n');
+  if (cmEditor) {
+    const totalLines = cmEditor.lineCount();
+    const targetLine = Math.max(1, Math.min(lineNumber, totalLines));
+    const contentLength = cmEditor.getValue().length;
+    const hasSelection = selectionRange && typeof selectionRange.start === 'number';
+    const selectionStart = hasSelection
+      ? Math.max(0, Math.min(selectionRange.start, contentLength))
+      : cmEditor.indexFromPos({ line: targetLine - 1, ch: 0 });
+    const selectionEnd = hasSelection && typeof selectionRange.end === 'number'
+      ? Math.max(selectionStart, Math.min(selectionRange.end, contentLength))
+      : selectionStart;
 
+    cmEditor.operation(() => {
+      cmEditor.setSelection(cmEditor.posFromIndex(selectionStart), cmEditor.posFromIndex(selectionEnd));
+      cmEditor.scrollIntoView({ line: targetLine - 1, ch: 0 }, 100);
+    });
+    if (focusEditor) {
+      suppressUserFocusMark = true;
+      cmEditor.focus();
+      setTimeout(() => { suppressUserFocusMark = false; }, 50);
+    }
+    updateLineInfoDisplay();
+    return;
+  }
+
+  const content = editor.value || '';
+  const lines = content.split('\n');
+  const totalLines = lines.length;
+  const targetLine = Math.max(1, Math.min(lineNumber, totalLines));
+
+  const style = window.getComputedStyle(editor);
+  const lineHeight = parseFloat(style.lineHeight) || 18;
+  const paddingTop = parseFloat(style.paddingTop) || 0;
+  
   // Compute character offset for the start of the target line
   let offset = 0;
-  for (let i = 0; i < lineNumber - 1; i++) {
+  for (let i = 0; i < targetLine - 1; i++) {
     offset += (lines[i]?.length || 0) + 1;
   }
 
-  if (focusEditor) editor.focus();
-  editor.setSelectionRange(offset, offset);
+  // Target scroll puts the line about 20% down from top of viewport
+  const viewportOffset = editor.clientHeight * 0.2;
+  const targetScroll = Math.max(0, (targetLine - 1) * lineHeight + paddingTop - viewportOffset);
+  
+  // Clamp to valid scroll range
+  const maxScroll = editor.scrollHeight - editor.clientHeight;
+  const finalScroll = Math.min(targetScroll, maxScroll);
+  
+  // Determine the selection we want to set (clamped to content length)
+  const contentLength = content.length;
+  const hasSelection = selectionRange && typeof selectionRange.start === 'number';
+  const selectionStart = hasSelection
+    ? Math.max(0, Math.min(selectionRange.start, contentLength))
+    : offset;
+  const selectionEnd = hasSelection && typeof selectionRange.end === 'number'
+    ? Math.max(selectionStart, Math.min(selectionRange.end, contentLength))
+    : selectionStart;
 
-  // Simple consistent scroll positioning
-  editor.scrollTop = editor.scrollHeight * (lineNumber / lines.length);
+  editor.blur();
+  editor.setSelectionRange(selectionStart, selectionEnd);
+  editor.scrollTop = finalScroll;
+  
+  if (focusEditor) {
+    suppressUserFocusMark = true;
+    try {
+      editor.focus({ preventScroll: true });
+    } catch (e) {
+      editor.focus();
+    }
+    setTimeout(() => { suppressUserFocusMark = false; }, 50);
+  }
 
-  updateLineInfoDisplay();
+  // Double-check after focus (focus might trigger a scroll)
+  const enforceScroll = (attempt = 0) => {
+    requestAnimationFrame(() => {
+      const drift = Math.abs(editor.scrollTop - finalScroll);
+      if (drift > 10) {
+        if (attempt === 0) {
+          console.warn(`[jumpEditorToLine] Focus caused drift! Correcting ${editor.scrollTop} -> ${finalScroll}`);
+        }
+        editor.scrollTop = finalScroll;
+      }
+      if (attempt < 3) {
+        enforceScroll(attempt + 1);
+      } else {
+        updateLineInfoDisplay();
+      }
+    });
+  };
+  enforceScroll();
 }
 
 
 function captureSelection() {
-  const editor = document.getElementById('markdownEditor');
-  if (editor && editor.selectionStart !== editor.selectionEnd) {
+  const editor = getEditorAdapter();
+  if (cmEditor) {
+    const sel = cmEditor.getSelection();
+    selectedText = (sel || '').trim();
+  } else if (editor && editor.selectionStart !== editor.selectionEnd) {
     const text = editor.value.substring(editor.selectionStart, editor.selectionEnd);
     selectedText = text.trim();
   } else {
@@ -1445,35 +1775,63 @@ function captureSelection() {
   updateSelectionModeIndicator();
 }
 
-function flashNameInEditor(name, anchorOffset = 0) {
+function flashNameInEditor(name, anchorOffset = null) {
   if (!name) return;
-  const editor = document.getElementById('markdownEditor');
+  const editor = getEditorAdapter();
   if (!editor) return;
 
-  const text = editor.value || '';
+  const text = cmEditor ? cmEditor.getValue() : (editor.value || '');
   const lower = text.toLowerCase();
   const target = name.toLowerCase();
 
+  const anchor = (typeof anchorOffset === 'number' && anchorOffset >= 0)
+    ? anchorOffset
+    : (cmEditor
+      ? cmEditor.indexFromPos(cmEditor.getCursor())
+      : (typeof editor.selectionStart === 'number' ? editor.selectionStart : 0));
+
   const searchRadius = 1500;
-  const start = Math.max(0, anchorOffset - 500);
-  const end = Math.min(text.length, anchorOffset + searchRadius);
+  const start = Math.max(0, anchor - 500);
+  const end = Math.min(text.length, anchor + searchRadius);
 
   let idx = lower.indexOf(target, start);
   if (idx === -1 || idx > end) {
-    idx = lower.indexOf(target);
+    return;
   }
   if (idx === -1) return;
+
+  if (cmEditor) {
+    const from = cmEditor.posFromIndex(idx);
+    const to = cmEditor.posFromIndex(idx + name.length);
+    cmEditor.setSelection(from, to);
+    setTimeout(() => cmEditor.setSelection(from, from), 250);
+    return;
+  }
 
   const originalStart = editor.selectionStart;
   const originalEnd = editor.selectionEnd;
 
   editor.setSelectionRange(idx, idx + name.length);
-
   setTimeout(() => {
     editor.setSelectionRange(originalStart, originalEnd);
   }, 250);
 }
 
+        const cursorLine = before ? before.split('\n').length : 1;
+        if (cursorLine < topLine || cursorLine > bottomLine) {
+          const half = Math.floor(visibleLineCount / 2);
+          const newTop = Math.max(1, cursorLine - half);
+          const newBottom = Math.min(totalLines, newTop + visibleLineCount);
+          visibleEl.textContent = `${newTop}-${newBottom}`;
+          return;
+        }
+      }
+
+      visibleEl.textContent = `${topLine}-${bottomLine}`;
+    } else {
+      visibleEl.textContent = `1-${totalLines}`;
+    }
+  }
 function updateSummaryTab(content) {
   const summary = document.getElementById('summaryContent');
   if (!summary) return;
@@ -2861,67 +3219,8 @@ function initializeDragAndDrop() {
 let lastSectionHash = null; // Cache to detect actual section changes
 
 function updateHeaderNavigator() {
-  const container = document.getElementById('navigatorList');
-  if (!container) return;
-
   const sections = extractSections(currentContent || '');
   allSections = sections; // reuse existing sections array
-
-  // Check if sections actually changed - avoid DOM thrashing
-  const hash = (sections || []).length + ':' + (sections || []).map(s => s.header).join('|');
-  if (lastSectionHash === hash) return; // No change, skip update
-  lastSectionHash = hash;
-
-  // Clear existing content safely
-  container.textContent = '';
-
-
-  if (!sections || sections.length === 0) {
-    const p = document.createElement('p');
-    p.className = 'placeholder';
-    p.style.padding = '12px';
-    p.textContent = 'No headers found in document.';
-    container.appendChild(p);
-    return;
-  }
-
-  sections.forEach((s, idx) => {
-    const item = document.createElement('div');
-    item.className = `nav-item nav-level-${Math.min(s.level, 6)}`;
-    item.dataset.index = idx;
-    item.dataset.level = s.level;
-
-    const dot = document.createElement('div');
-    dot.className = 'nav-dot';
-
-    const textDiv = document.createElement('div');
-    textDiv.className = 'nav-text';
-
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'nav-title';
-    titleDiv.title = s.header;
-    titleDiv.textContent = s.header;
-
-    const metaDiv = document.createElement('div');
-    metaDiv.className = 'nav-meta';
-    metaDiv.textContent = `H${s.level} · line ${s.startLine}`;
-
-    textDiv.appendChild(titleDiv);
-    textDiv.appendChild(metaDiv);
-
-    item.appendChild(dot);
-    item.appendChild(textDiv);
-
-    item.addEventListener('click', () => {
-      navigateToSection(idx);
-      container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-    });
-
-    container.appendChild(item);
-  });
-
-  applyHeaderCollapseState();
 
   // Update right-hand content tree when sections change
   renderRightNavigator(buildRightNavModel());
@@ -2933,51 +3232,13 @@ function navigateToSection(index) {
   const target = sections[index];
 
   // Update unified navigation context
-  navContext.mode = 'header';
+  navContext.mode = 'stat-block';
   navContext.index = index;
   updateNavButtonsForContext();
   updateLineInfoDisplay();
 
-
   // Jump editor to the section start (keeps caret aligned with navigation)
   jumpEditorToLine(target.startLine, false);
-
-
-  // Scroll Rendered to the matching heading element
-  const rendered = document.getElementById('renderedContent');
-  if (rendered) {
-    // Try to find exact match first, then fuzzy
-    const headings = Array.from(rendered.querySelectorAll('h1, h2, h3, h4, h5, h6'));
-    let match = headings.find(h => (h.textContent || '').trim() === target.header);
-
-    if (!match) {
-      match = headings.find(h => (h.textContent || '').trim().startsWith(target.header));
-    }
-
-
-    // Fallback: use data-line attribute if available (requires renderer update to inject it)
-    if (!match) {
-      match = headings.find(h => h.getAttribute('data-line') == target.startLine);
-    }
-
-
-    // Fallback: match by data-line if text match fails
-    if (!match) {
-      for (const h of headings) {
-        const dataLine = h.getAttribute('data-line');
-        if (dataLine && parseInt(dataLine, 10) === target.startLine) {
-          match = h;
-          break;
-        }
-      }
-    }
-
-    if (match) {
-      match.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      match.classList.add('highlight-flash');
-      setTimeout(() => match.classList.remove('highlight-flash'), 2000);
-    }
-  }
 }
 
 // ============================================================================
@@ -2995,6 +3256,103 @@ const CONTENT_TREE_ICONS = {
   'hazard': '⚠️',
   'feature': '✨'
 };
+
+/**
+ * Detect tables within a line range of the document
+ * Returns array of detected tables with type and line number
+ */
+function detectTablesInRange(startLine, endLine) {
+  if (!currentContent) return [];
+  
+  const lines = currentContent.split('\n');
+  const tables = [];
+  const actualEndLine = Math.min(endLine, lines.length);
+  
+  for (let i = startLine - 1; i < actualEndLine; i++) {
+    const line = lines[i] || '';
+    const lineNum = i + 1;
+    
+    // Markdown table separator row (|---|---|)
+    if (/^\s*\|?\s*:?-+:?\s*\|/.test(line) && /\|/.test(line)) {
+      // Look back for header row to get table name
+      let tableName = 'Table';
+      
+      // Check previous lines for table header or caption
+      for (let j = i - 1; j >= Math.max(0, i - 5); j--) {
+        const prevLine = lines[j] || '';
+        
+        // Check for "Table X:" or "TABLE:" pattern
+        const tableMatch = prevLine.match(/\*?\*?(?:Table\s*\d*[:.]\s*)?([^|*\n]+)/i);
+        if (tableMatch && prevLine.includes('|')) {
+          // This is the header row, extract first cell as name hint
+          const cells = prevLine.split('|').filter(c => c.trim());
+          if (cells.length > 0) {
+            tableName = cells[0].replace(/\*\*/g, '').trim().substring(0, 40);
+          }
+          break;
+        }
+        
+        // Check for standalone table title
+        if (/^#+\s*Table|^\*\*Table/i.test(prevLine)) {
+          tableName = prevLine.replace(/^#+\s*/, '').replace(/\*\*/g, '').trim().substring(0, 40);
+          break;
+        }
+      }
+      
+      tables.push({
+        type: 'table',
+        name: tableName || 'Table',
+        line: lineNum - 1, // Point to start of table
+        tableType: 'markdown'
+      });
+    }
+    
+    // HTML table start
+    if (/<table\b/i.test(line)) {
+      tables.push({
+        type: 'table',
+        name: 'HTML Table',
+        line: lineNum,
+        tableType: 'html'
+      });
+    }
+    
+    // Dice/Roll table patterns (common in TRPGs)
+    // e.g., "d6  Result" or "1-2  Something"
+    if (/^\s*(?:d\d+|Roll|\d+[-–]\d+)\s+/i.test(line) && i + 1 < actualEndLine) {
+      const nextLine = lines[i + 1] || '';
+      if (/^\s*\d+[-–]?\s+/.test(nextLine) || /^\s*\d+\.\s+/.test(nextLine)) {
+        tables.push({
+          type: 'table',
+          name: 'Roll Table',
+          line: lineNum,
+          tableType: 'roll'
+        });
+      }
+    }
+    
+    // Encounter table pattern (## Wandering Monsters, Random Encounters, etc.)
+    if (/^#{1,4}\s*(?:Wandering|Random|Encounter|Monster)\s*(?:Table|List)?/i.test(line)) {
+      tables.push({
+        type: 'table',
+        name: line.replace(/^#+\s*/, '').trim().substring(0, 40),
+        line: lineNum,
+        tableType: 'encounter'
+      });
+    }
+  }
+  
+  // Deduplicate tables that are close together (within 3 lines)
+  const deduped = [];
+  for (const table of tables) {
+    const isDupe = deduped.some(t => Math.abs(t.line - table.line) < 3);
+    if (!isDupe) {
+      deduped.push(table);
+    }
+  }
+  
+  return deduped;
+}
 
 /**
  * Build a model of sections with their contained stat blocks for the right navigator
@@ -3045,13 +3403,32 @@ function buildRightNavModel() {
       return blockLine >= node.startLine && blockLine <= sectionEndLine;
     });
 
-    node.children = sectionBlocks.map(b => ({
+    // Detect tables within this section
+    const sectionTables = detectTablesInRange(node.startLine, sectionEndLine);
+
+    // Combine stat blocks and tables, sorted by line number
+    const statBlockChildren = sectionBlocks.map(b => ({
       type: b.type || 'feature',
       name: b.name || 'Unknown',
       line: b.lineStart || b.lineNumber || 1,
       subtitle: null,
       warnings: (b.validation?.errors?.length || 0) + (b.validation?.warnings?.length || 0)
     }));
+
+    const tableChildren = sectionTables.map(t => ({
+      type: 'table',
+      name: t.name,
+      line: t.line,
+      subtitle: t.tableType,
+      warnings: 0
+    }));
+
+    // Merge and sort by line number
+    node.children = [...statBlockChildren, ...tableChildren].sort((a, b) => a.line - b.line);
+    
+    // Track if section has tables (for section-level indicator)
+    node.hasTables = sectionTables.length > 0;
+    node.tableCount = sectionTables.length;
 
     tree.push(node);
   });
@@ -3073,12 +3450,17 @@ function renderRightNavigator(model) {
 
   const htmlParts = model.map(section => {
     const indent = Math.max(0, (section.level - 1)) * 14;
+    
+    // Show table indicator if section contains tables
+    const tableIndicator = section.hasTables 
+      ? `<span class="section-table-badge" title="${section.tableCount} table(s)">📊${section.tableCount > 1 ? section.tableCount : ''}</span>`
+      : '';
 
     let html = `
       <div class="nav-node section-node"
            data-line="${section.startLine}"
            style="margin-left:${indent}px">
-        📘 ${escapeHtml(section.title)}
+        📘 ${escapeHtml(section.title)} ${tableIndicator}
       </div>
     `;
 
@@ -3122,31 +3504,52 @@ function renderRightNavigator(model) {
   });
 }
 
-function highlightHeaderForLine(lineNumber) {
-  const sections = allSections || [];
-  if (!sections.length || !lineNumber) return;
+/**
+ * Highlight the corresponding entry in the Content Tree when a stat block is selected
+ */
+function highlightInContentTree(block) {
+  const nav = document.getElementById('rightNavigator');
+  if (!nav || !block) return;
 
-  // Find the last section whose startLine is <= lineNumber
-  let bestIndex = -1;
+  const blockLine = block.lineStart || block.lineNumber || 0;
+  
+  // Clear all active states
+  nav.querySelectorAll('.nav-node').forEach(el => el.classList.remove('active'));
+
+  // Find the section that contains this block
+  const sections = allSections || [];
+  let containingSection = null;
+  
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    if (section && typeof section.startLine === 'number' && section.startLine <= lineNumber) {
-      bestIndex = i;
-    } else if (section && section.startLine > lineNumber) {
+    const nextSection = sections[i + 1];
+    const sectionEnd = nextSection ? nextSection.startLine - 1 : Infinity;
+    
+    if (blockLine >= section.startLine && blockLine <= sectionEnd) {
+      containingSection = section;
       break;
     }
   }
-  if (bestIndex === -1) return;
 
-  const container = document.getElementById('navigatorList');
-  if (!container) return;
-
-  container.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const activeItem = container.querySelector(`.nav-item[data-index="${bestIndex}"]`);
-  if (activeItem) {
-    activeItem.classList.add('active');
-    activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Highlight the section header
+  if (containingSection) {
+    const sectionNode = nav.querySelector(`.section-node[data-line="${containingSection.startLine}"]`);
+    if (sectionNode) {
+      sectionNode.classList.add('active');
+      sectionNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
+
+  // Also highlight the specific block if it exists in the tree
+  const blockNode = nav.querySelector(`.block-node[data-line="${blockLine}"]`);
+  if (blockNode) {
+    blockNode.classList.add('active');
+    blockNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function highlightHeaderForLine(lineNumber) {
+  // Header tree removed; no-op
 }
 
 // ============================================================================
@@ -3238,18 +3641,125 @@ function extractTrapsAndHazards(content) {
   return trapsAndHazards;
 }
 
+// Lightweight inline detector for bold stat lines the backend may miss
+function detectInlineStatBlocks(content) {
+  if (!content) return [];
+
+  const lines = content.split('\n');
+  const blocks = [];
+  const statSignal = /(hp\s*\d+|hd\s*\d+|ac\s*\d+|mv\s*\d+)/i;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.includes('**')) continue;
+    if (!statSignal.test(line)) continue;
+
+    const nameMatch = line.match(/\*\*([^*]+)\*\*/);
+    if (!nameMatch) continue;
+
+    let name = nameMatch[1].trim();
+    name = name.replace(/[:.]+$/, '').trim();
+    if (!name) continue;
+
+    const rawLine = line.trim();
+    blocks.push({
+      name,
+      raw: rawLine,
+      fullText: rawLine,
+      lineNumber: i + 1,
+      lineStart: i + 1,
+      lineEnd: i + 1,
+      context: '',
+      type: null
+    });
+  }
+
+  return blocks;
+}
+
+function realignStatBlocks(blocks) {
+  if (!currentContent || !blocks) return blocks;
+  const lines = currentContent.split('\n');
+  
+  return blocks.map(block => {
+    // Try to match using the raw line content first (most accurate)
+    const searchContent = (block.raw || block.fullText || '').split('\n')[0].trim();
+    if (!searchContent || searchContent.length < 5) return block;
+
+    // Search window: start from 0 to handle the "doubling" issue completely
+    // We want to find the FIRST occurrence to match user expectation
+    const expectedLine = block.lineNumber || 1;
+    
+    let bestLine = -1;
+    
+    // Scan the whole document for the best match
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.includes(searchContent)) {
+        // Exact match found
+        bestLine = i + 1;
+        break; // Stop at first match
+      }
+      
+      // Fuzzy match (fallback)
+      if (bestLine === -1 && block.name && line.includes(block.name.replace(/["']/g, '').trim())) {
+        bestLine = i + 1;
+        // Continue searching for a better exact match
+      }
+    }
+    
+    // If we found a better line, update it
+    if (bestLine !== -1 && bestLine !== expectedLine) {
+      return {
+        ...block,
+        lineNumber: bestLine,
+        lineStart: bestLine
+      };
+    }
+    
+    return block;
+  });
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function updateStatBlockNavigator(blocks) {
   const container = document.getElementById('statBlockNavigator');
   const countEl = document.getElementById('statBlockCount');
 
   if (!container) return;
 
-  // Store full list
-  statBlocks = Array.isArray(blocks) ? blocks : [];
+  // Store full list and ensure lineStart is set from lineNumber
+  // First realign blocks to correct line numbers in current content
+  const realignedBlocks = realignStatBlocks(Array.isArray(blocks) ? blocks : []);
+  
+  statBlocks = realignedBlocks.map(b => ({
+    ...b,
+    lineStart: b.lineStart || b.lineNumber || 1,
+    lineNumber: b.lineNumber || b.lineStart || 1
+  }));
 
   // Add traps and hazards
   const trapsAndHazards = extractTrapsAndHazards(currentContent || '');
   statBlocks = statBlocks.concat(trapsAndHazards);
+
+  // Add inline bold stat lines the backend may miss (e.g., quick edits)
+  const inlineDetected = detectInlineStatBlocks(currentContent || '');
+  inlineDetected.forEach(inlineBlock => {
+    const line = inlineBlock.lineNumber || inlineBlock.lineStart || 0;
+    const exists = statBlocks.some(block => {
+      const bLine = block.lineNumber || block.lineStart || 0;
+      const sameName = block.name && inlineBlock.name &&
+        block.name.toLowerCase().trim() === inlineBlock.name.toLowerCase().trim();
+      const closeLine = line && bLine && Math.abs(bLine - line) <= 2;
+      return sameName || closeLine;
+    });
+    if (!exists) {
+      statBlocks.push(inlineBlock);
+    }
+  });
 
   // Update count badge
   const sections = extractSections(currentContent || '');
@@ -3289,6 +3799,11 @@ function classifyStatBlock(block) {
   let name = (block.name || '').toLowerCase();
   const originalName = block.name || '';
   const text = (block.raw || block.fullText || '').toLowerCase();
+  const combined = `${name} ${text}`;
+
+  const hasCreatureWord = /(dragon|goblin|orc|troll|kobold|bugbear|hobgoblin|skeleton|zombie|ghoul|ghast|wraith|specter|lich|mummy|vampire|demon|devil|fiend|ogre|giant|beast|slime|ooze|fungus|mold|worm|centipede|spider|rat|bat|wolf|bear|boar|lion|griffon|wyvern|basilisk|naga|losel|shaman|chieftain|warrior|champion|leader|matriarch|patriarch|queen|king|lord|witch|cultist|spawn|aberration|construct|golem|gnoll|elf|elves|serjeant|lieutenant|yeexuul|stirge|mastiff|nixie|naga)/i.test(combined);
+  const hasLocationWord = /\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage|area|quarters|closet|chapel|shrine|temple|statue|altar|fountain|handout|compartment|lock|locked|barred|stuck|padlocked|door|gate|panel|lever|block\b|block\s*\d+|player\s+handout|cave|cavern|lair|den|well|reservoir)\b/i.test(combined);
+  const isAttributeOnly = /\b(locked|padlocked|barred|stuck|save\s+versus\s+poison|poison\s+save)\b/i.test(combined);
 
   // If this was extracted as a trap/hazard, classify it appropriately
   if (block.context === 'Trap/Hazard') {
@@ -3306,18 +3821,35 @@ function classifyStatBlock(block) {
   // Strip quantity patterns for better classification
   name = name.replace(/\s*x\s*\d+$/i, '').replace(/\s*\d+x$/i, '').replace(/\s*\d+$/i, '').trim();
 
-  const combined = `${name} ${text}`;
-
   const hasHpOrHd = /\b(hp\s*\d+|hd\s*\d+d?\d*)\b/i.test(combined);
   const hasAc = /\bac\b\s*\d+/i.test(combined);
   const hasStatSignals = hasHpOrHd && hasAc;
 
+  // Explicit handouts/items/blocks should be features
+  if (/handout/i.test(combined) || /^block\s*\d+/i.test(name)) {
+    return 'feature';
+  }
+
+  // Plain attributes/locks/save notes should not be entities
+  if (isAttributeOnly) {
+    return 'feature';
+  }
+
+  // Object/location cues that should override creature words
+  if (/\b(statue|altar|compartment|lock|locked|stuck|padlocked|barred|secret\s+compartment|cave|cavern|lair|den|well|reservoir)\b/i.test(combined)) {
+    return 'feature';
+  }
+
   // Room/Architectural patterns - check BEFORE NPC detection for location names
   // Use word boundaries to avoid matching creature names like "Cave bats"
-  if (/\b(chamber|room|hall|corridor|passage|tunnel|entrance|exit|stair|stairs|doorway|archway|alcove|niche|balcony|terrace|courtyard|cellar|basement|attic|loft|storage)\b/i.test(combined) ||
-    /\b(cave|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined) ||
+  if (hasLocationWord ||
+    (/\b(cave|cavern|den|lair)\b(?!\s+(bat|rat|spider|snake|monster|creature|giant|ghoul|naga))/i.test(combined)) ||
     /\b(sq\.?\s*ft|square\s*feet|feet\s*x\s*\d+|\d+\s*x\s*\d+|\d+\s*ft\s*x\s*\d+|dimensions?\b)/i.test(combined)) {
-    return 'feature';
+    // If it clearly names a creature but is also a location, keep feature only when it's an area/object label
+    const areaLike = /\b(area|quarters|room|chamber|hall|chapel|shrine|statue|altar|block|handout|compartment|lock|locked|stuck|padlocked|barred|cave|cavern|lair|den|well|reservoir)\b/i.test(combined);
+    if (!hasCreatureWord || areaLike) {
+      return 'feature';
+    }
   }
 
   // Detect if this is a named NPC (proper name, not generic)
@@ -3371,6 +3903,41 @@ function classifyStatBlock(block) {
   }
 
   return 'feature'; // Final fallback
+}
+
+// Find the earliest matching line for a block (prefer exact raw -> name patterns)
+function resolveBlockLine(block) {
+  if (!currentContent || !block) return null;
+  const lines = currentContent.split('\n');
+  const name = (block.name || '').trim();
+  const rawFirst = (block.raw || block.fullText || '').split('\n')[0].trim();
+
+  // Exact raw match (earliest)
+  if (rawFirst && rawFirst.length > 4) {
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes(rawFirst)) return i + 1;
+    }
+  }
+
+  // Bolded name pattern
+  if (name) {
+    const boldPattern = new RegExp(`\\*\\*${escapeRegExp(name)}[:\\s]`, 'i');
+    for (let i = 0; i < lines.length; i++) {
+      if (boldPattern.test(lines[i])) return i + 1;
+    }
+
+    // Simple name includes
+    const simpleName = name.replace(/["']/g, '').trim();
+    if (simpleName.length > 2) {
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].toLowerCase().includes(simpleName.toLowerCase())) {
+          return i + 1;
+        }
+      }
+    }
+  }
+
+  return null;
 }
 
 // Extract stat block names using the same pattern as Python analysis
@@ -3480,7 +4047,7 @@ function detectNamedNPC(name) {
   }
 
   // Exclude location/area names (not NPCs)
-  if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|lair|den)/i.test(name)) {
+  if (/(track|trail|road|path|river|stream|lake|forest|wood|hill|mountain|ravine|bluff|pier|bridge|cave|cavern|lair|den|handout|reservoir|well)/i.test(name)) {
     return false;
   }
 
@@ -3503,7 +4070,11 @@ function detectNamedNPC(name) {
     'turtle', 'wolf', 'wolverine', 'ogre', 'children', 'batrachianoid',
     'harpy', 'tick', 'mastiff', 'animal', 'herd', 'brigand', 'giant',
     'black', 'cave', 'wild', 'mountain', 'forest', 'river', 'huge', 'grey',
-    'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivorous'
+    'gray', 'small', 'large', 'medium', 'deadly', 'poisonous', 'carnivorous',
+    'slime', 'ooze', 'ghoul', 'ghouls', 'wraith', 'lich', 'mummy', 'vampire',
+    'dragon', 'fungus', 'mold', 'naga', 'stirges', 'rats', 'rat', 'snakes',
+    'griffon', 'hobgoblin', 'lizardfolk', 'orc', 'stirge', 'nixie', 'mastiff',
+    'gnoll', 'green', 'slime'
   ];
 
   // Check first word and also check for "Type, descriptor" pattern (e.g., "Bear, black")
@@ -3848,7 +4419,7 @@ function renderStatBlockList() {
       const index = parseInt(item.getAttribute('data-index'), 10);
       if (!Number.isNaN(index) && statBlocks[index]) {
         navigateToStatBlock(statBlocks[index]);
-        showValidationDetails(statBlocks[index]);
+        // showValidationDetails(statBlocks[index]); // Legacy function - no longer defined
       }
     });
   });
@@ -3896,38 +4467,14 @@ function renderStatBlockList() {
 
 function setHeaderCollapse(collapse) {
   headersCollapsed = !!collapse;
-  applyHeaderCollapseState();
 }
 
 function applyHeaderCollapseState() {
-  const list = document.getElementById('navigatorList');
-  if (!list) return;
-  const items = list.querySelectorAll('.nav-item');
-  items.forEach((item) => {
-    const level = parseInt(item.dataset.level || '1', 10);
-    if (headersCollapsed) {
-      if (level > 1) {
-        item.style.display = 'none';
-      } else {
-        item.style.display = '';
-      }
-    } else {
-      item.style.display = '';
-    }
-  });
-  // Update button labels
-  const expandBtn = document.getElementById('expandHeadersBtn');
-  const collapseBtn = document.getElementById('collapseHeadersBtn');
-  if (expandBtn && collapseBtn) {
-    if (headersCollapsed) {
-      expandBtn.disabled = false;
-      collapseBtn.disabled = true;
-    } else {
-      expandBtn.disabled = true;
-      collapseBtn.disabled = false;
-    }
-  }
+  // Header tree removed; nothing to collapse
 }
+
+// Wire up header expand/collapse buttons
+// (Header tree removed)
 
 // Wire up search and filter controls
 document.getElementById('statBlockSearch')?.addEventListener('input', renderStatBlockList);
@@ -4051,31 +4598,11 @@ function navigateToStatBlock(block) {
     navContext.index = idx;
     updateNavButtonsForContext();
 
+    // Set the active stat start line for display
+    activeStatStartLine = block.lineStart || block.lineNumber || null;
+    console.log(`[navigateToStatBlock] "${block.name}" stored lineStart=${block.lineStart}, lineNumber=${block.lineNumber}`);
+    
     updateLineInfoDisplay();
-    // If there's a matching header context, highlight it in the right-hand navigator
-    if (allSections && allSections.length > 0) {
-      const startLineCandidate = block.lineStart || block.lineNumber || block.lineBegin;
-      const startLine = typeof startLineCandidate === 'number' && startLineCandidate > 0 ? startLineCandidate : 1;
-      const matchIdx = allSections.findIndex(
-        (s) => (s.startLine && Math.abs(s.startLine - startLine) <= 2) ||
-          (block.context && s.header && s.header.trim().toLowerCase() === block.context.trim().toLowerCase())
-      );
-      if (matchIdx >= 0) {
-        try {
-          const navList = document.getElementById('navigatorList');
-          if (navList) {
-            navList.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const targetNav = navList.querySelector(`.nav-item[data-index="${matchIdx}"]`);
-            if (targetNav) {
-              targetNav.classList.add('active');
-              targetNav.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }
-        } catch (e) {
-          // ignore navigator highlight errors
-        }
-      }
-    }
   }
 
   // Update navigator active state
@@ -4091,8 +4618,11 @@ function navigateToStatBlock(block) {
     // ignore
   }
 
+  // Sync with Content Tree
+  highlightInContentTree(block);
+
   // Jump cursor to the stat block in the editor
-  let line = block.lineNumber || block.lineStart || 1;
+  let line = resolveBlockLine(block) || block.lineNumber || block.lineStart || 1;
 
   // First, try to verify the line number is still accurate by checking if the content matches
   if (block.name && currentContent && line > 0) {
@@ -4153,6 +4683,9 @@ function navigateToStatBlock(block) {
       if (bestMatch !== null) {
         line = bestMatch;
         console.log(`[Navigate] Found "${block.name}" at line ${line}`);
+        // Persist the corrected line so subsequent clicks use it
+        block.lineNumber = line;
+        block.lineStart = line;
       }
     }
   }
@@ -4161,7 +4694,9 @@ function navigateToStatBlock(block) {
 
   // Flash the block name in the editor briefly to aid visual tracking
   if (block.name) {
-    flashNameInEditor(block.name);
+    const editor = getEditorAdapter();
+    const anchor = editor ? editor.selectionStart : null;
+    flashNameInEditor(block.name, anchor);
   }
 
   // Sync header navigator highlight & scroll to matching section
@@ -4193,46 +4728,18 @@ function updateNavButtonsForContext() {
   const nextBtn = document.getElementById('nextStatBtn');
   if (!prevBtn || !nextBtn) return;
 
-  if (navContext.mode === 'stat-block') {
-    prevBtn.textContent = '◀ Prev Stat';
-    nextBtn.textContent = 'Next Stat ▶';
-    prevBtn.title = 'Previous Stat Block (Ctrl+Alt+↑)';
-    nextBtn.title = 'Next Stat Block (Ctrl+Alt+↓)';
-  } else {
-    prevBtn.textContent = '◀ Prev Header';
-    nextBtn.textContent = 'Next Header ▶';
-    prevBtn.title = 'Previous Header (Ctrl+Alt+↑)';
-    nextBtn.title = 'Next Header (Ctrl+Alt+↓)';
-  }
+  prevBtn.textContent = '◀ Prev Stat';
+  nextBtn.textContent = 'Next Stat ▶';
+  prevBtn.title = 'Previous Stat Block (Ctrl+Alt+↑)';
+  nextBtn.title = 'Next Stat Block (Ctrl+Alt+↓)';
 }
 
 function navigateNextByContext() {
-  if (navContext.mode === 'stat-block') {
-    nextStatBlock();
-    return;
-  }
-
-  const sections = allSections || [];
-  if (!sections.length) return;
-
-  let idx = typeof navContext.index === 'number' ? navContext.index : -1;
-  idx = Math.min(sections.length - 1, idx + 1);
-  if (idx < 0) idx = 0;
-  navigateToSection(idx);
+  nextStatBlock();
 }
 
 function navigatePrevByContext() {
-  if (navContext.mode === 'stat-block') {
-    prevStatBlock();
-    return;
-  }
-
-  const sections = allSections || [];
-  if (!sections.length) return;
-
-  let idx = typeof navContext.index === 'number' ? navContext.index : sections.length;
-  idx = Math.max(0, idx - 1);
-  navigateToSection(idx);
+  prevStatBlock();
 }
 
 // Show Validation Details Panel for a selected stat block
@@ -4736,8 +5243,8 @@ function updateSessionTimerUI() {
     const barTest = document.querySelector('.stat-segment.test');
 
     if (barPlan) barPlan.style.width = `${planPct}%`;
-    if (barCode) codeBar.style.width = `${codePct}%`;
-    if (testBar) testBar.style.width = `${testPct}%`;
+    if (barCode) barCode.style.width = `${codePct}%`;
+    if (barTest) barTest.style.width = `${testPct}%`;
 
     // Update legend text
     const planM = Math.floor(sessionTimeBreakdown.planning / 60000);
@@ -4754,7 +5261,7 @@ function updateSessionTimerUI() {
   }
 }
 
-initialize();
+// initialize(); // Legacy function - no longer defined
 updateUndoButton();
 initializeVelocityTracking();
 

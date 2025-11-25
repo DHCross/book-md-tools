@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TRPG MD Workbench</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
 </head>
 
 <body>
@@ -166,9 +169,6 @@
             <input type="text" id="findInput" placeholder="Find..." class="fr-input" />
           </div>
           <div class="fr-group">
-            <input type="text" id="replaceInput" placeholder="Replace..." class="fr-input" />
-          </div>
-          <div class="fr-group">
             <select id="searchScopeSelect" class="fr-select" title="Search Scope">
               <option value="all">[All]</option>
               <option value="stat-blocks">[Stat Blocks]</option>
@@ -193,15 +193,22 @@
           <div class="fr-group">
             <span id="matchCounter" class="match-counter">--</span>
           </div>
+          <div class="fr-group">
+            <button id="toggleReplaceBtn" class="fr-btn" title="Show replace options">Replace ▼</button>
+          </div>
+          <div id="replaceControls" style="display:none; gap:8px; align-items:center;">
+            <div class="fr-group">
+              <input type="text" id="replaceInput" placeholder="Replace..." class="fr-input" />
+            </div>
+            <div class="fr-group">
+              <button id="replaceBtn" class="fr-btn">Replace</button>
+              <button id="replaceAllBtn" class="fr-btn fr-btn-primary">Replace All</button>
+            </div>
+          </div>
           <div class="fr-divider"></div>
           <div class="fr-group">
             <button id="findPrevBtn" class="fr-btn" title="Previous Match">&lt;</button>
             <button id="findNextBtn" class="fr-btn" title="Next Match">&gt;</button>
-          </div>
-          <div class="fr-divider"></div>
-          <div class="fr-group">
-            <button id="replaceBtn" class="fr-btn">Replace</button>
-            <button id="replaceAllBtn" class="fr-btn fr-btn-primary">Replace All</button>
           </div>
           <button id="closeFindStripBtn" class="fr-close-btn">&times;</button>
         </div>
@@ -306,8 +313,16 @@
                     <div class="line-info-label">Stat start</div>
                     <div id="lineInfoBlock" class="line-info-value">—</div>
                   </div>
+                  <div class="line-info-row">
+                    <div class="line-info-label">Visible</div>
+                    <div id="lineInfoVisible" class="line-info-value" style="font-size: 10px;">—</div>
+                  </div>
+                  <div class="line-info-row" style="gap:6px; align-items:center;">
+                    <input id="goToLineInput" type="text" inputmode="numeric" pattern="\\d*" min="1" placeholder="Line" style="width:70px;font-size:11px;padding:4px 6px;" />
+                    <button id="goToLineBtn" class="btn tertiary" style="padding:4px 6px;font-size:11px;">Go To</button>
+                  </div>
                 </div>
-                <textarea id="markdownEditor" class="markdown-editor"
+                <textarea id="markdownEditor" class="markdown-editor" wrap="off"
                   placeholder="Start typing or load a file to edit..." spellcheck="false"></textarea>
                 <div id="editorStatus" class="editor-status">Ready</div>
               </div>
@@ -609,25 +624,7 @@
 
       <!-- Header Navigator: Right of editor -->
       <aside class="navigator navigator-right">
-        <div class="nav-column header-nav-column">
-          <div class="navigator-header">
-            <h3>Navigator</h3>
-            <div class="header-nav-controls">
-              <button id="refreshNavigatorBtn" class="header-nav-btn" title="Rescan headers">↻</button>
-              <button id="expandHeadersBtn" class="header-nav-btn" title="Expand all headers">Expand</button>
-              <button id="collapseHeadersBtn" class="header-nav-btn" title="Collapse all headers">Collapse</button>
-            </div>
-          </div>
-          <div class="header-nav-collapsers">
-            <span>Structure</span>
-          </div>
-          <div id="navigatorList" class="navigator-list">
-            <p class="placeholder" style="padding: 12px;">Add headings (H1–H4) to see document structure here.</p>
-          </div>
-        </div>
-
         <!-- Content Tree: Sections + Stat Blocks -->
-        <div class="navigator-divider"></div>
         <div class="nav-column content-tree-column">
           <div class="navigator-header">
             <h3>Content Tree</h3>

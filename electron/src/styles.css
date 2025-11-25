@@ -2275,8 +2275,8 @@ body {
   border-radius: 6px;
   resize: none;
   overflow: auto;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: pre;
+  word-wrap: normal;
   box-sizing: border-box;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -3588,4 +3588,10 @@ body {
 
 .right-navigator .block-icon {
   margin-right: 4px;
+}
+
+.right-navigator .section-table-badge {
+  margin-left: 6px;
+  font-size: 11px;
+  opacity: 0.8;
 }
